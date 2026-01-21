@@ -74,6 +74,9 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params;
   const company = await getCompanyBySlug(slug);
+  console.log("DEBUG website:", (company as any).website);
+console.log("DEBUG links:", (company as any).links);
+
 
   if (!company) {
     return siteMeta({
@@ -143,9 +146,24 @@ export default async function CompanyPage({
   const mp4 = isMp4Url(rawVideo);
   const embedSrc = mp4 ? null : normalizeVideoUrl(rawVideo);
 
-  // ✅ NEW: website URL prepared for rendering
-  const websiteUrl = toAbsoluteUrl((company as any).website);
-  const websiteHost = hostFromUrl(websiteUrl);
+  // ✅ Website URL (supports both companies.website and links[])
+const websiteRaw: string | null =
+  (company as any).website ??
+  (company as any).links?.find((l: any) => {
+    const kind = String(l?.kind ?? "").toLowerCase();
+    const label = String(l?.label ?? "").toLowerCase();
+    return (
+      ["website", "site", "homepage"].includes(kind) ||
+      label.includes("nettside") ||
+      label.includes("website") ||
+      label.includes("hjemmeside")
+    );
+  })?.url ??
+  null;
+
+const websiteUrl = toAbsoluteUrl(websiteRaw);
+const websiteHost = hostFromUrl(websiteUrl);
+
 
 
   return (
