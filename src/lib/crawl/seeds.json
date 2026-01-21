@@ -1,0 +1,14 @@
+[
+  {
+    "url": "https://www.kampanje.com/rss/",
+    "type": "rss",
+    "trust": 4,
+    "extractionHint": "Se etter artikler om AI/KI, reklame, byrå, film, produksjon. Plukk ut eksterne lenker til aktørers nettsider."
+  },
+  {
+    "url": "https://www.welltold.no/sitemap.xml",
+    "type": "sitemap",
+    "trust": 3,
+    "extractionHint": "Se etter AI + byrå/tech. Plukk ut eksterne lenker til selskaper."
+  }
+]
