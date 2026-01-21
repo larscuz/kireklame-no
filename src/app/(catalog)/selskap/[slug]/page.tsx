@@ -1,7 +1,8 @@
+// src/app/(catalog)/selskap/[slug]/page.tsx
+
 import Link from "next/link";
 import { cookies } from "next/headers";
 import { createServerClient } from "@supabase/ssr";
-import Badge from "@/app/_components/Badge";
 import Separator from "@/app/_components/Separator";
 import ClaimCta from "@/app/_components/ClaimCta";
 import CoverImg from "@/app/_components/CoverImg";
@@ -30,6 +31,24 @@ function isMp4Url(url: string | null): boolean {
   if (!url) return false;
   return url.toLowerCase().endsWith(".mp4") || url.toLowerCase().includes(".mp4?");
 }
+
+// ✅ NEW: ensure website links work even if stored without protocol
+function toAbsoluteUrl(raw: string | null | undefined): string | null {
+  const s = (raw ?? "").trim();
+  if (!s) return null;
+  if (s.startsWith("http://") || s.startsWith("https://")) return s;
+  return `https://${s}`;
+}
+
+function hostFromUrl(url: string | null): string | null {
+  if (!url) return null;
+  try {
+    return new URL(url).host.replace(/^www\./, "");
+  } catch {
+    return null;
+  }
+}
+
 
 async function getSupabase() {
   const cookieStore = await cookies();
@@ -124,6 +143,11 @@ export default async function CompanyPage({
   const mp4 = isMp4Url(rawVideo);
   const embedSrc = mp4 ? null : normalizeVideoUrl(rawVideo);
 
+  // ✅ NEW: website URL prepared for rendering
+  const websiteUrl = toAbsoluteUrl((company as any).website);
+  const websiteHost = hostFromUrl(websiteUrl);
+
+
   return (
     <div className="mx-auto max-w-6xl px-4 py-10">
       <h1 className="text-3xl md:text-4xl font-semibold">{company.name}</h1>
@@ -170,16 +194,39 @@ export default async function CompanyPage({
 
         <div className="lg:col-span-4">
           <div className="rounded-2xl border p-6">
-            {company.email && (
-              <a
-                href={`mailto:${company.email}?subject=${encodeURIComponent(
-                  `Kontakt via KiReklame: ${company.name}`
-                )}`}
-                className="block text-center rounded-xl border px-4 py-3 font-semibold"
-              >
-                Kontakt bedrift
-              </a>
-            )}
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+  {company.email ? (
+    <a
+      href={`mailto:${company.email}?subject=${encodeURIComponent(
+        `Kontakt via KiReklame: ${company.name}`
+      )}`}
+      className="block text-center rounded-xl border px-4 py-3 font-semibold"
+    >
+      Kontakt bedrift
+    </a>
+  ) : (
+    <div />
+  )}
+
+  {websiteUrl ? (
+  <a
+    href={websiteUrl}
+    target="_blank"
+    rel="noopener noreferrer"
+    className="block text-center rounded-xl border px-4 py-3 font-semibold opacity-80 hover:opacity-100"
+  >
+    Besøk nettside <span aria-hidden>↗</span>
+  </a>
+) : (
+  <div />
+)}
+
+</div>
+
+{websiteHost && (
+  <p className="mt-2 text-xs text-muted text-center">{websiteHost}</p>
+)}
+
 
             <Separator className="my-4" />
 
