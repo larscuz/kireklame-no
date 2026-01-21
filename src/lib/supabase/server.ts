@@ -187,7 +187,8 @@ export async function getCompanies(
   const { data, error } = await query;
 
 if (error) {
-  console.error("[getCompanies] supabase error:", error);
+  console.error("[getCompanies] supabase error:", error.message);
+
   return {
     companies: [],
     facets: {
