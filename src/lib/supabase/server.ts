@@ -186,16 +186,18 @@ export async function getCompanies(
 
   const { data, error } = await query;
 
-  if (error) {
-    return {
-      companies: [],
-      facets: {
-        locations: locRes.data ?? [],
-        tags: tagRes.data ?? [],
-        types,
-      },
-    };
-  }
+if (error) {
+  console.error("[getCompanies] supabase error:", error);
+  return {
+    companies: [],
+    facets: {
+      locations: locRes.data ?? [],
+      tags: tagRes.data ?? [],
+      types,
+    },
+  };
+}
+
 
   let companies: CompanyCardModel[] = (data ?? []).map((row: any) => {
     const tags = (row.company_tags ?? []).map((ct: any) => ct.tags).filter(Boolean);
