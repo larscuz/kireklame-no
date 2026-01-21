@@ -2,19 +2,31 @@ import ListingGrid from "@/app/_components/ListingGrid";
 import { getCompaniesByLocationSlug, getLocationBySlug } from "@/lib/supabase/server";
 import { siteMeta } from "@/lib/seo";
 
-export async function generateMetadata({ params }: { params: { slug: string } }) {
-  const location = await getLocationBySlug(params.slug);
-  const name = location?.name ?? params.slug;
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
+  const location = await getLocationBySlug(slug);
+  const name = location?.name ?? slug;
+
   return siteMeta({
     title: `${name} – KiReklame.no`,
     description: `AI/KI-aktører innen reklame og kreativ produksjon i ${name}.`,
-    path: `/by/${params.slug}`
+    path: `/by/${slug}`,
   });
 }
 
-export default async function CityPage({ params }: { params: { slug: string } }) {
-  const location = await getLocationBySlug(params.slug);
-  const companies = await getCompaniesByLocationSlug(params.slug);
+export default async function CityPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
+
+  const location = await getLocationBySlug(slug);
+  const companies = await getCompaniesByLocationSlug(slug);
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-10">

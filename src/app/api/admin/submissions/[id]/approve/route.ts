@@ -17,14 +17,20 @@ async function uniqueSlug(db: ReturnType<typeof supabaseAdmin>, base: string) {
   return `${base}-${Date.now()}`;
 }
 
-export async function POST(req: Request, ctx: { params: { id: string } }) {
+export async function POST(
+  req: Request,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const { id } = await params;
+
+
   await requireAdmin();
   const db = supabaseAdmin();
 
   const { data: s, error } = await db
     .from("submissions")
     .select("*")
-    .eq("id", ctx.params.id)
+    .eq("id", id)
     .single();
 
   if (error || !s) {

@@ -1,46 +1,57 @@
-import Link from "next/link";
+// src/app/claim/company/[slug]/page.tsx
+import type { Metadata } from "next";
+import { siteMeta } from "@/lib/seo";
+import { getCompanyBySlug } from "@/lib/supabase/server";
 import ClaimForm from "./ClaimForm";
 
-export const dynamic = "force-dynamic";
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
 
-type ParamsLike = { slug: string } | Promise<{ slug: string }>;
+  const company = await getCompanyBySlug(slug);
+  const name = company?.name ?? slug;
+
+  return siteMeta({
+    title: `Claim ${name} – KiReklame.no`,
+    description: "Bekreft eierskap til bedriftsprofilen på KiReklame.no.",
+    path: `/claim/company/${slug}`,
+  });
+}
 
 export default async function ClaimCompanyPage({
   params,
 }: {
-  params: ParamsLike;
+  params: Promise<{ slug: string }>;
 }) {
-  const { slug } = (await params) as { slug: string };
+  const { slug } = await params;
 
+  const company = await getCompanyBySlug(slug);
+
+  // hvis slug ikke finnes / er feil
+  if (!company) {
+    return (
+      <div className="mx-auto max-w-3xl px-4 py-16">
+        <h1 className="text-2xl font-semibold tracking-tight">Fant ikke bedriften</h1>
+        <p className="mt-3 text-sm text-[rgb(var(--muted))]">
+          Denne profilen finnes ikke (eller er ikke publisert).
+        </p>
+      </div>
+    );
+  }
+
+  // ClaimForm forventer vanligvis slug + id (basert på din arkitektur)
   return (
     <div className="mx-auto max-w-3xl px-4 py-16">
-      <div className="rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] p-6 shadow-soft">
-        <h1 className="text-2xl font-semibold tracking-tight">
-          Claim bedrift
-        </h1>
+      <h1 className="text-2xl font-semibold tracking-tight">Claim {company.name}</h1>
+      <p className="mt-3 text-sm text-[rgb(var(--muted))]">
+        Send claim for å kunne redigere profilen etter godkjenning.
+      </p>
 
-        <p className="mt-2 text-sm text-[rgb(var(--muted))]">
-          Du er i claim-flyten for: <span className="font-medium">{slug}</span>
-        </p>
-
-        {/* 👇 HER */}
-        <ClaimForm slug={slug} />
-
-        <div className="mt-6 flex gap-3">
-          <Link
-            href={`/selskap/${slug}`}
-            className="inline-flex items-center justify-center rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))] px-4 py-2 text-sm font-semibold hover:shadow-soft transition"
-          >
-            Tilbake til profilen
-          </Link>
-
-          <Link
-            href="/me"
-            className="inline-flex items-center justify-center rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))] px-4 py-2 text-sm font-semibold hover:shadow-soft transition"
-          >
-            Min side
-          </Link>
-        </div>
+      <div className="mt-8">
+        <ClaimForm companyId={company.id} companySlug={company.slug ?? slug} />
       </div>
     </div>
   );

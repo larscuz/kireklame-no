@@ -3,10 +3,12 @@
 import { useMemo, useState } from "react";
 
 type Props = {
-  slug: string;
+  companyId: string;
+  companySlug: string;
 };
 
-export default function ClaimForm({ slug }: Props) {
+export default function ClaimForm({ companyId, companySlug }: Props) {
+
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -33,7 +35,7 @@ export default function ClaimForm({ slug }: Props) {
 
     // Mikrosteg D: Vi lagrer bare "message" + slug via API (claims-tabellen har typisk company_id/user_id/status/message)
     const payload = {
-      slug,
+      companySlug,
       message: message.trim(),
     };
 
@@ -47,7 +49,7 @@ export default function ClaimForm({ slug }: Props) {
       if (res.status === 401) {
         // Ikke innlogget → send til auth og tilbake hit
         window.location.href = `/auth?mode=signup&next=${encodeURIComponent(
-  `/claim/company/${slug}`
+  `/claim/company/${companySlug}`
 )}`;
 
         return;
