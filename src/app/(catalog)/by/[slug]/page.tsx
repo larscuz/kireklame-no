@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import ListingGrid from "@/app/_components/ListingGrid";
 import { getCompaniesByLocationSlug, getLocationBySlug } from "@/lib/supabase/server";
 import { siteMeta } from "@/lib/seo";
@@ -6,7 +7,7 @@ export async function generateMetadata({
   params,
 }: {
   params: Promise<{ slug: string }>;
-}) {
+}): Promise<Metadata> {
   const { slug } = await params;
   const location = await getLocationBySlug(slug);
   const name = location?.name ?? slug;
