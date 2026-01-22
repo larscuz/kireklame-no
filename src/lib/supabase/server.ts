@@ -44,7 +44,7 @@ export function isAdminUser(email: string | null | undefined): boolean {
   return admins.includes(email.toLowerCase());
 }
 
-/** Krev innlogget bruker */
+/** Krev innlogget bruker (UI / pages) */
 export async function requireUser(nextPath: string = "/me") {
   const supabase = await supabaseServerClient();
   const { data, error } = await supabase.auth.getUser();
@@ -60,7 +60,6 @@ export async function requireAdmin(nextPath: string = "/admin") {
   const user = await requireUser(nextPath);
 
   if (!isAdminUser(user.email)) {
-    // Ikke-admin skal ikke få 500 — send til /me
     redirect("/me");
   }
   return user;
@@ -119,6 +118,70 @@ export async function requireApprovedClaim(companyId: string) {
   return { user, isAdmin: false };
 }
 
+/**
+ * API-safe: henter user fra cookies, men redirecter aldri.
+ * Returnerer null hvis ikke innlogget / feil.
+ */
+export async function getUserOrNull() {
+  const supabase = await supabaseServerClient();
+  const { data, error } = await supabase.auth.getUser();
+  if (error || !data.user) return null;
+  return data.user;
+}
+
+/**
+ * API-safe auth for API routes: redirecter aldri.
+ * Returnerer { ok: true, ... } eller { ok: false, status, error }
+ */
+export async function canEditCompany(companyId: string): Promise<
+  | { ok: true; isAdmin: boolean; userId: string; email: string | null }
+  | { ok: false; status: number; error: string }
+> {
+  if (!companyId) return { ok: false, status: 400, error: "Missing company_id" };
+
+  const user = await getUserOrNull();
+  if (!user) return { ok: false, status: 401, error: "Not authenticated" };
+
+  const email = (user.email ?? "").trim().toLowerCase();
+
+  if (isAdminUser(email)) {
+    return { ok: true, isAdmin: true, userId: user.id, email: user.email ?? null };
+  }
+
+  const db = supabaseAdmin();
+
+  // ✅ Eier via epost (ikke placeholder)
+  const { data: company, error: cErr } = await db
+    .from("companies")
+    .select("id,email,is_placeholder")
+    .eq("id", companyId)
+    .maybeSingle();
+
+  if (cErr) return { ok: false, status: 500, error: cErr.message };
+
+  const companyEmail = String(company?.email ?? "").trim().toLowerCase();
+  if (companyEmail && email && companyEmail === email && company?.is_placeholder !== true) {
+    return { ok: true, isAdmin: false, userId: user.id, email: user.email ?? null };
+  }
+
+  // ✅ Eller approved claim
+  const { data: claim, error: clErr } = await db
+    .from("claims")
+    .select("id,status")
+    .eq("company_id", companyId)
+    .eq("user_id", user.id)
+    .maybeSingle();
+
+  if (clErr) return { ok: false, status: 500, error: clErr.message };
+
+  const status = String(claim?.status ?? "pending").toLowerCase();
+  if (status !== "approved") {
+    return { ok: false, status: 403, error: "Not authorized. Claim not approved." };
+  }
+
+  return { ok: true, isAdmin: false, userId: user.id, email: user.email ?? null };
+}
+
 function normalizeLocation(loc: any): { name: string; slug: string } | null {
   const l = Array.isArray(loc) ? loc[0] : loc;
   if (!l) return null;
@@ -127,7 +190,6 @@ function normalizeLocation(loc: any): { name: string; slug: string } | null {
 
 /**
  * Idempotent: hvis claim allerede finnes (company_id + user_id), ikke feile.
- * Første gang → insert, senere klikk → ingen endring, men ok.
  */
 export async function createClaim(args: { companyId: string; userId: string; message?: string }) {
   const supabase = await supabaseServerClient();
@@ -181,7 +243,6 @@ export async function getCompanies(
       company_tags:company_tags ( tags:tag_id (name,slug) )
     `
     )
-    // ✅ PUBLIC: skjul deaktiverte bedrifter
     .eq("is_active", true)
     .order("is_verified", { ascending: false })
     .order("ai_level", { ascending: false })
@@ -263,7 +324,6 @@ export async function getCompanyBySlug(slug: string): Promise<CompanyDetailModel
       company_tags:company_tags ( tags:tag_id (name,slug) )
     `
     )
-    // ✅ PUBLIC: skjul deaktiverte bedrifter
     .eq("is_active", true)
     .eq("slug", slug)
     .maybeSingle();
@@ -321,7 +381,6 @@ export async function getCompaniesByLocationSlug(locationSlug: string) {
       company_tags:company_tags ( tags:tag_id (name,slug) )
     `
     )
-    // ✅ PUBLIC: skjul deaktiverte bedrifter
     .eq("is_active", true)
     .eq("location_id", loc.id)
     .order("ai_level", { ascending: false });
@@ -361,7 +420,6 @@ export async function getCompaniesByTagSlug(tagSlug: string) {
       company_tags:company_tags ( tags:tag_id (name,slug) )
     `
     )
-    // ✅ PUBLIC: skjul deaktiverte bedrifter
     .eq("is_active", true)
     .in("id", ids)
     .order("ai_level", { ascending: false });

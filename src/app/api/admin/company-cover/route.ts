@@ -1,7 +1,7 @@
 // src/app/api/admin/company-cover/route.ts
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase/admin";
-import { requireApprovedClaim } from "@/lib/supabase/server";
+import { canEditCompany } from "@/lib/supabase/server";
 
 export const runtime = "nodejs";
 
@@ -27,7 +27,7 @@ function assertEnv(name: string) {
 
 export async function POST(req: Request) {
   try {
-    // 1) parse form-data fra admin UI
+    // 1) parse form-data fra UI
     const form = await req.formData();
     const companyId = String(form.get("company_id") ?? "").trim();
     const file = form.get("file");
@@ -42,8 +42,11 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Empty file" }, { status: 400 });
     }
 
-    // ✅ Tillat: admin ELLER approved claim-owner
-    await requireApprovedClaim(companyId);
+    // ✅ API-safe auth: admin OR owner-email OR approved claim
+    const auth = await canEditCompany(companyId);
+    if (!auth.ok) {
+      return NextResponse.json({ error: auth.error }, { status: auth.status });
+    }
 
     // 2) DB: sjekk at company finnes
     const db = supabaseAdmin();
@@ -58,7 +61,14 @@ export async function POST(req: Request) {
 
     // 3) bygg filnavn (cover.<ext>)
     const ext = safeExtFromFile(file);
-    const filename = `cover.${ext}`;
+    const allowed = new Set(["png", "jpg", "jpeg", "webp"]);
+    const normalizedExt = ext === "jpeg" ? "jpg" : ext;
+
+    if (!allowed.has(normalizedExt)) {
+      return NextResponse.json({ error: "Only png/jpg/webp allowed" }, { status: 415 });
+    }
+
+    const filename = `cover.${normalizedExt}`;
 
     // 4) send til one.com upload.php
     const uploadUrl = assertEnv("ONECOM_UPLOAD_URL");
@@ -67,7 +77,7 @@ export async function POST(req: Request) {
     const forward = new FormData();
     forward.set("kind", "cover");
     forward.set("companyId", companyId);
-    forward.set("filename", filename);
+    forward.set("filename", filename); // upload.php ignorerer dette nå, men greit å sende
     forward.set("file", file);
 
     const upRes = await fetch(uploadUrl, {
@@ -76,7 +86,6 @@ export async function POST(req: Request) {
         Authorization: `Bearer ${token}`,
       },
       body: forward,
-      // (ingen cache her)
     });
 
     const text = await upRes.text();
@@ -84,7 +93,7 @@ export async function POST(req: Request) {
     try {
       payload = JSON.parse(text);
     } catch {
-      // payload forblir null
+      // payload blir null → vi sender raw text videre
     }
 
     if (!upRes.ok || !payload?.ok || !payload?.url) {
@@ -108,8 +117,11 @@ export async function POST(req: Request) {
 
     if (uErr) return NextResponse.json({ error: uErr.message }, { status: 500 });
 
-    // 6) redirect tilbake til admin edit side
+    // 6) redirect tilbake (admin eller /me)
     const origin = new URL(req.url).origin;
+
+    // Hvis requesten kommer fra admin UI så er det ok å sende til admin-siden,
+    // ellers kan du bytte til /me/company/:id hvis du ønsker det.
     return NextResponse.redirect(`${origin}/admin/companies/${companyId}`, { status: 303 });
   } catch (err: any) {
     return NextResponse.json({ error: err?.message ?? "Unknown error" }, { status: 500 });
