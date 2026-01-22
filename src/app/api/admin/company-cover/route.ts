@@ -1,6 +1,7 @@
 // src/app/api/admin/company-cover/route.ts
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase/admin";
+import { requireApprovedClaim } from "@/lib/supabase/server";
 
 export const runtime = "nodejs";
 
@@ -40,6 +41,9 @@ export async function POST(req: Request) {
     if (file.size === 0) {
       return NextResponse.json({ error: "Empty file" }, { status: 400 });
     }
+
+    // ✅ Tillat: admin ELLER approved claim-owner
+    await requireApprovedClaim(companyId);
 
     // 2) DB: sjekk at company finnes
     const db = supabaseAdmin();
@@ -108,9 +112,6 @@ export async function POST(req: Request) {
     const origin = new URL(req.url).origin;
     return NextResponse.redirect(`${origin}/admin/companies/${companyId}`, { status: 303 });
   } catch (err: any) {
-    return NextResponse.json(
-      { error: err?.message ?? "Unknown error" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: err?.message ?? "Unknown error" }, { status: 500 });
   }
 }
