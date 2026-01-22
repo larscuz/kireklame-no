@@ -45,7 +45,6 @@ export function isAdminUser(email: string | null | undefined): boolean {
 }
 
 /** Krev innlogget bruker */
-/** Krev innlogget bruker */
 export async function requireUser(nextPath: string = "/me") {
   const supabase = await supabaseServerClient();
   const { data, error } = await supabase.auth.getUser();
@@ -67,24 +66,42 @@ export async function requireAdmin(nextPath: string = "/admin") {
   return user;
 }
 
-
 /**
- * Krev at bruker enten er admin ELLER har approved claim på companyId.
+ * Krev at bruker enten er admin ELLER:
+ * - eier bedriften via companies.email == user.email (ikke placeholder), ELLER
+ * - har approved claim på companyId.
+ *
  * Brukes for /me/company/:id og actions som oppdaterer bedrift via service role.
  */
 export async function requireApprovedClaim(companyId: string) {
   if (!companyId) throw new Error("Missing companyId");
 
-    const user = await requireUser(`/me/company/${companyId}`);
-
+  const user = await requireUser(`/me/company/${companyId}`);
 
   // Admin kan alltid redigere
   if (isAdminUser(user.email)) {
     return { user, isAdmin: true };
   }
 
-  // Ikke-admin: må ha approved claim
   const db = supabaseAdmin();
+
+  // ✅ Eier via epost (bedriften ble registrert med samme epost som innlogget bruker)
+  const { data: company, error: cErr } = await db
+    .from("companies")
+    .select("id,email,is_placeholder")
+    .eq("id", companyId)
+    .maybeSingle();
+
+  if (cErr) throw new Error(cErr.message);
+
+  const companyEmail = String(company?.email ?? "").trim().toLowerCase();
+  const userEmail = String(user.email ?? "").trim().toLowerCase();
+
+  if (companyEmail && userEmail && companyEmail === userEmail && company?.is_placeholder !== true) {
+    return { user, isAdmin: false };
+  }
+
+  // Ikke-admin: må ha approved claim
   const { data: claim, error } = await db
     .from("claims")
     .select("id,status")
@@ -186,19 +203,18 @@ export async function getCompanies(
 
   const { data, error } = await query;
 
-if (error) {
-  console.error("[getCompanies] supabase error:", error.message);
+  if (error) {
+    console.error("[getCompanies] supabase error:", error.message);
 
-  return {
-    companies: [],
-    facets: {
-      locations: locRes.data ?? [],
-      tags: tagRes.data ?? [],
-      types,
-    },
-  };
-}
-
+    return {
+      companies: [],
+      facets: {
+        locations: locRes.data ?? [],
+        tags: tagRes.data ?? [],
+        types,
+      },
+    };
+  }
 
   let companies: CompanyCardModel[] = (data ?? []).map((row: any) => {
     const tags = (row.company_tags ?? []).map((ct: any) => ct.tags).filter(Boolean);
