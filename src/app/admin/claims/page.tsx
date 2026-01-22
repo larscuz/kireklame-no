@@ -4,7 +4,6 @@ import { supabaseAdmin } from "@/lib/supabase/admin";
 import { requireUser } from "@/lib/supabase/server";
 import { notifySubmitter } from "@/lib/email/notifySubmitter";
 
-
 export const dynamic = "force-dynamic";
 
 async function approveClaim(formData: FormData) {
@@ -55,7 +54,10 @@ async function approveClaim(formData: FormData) {
 
         if (to) {
           const site = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
-          const actionUrl = `${site}/me`;
+
+          // ✅ CTA skal gå til /auth først, og så tilbake til riktig /me/company/:id
+          const nextPath = `/me/company/${String(claimRow.company_id)}`;
+          const actionUrl = `${site}/auth?next=${encodeURIComponent(nextPath)}`;
 
           await notifySubmitter({
             to,
@@ -85,7 +87,6 @@ async function approveClaim(formData: FormData) {
   revalidatePath("/me");
 }
 
-
 async function rejectClaim(formData: FormData) {
   "use server";
 
@@ -101,7 +102,7 @@ async function rejectClaim(formData: FormData) {
 }
 
 export default async function AdminClaimsPage() {
-      const user = await requireUser();
+  const user = await requireUser();
 
   const allowed = (process.env.ADMIN_EMAILS ?? "")
     .split(",")
@@ -126,27 +127,24 @@ export default async function AdminClaimsPage() {
     );
   }
 
-  
-    const db = supabaseAdmin();
+  const db = supabaseAdmin();
 
   const { data: claims, error } = await db
-  .from("claims")
-  .select(`
-    id,
-    status,
-    message,
-    created_at,
-    company_id,
-    companies:company_id (
+    .from("claims")
+    .select(`
       id,
-      name,
-      slug
-    ),
-    user_id
-  `)
-  .order("created_at", { ascending: false });
-
-
+      status,
+      message,
+      created_at,
+      company_id,
+      companies:company_id (
+        id,
+        name,
+        slug
+      ),
+      user_id
+    `)
+    .order("created_at", { ascending: false });
 
   return (
     <main className="mx-auto max-w-5xl px-4 py-10">
@@ -154,12 +152,8 @@ export default async function AdminClaimsPage() {
         <div>
           <h1 className="text-3xl font-semibold tracking-tight">Claims</h1>
           <p className="mt-2 text-sm text-[rgb(var(--muted))]">
-            Innlogget admin: <span className="font-medium text-[rgb(var(--fg))]">{user.email ?? user.id}</span>
-
-            <span className="font-medium text-[rgb(var(--fg))]">
-              {user.email ?? user.id}
-
-            </span>
+            Innlogget admin:{" "}
+            <span className="font-medium text-[rgb(var(--fg))]">{user.email ?? user.id}</span>
           </p>
         </div>
 
@@ -184,70 +178,66 @@ export default async function AdminClaimsPage() {
       {!error && claims && claims.length > 0 ? (
         <div className="mt-8 overflow-hidden rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] shadow-soft">
           <div className="grid grid-cols-12 gap-3 border-b border-[rgb(var(--border))] px-4 py-3 text-xs font-semibold text-[rgb(var(--muted))]">
-  <div className="col-span-3">Bedrift</div>
-
-  <div className="col-span-3">Bruker</div>
-  <div className="col-span-2">Status</div>
-  <div className="col-span-2">Handling</div>
-  <div className="col-span-2">Melding</div>
-</div>
-
+            <div className="col-span-3">Bedrift</div>
+            <div className="col-span-3">Bruker</div>
+            <div className="col-span-2">Status</div>
+            <div className="col-span-2">Handling</div>
+            <div className="col-span-2">Melding</div>
+          </div>
 
           <div className="divide-y divide-[rgb(var(--border))]">
             {claims.map((c: any) => (
               <div key={c.id} className="grid grid-cols-12 gap-3 px-4 py-3 text-sm">
                 <div className="col-span-3">
-  <div className="font-semibold">
-    {c.companies?.name ?? "Ukjent bedrift"}
-  </div>
-  {c.companies?.slug ? (
-    <Link
-      href={`/selskap/${c.companies.slug}`}
-      className="text-xs underline text-[rgb(var(--muted))]"
-      target="_blank"
-    >
-      Åpne profil ↗
-    </Link>
-  ) : null}
-</div>
+                  <div className="font-semibold">{c.companies?.name ?? "Ukjent bedrift"}</div>
+                  {c.companies?.slug ? (
+                    <Link
+                      href={`/selskap/${c.companies.slug}`}
+                      className="text-xs underline text-[rgb(var(--muted))]"
+                      target="_blank"
+                    >
+                      Åpne profil ↗
+                    </Link>
+                  ) : null}
+                </div>
 
                 <div className="col-span-3 text-xs">
-  <code>{c.user_id}</code>
-</div>
+                  <code>{c.user_id}</code>
+                </div>
 
                 <div className="col-span-2">
                   <span className="inline-flex items-center rounded-full border px-2.5 py-1 text-xs font-semibold">
                     {(c.status ?? "pending").toLowerCase()}
                   </span>
                 </div>
+
                 <div className="col-span-2 flex flex-wrap gap-2">
-  <form action={approveClaim}>
-    <input type="hidden" name="id" value={c.id} />
-    <button
-      type="submit"
-      className="rounded-xl border border-[rgb(var(--border))] bg-black text-white px-3 py-1.5 text-xs hover:opacity-90 disabled:opacity-50"
-      disabled={(c.status ?? "pending").toLowerCase() === "approved"}
-    >
-      Godkjenn
-    </button>
-  </form>
+                  <form action={approveClaim}>
+                    <input type="hidden" name="id" value={c.id} />
+                    <button
+                      type="submit"
+                      className="rounded-xl border border-[rgb(var(--border))] bg-black text-white px-3 py-1.5 text-xs hover:opacity-90 disabled:opacity-50"
+                      disabled={(c.status ?? "pending").toLowerCase() === "approved"}
+                    >
+                      Godkjenn
+                    </button>
+                  </form>
 
-  <form action={rejectClaim}>
-    <input type="hidden" name="id" value={c.id} />
-    <button
-      type="submit"
-      className="rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))] px-3 py-1.5 text-xs hover:shadow-soft disabled:opacity-50"
-      disabled={(c.status ?? "pending").toLowerCase() === "rejected"}
-    >
-      Avslå
-    </button>
-  </form>
-</div>
+                  <form action={rejectClaim}>
+                    <input type="hidden" name="id" value={c.id} />
+                    <button
+                      type="submit"
+                      className="rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))] px-3 py-1.5 text-xs hover:shadow-soft disabled:opacity-50"
+                      disabled={(c.status ?? "pending").toLowerCase() === "rejected"}
+                    >
+                      Avslå
+                    </button>
+                  </form>
+                </div>
 
-<div className="col-span-2 text-xs text-[rgb(var(--muted))] break-words">
-  {c.message ?? ""}
-</div>
-
+                <div className="col-span-2 text-xs text-[rgb(var(--muted))] break-words">
+                  {c.message ?? ""}
+                </div>
               </div>
             ))}
           </div>
