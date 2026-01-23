@@ -15,12 +15,12 @@ export default function ClaimForm({ companyId, companySlug }: Props) {
   const [role, setRole] = useState("Eier");
   const [message, setMessage] = useState("");
 
-  const [submitting, setSubmitting] = useState(false);
-  const [result, setResult] = useState<null | { ok: boolean; message: string }>(
-    null
-  );
+  const [password, setPassword] = useState("");
+  const [password2, setPassword2] = useState("");
 
-  // Supabase client (browser) for å hente access_token til API-kall
+  const [submitting, setSubmitting] = useState(false);
+  const [result, setResult] = useState<null | { ok: boolean; message: string }>(null);
+
   const supabase = useMemo(() => {
     return createBrowserClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -31,8 +31,46 @@ export default function ClaimForm({ companyId, companySlug }: Props) {
   const isValid = useMemo(() => {
     const e = email.trim();
     const n = fullName.trim();
-    return n.length >= 2 && e.includes("@") && e.includes(".");
-  }, [fullName, email]);
+    const pwOk = password.length >= 8 && password === password2;
+    return n.length >= 2 && e.includes("@") && e.includes(".") && pwOk;
+  }, [fullName, email, password, password2]);
+
+  async function ensureAuthAccount() {
+    // Prøv signUp først (samme strategi som RegisterCompanyForm)
+    let authErrorMsg: string | null = null;
+
+    const { error } = await supabase.auth.signUp({
+      email: email.trim(),
+      password,
+      options: {
+        // Etter epost-verifisering lander de på claim-siden igjen (om de må verifisere)
+        emailRedirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(
+          `/claim/company/${companySlug}`
+        )}`,
+      },
+    });
+
+    if (error) {
+      const msg = (error as any)?.message?.toLowerCase?.() ?? "";
+      const looksLikeExists =
+        msg.includes("already") ||
+        msg.includes("exists") ||
+        msg.includes("registered") ||
+        (msg.includes("email") && msg.includes("taken"));
+
+      if (looksLikeExists) {
+        const { error: signInError } = await supabase.auth.signInWithPassword({
+          email: email.trim(),
+          password,
+        });
+        if (signInError) authErrorMsg = signInError.message;
+      } else {
+        authErrorMsg = error.message;
+      }
+    }
+
+    if (authErrorMsg) throw new Error(authErrorMsg);
+  }
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -41,20 +79,33 @@ export default function ClaimForm({ companyId, companySlug }: Props) {
     setSubmitting(true);
     setResult(null);
 
-    const payload = {
-      companySlug,
-      companyId,
-      fullName,
-      email,
-      phone,
-      role,
-      message: message.trim(),
-    };
-
     try {
-      // Hent access token (fallback hvis cookies er flaky mellom domener)
+      // 1) Sørg for at bruker finnes + er innlogget (passordbasert)
+      await ensureAuthAccount();
+
+      // 2) Hent access token (til /api/claim)
       const { data: sessionData } = await supabase.auth.getSession();
       const accessToken = sessionData?.session?.access_token ?? null;
+
+      // Hvis brukeren ikke er verifisert og derfor ikke fikk session, gi tydelig beskjed
+      if (!accessToken) {
+        setResult({
+          ok: true,
+          message:
+            "Konto opprettet. Sjekk e-posten din og bekreft adressen (hvis du fikk verifiseringsmail), og prøv claim på nytt etterpå.",
+        });
+        return;
+      }
+
+      const payload = {
+        companySlug,
+        companyId,
+        fullName,
+        email,
+        phone,
+        role,
+        message: message.trim(),
+      };
 
       const res = await fetch("/api/claim", {
         method: "POST",
@@ -65,14 +116,6 @@ export default function ClaimForm({ companyId, companySlug }: Props) {
         body: JSON.stringify(payload),
       });
 
-      if (res.status === 401) {
-        // Ikke innlogget → send til auth og tilbake hit
-        window.location.href = `/auth?mode=signup&next=${encodeURIComponent(
-          `/claim/company/${companySlug}`
-        )}`;
-        return;
-      }
-
       const data = await res.json().catch(() => ({}));
 
       if (res.ok && data?.ok) {
@@ -82,14 +125,17 @@ export default function ClaimForm({ companyId, companySlug }: Props) {
           ok: false,
           message: "Denne bedriften er allerede claimet av noen andre.",
         });
-      } else {
+      } else if (res.status === 401) {
         setResult({
           ok: false,
-          message: data?.error || "Kunne ikke sende claim.",
+          message:
+            "Du er ikke innlogget. Prøv å logge inn, og send claim på nytt.",
         });
+      } else {
+        setResult({ ok: false, message: data?.error || "Kunne ikke sende claim." });
       }
-    } catch {
-      setResult({ ok: false, message: "Nettverksfeil. Prøv igjen." });
+    } catch (err: any) {
+      setResult({ ok: false, message: err?.message || "Nettverksfeil. Prøv igjen." });
     } finally {
       setSubmitting(false);
     }
@@ -98,7 +144,7 @@ export default function ClaimForm({ companyId, companySlug }: Props) {
   return (
     <form onSubmit={onSubmit} className="mt-6 space-y-4">
       <div className="grid gap-2">
-        <label className="text-sm font-medium">Navn</label>
+        <label className="text-sm font-medium">Navn *</label>
         <input
           value={fullName}
           onChange={(e) => setFullName(e.target.value)}
@@ -109,7 +155,7 @@ export default function ClaimForm({ companyId, companySlug }: Props) {
       </div>
 
       <div className="grid gap-2">
-        <label className="text-sm font-medium">E-post</label>
+        <label className="text-sm font-medium">E-post *</label>
         <input
           value={email}
           onChange={(e) => setEmail(e.target.value)}
@@ -119,7 +165,7 @@ export default function ClaimForm({ companyId, companySlug }: Props) {
           inputMode="email"
         />
         <p className="text-xs text-[rgb(var(--muted))]">
-          Vi bruker e-posten til å sende innlogging og følge opp claim.
+          Vi bruker e-posten til innlogging og oppfølging.
         </p>
       </div>
 
@@ -159,6 +205,38 @@ export default function ClaimForm({ companyId, companySlug }: Props) {
         />
       </div>
 
+      <div className="grid gap-4 md:grid-cols-2">
+        <div className="grid gap-2">
+          <label className="text-sm font-medium">Velg passord *</label>
+          <input
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            type="password"
+            minLength={8}
+            className="w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))] px-4 py-3 text-sm"
+            placeholder="Minst 8 tegn"
+            autoComplete="new-password"
+          />
+        </div>
+
+        <div className="grid gap-2">
+          <label className="text-sm font-medium">Gjenta passord *</label>
+          <input
+            value={password2}
+            onChange={(e) => setPassword2(e.target.value)}
+            type="password"
+            minLength={8}
+            className="w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))] px-4 py-3 text-sm"
+            placeholder="Skriv passordet igjen"
+            autoComplete="new-password"
+          />
+        </div>
+      </div>
+
+      <p className="text-xs text-[rgb(var(--muted))]">
+        Passordet brukes for å opprette kontoen din. Du kan logge inn senere og redigere profilen.
+      </p>
+
       <button
         type="submit"
         disabled={!isValid || submitting}
@@ -167,13 +245,11 @@ export default function ClaimForm({ companyId, companySlug }: Props) {
         {submitting ? "Sender…" : "Send claim"}
       </button>
 
-      {result && (
-        <p className="text-sm text-[rgb(var(--muted))]">{result.message}</p>
-      )}
+      {result && <p className="text-sm text-[rgb(var(--muted))]">{result.message}</p>}
 
       {!isValid && !result && (
         <p className="text-xs text-[rgb(var(--muted))]">
-          Fyll inn minst navn og gyldig e-post.
+          Fyll inn navn, gyldig e-post og et passord (minst 8 tegn) som matcher.
         </p>
       )}
     </form>
