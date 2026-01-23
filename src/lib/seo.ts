@@ -19,13 +19,21 @@ export function siteMeta(args: {
       siteName: "KiReklame.no",
       locale: "nb_NO",
       type: "website",
-      images: [{ url: `${site}/og.png`, width: 1200, height: 630 }]
+      images: [
+  {
+    url: `${site}/og-linkedin.jpg`,
+    width: 1200,
+    height: 627
+  }
+]
+
     },
     twitter: {
       card: "summary_large_image",
       title: args.title,
       description: args.description,
-      images: [`${site}/og.png`]
+      images: [`${site}/og-linkedin.jpg`]
+
     }
   };
 }

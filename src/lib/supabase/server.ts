@@ -44,7 +44,18 @@ export function isAdminUser(email: string | null | undefined): boolean {
   return admins.includes(email.toLowerCase());
 }
 
-/** Krev innlogget bruker (UI / pages) */
+/**
+ * ✅ API-safe: hent user uten redirect()
+ * Returnerer null hvis ikke innlogget.
+ */
+export async function getUserOrNull() {
+  const supabase = await supabaseServerClient();
+  const { data, error } = await supabase.auth.getUser();
+  if (error || !data.user) return null;
+  return data.user;
+}
+
+/** Krev innlogget bruker (PAGE): redirecter til /auth */
 export async function requireUser(nextPath: string = "/me") {
   const supabase = await supabaseServerClient();
   const { data, error } = await supabase.auth.getUser();
@@ -55,7 +66,7 @@ export async function requireUser(nextPath: string = "/me") {
   return data.user;
 }
 
-/** Krev admin (email whitelist) */
+/** Krev admin (PAGE): redirecter ikke-admin til /me */
 export async function requireAdmin(nextPath: string = "/admin") {
   const user = await requireUser(nextPath);
 
@@ -66,25 +77,26 @@ export async function requireAdmin(nextPath: string = "/admin") {
 }
 
 /**
- * Krev at bruker enten er admin ELLER:
- * - eier bedriften via companies.email == user.email (ikke placeholder), ELLER
- * - har approved claim på companyId.
- *
- * Brukes for /me/company/:id og actions som oppdaterer bedrift via service role.
+ * ✅ API-safe: sjekk om bruker kan redigere bedrift (uten redirect()).
+ * Tillatt hvis:
+ * - admin, eller
+ * - companies.email == user.email (ikke placeholder), eller
+ * - approved claim for (companyId,userId)
  */
-export async function requireApprovedClaim(companyId: string) {
+export async function assertCompanyEditorApi(companyId: string) {
   if (!companyId) throw new Error("Missing companyId");
 
-  const user = await requireUser(`/me/company/${companyId}`);
+  const user = await getUserOrNull();
+  if (!user) throw new Error("Unauthorized");
 
   // Admin kan alltid redigere
   if (isAdminUser(user.email)) {
-    return { user, isAdmin: true };
+    return { user, isAdmin: true as const };
   }
 
   const db = supabaseAdmin();
 
-  // ✅ Eier via epost (bedriften ble registrert med samme epost som innlogget bruker)
+  // Eier via epost
   const { data: company, error: cErr } = await db
     .from("companies")
     .select("id,email,is_placeholder")
@@ -97,10 +109,10 @@ export async function requireApprovedClaim(companyId: string) {
   const userEmail = String(user.email ?? "").trim().toLowerCase();
 
   if (companyEmail && userEmail && companyEmail === userEmail && company?.is_placeholder !== true) {
-    return { user, isAdmin: false };
+    return { user, isAdmin: false as const };
   }
 
-  // Ikke-admin: må ha approved claim
+  // Ellers: må ha approved claim
   const { data: claim, error } = await db
     .from("claims")
     .select("id,status")
@@ -115,71 +127,7 @@ export async function requireApprovedClaim(companyId: string) {
     throw new Error("Not authorized. Claim not approved.");
   }
 
-  return { user, isAdmin: false };
-}
-
-/**
- * API-safe: henter user fra cookies, men redirecter aldri.
- * Returnerer null hvis ikke innlogget / feil.
- */
-export async function getUserOrNull() {
-  const supabase = await supabaseServerClient();
-  const { data, error } = await supabase.auth.getUser();
-  if (error || !data.user) return null;
-  return data.user;
-}
-
-/**
- * API-safe auth for API routes: redirecter aldri.
- * Returnerer { ok: true, ... } eller { ok: false, status, error }
- */
-export async function canEditCompany(companyId: string): Promise<
-  | { ok: true; isAdmin: boolean; userId: string; email: string | null }
-  | { ok: false; status: number; error: string }
-> {
-  if (!companyId) return { ok: false, status: 400, error: "Missing company_id" };
-
-  const user = await getUserOrNull();
-  if (!user) return { ok: false, status: 401, error: "Not authenticated" };
-
-  const email = (user.email ?? "").trim().toLowerCase();
-
-  if (isAdminUser(email)) {
-    return { ok: true, isAdmin: true, userId: user.id, email: user.email ?? null };
-  }
-
-  const db = supabaseAdmin();
-
-  // ✅ Eier via epost (ikke placeholder)
-  const { data: company, error: cErr } = await db
-    .from("companies")
-    .select("id,email,is_placeholder")
-    .eq("id", companyId)
-    .maybeSingle();
-
-  if (cErr) return { ok: false, status: 500, error: cErr.message };
-
-  const companyEmail = String(company?.email ?? "").trim().toLowerCase();
-  if (companyEmail && email && companyEmail === email && company?.is_placeholder !== true) {
-    return { ok: true, isAdmin: false, userId: user.id, email: user.email ?? null };
-  }
-
-  // ✅ Eller approved claim
-  const { data: claim, error: clErr } = await db
-    .from("claims")
-    .select("id,status")
-    .eq("company_id", companyId)
-    .eq("user_id", user.id)
-    .maybeSingle();
-
-  if (clErr) return { ok: false, status: 500, error: clErr.message };
-
-  const status = String(claim?.status ?? "pending").toLowerCase();
-  if (status !== "approved") {
-    return { ok: false, status: 403, error: "Not authorized. Claim not approved." };
-  }
-
-  return { ok: true, isAdmin: false, userId: user.id, email: user.email ?? null };
+  return { user, isAdmin: false as const };
 }
 
 function normalizeLocation(loc: any): { name: string; slug: string } | null {
@@ -190,6 +138,7 @@ function normalizeLocation(loc: any): { name: string; slug: string } | null {
 
 /**
  * Idempotent: hvis claim allerede finnes (company_id + user_id), ikke feile.
+ * Første gang → insert, senere klikk → ingen endring, men ok.
  */
 export async function createClaim(args: { companyId: string; userId: string; message?: string }) {
   const supabase = await supabaseServerClient();
@@ -266,7 +215,6 @@ export async function getCompanies(
 
   if (error) {
     console.error("[getCompanies] supabase error:", error.message);
-
     return {
       companies: [],
       facets: {
