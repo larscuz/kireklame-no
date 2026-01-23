@@ -1,10 +1,13 @@
 // src/app/api/claim/route.ts
 import { NextResponse } from "next/server";
+import { cookies } from "next/headers";
+import { createServerClient } from "@supabase/ssr";
 import { Resend } from "resend";
 import { supabaseAdmin } from "@/lib/supabase/admin";
-import { supabaseServerClient, createClaim } from "@/lib/supabase/server";
+import { createClaim } from "@/lib/supabase/server";
 
 export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
 
 function norm(s: unknown) {
   return String(s ?? "").trim();
@@ -19,7 +22,8 @@ function parseEmails(envName: string): string[] {
 }
 
 function siteUrl() {
-  return process.env.NEXT_PUBLIC_SITE_URL ?? "https://kireklame-no.vercel.app";
+  // Viktig: bruk produksjonsdomenet når mulig
+  return process.env.NEXT_PUBLIC_SITE_URL ?? "https://kireklame.no";
 }
 
 function escapeHtml(s: string) {
@@ -31,12 +35,51 @@ function escapeHtml(s: string) {
     .replaceAll("'", "&#039;");
 }
 
+async function getUserOrNull() {
+  try {
+    const cookieStore = await cookies();
+
+    const supabase = createServerClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+      {
+        cookies: {
+          getAll() {
+            return cookieStore.getAll();
+          },
+          setAll(
+  cookiesToSet: Array<{
+    name: string;
+    value: string;
+    options?: Parameters<typeof cookieStore.set>[2];
+  }>
+) {
+  try {
+    cookiesToSet.forEach((c) => cookieStore.set(c.name, c.value, c.options));
+  } catch {
+    // ignore
+  }
+},
+
+        },
+      }
+    );
+
+    const { data, error } = await supabase.auth.getUser();
+
+    // Viktig: refresh_token_not_found / invalid refresh token => behandle som utlogget
+    if (error) return null;
+
+    return data?.user ?? null;
+  } catch {
+    return null;
+  }
+}
+
 export async function POST(req: Request) {
   try {
-    // 1) må være innlogget
-    const supabase = await supabaseServerClient();
-    const { data } = await supabase.auth.getUser();
-    const user = data?.user;
+    // 1) må være innlogget (robust mot manglende/ugyldig refresh token)
+    const user = await getUserOrNull();
 
     if (!user) {
       return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
@@ -55,7 +98,10 @@ export async function POST(req: Request) {
     const message = norm(body?.message);
 
     if (!companySlug && !companyIdFromClient) {
-      return NextResponse.json({ error: "Missing slug or companyId" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Missing slug or companyId" },
+        { status: 400 }
+      );
     }
 
     // 3) finn company (via slug eller id)
@@ -67,7 +113,8 @@ export async function POST(req: Request) {
       : await q.eq("slug", companySlug).maybeSingle();
 
     if (cErr) return NextResponse.json({ error: cErr.message }, { status: 500 });
-    if (!company) return NextResponse.json({ error: "Company not found" }, { status: 404 });
+    if (!company)
+      return NextResponse.json({ error: "Company not found" }, { status: 404 });
 
     // 4) blokkér hvis allerede claimet av noen andre (approved)
     const { data: existingApproved, error: aErr } = await db
@@ -108,7 +155,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ ok: false, error: created.error }, { status: 500 });
     }
 
-    // 7) send admin mail (Resend inline)
+    // 7) send admin mail (best-effort)
     try {
       const apiKey = process.env.RESEND_API_KEY;
       const from = process.env.MAIL_FROM;
@@ -129,9 +176,13 @@ export async function POST(req: Request) {
       const html = `
         <div style="font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial; line-height:1.5">
           <h2 style="margin:0 0 12px">Ny claim sendt</h2>
-          <p style="margin:0 0 8px"><b>Bedrift:</b> ${escapeHtml(company.name)} (${escapeHtml(company.slug ?? "")})</p>
+          <p style="margin:0 0 8px"><b>Bedrift:</b> ${escapeHtml(
+            company.name
+          )} (${escapeHtml(company.slug ?? "")})</p>
           <p style="margin:0 0 8px"><b>Company ID:</b> ${escapeHtml(company.id)}</p>
-          <p style="margin:0 0 16px"><b>Fra bruker:</b> ${escapeHtml(user.email ?? user.id)}</p>
+          <p style="margin:0 0 16px"><b>Fra bruker:</b> ${escapeHtml(
+            user.email ?? user.id
+          )}</p>
 
           <pre style="white-space:pre-wrap; background:#f6f6f6; padding:12px; border-radius:10px; border:1px solid #e5e5e5">${escapeHtml(
             claimMessage
@@ -154,11 +205,68 @@ export async function POST(req: Request) {
       });
     } catch (e) {
       console.error("[claim] admin mail failed:", e);
-      // mail-feil stopper ikke claim
+    }
+
+    // 8) send mail til den som claimet (best-effort)
+    try {
+      const apiKey = process.env.RESEND_API_KEY;
+      const from = process.env.MAIL_FROM;
+
+      if (!apiKey) throw new Error("Missing env: RESEND_API_KEY");
+      if (!from) throw new Error("Missing env: MAIL_FROM");
+
+      const claimantEmail = email || user.email;
+      if (!claimantEmail) throw new Error("Missing claimant email");
+
+      const subject = `Vi har mottatt claim på ${company.name} – KiReklame`;
+      const meUrl = `${siteUrl()}/me`;
+      const companyUrl = company.slug
+        ? `${siteUrl()}/selskap/${encodeURIComponent(company.slug)}`
+        : `${siteUrl()}`;
+
+      const html = `
+        <div style="font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial; line-height:1.6">
+          <h2 style="margin:0 0 12px">Claim mottatt</h2>
+          <p style="margin:0 0 8px">
+            Vi har mottatt forespørselen din om å claime <b>${escapeHtml(
+              company.name
+            )}</b>.
+          </p>
+          <p style="margin:0 0 16px">
+            Neste steg: Admin godkjenner claimen. Du får beskjed når den er godkjent.
+          </p>
+
+          <p style="margin:0 0 16px">
+            <a href="${meUrl}" style="display:inline-block; padding:10px 14px; border-radius:10px; background:#111; color:#fff; text-decoration:none">
+              Gå til Min side
+            </a>
+            <a href="${companyUrl}" style="display:inline-block; margin-left:10px; padding:10px 14px; border-radius:10px; background:#f3f3f3; color:#111; text-decoration:none">
+              Se bedriftssiden
+            </a>
+          </p>
+
+          <div style="font-size:12px; color:#666">
+            Hvis du ikke sendte denne forespørselen, kan du se bort fra e-posten.
+          </div>
+        </div>
+      `;
+
+      const resend = new Resend(apiKey);
+      await resend.emails.send({
+        from,
+        to: claimantEmail,
+        subject,
+        html,
+      });
+    } catch (e) {
+      console.error("[claim] claimant mail failed:", e);
     }
 
     return NextResponse.json({ ok: true });
   } catch (err: any) {
-    return NextResponse.json({ error: err?.message ?? "Unknown error" }, { status: 500 });
+    return NextResponse.json(
+      { error: err?.message ?? "Unknown error" },
+      { status: 500 }
+    );
   }
 }
