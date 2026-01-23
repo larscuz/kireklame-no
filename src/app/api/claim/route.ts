@@ -1,13 +1,10 @@
 // src/app/api/claim/route.ts
 import { NextResponse } from "next/server";
-import { cookies } from "next/headers";
-import { createServerClient } from "@supabase/ssr";
 import { Resend } from "resend";
 import { supabaseAdmin } from "@/lib/supabase/admin";
-import { createClaim } from "@/lib/supabase/server";
+import { supabaseServerClient, createClaim } from "@/lib/supabase/server";
 
 export const runtime = "nodejs";
-export const dynamic = "force-dynamic";
 
 function norm(s: unknown) {
   return String(s ?? "").trim();
@@ -22,7 +19,7 @@ function parseEmails(envName: string): string[] {
 }
 
 function siteUrl() {
-  // Viktig: bruk produksjonsdomenet når mulig
+  // Sett gjerne NEXT_PUBLIC_SITE_URL=https://kireklame.no i Vercel (Production)
   return process.env.NEXT_PUBLIC_SITE_URL ?? "https://kireklame.no";
 }
 
@@ -35,57 +32,50 @@ function escapeHtml(s: string) {
     .replaceAll("'", "&#039;");
 }
 
-async function getUserOrNull() {
-  try {
-    const cookieStore = await cookies();
-
-    const supabase = createServerClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-      {
-        cookies: {
-          getAll() {
-            return cookieStore.getAll();
-          },
-          setAll(
-  cookiesToSet: Array<{
-    name: string;
-    value: string;
-    options?: Parameters<typeof cookieStore.set>[2];
-  }>
-) {
-  try {
-    cookiesToSet.forEach((c) => cookieStore.set(c.name, c.value, c.options));
-  } catch {
-    // ignore
-  }
-},
-
-        },
-      }
-    );
-
-    const { data, error } = await supabase.auth.getUser();
-
-    // Viktig: refresh_token_not_found / invalid refresh token => behandle som utlogget
-    if (error) return null;
-
-    return data?.user ?? null;
-  } catch {
-    return null;
-  }
+function bearerTokenFromReq(req: Request) {
+  const h = req.headers.get("authorization") || "";
+  const m = h.match(/^Bearer\s+(.+)$/i);
+  return m?.[1]?.trim() || "";
 }
 
 export async function POST(req: Request) {
+  const db = supabaseAdmin();
+
+  console.log("[api/claim] HIT", {
+    host: req.headers.get("host"),
+    url: req.url,
+  });
+
   try {
-    // 1) må være innlogget (robust mot manglende/ugyldig refresh token)
-    const user = await getUserOrNull();
+    // 1) Auth: prøv cookie-basert først (som før)
+    let user: any = null;
+
+    try {
+      const supabase = await supabaseServerClient();
+      const { data } = await supabase.auth.getUser();
+      user = data?.user ?? null;
+    } catch (e) {
+      console.warn("[api/claim] cookie auth failed (ignored):", e);
+    }
+
+    // 2) Fallback: Authorization: Bearer <access_token>
+    if (!user) {
+      const token = bearerTokenFromReq(req);
+      if (token) {
+        const { data, error } = await db.auth.getUser(token);
+        if (error) {
+          console.warn("[api/claim] token auth failed:", error.message);
+        } else {
+          user = data?.user ?? null;
+        }
+      }
+    }
 
     if (!user) {
       return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
     }
 
-    // 2) les body
+    // 3) body
     const body = await req.json().catch(() => null);
 
     const companySlug = norm(body?.companySlug);
@@ -98,14 +88,10 @@ export async function POST(req: Request) {
     const message = norm(body?.message);
 
     if (!companySlug && !companyIdFromClient) {
-      return NextResponse.json(
-        { error: "Missing slug or companyId" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Missing slug or companyId" }, { status: 400 });
     }
 
-    // 3) finn company (via slug eller id)
-    const db = supabaseAdmin();
+    // 4) finn company
     const q = db.from("companies").select("id,name,slug,is_active,is_placeholder");
 
     const { data: company, error: cErr } = companyIdFromClient
@@ -113,10 +99,9 @@ export async function POST(req: Request) {
       : await q.eq("slug", companySlug).maybeSingle();
 
     if (cErr) return NextResponse.json({ error: cErr.message }, { status: 500 });
-    if (!company)
-      return NextResponse.json({ error: "Company not found" }, { status: 404 });
+    if (!company) return NextResponse.json({ error: "Company not found" }, { status: 404 });
 
-    // 4) blokkér hvis allerede claimet av noen andre (approved)
+    // 5) blokkér hvis allerede claimet av noen andre (approved)
     const { data: existingApproved, error: aErr } = await db
       .from("claims")
       .select("id,user_id,status")
@@ -125,6 +110,7 @@ export async function POST(req: Request) {
       .maybeSingle();
 
     if (aErr) return NextResponse.json({ error: aErr.message }, { status: 500 });
+
     if (existingApproved && existingApproved.user_id !== user.id) {
       return NextResponse.json(
         { ok: false, code: "ALREADY_CLAIMED", error: "Already claimed" },
@@ -132,7 +118,7 @@ export async function POST(req: Request) {
       );
     }
 
-    // 5) bygg claim-message (ta med kontaktdetaljer fra UI)
+    // 6) bygg claimMessage
     const metaLines = [
       fullName ? `Navn: ${fullName}` : null,
       email ? `E-post: ${email}` : null,
@@ -144,7 +130,7 @@ export async function POST(req: Request) {
 
     const claimMessage = metaLines.join("\n");
 
-    // 6) opprett claim (idempotent)
+    // 7) opprett claim (idempotent)
     const created = await createClaim({
       companyId: company.id,
       userId: user.id,
@@ -155,13 +141,16 @@ export async function POST(req: Request) {
       return NextResponse.json({ ok: false, error: created.error }, { status: 500 });
     }
 
-    // 7) send admin mail (best-effort)
-    try {
-      const apiKey = process.env.RESEND_API_KEY;
-      const from = process.env.MAIL_FROM;
+    // 8) mail (best-effort)
+    const apiKey = process.env.RESEND_API_KEY;
+    const from = process.env.MAIL_FROM;
 
-      if (!apiKey) throw new Error("Missing env: RESEND_API_KEY");
-      if (!from) throw new Error("Missing env: MAIL_FROM");
+    const resendEnabled = !!apiKey && !!from;
+    const resend = resendEnabled ? new Resend(apiKey!) : null;
+
+    // admin
+    try {
+      if (!resend) throw new Error("Mail disabled (missing RESEND_API_KEY or MAIL_FROM)");
 
       const to =
         parseEmails("ADMIN_NOTIFY_EMAILS").length > 0
@@ -176,13 +165,9 @@ export async function POST(req: Request) {
       const html = `
         <div style="font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial; line-height:1.5">
           <h2 style="margin:0 0 12px">Ny claim sendt</h2>
-          <p style="margin:0 0 8px"><b>Bedrift:</b> ${escapeHtml(
-            company.name
-          )} (${escapeHtml(company.slug ?? "")})</p>
+          <p style="margin:0 0 8px"><b>Bedrift:</b> ${escapeHtml(company.name)} (${escapeHtml(company.slug ?? "")})</p>
           <p style="margin:0 0 8px"><b>Company ID:</b> ${escapeHtml(company.id)}</p>
-          <p style="margin:0 0 16px"><b>Fra bruker:</b> ${escapeHtml(
-            user.email ?? user.id
-          )}</p>
+          <p style="margin:0 0 16px"><b>Fra bruker:</b> ${escapeHtml(user.email ?? user.id)}</p>
 
           <pre style="white-space:pre-wrap; background:#f6f6f6; padding:12px; border-radius:10px; border:1px solid #e5e5e5">${escapeHtml(
             claimMessage
@@ -196,41 +181,28 @@ export async function POST(req: Request) {
         </div>
       `;
 
-      const resend = new Resend(apiKey);
-      await resend.emails.send({
-        from,
-        to,
-        subject,
-        html,
-      });
+      await resend.emails.send({ from: from!, to, subject, html });
+      console.log("[claim] admin mail sent");
     } catch (e) {
       console.error("[claim] admin mail failed:", e);
     }
 
-    // 8) send mail til den som claimet (best-effort)
+    // claimant
     try {
-      const apiKey = process.env.RESEND_API_KEY;
-      const from = process.env.MAIL_FROM;
-
-      if (!apiKey) throw new Error("Missing env: RESEND_API_KEY");
-      if (!from) throw new Error("Missing env: MAIL_FROM");
+      if (!resend) throw new Error("Mail disabled (missing RESEND_API_KEY or MAIL_FROM)");
 
       const claimantEmail = email || user.email;
       if (!claimantEmail) throw new Error("Missing claimant email");
 
       const subject = `Vi har mottatt claim på ${company.name} – KiReklame`;
       const meUrl = `${siteUrl()}/me`;
-      const companyUrl = company.slug
-        ? `${siteUrl()}/selskap/${encodeURIComponent(company.slug)}`
-        : `${siteUrl()}`;
+      const companyUrl = `${siteUrl()}/selskap/${encodeURIComponent(company.slug ?? "")}`;
 
       const html = `
         <div style="font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial; line-height:1.6">
           <h2 style="margin:0 0 12px">Claim mottatt</h2>
           <p style="margin:0 0 8px">
-            Vi har mottatt forespørselen din om å claime <b>${escapeHtml(
-              company.name
-            )}</b>.
+            Vi har mottatt forespørselen din om å claime <b>${escapeHtml(company.name)}</b>.
           </p>
           <p style="margin:0 0 16px">
             Neste steg: Admin godkjenner claimen. Du får beskjed når den er godkjent.
@@ -240,9 +212,13 @@ export async function POST(req: Request) {
             <a href="${meUrl}" style="display:inline-block; padding:10px 14px; border-radius:10px; background:#111; color:#fff; text-decoration:none">
               Gå til Min side
             </a>
-            <a href="${companyUrl}" style="display:inline-block; margin-left:10px; padding:10px 14px; border-radius:10px; background:#f3f3f3; color:#111; text-decoration:none">
-              Se bedriftssiden
-            </a>
+            ${
+              company.slug
+                ? `<a href="${companyUrl}" style="display:inline-block; margin-left:10px; padding:10px 14px; border-radius:10px; background:#f3f3f3; color:#111; text-decoration:none">
+                    Se bedriftssiden
+                  </a>`
+                : ""
+            }
           </p>
 
           <div style="font-size:12px; color:#666">
@@ -251,22 +227,15 @@ export async function POST(req: Request) {
         </div>
       `;
 
-      const resend = new Resend(apiKey);
-      await resend.emails.send({
-        from,
-        to: claimantEmail,
-        subject,
-        html,
-      });
+      await resend.emails.send({ from: from!, to: claimantEmail, subject, html });
+      console.log("[claim] claimant mail sent");
     } catch (e) {
       console.error("[claim] claimant mail failed:", e);
     }
 
     return NextResponse.json({ ok: true });
   } catch (err: any) {
-    return NextResponse.json(
-      { error: err?.message ?? "Unknown error" },
-      { status: 500 }
-    );
+    console.error("[api/claim] fatal:", err);
+    return NextResponse.json({ error: err?.message ?? "Unknown error" }, { status: 500 });
   }
 }

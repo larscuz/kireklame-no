@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { createBrowserClient } from "@supabase/ssr";
 
 type Props = {
   companyId: string;
@@ -8,7 +9,6 @@ type Props = {
 };
 
 export default function ClaimForm({ companyId, companySlug }: Props) {
-
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -19,6 +19,14 @@ export default function ClaimForm({ companyId, companySlug }: Props) {
   const [result, setResult] = useState<null | { ok: boolean; message: string }>(
     null
   );
+
+  // Supabase client (browser) for å hente access_token til API-kall
+  const supabase = useMemo(() => {
+    return createBrowserClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    );
+  }, []);
 
   const isValid = useMemo(() => {
     const e = email.trim();
@@ -33,25 +41,35 @@ export default function ClaimForm({ companyId, companySlug }: Props) {
     setSubmitting(true);
     setResult(null);
 
-    // Mikrosteg D: Vi lagrer bare "message" + slug via API (claims-tabellen har typisk company_id/user_id/status/message)
     const payload = {
       companySlug,
+      companyId,
+      fullName,
+      email,
+      phone,
+      role,
       message: message.trim(),
     };
 
     try {
+      // Hent access token (fallback hvis cookies er flaky mellom domener)
+      const { data: sessionData } = await supabase.auth.getSession();
+      const accessToken = sessionData?.session?.access_token ?? null;
+
       const res = await fetch("/api/claim", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
+        },
         body: JSON.stringify(payload),
       });
 
       if (res.status === 401) {
         // Ikke innlogget → send til auth og tilbake hit
         window.location.href = `/auth?mode=signup&next=${encodeURIComponent(
-  `/claim/company/${companySlug}`
-)}`;
-
+          `/claim/company/${companySlug}`
+        )}`;
         return;
       }
 
@@ -65,7 +83,10 @@ export default function ClaimForm({ companyId, companySlug }: Props) {
           message: "Denne bedriften er allerede claimet av noen andre.",
         });
       } else {
-        setResult({ ok: false, message: data?.error || "Kunne ikke sende claim." });
+        setResult({
+          ok: false,
+          message: data?.error || "Kunne ikke sende claim.",
+        });
       }
     } catch {
       setResult({ ok: false, message: "Nettverksfeil. Prøv igjen." });
