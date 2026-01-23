@@ -27,10 +27,50 @@ export default function RegisterCompanyForm() {
   const [loading, setLoading] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
   const [err, setErr] = useState<string | null>(null);
+  const [coverFile, setCoverFile] = useState<File | null>(null);
+const [coverUrl, setCoverUrl] = useState<string>("");
+const [coverUploading, setCoverUploading] = useState(false);
+
     const supabase = createBrowserClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   );
+
+  async function uploadCoverNow() {
+  if (!coverFile) {
+    setErr("Velg et bilde først.");
+    return;
+  }
+
+  setErr(null);
+  setMsg(null);
+  setCoverUploading(true);
+
+  try {
+    const fd = new FormData();
+    fd.set("file", coverFile);
+
+    const res = await fetch("/api/upload/submission-cover", {
+      method: "POST",
+      body: fd,
+    });
+
+    const data = await res.json().catch(() => ({}));
+
+    if (!res.ok || !data?.ok) {
+      setErr(data?.error || "Kunne ikke laste opp bilde.");
+      setCoverUploading(false);
+      return;
+    }
+
+    setCoverUrl(data.url || "");
+    setCoverUploading(false);
+  } catch (e: any) {
+    setCoverUploading(false);
+    setErr(e?.message ?? "Kunne ikke laste opp bilde.");
+  }
+}
+
 
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -226,17 +266,52 @@ const data = await res.json().catch(() => ({}));
         </div>
 
         <label className="grid gap-2">
-          <span className="text-sm font-semibold">Bilde (logo/cover)</span>
-          <input
-            name="cover_image"
-            type="file"
-            accept="image/*"
-            className="w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))] px-4 py-3 outline-none"
-          />
-          <span className="text-xs text-[rgb(var(--muted))]">
-            PNG/JPG/WebP. Valgfritt, men anbefalt.
-          </span>
-        </label>
+  <span className="text-sm font-semibold">Bilde (logo/cover)</span>
+
+  <input
+    name="cover_image"
+    type="file"
+    accept="image/*"
+    className="w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))] px-4 py-3 outline-none"
+    onChange={(e) => {
+      const f = e.currentTarget.files?.[0] || null;
+      setCoverFile(f);
+      setCoverUrl("");
+    }}
+  />
+
+  <div className="flex items-center gap-3">
+    <button
+      type="button"
+      onClick={uploadCoverNow}
+      disabled={!coverFile || coverUploading}
+      className="inline-flex items-center justify-center rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-4 py-3 font-semibold hover:opacity-90 transition disabled:opacity-60"
+    >
+      {coverUploading ? "Laster opp…" : "Last opp cover"}
+    </button>
+
+    {coverUrl ? <span className="text-xs text-[rgb(var(--muted))]">✅ Opplastet</span> : null}
+  </div>
+
+  {coverUrl ? (
+    <div className="mt-3 grid gap-2">
+      <img
+        src={coverUrl}
+        alt="Cover preview"
+        className="w-full max-h-64 object-cover rounded-2xl border border-[rgb(var(--border))]"
+      />
+      <div className="text-xs text-[rgb(var(--muted))] break-all">{coverUrl}</div>
+    </div>
+  ) : null}
+
+  {/* Sendes til /api/submit */}
+  <input type="hidden" name="cover_image_url" value={coverUrl} />
+
+  <span className="text-xs text-[rgb(var(--muted))]">
+    PNG/JPG/WebP. Valgfritt, men anbefalt.
+  </span>
+</label>
+
 
         <label className="grid gap-2">
           <span className="text-sm font-semibold">Kort beskrivelse</span>

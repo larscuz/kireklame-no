@@ -21,6 +21,9 @@ function hostOfWebsite(input: string) {
 export async function POST(req: Request) {
   try {
     const form = await req.formData();
+    const cover_image_url =
+  String(form.get("cover_image_url") ?? "").trim() || null;
+
 
     const company_name = String(form.get("company_name") ?? "").trim() || null;
     const website = String(form.get("website") ?? "").trim() || null;
@@ -85,43 +88,74 @@ export async function POST(req: Request) {
 
     const db = supabaseAdmin();
 
-    // cover image upload
-    const file = form.get("cover_image");
-    let cover_image: string | null = null;
+    // cover image (prefer URL from "Last opp cover" button)
+const file = form.get("cover_image");
+let cover_image: string | null = cover_image_url;
 
-    if (file && typeof file === "object" && "arrayBuffer" in file) {
-      const bucket =
-        process.env.SUPABASE_COMPANY_IMAGES_BUCKET || "company-covers";
+function assertEnv(name: string) {
+  const v = process.env[name];
+  if (!v) throw new Error(`Missing env: ${name}`);
+  return v;
+}
 
-      const f = file as File;
-      const ext = (f.name.split(".").pop() || "jpg")
-        .toLowerCase()
-        .replace(/[^a-z0-9]/g, "");
-      const safeExt = ext || "jpg";
+function safeExtFromFile(f: File) {
+  const name = (f.name || "").toLowerCase();
+  const byName = name.split(".").pop();
+  if (byName && byName.length <= 5) return byName;
 
-      const key = `submissions/${Date.now()}-${Math.random()
-        .toString(16)
-        .slice(2)}.${safeExt}`;
+  const type = (f.type || "").toLowerCase();
+  if (type.includes("jpeg")) return "jpg";
+  if (type.includes("png")) return "png";
+  if (type.includes("webp")) return "webp";
+  return "png";
+}
 
-      const bytes = Buffer.from(await f.arrayBuffer());
+// Fallback: if user selected a file but didn't click "Last opp cover"
+if (!cover_image && file instanceof File && file.size > 0) {
+  const ext = safeExtFromFile(file);
+  const allowed = new Set(["png", "jpg", "jpeg", "webp"]);
+  if (!allowed.has(ext)) {
+    return NextResponse.json(
+      { error: "Kun png/jpg/webp er støttet." },
+      { status: 415 }
+    );
+  }
 
-      const { error: upErr } = await db.storage
-        .from(bucket)
-        .upload(key, bytes, {
-          contentType: f.type || "image/jpeg",
-          upsert: false,
-        });
+  const uploadUrl = assertEnv("ONECOM_UPLOAD_URL");
+  const token = assertEnv("ONECOM_UPLOAD_TOKEN");
 
-      if (upErr) {
-        return NextResponse.json(
-          { error: `Kunne ikke laste opp bilde: ${upErr.message}` },
-          { status: 400 }
-        );
-      }
+  const submissionId =
+    globalThis.crypto?.randomUUID?.() ??
+    `${Date.now()}-${Math.random().toString(16).slice(2)}`;
 
-      const { data: pub } = db.storage.from(bucket).getPublicUrl(key);
-      cover_image = pub?.publicUrl ?? null;
-    }
+  const forward = new FormData();
+  forward.set("kind", "cover");
+  forward.set("scope", "submissions");
+  forward.set("companyId", submissionId);
+  forward.set("file", file);
+
+  const upRes = await fetch(uploadUrl, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${token}` },
+    body: forward,
+  });
+
+  const text = await upRes.text();
+  let payload: any = null;
+  try {
+    payload = JSON.parse(text);
+  } catch {}
+
+  if (!upRes.ok || !payload?.ok || !payload?.url) {
+    return NextResponse.json(
+      { error: "Kunne ikke laste opp bilde.", status: upRes.status, response: payload ?? text },
+      { status: 502 }
+    );
+  }
+
+  cover_image = payload.url;
+}
+
 
     // Insert submission
     const { data: inserted, error } = await db
