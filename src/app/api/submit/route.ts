@@ -173,12 +173,10 @@ export async function POST(req: Request) {
 
         await notifySubmitter({
           to,
-          subject: "Vi har mottatt innsendingen din – KiReklame",
+          subject: "KiReklame har mottatt innsendingen din –",
           title: "Takk for henvendelsen",
           lines: [
-  "Viktig: Du får også en separat e-post fra Supabase for å bekrefte e-postadressen din.",
-  "Klikk bekreftelseslenken i Supabase-eposten for å aktivere innloggingen.",
-  "",
+  
   "Innsendingen er mottatt og vil bli gjennomgått.",
   "Du får en ny e-post når bedriften er godkjent og profilen er publisert.",
   "",
