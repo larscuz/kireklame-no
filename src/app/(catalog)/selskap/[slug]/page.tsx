@@ -249,19 +249,18 @@ const websiteHost = hostFromUrl(websiteUrl);
             <Separator className="my-4" />
 
             {!user ? (
-              !isClaimed ? (
-                <Link
-                  href={`/auth?mode=signup&next=${encodeURIComponent(
-                    `/claim/company/${company.slug}`
-                  )}`}
-                  className="block text-center rounded-xl border px-4 py-3 font-semibold"
-                >
-                  Opprett konto for å claime
-                </Link>
-              ) : (
-                <p className="text-sm text-muted">Allerede claimet</p>
-              )
-            ) : isOwner ? (
+  !isClaimed ? (
+    <Link
+      href={`/claim/company/${company.slug}`}
+      className="block text-center rounded-xl border px-4 py-3 font-semibold"
+    >
+      Claime denne bedriften
+    </Link>
+  ) : (
+    <p className="text-sm text-muted">Allerede claimet</p>
+  )
+) : isOwner ? (
+
               <Link
                 href={`/me/company/${company.id}`}
                 className="block text-center rounded-xl border px-4 py-3 font-semibold"
