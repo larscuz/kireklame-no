@@ -14,6 +14,18 @@ const nextConfig = {
       },
     ],
   },
+
+  // ✅ Canonical domain: tving www -> apex (fikser auth cookies + API calls)
+  async redirects() {
+    return [
+      {
+        source: "/:path*",
+        has: [{ type: "host", value: "www.kireklame.no" }],
+        destination: "https://kireklame.no/:path*",
+        permanent: true,
+      },
+    ];
+  },
 };
 
 export default nextConfig;
