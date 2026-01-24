@@ -221,13 +221,12 @@ export default async function CompanyPage({
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               {company.email ? (
                 <a
-                  href={`mailto:${company.email}?subject=${encodeURIComponent(
-                    `Kontakt via KiReklame: ${company.name}`
-                  )}`}
-                  className="block text-center rounded-xl border px-4 py-3 font-semibold"
-                >
-                  Kontakt bedrift
-                </a>
+  href={`/c/email/${slug}`}
+  className="block text-center rounded-xl border px-4 py-3 font-semibold"
+>
+  Kontakt bedrift
+</a>
+
               ) : (
                 <div />
               )}
