@@ -28,6 +28,11 @@ export default async function Topbar() {
   <Link href="/selskaper" className="hover:opacity-80 transition">
     Selskaper
   </Link>
+  
+  <Link href="/om" className="hover:opacity-80 transition">
+  Om
+</Link>
+
 
   <Link href="/register/company" className="hover:opacity-80 transition">
     Registrer bedrift
