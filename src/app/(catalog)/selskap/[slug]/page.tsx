@@ -262,7 +262,7 @@ const websiteHost = hostFromUrl(websiteUrl);
       href={`/claim/company/${company.slug}`}
       className="block text-center rounded-xl border px-4 py-3 font-semibold"
     >
-      Claime denne bedriften
+      Claim
     </Link>
   ) : (
     <p className="text-sm text-muted">Allerede claimet</p>
