@@ -170,17 +170,20 @@ const websiteHost = hostFromUrl(websiteUrl);
     <div className="mx-auto max-w-6xl px-4 py-10">
       <h1 className="text-3xl md:text-4xl font-semibold">{company.name}</h1>
 
-      <div className="mt-2 flex flex-wrap gap-2 text-sm text-[rgb(var(--muted))]">
-        <span>{company.location?.name ?? "Ukjent sted"}</span>
-        <span>•</span>
-        <span>{typeLabel(company.company_type)}</span>
-        <span>•</span>
-        <span>AI: {aiLevelLabel(company.ai_level)}</span>
-        <span>•</span>
-        <span>Pris: {priceLevelLabel(company.price_level)}</span>
-      </div>
+     
 
       {/* MEDIA */}
+      {/* ABOUT META */}
+<div className="mt-4 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-[rgb(var(--muted))]">
+  <span>{company.location?.name ?? "Ukjent sted"}</span>
+  <span aria-hidden>•</span>
+  <span>{typeLabel(company.company_type)}</span>
+  <span aria-hidden>•</span>
+  <span>AI: {aiLevelLabel(company.ai_level)}</span>
+  <span aria-hidden>•</span>
+  <span>Pris: {priceLevelLabel(company.price_level)}</span>
+</div>
+
 <div className="mt-8 grid grid-cols-1 gap-3 md:grid-cols-5 md:grid-rows-2">
   {/* VIDEO først (stor) */}
   <div className="relative md:col-span-3 md:row-span-2 aspect-[16/10] overflow-hidden rounded-2xl border bg-black">
