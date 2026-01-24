@@ -115,7 +115,7 @@ export default function ClaimCta({
 
             className="rounded-xl bg-[rgb(var(--fg))] text-[rgb(var(--bg))] px-4 py-2.5 text-sm font-semibold hover:opacity-90 transition text-center"
           >
-            Claim / oppdater profil
+            Claim
           </Link>
 
           <Link
