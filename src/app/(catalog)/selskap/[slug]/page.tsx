@@ -216,8 +216,8 @@ export default async function CompanyPage({
           </p>
         </div>
 
-        <div className="lg:col-span-4">
-          <div className="rounded-2xl border p-6">
+        <div className="lg:col-span-4 self-start">
+          <div className="rounded-xl border p-4">
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               {company.email ? (
                 <a
@@ -237,7 +237,7 @@ export default async function CompanyPage({
                   href={websiteUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="block text-center rounded-xl border px-4 py-3 font-semibold opacity-80 hover:opacity-100"
+                  className="block text-center rounded-lg border px-3 py-2 text-sm font-medium hover:bg-[rgb(var(--bg))]"
                 >
                   Besøk nettside ↗
                 </a>
@@ -257,11 +257,11 @@ export default async function CompanyPage({
             {!user ? (
               !isClaimed ? (
                 <Link
-                  href={`/claim/company/${company.slug}`}
-                  className="inline-flex items-center justify-center rounded-lg border px-3 py-2 text-sm font-medium opacity-80 hover:opacity-100 transition"
-                >
-                  Claim
-                </Link>
+  href={`/claim/company/${company.slug}`}
+  className="inline-flex items-center justify-center rounded-lg border px-3 py-2 text-sm font-medium opacity-80 hover:opacity-100 transition"
+>
+  Claim bedrift
+</Link>
               ) : (
                 <p className="text-sm text-muted">Allerede claimet</p>
               )
