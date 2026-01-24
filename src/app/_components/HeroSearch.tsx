@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
+import HeroBackgroundVideo from "./HeroBackgroundVideo";
 
 export default function HeroSearch({ initialQuery }: { initialQuery: string }) {
   const [q, setQ] = useState(initialQuery);
@@ -19,14 +20,23 @@ export default function HeroSearch({ initialQuery }: { initialQuery: string }) {
 
   return (
     <section className="mx-auto max-w-6xl px-4 pt-10 pb-8">
-      <div className="rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] shadow-soft overflow-hidden">
-        <div className="p-6 md:p-10">
+      {/* HERO */}
+      <div className="relative rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] shadow-soft overflow-hidden">
+        {/* Background video (safe: renders nothing if src is undefined) */}
+        <HeroBackgroundVideo
+          src={process.env.NEXT_PUBLIC_HERO_VIDEO_URL}
+          poster="/covers/cover-1.jpg"
+        />
+
+        {/* Foreground content */}
+        <div className="relative z-10 p-6 md:p-10">
           {/* Title + CTA */}
           <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
             <h1 className="text-4xl md:text-5xl font-semibold tracking-tight">
               KiReklame{" "}
               <span className="text-[rgb(var(--muted))] font-normal">
-                 - katalog
+                {" "}
+                – katalog
               </span>
             </h1>
 
@@ -65,7 +75,8 @@ export default function HeroSearch({ initialQuery }: { initialQuery: string }) {
           </div>
         </div>
 
-        <div className="h-1 bg-gradient-to-r from-black/10 via-black/0 to-black/10 dark:from-white/10 dark:via-white/0 dark:to-white/10" />
+        {/* Bottom divider */}
+        <div className="relative z-10 h-1 bg-gradient-to-r from-black/10 via-black/0 to-black/10 dark:from-white/10 dark:via-white/0 dark:to-white/10" />
       </div>
     </section>
   );
