@@ -18,8 +18,6 @@ export default function HeroSearch({
     locationName?: string | null;
   } | null;
 }) {
-
-
   const [q, setQ] = useState(initialQuery);
   const router = useRouter();
 
@@ -38,11 +36,7 @@ export default function HeroSearch({
       {/* HERO */}
       <div className="relative rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] shadow-soft overflow-hidden">
         {/* Background video (safe: renders nothing if src is undefined) */}
-        <HeroBackgroundVideo
-  src={heroVideoUrl}
-  poster="/covers/cover-1.jpg"
-/>
-
+        <HeroBackgroundVideo src={heroVideoUrl} poster="/covers/cover-1.jpg" />
 
         {/* Foreground content */}
         <div className="relative z-10 p-6 md:p-10">
@@ -50,10 +44,7 @@ export default function HeroSearch({
           <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
             <h1 className="text-4xl md:text-5xl font-semibold tracking-tight">
               KiReklame{" "}
-              <span className="text-[rgb(var(--muted))] font-normal">
-                {" "}
-                – katalog
-              </span>
+              <span className="text-[rgb(var(--muted))] font-normal"> – katalog</span>
             </h1>
 
             <a
@@ -64,52 +55,53 @@ export default function HeroSearch({
             </a>
           </div>
 
-          <p className="mt-4 max-w-2xl text-[rgb(var(--muted))] leading-relaxed">
-            {subtitle}
-          </p>
+          <p className="mt-4 max-w-2xl text-[rgb(var(--muted))] leading-relaxed">{subtitle}</p>
 
-          <div className="mt-6 flex flex-col sm:flex-row gap-3">
-            <div className="flex-1 rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))] px-4 py-3 shadow-soft">
-              <label className="block text-[11px] uppercase tracking-wide text-[rgb(var(--muted))]">
+          {/* Search row + Featured below */}
+          <div className="mt-6">
+            <div className="flex flex-col sm:flex-row gap-3">
+              <div className="flex-1 rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))] px-4 py-3 shadow-soft">
+                <label className="block text-[11px] uppercase tracking-wide text-[rgb(var(--muted))]">
+                  Søk
+                </label>
+                <input
+                  value={q}
+                  onChange={(e) => setQ(e.target.value)}
+                  onKeyDown={(e) => e.key === "Enter" && submit()}
+                  placeholder="Søk på bedrift, AI-nivå eller pris-nivå"
+                  className="mt-1 w-full bg-transparent outline-none text-base"
+                />
+              </div>
+
+              <button
+                onClick={submit}
+                className="rounded-2xl bg-[rgb(var(--fg))] text-[rgb(var(--bg))] px-6 py-4 font-semibold shadow-soft hover:opacity-90 transition"
+              >
                 Søk
-              </label>
-              <input
-                value={q}
-                onChange={(e) => setQ(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && submit()}
-                placeholder="Søk på bedrift, AI-nivå eller pris-nivå"
-                className="mt-1 w-full bg-transparent outline-none text-base"
-              />
+              </button>
             </div>
 
             {featuredCompany?.slug ? (
-  <div className="mt-3 text-sm text-[rgb(var(--muted))]">
-    <span className="mr-2 inline-flex items-center rounded-full border border-[rgb(var(--border))] bg-[rgb(var(--bg))] px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide">
-      Featured
-    </span>
-    <a
-      href={`/selskap/${featuredCompany.slug}`}
-      className="font-semibold underline-offset-2 hover:underline text-[rgb(var(--fg))]"
-    >
-      {featuredCompany.name}
-    </a>
-    {(featuredCompany.company_type || featuredCompany.locationName) ? (
-      <span className="ml-2 text-[rgb(var(--muted))]">
-        {featuredCompany.company_type ? `${featuredCompany.company_type}` : ""}
-        {featuredCompany.company_type && featuredCompany.locationName ? " · " : ""}
-        {featuredCompany.locationName ? featuredCompany.locationName : ""}
-      </span>
-    ) : null}
-  </div>
-) : null}
+              <div className="mt-3 text-sm text-[rgb(var(--muted))]">
+                <span className="mr-2 inline-flex items-center rounded-full border border-[rgb(var(--border))] bg-[rgb(var(--bg))] px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide">
+                  Featured
+                </span>
+                <a
+                  href={`/selskap/${featuredCompany.slug}`}
+                  className="font-semibold underline-offset-2 hover:underline text-[rgb(var(--fg))]"
+                >
+                  {featuredCompany.name}
+                </a>
 
-
-            <button
-              onClick={submit}
-              className="rounded-2xl bg-[rgb(var(--fg))] text-[rgb(var(--bg))] px-6 py-4 font-semibold shadow-soft hover:opacity-90 transition"
-            >
-              Søk
-            </button>
+                {featuredCompany.company_type || featuredCompany.locationName ? (
+                  <span className="ml-2 text-[rgb(var(--muted))]">
+                    {featuredCompany.company_type ? featuredCompany.company_type : ""}
+                    {featuredCompany.company_type && featuredCompany.locationName ? " · " : ""}
+                    {featuredCompany.locationName ? featuredCompany.locationName : ""}
+                  </span>
+                ) : null}
+              </div>
+            ) : null}
           </div>
         </div>
 
