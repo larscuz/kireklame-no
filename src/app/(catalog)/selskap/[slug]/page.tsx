@@ -238,7 +238,7 @@ export default async function CompanyPage({
 
 
                   target="_blank"
-                  rel="noopener noreferrer"
+                  rel="noopener"
                   className="block text-center rounded-lg border px-3 py-2 text-sm font-medium hover:bg-[rgb(var(--bg))]"
                 >
                   Besøk nettside ↗
