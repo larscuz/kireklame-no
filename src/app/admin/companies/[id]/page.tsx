@@ -346,8 +346,8 @@ export default async function AdminCompanyEditPage({
             className="w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-4 py-2"
           >
             <option value="byrå">Byrå</option>
-            <option value="Bedrift">Bedrift</option>
-            <option value="Studio">Studio</option>
+            <option value="Bedrift">Studio</option>
+            <option value="Miljø">Miljø</option>
             <option value="frilans">Frilans</option>
             <option value="UB/SB">UB/SB</option>
           </select>

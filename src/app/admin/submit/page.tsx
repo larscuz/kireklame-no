@@ -50,8 +50,8 @@ export default function SubmitPage() {
             <span className="text-sm font-medium">Type</span>
             <select name="company_type" className={inputBase} defaultValue="byrå">
               <option value="byrå">Byrå</option>
-              <option value="bedrift">Bedrift</option>
               <option value="studio">Studio</option>
+              <option value="miljø">Miljø</option>
               <option value="frilans">Frilans</option>
               <option value="ub/sb">UB/SB</option>
             </select>
@@ -75,11 +75,11 @@ export default function SubmitPage() {
           <label className="grid gap-1">
             <span className="text-sm font-medium">AI-nivå</span>
             <select name="ai_level" className={inputBase} defaultValue="3">
-              <option value="1">Nybegynner</option>
-              <option value="2">Lærling</option>
-              <option value="3">Avansert</option>
-              <option value="4">Expert</option>
-              <option value="5">Mester</option>
+              <option value="0">Student</option>
+              <option value="1">Lærling</option>
+              <option value="2">Avansert</option>
+              <option value="3">Expert</option>
+              <option value="4">Mester</option>
             </select>
           </label>
 

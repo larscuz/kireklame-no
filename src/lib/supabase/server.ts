@@ -176,8 +176,8 @@ export async function getCompanies(
 
   const types = [
     { value: "byrå", label: "Byrå" },
-    { value: "Bedrift", label: "Bedrift" },
     { value: "Studio", label: "Studio" },
+    { value: "Miljø", label: "Miljø" },
     { value: "frilans", label: "Frilans" },
     { value: "UB/SB", label: "UB/SB" },
   ];

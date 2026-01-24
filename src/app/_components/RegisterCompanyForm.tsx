@@ -7,20 +7,20 @@ import { createBrowserClient } from "@supabase/ssr";
 
 
 const AI_LEVELS = [
-  { value: "0", label: "0 – Elev" },
+  { value: "0", label: "0 – Student" },
   { value: "1", label: "1 – Lærling" },
-  { value: "2", label: "2 – Proff" },
+  { value: "2", label: "2 – Avansert" },
   { value: "3", label: "3 – Expert" },
   { value: "4", label: "4 – Mester" },
-  { value: "5", label: "5 – Guru" },
+  
 ];
 
 const PRICE_LEVELS = [
   { value: "0", label: "0 – Lav" },
-  { value: "1", label: "1 – Under middels" },
-  { value: "2", label: "2 – Middels" },
-  { value: "3", label: "3 – Over middels" },
-  { value: "4", label: "4 – Premium" },
+  { value: "1", label: "1 – Rimelig" },
+  { value: "2", label: "2 – Mellom" },
+  { value: "3", label: "3 – Premium" },
+  { value: "4", label: "4 – Enterprise" },
 ];
 
 export default function RegisterCompanyForm() {

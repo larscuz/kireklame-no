@@ -69,20 +69,20 @@ export function buildUrlWithParams(
 }
 
 export function aiLevelLabel(level: number) {
-  if (level <= 1) return "Nybegynner";
-  if (level === 2) return "Lærling";
-  if (level === 3) return "Avansert";
-  if (level === 4) return "Ekspert";
-  return "Mester"; // 5+
+  if (level <= 0) return "Student";
+  if (level === 1) return "Lærling";
+  if (level === 2) return "Avansert";
+  if (level === 3) return "Ekspert";
+  return "Mester"; // 4+
 }
 
 
 export function priceLevelLabel(level: number) {
-  if (level <= 1) return "Lav";
-  if (level === 2) return "Rimelig";
-  if (level === 3) return "Mellom";
-  if (level === 4) return "Premium";
-  return "Enterprise"; // 5+
+  if (level <= 0) return "Lav";
+  if (level === 1) return "Rimelig";
+  if (level === 2) return "Mellom";
+  if (level === 3) return "Premium";
+  return "Enterprise"; // 4+
 }
 
 
@@ -90,8 +90,8 @@ export function typeLabel(type: string) {
   const key = String(type ?? "").trim().toLowerCase();
   const map: Record<string, string> = {
     "byrå": "Byrå",
-    "bedrift": "Bedrift",
     "studio": "Studio",
+    "miljø": "Miljø",
     "frilans": "Frilans",
     "ub/sb": "UB/SB",
   };

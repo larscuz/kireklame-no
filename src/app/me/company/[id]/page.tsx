@@ -526,10 +526,10 @@ export default async function EditCompanyPage({
             defaultValue={(company as any).company_type ?? "byrå"}
             className="w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-4 py-2"
           >
-            <option value="byrå">Byrå</option>
-            <option value="Bedrift">Bedrift</option>
+            <option value="Byrå">Byrå</option>
             <option value="Studio">Studio</option>
-            <option value="frilans">Frilans</option>
+            <option value="Miljø">Miljø</option>
+            <option value="Frilans">Frilans</option>
             <option value="UB/SB">UB/SB</option>
           </select>
         </div>

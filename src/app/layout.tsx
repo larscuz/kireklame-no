@@ -8,7 +8,7 @@ import { siteMeta } from "@/lib/seo";
 export const metadata: Metadata = siteMeta({
   title: "KiReklame.no – Norsk katalog for KI i reklame og kreativ produksjon",
   description:
-    "Finn norske byråer, studioer og frilansmiljøer som bruker KI/AI i kommersielt kreativt arbeid. Filtrer på sted, tjenester og AI-nivå.",
+    "Finn norske byråer, studioer og miljøer som bruker KI/AI i kommersielt kreativt arbeid. Filtrer på sted, tjenester og AI-nivå.",
   path: "/"
 });
 

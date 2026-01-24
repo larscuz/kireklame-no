@@ -13,11 +13,11 @@ export default function FilterChips({ facets, params }: Props) {
     {
       label: "AI-nivå",
       options: [
-        { k: "ai", v: "1", label: "Nybegynner" },
-        { k: "ai", v: "2", label: "Lærling" },
-        { k: "ai", v: "3", label: "Avansert" },
-        { k: "ai", v: "4", label: "Expert" },
-        { k: "ai", v: "5", label: "Mester" },
+        { k: "ai", v: "0", label: "Student" },
+        { k: "ai", v: "1", label: "Lærling" },
+        { k: "ai", v: "2", label: "Avansert" },
+        { k: "ai", v: "3", label: "Expert" },
+        { k: "ai", v: "4", label: "Mester" },
       ],
     },
     {
