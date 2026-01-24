@@ -28,21 +28,14 @@ export default async function Topbar() {
   <Link href="/selskaper" className="hover:opacity-80 transition">
     Selskaper
   </Link>
-  
-  <Link href="/om" className="hover:opacity-80 transition">
-  Om
-</Link>
 
+  <Link href="/kontakt" className="hover:opacity-80 transition">
+    Kontakt
+  </Link>
 
   <Link href="/register/company" className="hover:opacity-80 transition">
     Registrer bedrift
   </Link>
-
-  {isAdmin ? (
-    <Link href="/admin" className="hover:opacity-80 transition">
-      Admin
-    </Link>
-  ) : null}
 
   {user ? (
     <Link href="/me" className="hover:opacity-80 transition">
@@ -50,6 +43,7 @@ export default async function Topbar() {
     </Link>
   ) : null}
 </nav>
+
 
 
         <div className="flex items-center gap-2">
