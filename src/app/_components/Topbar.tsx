@@ -33,14 +33,11 @@ export default async function Topbar() {
 
 
           {user ? (
-            <Link href="/me" className="hover:opacity-80 transition">
-              Min side
-            </Link>
-          ) : (
-            <Link href="/auth" className="hover:opacity-80 transition">
-              Logg inn
-            </Link>
-          )}
+  <Link href="/me" className="hover:opacity-80 transition">
+    Min side
+  </Link>
+) : null}
+
         </nav>
 
         <div className="flex items-center gap-2">
@@ -53,10 +50,10 @@ export default async function Topbar() {
             </SignOutButton>
           ) : (
             <Link
-              href="/selskaper"
+              href="/auth"
               className="hidden sm:inline-flex rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-3 py-2 text-sm font-medium shadow-soft hover:shadow-lift transition"
             >
-              Utforsk
+              Logg inn
             </Link>
           )}
         </div>
