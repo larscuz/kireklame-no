@@ -43,7 +43,7 @@ export async function POST(req: Request) {
 
     const to = process.env.CONTACT_TO_EMAIL || "lars@larscuzner.com";
     const from =
-      process.env.CONTACT_FROM_EMAIL || "onboarding@resend.dev";
+      process.env.CONTACT_FROM_EMAIL || "kontakt@kireklame.no";
 
     await resend.emails.send({
       from,

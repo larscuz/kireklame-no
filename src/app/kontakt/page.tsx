@@ -14,7 +14,7 @@ export default function ContactPage() {
       <div className="rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] p-8 shadow-soft">
         <h1 className="text-3xl md:text-4xl font-semibold tracking-tight">Kontakt</h1>
         <p className="mt-3 text-[rgb(var(--muted))] leading-relaxed">
-          Send en melding — den går til <span className="font-medium">lars@larscuzner.com</span>.
+          Send en melding  <span className="font-medium"></span>.
         </p>
 
         <form
