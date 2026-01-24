@@ -32,7 +32,6 @@ function isMp4Url(url: string | null): boolean {
   return url.toLowerCase().endsWith(".mp4") || url.toLowerCase().includes(".mp4?");
 }
 
-// ✅ NEW: ensure website links work even if stored without protocol
 function toAbsoluteUrl(raw: string | null | undefined): string | null {
   const s = (raw ?? "").trim();
   if (!s) return null;
@@ -48,7 +47,6 @@ function hostFromUrl(url: string | null): string | null {
     return null;
   }
 }
-
 
 async function getSupabase() {
   const cookieStore = await cookies();
@@ -74,9 +72,6 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params;
   const company = await getCompanyBySlug(slug);
-  console.log("DEBUG website:", (company as any).website);
-console.log("DEBUG links:", (company as any).links);
-
 
   if (!company) {
     return siteMeta({
@@ -146,73 +141,73 @@ export default async function CompanyPage({
   const mp4 = isMp4Url(rawVideo);
   const embedSrc = mp4 ? null : normalizeVideoUrl(rawVideo);
 
-  // ✅ Website URL (supports both companies.website and links[])
-const websiteRaw: string | null =
-  (company as any).website ??
-  (company as any).links?.find((l: any) => {
-    const kind = String(l?.kind ?? "").toLowerCase();
-    const label = String(l?.label ?? "").toLowerCase();
-    return (
-      ["website", "site", "homepage"].includes(kind) ||
-      label.includes("nettside") ||
-      label.includes("website") ||
-      label.includes("hjemmeside")
-    );
-  })?.url ??
-  null;
+  const websiteRaw: string | null =
+    (company as any).website ??
+    (company as any).links?.find((l: any) => {
+      const kind = String(l?.kind ?? "").toLowerCase();
+      const label = String(l?.label ?? "").toLowerCase();
+      return (
+        ["website", "site", "homepage"].includes(kind) ||
+        label.includes("nettside") ||
+        label.includes("website") ||
+        label.includes("hjemmeside")
+      );
+    })?.url ??
+    null;
 
-const websiteUrl = toAbsoluteUrl(websiteRaw);
-const websiteHost = hostFromUrl(websiteUrl);
-
-
+  const websiteUrl = toAbsoluteUrl(websiteRaw);
+  const websiteHost = hostFromUrl(websiteUrl);
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-10">
-      <h1 className="text-3xl md:text-4xl font-semibold">{company.name}</h1>
-
-     
-
       {/* MEDIA */}
-      {/* ABOUT META */}
-<div className="mt-4 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-[rgb(var(--muted))]">
-  <span>{company.location?.name ?? "Ukjent sted"}</span>
-  <span aria-hidden>•</span>
-  <span>{typeLabel(company.company_type)}</span>
-  <span aria-hidden>•</span>
-  <span>AI: {aiLevelLabel(company.ai_level)}</span>
-  <span aria-hidden>•</span>
-  <span>Pris: {priceLevelLabel(company.price_level)}</span>
-</div>
+      <div className="grid grid-cols-1 gap-3 md:grid-cols-5 md:grid-rows-2">
+        <div className="relative md:col-span-3 md:row-span-2 aspect-[16/10] overflow-hidden rounded-2xl border bg-black">
+          {!rawVideo ? (
+            <div className="absolute inset-0 flex items-center justify-center text-sm text-muted">
+              Ingen video
+            </div>
+          ) : mp4 ? (
+            <video
+              src={rawVideo}
+              controls
+              playsInline
+              className="absolute inset-0 h-full w-full object-cover"
+            />
+          ) : embedSrc ? (
+            <iframe
+              src={embedSrc}
+              className="absolute inset-0 h-full w-full"
+              allowFullScreen
+            />
+          ) : null}
+        </div>
 
-<div className="mt-8 grid grid-cols-1 gap-3 md:grid-cols-5 md:grid-rows-2">
-  {/* VIDEO først (stor) */}
-  <div className="relative md:col-span-3 md:row-span-2 aspect-[16/10] overflow-hidden rounded-2xl border bg-black">
-    {!rawVideo ? (
-      <div className="absolute inset-0 flex items-center justify-center text-sm text-muted">
-        Ingen video
+        <div className="relative md:col-span-2 md:row-span-2 aspect-[16/10] overflow-hidden rounded-2xl border">
+          <CoverImg
+            src={cover}
+            alt={company.name}
+            className="h-full w-full object-cover"
+          />
+        </div>
       </div>
-    ) : mp4 ? (
-      <video
-        src={rawVideo}
-        controls
-        playsInline
-        className="absolute inset-0 h-full w-full object-cover"
-      />
-    ) : embedSrc ? (
-      <iframe
-        src={embedSrc}
-        className="absolute inset-0 h-full w-full"
-        allowFullScreen
-      />
-    ) : null}
-  </div>
 
-  {/* BILDE etterpå (mindre) */}
-  <div className="relative md:col-span-2 md:row-span-2 aspect-[16/10] overflow-hidden rounded-2xl border">
-    <CoverImg src={cover} alt={company.name} className="h-full w-full object-cover" />
-  </div>
-</div>
+      {/* ABOUT */}
+      <div className="mt-8 max-w-3xl">
+        <h1 className="text-3xl md:text-4xl font-semibold">
+          {company.name}
+        </h1>
 
+        <div className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-[rgb(var(--muted))]">
+          <span>{company.location?.name ?? "Ukjent sted"}</span>
+          <span aria-hidden>•</span>
+          <span>{typeLabel(company.company_type)}</span>
+          <span aria-hidden>•</span>
+          <span>AI: {aiLevelLabel(company.ai_level)}</span>
+          <span aria-hidden>•</span>
+          <span>Pris: {priceLevelLabel(company.price_level)}</span>
+        </div>
+      </div>
 
       <div className="mt-10 grid grid-cols-1 lg:grid-cols-12 gap-8">
         <div className="lg:col-span-8">
@@ -224,54 +219,53 @@ const websiteHost = hostFromUrl(websiteUrl);
         <div className="lg:col-span-4">
           <div className="rounded-2xl border p-6">
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-  {company.email ? (
-    <a
-      href={`mailto:${company.email}?subject=${encodeURIComponent(
-        `Kontakt via KiReklame: ${company.name}`
-      )}`}
-      className="block text-center rounded-xl border px-4 py-3 font-semibold"
-    >
-      Kontakt bedrift
-    </a>
-  ) : (
-    <div />
-  )}
+              {company.email ? (
+                <a
+                  href={`mailto:${company.email}?subject=${encodeURIComponent(
+                    `Kontakt via KiReklame: ${company.name}`
+                  )}`}
+                  className="block text-center rounded-xl border px-4 py-3 font-semibold"
+                >
+                  Kontakt bedrift
+                </a>
+              ) : (
+                <div />
+              )}
 
-  {websiteUrl ? (
-  <a
-    href={websiteUrl}
-    target="_blank"
-    rel="noopener noreferrer"
-    className="block text-center rounded-xl border px-4 py-3 font-semibold opacity-80 hover:opacity-100"
-  >
-    Besøk nettside <span aria-hidden>↗</span>
-  </a>
-) : (
-  <div />
-)}
+              {websiteUrl ? (
+                <a
+                  href={websiteUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block text-center rounded-xl border px-4 py-3 font-semibold opacity-80 hover:opacity-100"
+                >
+                  Besøk nettside ↗
+                </a>
+              ) : (
+                <div />
+              )}
+            </div>
 
-</div>
-
-{websiteHost && (
-  <p className="mt-2 text-xs text-muted text-center">{websiteHost}</p>
-)}
-
+            {websiteHost && (
+              <p className="mt-2 text-xs text-muted text-center">
+                {websiteHost}
+              </p>
+            )}
 
             <Separator className="my-4" />
 
             {!user ? (
-  !isClaimed ? (
-    <Link
-      href={`/claim/company/${company.slug}`}
-      className="block text-center rounded-xl border px-4 py-3 font-semibold"
-    >
-      Claim
-    </Link>
-  ) : (
-    <p className="text-sm text-muted">Allerede claimet</p>
-  )
-) : isOwner ? (
-
+              !isClaimed ? (
+                <Link
+                  href={`/claim/company/${company.slug}`}
+                  className="inline-flex items-center justify-center rounded-lg border px-3 py-2 text-sm font-medium opacity-80 hover:opacity-100 transition"
+                >
+                  Claim
+                </Link>
+              ) : (
+                <p className="text-sm text-muted">Allerede claimet</p>
+              )
+            ) : isOwner ? (
               <Link
                 href={`/me/company/${company.id}`}
                 className="block text-center rounded-xl border px-4 py-3 font-semibold"
