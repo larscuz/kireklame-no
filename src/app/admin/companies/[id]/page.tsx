@@ -4,6 +4,8 @@ import { revalidatePath } from "next/cache";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import { requireAdmin } from "@/lib/supabase/server";
 import { updateCompanyProfile } from "@/lib/companies/updateCompanyProfile";
+import { aiLevelLabel, priceLevelLabel } from "@/lib/utils";
+
 
 export const dynamic = "force-dynamic";
 
@@ -346,8 +348,8 @@ export default async function AdminCompanyEditPage({
             className="w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-4 py-2"
           >
             <option value="byrå">Byrå</option>
-            <option value="Bedrift">Studio</option>
-            <option value="Miljø">Miljø</option>
+            <option value="studio">Studio</option>
+            <option value="miljø">Miljø</option>
             <option value="frilans">Frilans</option>
             <option value="UB/SB">UB/SB</option>
           </select>
@@ -415,11 +417,12 @@ export default async function AdminCompanyEditPage({
             className="w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-4 py-2"
           >
             <option value="">— Ikke satt —</option>
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
-            <option value="5">5</option>
+{[0, 1, 2, 3, 4].map((level) => (
+  <option key={level} value={String(level)}>
+    {level} – {aiLevelLabel(level)}
+  </option>
+))}
+
           </select>
         </div>
 
@@ -431,11 +434,12 @@ export default async function AdminCompanyEditPage({
             className="w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-4 py-2"
           >
             <option value="">— Ikke satt —</option>
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4</option>
-            <option value="5">5</option>
+{[0, 1, 2, 3, 4].map((level) => (
+  <option key={level} value={String(level)}>
+    {level} – {priceLevelLabel(level)}
+  </option>
+))}
+
           </select>
         </div>
 
