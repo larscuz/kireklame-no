@@ -1,12 +1,15 @@
 import Link from "next/link";
 import ThemeToggle from "./ThemeToggle";
 import SignOutButton from "./SignOutButton";
-import { supabaseServerClient } from "@/lib/supabase/server";
+import { supabaseServerClient, isAdminUser } from "@/lib/supabase/server";
+
 
 export default async function Topbar() {
   const supabase = await supabaseServerClient();
   const { data } = await supabase.auth.getUser();
   const user = data.user;
+  const isAdmin = isAdminUser(user?.email);
+
 
   return (
     <header className="sticky top-0 z-50 backdrop-blur supports-[backdrop-filter]:bg-white/70 dark:supports-[backdrop-filter]:bg-[rgb(var(--bg))]/70 border-b border-[rgb(var(--border))]">
@@ -22,23 +25,27 @@ export default async function Topbar() {
         </Link>
 
         <nav className="hidden md:flex items-center gap-5 text-sm">
-          <Link href="/selskaper" className="hover:opacity-80 transition">
-            Selskaper
-          </Link>
-
-          {/* Viktig: dette skal ikke være /admin */}
-          <Link href="/register/company" className="hover:opacity-80 transition">
-            Registrer bedrift
-          </Link>
-
-
-          {user ? (
-  <Link href="/me" className="hover:opacity-80 transition">
-    Min side
+  <Link href="/selskaper" className="hover:opacity-80 transition">
+    Selskaper
   </Link>
-) : null}
 
-        </nav>
+  <Link href="/register/company" className="hover:opacity-80 transition">
+    Registrer bedrift
+  </Link>
+
+  {isAdmin ? (
+    <Link href="/admin" className="hover:opacity-80 transition">
+      Admin
+    </Link>
+  ) : null}
+
+  {user ? (
+    <Link href="/me" className="hover:opacity-80 transition">
+      Min side
+    </Link>
+  ) : null}
+</nav>
+
 
         <div className="flex items-center gap-2">
           <ThemeToggle />
