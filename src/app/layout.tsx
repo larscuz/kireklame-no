@@ -4,6 +4,7 @@ import { ThemeProvider } from "next-themes";
 import Topbar from "./_components/Topbar";
 import Footer from "./_components/Footer";
 import { siteMeta } from "@/lib/seo";
+import { Analytics } from "@vercel/analytics/react";
 
 export const metadata: Metadata = siteMeta({
   title: "KiReklame.no – Norsk katalog for KI i reklame og kreativ produksjon",
@@ -23,6 +24,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <Footer />
           </div>
         </ThemeProvider>
+        <Analytics />
       </body>
     </html>
   );
