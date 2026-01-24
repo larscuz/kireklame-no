@@ -7,10 +7,18 @@ import HeroBackgroundVideo from "./HeroBackgroundVideo";
 export default function HeroSearch({
   initialQuery,
   heroVideoUrl,
+  featuredCompany,
 }: {
   initialQuery: string;
   heroVideoUrl?: string | null;
+  featuredCompany?: {
+    name: string;
+    slug: string;
+    company_type?: string | null;
+    locationName?: string | null;
+  } | null;
 }) {
+
 
   const [q, setQ] = useState(initialQuery);
   const router = useRouter();
@@ -73,6 +81,28 @@ export default function HeroSearch({
                 className="mt-1 w-full bg-transparent outline-none text-base"
               />
             </div>
+
+            {featuredCompany?.slug ? (
+  <div className="mt-3 text-sm text-[rgb(var(--muted))]">
+    <span className="mr-2 inline-flex items-center rounded-full border border-[rgb(var(--border))] bg-[rgb(var(--bg))] px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide">
+      Featured
+    </span>
+    <a
+      href={`/selskap/${featuredCompany.slug}`}
+      className="font-semibold underline-offset-2 hover:underline text-[rgb(var(--fg))]"
+    >
+      {featuredCompany.name}
+    </a>
+    {(featuredCompany.company_type || featuredCompany.locationName) ? (
+      <span className="ml-2 text-[rgb(var(--muted))]">
+        {featuredCompany.company_type ? `${featuredCompany.company_type}` : ""}
+        {featuredCompany.company_type && featuredCompany.locationName ? " · " : ""}
+        {featuredCompany.locationName ? featuredCompany.locationName : ""}
+      </span>
+    ) : null}
+  </div>
+) : null}
+
 
             <button
               onClick={submit}
