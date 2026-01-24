@@ -4,7 +4,14 @@ import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import HeroBackgroundVideo from "./HeroBackgroundVideo";
 
-export default function HeroSearch({ initialQuery }: { initialQuery: string }) {
+export default function HeroSearch({
+  initialQuery,
+  heroVideoUrl,
+}: {
+  initialQuery: string;
+  heroVideoUrl?: string | null;
+}) {
+
   const [q, setQ] = useState(initialQuery);
   const router = useRouter();
 
@@ -24,9 +31,10 @@ export default function HeroSearch({ initialQuery }: { initialQuery: string }) {
       <div className="relative rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] shadow-soft overflow-hidden">
         {/* Background video (safe: renders nothing if src is undefined) */}
         <HeroBackgroundVideo
-          src={process.env.NEXT_PUBLIC_HERO_VIDEO_URL}
-          poster="/covers/cover-1.jpg"
-        />
+  src={heroVideoUrl}
+  poster="/covers/cover-1.jpg"
+/>
+
 
         {/* Foreground content */}
         <div className="relative z-10 p-6 md:p-10">
