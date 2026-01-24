@@ -236,6 +236,7 @@ export default async function CompanyPage({
                 <a
                   href={`/go/${slug}`}
 
+
                   target="_blank"
                   rel="noopener noreferrer"
                   className="block text-center rounded-lg border px-3 py-2 text-sm font-medium hover:bg-[rgb(var(--bg))]"
