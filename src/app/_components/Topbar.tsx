@@ -2,6 +2,7 @@ import Link from "next/link";
 import ThemeToggle from "./ThemeToggle";
 import SignOutButton from "./SignOutButton";
 import { supabaseServerClient, isAdminUser } from "@/lib/supabase/server";
+import MobileMenu from "./MobileMenu";
 
 
 export default async function Topbar() {
@@ -57,22 +58,23 @@ export default async function Topbar() {
 
 
         <div className="flex items-center gap-2">
-          <ThemeToggle />
+  <MobileMenu isAuthed={!!user} isAdmin={isAdmin} />
+  <ThemeToggle />
 
-          {/* Høyre knapp: Utforsk når du ikke er innlogget, Logg ut når du er innlogget */}
-          {user ? (
-            <SignOutButton className="hidden sm:inline-flex rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-3 py-2 text-sm font-medium shadow-soft hover:shadow-lift transition">
-              Logg ut
-            </SignOutButton>
-          ) : (
-            <Link
-              href="/auth"
-              className="hidden sm:inline-flex rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-3 py-2 text-sm font-medium shadow-soft hover:shadow-lift transition"
-            >
-              Logg inn
-            </Link>
-          )}
-        </div>
+  {user ? (
+    <SignOutButton className="hidden sm:inline-flex rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-3 py-2 text-sm font-medium shadow-soft hover:shadow-lift transition">
+      Logg ut
+    </SignOutButton>
+  ) : (
+    <Link
+      href="/auth"
+      className="hidden sm:inline-flex rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-3 py-2 text-sm font-medium shadow-soft hover:shadow-lift transition"
+    >
+      Logg inn
+    </Link>
+  )}
+</div>
+
       </div>
     </header>
   );
