@@ -181,27 +181,35 @@ const websiteHost = hostFromUrl(websiteUrl);
       </div>
 
       {/* MEDIA */}
-      <div className="mt-8 grid grid-cols-1 gap-3 md:grid-cols-5 md:grid-rows-2">
-        <div className="relative md:col-span-3 md:row-span-2 aspect-[16/10] overflow-hidden rounded-2xl border">
-          <CoverImg src={cover} alt={company.name} className="h-full w-full object-cover" />
-        </div>
-
-        <div className="md:col-span-2 md:row-span-2 rounded-2xl border p-4">
-          {!rawVideo ? (
-            <div className="aspect-video flex items-center justify-center text-sm text-muted">
-              Ingen video
-            </div>
-          ) : mp4 ? (
-            <video src={rawVideo} controls className="w-full h-full" />
-          ) : embedSrc ? (
-            <iframe
-              src={embedSrc}
-              className="w-full aspect-video"
-              allowFullScreen
-            />
-          ) : null}
-        </div>
+<div className="mt-8 grid grid-cols-1 gap-3 md:grid-cols-5 md:grid-rows-2">
+  {/* VIDEO først (stor) */}
+  <div className="relative md:col-span-3 md:row-span-2 aspect-[16/10] overflow-hidden rounded-2xl border bg-black">
+    {!rawVideo ? (
+      <div className="absolute inset-0 flex items-center justify-center text-sm text-muted">
+        Ingen video
       </div>
+    ) : mp4 ? (
+      <video
+        src={rawVideo}
+        controls
+        playsInline
+        className="absolute inset-0 h-full w-full object-cover"
+      />
+    ) : embedSrc ? (
+      <iframe
+        src={embedSrc}
+        className="absolute inset-0 h-full w-full"
+        allowFullScreen
+      />
+    ) : null}
+  </div>
+
+  {/* BILDE etterpå (mindre) */}
+  <div className="relative md:col-span-2 md:row-span-2 aspect-[16/10] overflow-hidden rounded-2xl border">
+    <CoverImg src={cover} alt={company.name} className="h-full w-full object-cover" />
+  </div>
+</div>
+
 
       <div className="mt-10 grid grid-cols-1 lg:grid-cols-12 gap-8">
         <div className="lg:col-span-8">
