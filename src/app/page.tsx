@@ -5,6 +5,7 @@ import ListingGrid from "./_components/ListingGrid";
 import { getCompanies, getCompanyBySlug } from "@/lib/supabase/server";
 import { parseSearchParamsAsync } from "@/lib/utils";
 import { supabaseAdmin } from "@/lib/supabase/admin";
+import FilterSearchBar from "./_components/FilterSearchBar";
 
 export default async function Home(props: any) {
   const params = await parseSearchParamsAsync(props?.searchParams);
@@ -34,16 +35,40 @@ export default async function Home(props: any) {
         }
       : null;
 
+  // 3) Hent aktiv annonse for hero sidebar (uten dato-filter foreløpig)
+  const { data: ad } = await supabaseAdmin()
+    .from("ads")
+    .select("id, title, image_url, mobile_image_url, href, alt, label, cta_text, priority")
+    .eq("placement", "home_hero_sidebar")
+    .eq("is_active", true)
+    .order("priority", { ascending: true })
+    .limit(1)
+    .maybeSingle();
+
   return (
     <div className="bg-[rgb(var(--bg))]">
       <HeroSearch
         initialQuery={params.q ?? ""}
         heroVideoUrl={heroVideoUrl}
         featuredCompany={featured}
+        sponsorAd={ad ?? null}
       />
 
+      {/* FILTER KORT (alt inni samme boks) */}
       <section className="mx-auto max-w-6xl px-4 pb-6">
-        <FilterChips facets={facets} params={params} />
+        <div className="rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] shadow-soft p-4">
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+            {/* Venstre: filtre */}
+            <div className="min-w-0 flex-1">
+              <FilterChips facets={facets} params={params} />
+            </div>
+
+            {/* Høyre: søk */}
+            <div className="w-full lg:w-[360px]">
+              <FilterSearchBar initialQuery={params.q ?? ""} />
+            </div>
+          </div>
+        </div>
       </section>
 
       <section className="mx-auto max-w-6xl px-4 pb-14">
