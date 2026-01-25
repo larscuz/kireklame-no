@@ -56,7 +56,7 @@ export default function FilterChips({ facets, params, basePath }: Props) {
       )}
 
       {/* ÉN ROW på desktop: nowrap + horisontal scroll hvis nødvendig */}
-      <div className="flex items-center gap-2 overflow-x-auto whitespace-nowrap [-webkit-overflow-scrolling:touch] pb-1">
+      <div className="hidden md:flex items-center gap-2 overflow-x-auto whitespace-nowrap [-webkit-overflow-scrolling:touch] pb-1">
         <select
           name="ai"
           defaultValue={(params as any).ai ?? ""}
