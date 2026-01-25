@@ -39,10 +39,12 @@ export default async function InternasjonaltPage({
         </div>
       </div>
 
-      <div className="mt-6">
-        <FilterChips facets={facets} params={params} basePath="/internasjonalt" />
+      {/*
+<div className="mt-6">
+  <FilterChips facets={facets} params={params} basePath="/internasjonalt" />
+</div>
+*/}
 
-      </div>
 
       <div className="mt-8">
         <ListingGrid companies={intl} />
