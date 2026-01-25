@@ -61,8 +61,8 @@ export default async function Home(props: any) {
         sponsorAd={ad ?? null}
       />
 
-      {/* FILTER (kompakt) */}
-      <section className="mx-auto max-w-6xl px-4 pb-4">
+      {/* FILTER (kun desktop/tablet) */}
+      <section className="hidden md:block mx-auto max-w-6xl px-4 pb-4">
         <div className="rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] shadow-soft px-3 py-3">
           <FilterChips facets={facets} params={params} />
         </div>
