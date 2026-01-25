@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 import ListingGrid from "@/app/_components/ListingGrid";
-import FilterChips from "@/app/_components/FilterChips";
+import HeroInternational from "@/app/_components/HeroInternational";
 import { getCompanies } from "@/lib/supabase/server";
 import { parseSearchParams } from "@/lib/utils";
 import { siteMeta } from "@/lib/seo";
@@ -20,34 +20,29 @@ export default async function InternasjonaltPage({
   const sp = await searchParams;
   const params = parseSearchParams(sp);
 
-  const { companies, facets } = await getCompanies(params, { market: "intl" });
-
-
+  const { companies } = await getCompanies(params, { market: "intl" });
   const intl = companies ?? [];
 
-
-
   return (
-    <div className="mx-auto max-w-6xl px-4 py-10">
-      <div className="flex items-end justify-between gap-6">
-        <div>
-          <h1 className="text-3xl font-semibold tracking-tight">Internasjonalt</h1>
-          <p className="mt-2 text-[rgb(var(--muted))]">Filtrer på AI-nivå og pris.</p>
-        </div>
-        <div className="hidden md:block text-sm text-[rgb(var(--muted))]">
-          {intl.length} treff
-        </div>
-      </div>
-
-      {/*
-<div className="mt-6">
-  <FilterChips facets={facets} params={params} basePath="/internasjonalt" />
-</div>
-*/}
+    <div className="mx-auto max-w-6xl px-4 pb-10">
+      {/* HERO */}
+      <HeroInternational
+  heroVideoUrl="https://video.wixstatic.com/video/f82397_e685f1fa8a0d44dcbe08337acf33fff1/1080p/mp4/file.mp4"
+  poster="/covers/cover-1.jpg"
+/>
 
 
+      {/* Content under hero */}
       <div className="mt-8">
-        <ListingGrid companies={intl} />
+        <div className="flex items-end justify-between gap-6">
+          <div className="text-sm text-[rgb(var(--muted))]">
+            {intl.length} treff
+          </div>
+        </div>
+
+        <div className="mt-6">
+          <ListingGrid companies={intl} />
+        </div>
       </div>
     </div>
   );
