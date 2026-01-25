@@ -42,16 +42,12 @@ export default function FilterChips({ facets, params, basePath }: Props) {
   })();
 
   const selectClass =
-    "h-10 w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-3 text-sm";
+    "h-10 rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-3 text-sm";
   const btnClass =
     "h-10 inline-flex items-center justify-center rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-4 text-sm font-medium shadow-soft hover:shadow-lift transition whitespace-nowrap";
 
   return (
-    <form
-      action={basePath ?? "/selskaper"}
-      method="get"
-      className="w-full"
-    >
+    <form action={basePath ?? "/selskaper"} method="get" className="w-full">
       {/* Behold eksisterende params som skjulte inputs, ellers mister du søk/andre filtre */}
       {Object.entries(params as any).map(([k, v]) =>
         v == null || v === "" || k === "ai" || k === "price" || k === "type" || k === "loc" ? null : (
@@ -59,9 +55,13 @@ export default function FilterChips({ facets, params, basePath }: Props) {
         )
       )}
 
-      <div className="flex flex-wrap items-center gap-2">
-        {/* AI */}
-        <select name="ai" defaultValue={(params as any).ai ?? ""} className={`${selectClass} w-[160px]`}>
+      {/* ÉN ROW på desktop: nowrap + horisontal scroll hvis nødvendig */}
+      <div className="flex items-center gap-2 overflow-x-auto whitespace-nowrap [-webkit-overflow-scrolling:touch] pb-1">
+        <select
+          name="ai"
+          defaultValue={(params as any).ai ?? ""}
+          className={`${selectClass} w-[160px] flex-none`}
+        >
           <option value="">AI-nivå</option>
           <option value="0">0 – Student</option>
           <option value="1">1 – Lærling</option>
@@ -70,8 +70,11 @@ export default function FilterChips({ facets, params, basePath }: Props) {
           <option value="4">4 – Mester</option>
         </select>
 
-        {/* Pris */}
-        <select name="price" defaultValue={(params as any).price ?? ""} className={`${selectClass} w-[140px]`}>
+        <select
+          name="price"
+          defaultValue={(params as any).price ?? ""}
+          className={`${selectClass} w-[140px] flex-none`}
+        >
           <option value="">Pris</option>
           <option value="0">0 – Lav</option>
           <option value="1">1 – Rimelig</option>
@@ -80,8 +83,11 @@ export default function FilterChips({ facets, params, basePath }: Props) {
           <option value="4">4 – Enterprise</option>
         </select>
 
-        {/* Type */}
-        <select name="type" defaultValue={(params as any).type ?? ""} className={`${selectClass} w-[150px]`}>
+        <select
+          name="type"
+          defaultValue={(params as any).type ?? ""}
+          className={`${selectClass} w-[150px] flex-none`}
+        >
           <option value="">Type</option>
           <option value="byrå">Byrå</option>
           <option value="studio">Studio</option>
@@ -90,8 +96,11 @@ export default function FilterChips({ facets, params, basePath }: Props) {
           <option value="ub/sb">UB/SB</option>
         </select>
 
-        {/* Sted */}
-        <select name="loc" defaultValue={(params as any).loc ?? ""} className={`${selectClass} w-[200px]`}>
+        <select
+          name="loc"
+          defaultValue={(params as any).loc ?? ""}
+          className={`${selectClass} w-[220px] flex-none`}
+        >
           <option value="">Sted</option>
           {locOptions.map((o) => (
             <option key={o.value} value={o.value}>
@@ -100,22 +109,14 @@ export default function FilterChips({ facets, params, basePath }: Props) {
           ))}
         </select>
 
-        {/* Knapper (samme rad) */}
-        <button type="submit" className={btnClass}>
+        <button type="submit" className={`${btnClass} flex-none`}>
           Bruk
         </button>
 
-        <a href={clearHref} className={btnClass}>
+        <a href={clearHref} className={`${btnClass} flex-none`}>
           Fjern
         </a>
       </div>
-
-      {/* Optional hint hvis ingen steder */}
-      {locOptions.length === 0 ? (
-        <div className="mt-2 text-xs text-[rgb(var(--muted))]">
-          (Steder kommer fra databasen – hvis denne er tom i facets, er det ok.)
-        </div>
-      ) : null}
     </form>
   );
 }
