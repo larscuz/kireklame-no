@@ -1,4 +1,5 @@
 // src/app/page.tsx
+import type { Metadata } from "next";
 import HeroSearch from "./_components/HeroSearch";
 import FilterChips from "./_components/FilterChips";
 import ListingGrid from "./_components/ListingGrid";
@@ -6,6 +7,13 @@ import { getCompanies, getCompanyBySlug } from "@/lib/supabase/server";
 import { parseSearchParamsAsync } from "@/lib/utils";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import FilterSearchBar from "./_components/FilterSearchBar";
+
+export const metadata: Metadata = {
+  title: "KiReklame.no – Norsk katalog for KI i reklame og kreativ produksjon",
+  description:
+    "Kuratert katalog over norske byråer, studioer og frilansmiljøer som bruker KI i reklame, film og kreativ produksjon.",
+  alternates: { canonical: "/" },
+};
 
 export default async function Home(props: any) {
   const params = await parseSearchParamsAsync(props?.searchParams);
