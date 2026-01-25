@@ -31,8 +31,10 @@ export default function CompanyCard({ company }: { company: CompanyCardModel }) 
           <div>
             <div className="font-semibold tracking-tight">{company.name}</div>
             <div className="mt-1 text-sm text-[rgb(var(--muted))]">
-              {company.location?.name ?? "Norge"} • {typeLabel(company.company_type)}
-            </div>
+  {company.location?.name ? `${company.location.name} • ` : ""}
+  {typeLabel(company.company_type)}
+</div>
+
           </div>
         </div>
 

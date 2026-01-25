@@ -162,8 +162,10 @@ export async function createClaim(args: { companyId: string; userId: string; mes
 }
 
 export async function getCompanies(
-  params: SearchParamsV1
+  params: SearchParamsV1,
+  opts?: { market?: "no" | "intl" }
 ): Promise<{
+
   companies: CompanyCardModel[];
   facets: Facets;
 }> {
@@ -183,19 +185,21 @@ export async function getCompanies(
   ];
 
   let query = supabase
-    .from("companies")
-    .select(
-      `
-      id,name,slug,short_description,description,ai_level,price_level,company_type,website,email,phone,cover_image,video_url,is_verified,is_placeholder,
-      locations:location_id (name,slug),
-      links:links (id,kind,label,url),
-      company_tags:company_tags ( tags:tag_id (name,slug) )
+  .from("companies")
+  .select(
     `
-    )
-    .eq("is_active", true)
-    .order("is_verified", { ascending: false })
-    .order("ai_level", { ascending: false })
-    .order("name", { ascending: true });
+    id,name,slug,short_description,description,ai_level,price_level,company_type,website,email,phone,cover_image,video_url,is_verified,is_placeholder,
+    locations:location_id (name,slug),
+    links:links (id,kind,label,url),
+    company_tags:company_tags ( tags:tag_id (name,slug) )
+  `
+  )
+  .eq("is_active", true)
+  .eq("market", opts?.market ?? "no")
+  .order("is_verified", { ascending: false })
+  .order("ai_level", { ascending: false })
+  .order("name", { ascending: true });
+
 
   if (params.ai) query = query.eq("ai_level", Number(params.ai));
   if (params.type) query = query.eq("company_type", params.type);

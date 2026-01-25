@@ -3,9 +3,12 @@ import { type Facets, type SearchParamsV1 } from "@/lib/utils";
 type Props = {
   facets: Facets;
   params: SearchParamsV1;
+  basePath?: string;
 };
 
-export default function FilterChips({ facets, params }: Props) {
+
+export default function FilterChips({ facets, params, basePath }: Props) {
+
   // ---- Clear href: behold alt annet (f.eks. q), men fjern filter-feltene vi kontrollerer her
   const keptParams = Object.fromEntries(
     Object.entries(params as any).filter(([k, v]) => {
@@ -44,7 +47,12 @@ export default function FilterChips({ facets, params }: Props) {
   return (
     <div className="rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] p-4 shadow-soft">
       <div className="flex flex-col gap-5">
-        <form action="/selskaper" method="get" className="grid gap-3 sm:grid-cols-2 max-w-3xl">
+        <form
+  action={basePath ?? "/selskaper"}
+  method="get"
+  className="grid gap-3 sm:grid-cols-2 max-w-xl"
+  >
+
           {/* Behold eksisterende params som skjulte inputs, ellers mister du søk/andre filtre */}
           {Object.entries(params as any).map(([k, v]) =>
             v == null ||

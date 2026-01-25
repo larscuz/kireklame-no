@@ -26,6 +26,13 @@ export default async function Topbar() {
         </Link>
 
         <nav className="hidden md:flex items-center gap-5 text-sm">
+          <Link
+  href="/internasjonalt"
+  className="rounded-xl px-3 py-2 text-sm font-medium text-[rgb(var(--fg))] hover:bg-[rgb(var(--muted))]"
+>
+  Internasjonalt
+</Link>
+
   <Link href="/selskaper" className="hover:opacity-80 transition">
     Selskaper
   </Link>

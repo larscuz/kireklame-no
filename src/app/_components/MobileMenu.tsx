@@ -50,6 +50,13 @@ export default function MobileMenu({ isAuthed, isAdmin }: Props) {
 
             <nav className="mt-4 flex flex-col gap-2 text-sm">
               <Link
+  href="/internasjonalt"
+  className="block rounded-xl px-3 py-2 text-sm font-medium text-[rgb(var(--fg))] hover:bg-[rgb(var(--muted))]"
+>
+  Internasjonalt
+</Link>
+
+<Link
                 href="/selskaper"
                 onClick={() => setOpen(false)}
                 className="rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-3 py-3 shadow-soft hover:shadow-lift transition"
