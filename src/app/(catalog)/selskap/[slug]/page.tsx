@@ -63,6 +63,11 @@ function trimDescription(raw: string, maxLen = 160): string {
   return s.slice(0, maxLen - 1).replace(/\s+\S*$/, "").trim() + "…";
 }
 
+// Safe JSON-LD (unngå edge-cases med "<")
+function safeJsonLd(obj: unknown) {
+  return JSON.stringify(obj).replace(/</g, "\\u003c");
+}
+
 async function getSupabase() {
   const cookieStore = await cookies();
 
@@ -210,8 +215,35 @@ export default async function CompanyPage({
   const websiteUrl = toAbsoluteUrl(websiteRaw);
   const websiteHost = hostFromUrl(websiteUrl);
 
+  // --- JSON-LD (Organization) ---
+  const canonicalUrl = `https://kireklame.no/selskap/${slug}`;
+
+  const jsonLd: any = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "@id": `${canonicalUrl}#organization`,
+    name: company.name,
+    url: canonicalUrl,
+    description: (company.short_description ?? company.description ?? "").trim() || undefined,
+    sameAs: websiteUrl ? [websiteUrl] : undefined,
+    address: company.location?.name
+      ? {
+          "@type": "PostalAddress",
+          addressLocality: company.location.name,
+          addressCountry: "NO",
+        }
+      : undefined,
+    image: toAbsoluteSiteUrl(company.cover_image) ?? undefined,
+  };
+
   return (
     <div className="mx-auto max-w-6xl px-4 py-10">
+      <script
+        type="application/ld+json"
+        // eslint-disable-next-line react/no-danger
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(jsonLd) }}
+      />
+
       {/* MEDIA */}
       <div className="grid grid-cols-1 gap-3 md:grid-cols-5 md:grid-rows-2">
         <div className="relative md:col-span-3 md:row-span-2 aspect-[16/10] overflow-hidden rounded-2xl border bg-black">
