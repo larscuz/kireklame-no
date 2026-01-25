@@ -138,7 +138,7 @@ export default function HeroSearch({
                       </span>
 
                       <span className="text-xs sm:text-sm font-semibold text-white/90">
-                        {sponsorAd.cta_text ?? "Se mer →"}
+                        {sponsorAd.cta_text ?? ""}
                       </span>
                     </div>
                   </div>
@@ -174,7 +174,7 @@ export default function HeroSearch({
 
                     <div className="flex items-center justify-between">
                       <span className="text-sm font-semibold text-white/90">
-                        {sponsorAd.cta_text ?? "Se mer →"}
+                        {sponsorAd.cta_text ?? ""}
                       </span>
                     </div>
                   </div>
