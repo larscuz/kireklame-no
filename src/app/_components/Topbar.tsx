@@ -3,6 +3,8 @@ import ThemeToggle from "./ThemeToggle";
 import SignOutButton from "./SignOutButton";
 import { supabaseServerClient, isAdminUser } from "@/lib/supabase/server";
 import MobileMenu from "./MobileMenu";
+import TopbarSearch from "./TopbarSearch";
+
 
 
 export default async function Topbar() {
@@ -66,7 +68,9 @@ export default async function Topbar() {
 
         <div className="flex items-center gap-2">
   <MobileMenu isAuthed={!!user} isAdmin={isAdmin} />
+  <TopbarSearch />
   <ThemeToggle />
+
 
   {user ? (
     <SignOutButton className="hidden sm:inline-flex rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-3 py-2 text-sm font-medium shadow-soft hover:shadow-lift transition">

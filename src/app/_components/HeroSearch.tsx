@@ -7,7 +7,7 @@ type SponsorAd = {
   id: number;
   title?: string | null;
 
-  // Desktop (kvadrat)
+  // Desktop (høyre kolonne)
   image_url: string;
 
   // Mobil (banner) – fallbacker til image_url hvis null/undefined
@@ -38,12 +38,21 @@ export default function HeroSearch({
   const subtitle =
     "En kuratert katalog over norske aktører som bruker AI i reklame og kreativ produksjon.";
 
+  // Bruk banner om den finnes, ellers desktop-bilde som fallback
+  const mobileImg = sponsorAd?.mobile_image_url ?? sponsorAd?.image_url ?? null;
+
   return (
     <section className="mx-auto max-w-6xl px-4 pt-10 pb-8">
       {/* HERO + SPONSOR SLOT */}
-      <div className={sponsorAd ? "grid gap-6 lg:grid-cols-[1fr_360px] items-start" : "grid gap-6"}>
+      <div
+        className={
+          sponsorAd
+            ? "grid gap-6 lg:grid-cols-[1fr_360px] items-stretch"
+            : "grid gap-6 items-start"
+        }
+      >
         {/* HERO */}
-        <div className="relative min-h-[280px] md:min-h-[320px] rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] shadow-soft overflow-hidden">
+        <div className="relative min-h-[280px] md:min-h-[320px] lg:h-[360px] rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] shadow-soft overflow-hidden">
           {/* Background video */}
           <HeroBackgroundVideo src={heroVideoUrl} poster="/covers/cover-1.jpg" />
 
@@ -64,7 +73,9 @@ export default function HeroSearch({
               </a>
             </div>
 
-            <p className="mt-4 max-w-2xl text-[rgb(var(--muted))] leading-relaxed">{subtitle}</p>
+            <p className="mt-4 max-w-2xl text-[rgb(var(--muted))] leading-relaxed">
+              {subtitle}
+            </p>
 
             {/* Featured */}
             {featuredCompany?.slug ? (
@@ -102,20 +113,25 @@ export default function HeroSearch({
                   target="_blank"
                   rel="noreferrer"
                   className="group block"
-                  aria-label={`${sponsorAd.label ?? "Sponset"}: ${sponsorAd.title ?? "Åpne lenke"}`}
+                  aria-label={`${sponsorAd.label ?? "Sponset"}: ${
+                    sponsorAd.title ?? "Åpne lenke"
+                  }`}
                 >
-                  <div className="relative h-[96px] sm:h-[112px]">
-                    <img
-                      src={sponsorAd.mobile_image_url ?? sponsorAd.image_url}
-                      alt={sponsorAd.alt}
-                      className="absolute inset-0 h-full w-full object-cover"
-                      loading="lazy"
-                    />
+                  {/* Stabil banner-høyde via aspect ratio (hindrer at bildet “blåser opp”) */}
+                  <div className="relative overflow-hidden aspect-[16/4] sm:aspect-[16/3]">
+                    {mobileImg ? (
+                      <img
+                        src={mobileImg}
+                        alt={sponsorAd.alt}
+                        className="absolute inset-0 h-full w-full object-cover object-center"
+                        loading="lazy"
+                      />
+                    ) : null}
 
-                    {/* Litt svakere overlay på banner (for å ikke "vaske ut" teksten i bildet) */}
+                    {/* Mild overlay på banner (for ikke å vaske ut motivet) */}
                     <div className="absolute inset-0 bg-black/15 group-hover:bg-black/10 transition" />
 
-                    {/* Diskré label + CTA (liten tekst) */}
+                    {/* Diskré label + CTA */}
                     <div className="absolute inset-0 p-3 sm:p-4 flex items-end justify-between">
                       <span className="inline-flex items-center rounded-full border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/80 backdrop-blur px-2 py-0.5 text-[10px] sm:text-[11px] font-semibold uppercase tracking-wide text-[rgb(var(--muted))]">
                         {sponsorAd.label ?? "Sponset"}
@@ -130,20 +146,22 @@ export default function HeroSearch({
               </aside>
             </div>
 
-            {/* Desktop: kvadrat i høyre kolonne (uendret) */}
+            {/* Desktop: høyre kolonne – match hero-høyde (og tving bilde til ramma) */}
             <aside className="hidden lg:block rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] shadow-soft overflow-hidden">
               <a
                 href={sponsorAd.href}
                 target="_blank"
                 rel="noreferrer"
-                className="group block"
-                aria-label={`${sponsorAd.label ?? "Sponset"}: ${sponsorAd.title ?? "Åpne lenke"}`}
+                className="group block h-full"
+                aria-label={`${sponsorAd.label ?? "Sponset"}: ${
+                  sponsorAd.title ?? "Åpne lenke"
+                }`}
               >
-                <div className="relative aspect-square">
+                <div className="relative h-full overflow-hidden">
                   <img
                     src={sponsorAd.image_url}
                     alt={sponsorAd.alt}
-                    className="absolute inset-0 h-full w-full object-cover"
+                    className="absolute inset-0 h-full w-full object-cover object-center"
                     loading="lazy"
                   />
                   <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition" />
@@ -153,6 +171,7 @@ export default function HeroSearch({
                         {sponsorAd.label ?? "Sponset"}
                       </span>
                     </div>
+
                     <div className="flex items-center justify-between">
                       <span className="text-sm font-semibold text-white/90">
                         {sponsorAd.cta_text ?? "Se mer →"}
