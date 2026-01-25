@@ -49,10 +49,7 @@ export default function HeroInternational({
 </div>
 
 
-          <div className="mt-6 text-sm text-[rgb(var(--muted))]">
-            Tips: Denne siden er “unlisted” og kan deles direkte.
-          </div>
-        </div>
+         
 
         <div className="relative z-10 h-1 bg-gradient-to-r from-black/10 via-black/0 to-black/10 dark:from-white/10 dark:via-white/0 dark:to-white/10" />
       </div>
