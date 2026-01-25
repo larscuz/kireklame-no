@@ -33,6 +33,22 @@ export default function HeroInternational({
 
           <p className="mt-4 max-w-2xl text-[rgb(var(--muted))] leading-relaxed">{subtitle}</p>
 
+          <div className="mt-4 text-sm text-[rgb(var(--muted))]">
+  <span className="mr-2 inline-flex items-center rounded-full border border-[rgb(var(--border))] bg-[rgb(var(--bg))] px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide">
+    Featured
+  </span>
+  <a
+    href="/selskap/nmatic"
+    className="font-semibold underline-offset-2 hover:underline text-[rgb(var(--fg))]"
+  >
+    Nmatic
+  </a>
+  <span className="ml-2 text-[rgb(var(--muted))]">
+    Studio · International
+  </span>
+</div>
+
+
           <div className="mt-6 text-sm text-[rgb(var(--muted))]">
             Tips: Denne siden er “unlisted” og kan deles direkte.
           </div>
