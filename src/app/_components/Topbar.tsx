@@ -36,7 +36,7 @@ export default async function Topbar() {
 </Link>
 
   <Link href="/selskaper" className="hover:opacity-80 transition">
-    Selskaper
+    Norge
   </Link>
   
   <Link href="/om" className="hover:opacity-80 transition">
