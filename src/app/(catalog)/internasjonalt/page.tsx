@@ -12,7 +12,7 @@ export const metadata: Metadata = siteMeta({
   path: "/internasjonal",
 });
 
-export default async function InternasjonaltPage({
+export default async function InternasjonalPage({
   searchParams,
 }: {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
