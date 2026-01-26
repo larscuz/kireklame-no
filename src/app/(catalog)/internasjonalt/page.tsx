@@ -9,7 +9,7 @@ import { siteMeta } from "@/lib/seo";
 export const metadata: Metadata = siteMeta({
   title: "Internasjonal – KiReklame.no",
   description: "Internasjonale AI-first aktører og aigencies innen reklame og kreativ produksjon.",
-  path: "/internasjonal",
+  path: "/internasjonalt",
 });
 
 export default async function InternasjonaltPage({

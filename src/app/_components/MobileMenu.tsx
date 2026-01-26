@@ -57,7 +57,7 @@ export default function MobileMenu({ isAuthed, isAdmin }: Props) {
 
             {/* Block list */}
             <nav className="mt-4 grid gap-2">
-              <Link href="/internasjonal" onClick={close} className={itemClass}>
+              <Link href="/internasjonalt" onClick={close} className={itemClass}>
                 Internasjonal
               </Link>
 
