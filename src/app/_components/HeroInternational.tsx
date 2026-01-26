@@ -24,7 +24,7 @@ export default function HeroInternational({
         <div className="relative z-10 p-6 md:p-10">
           <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
             <h1 className="text-4xl md:text-5xl font-semibold tracking-tight">
-              Internasjonalt{" "}
+              International{" "}
               <span className="text-[rgb(var(--muted))] font-normal">
                 – katalog
               </span>
@@ -34,7 +34,7 @@ export default function HeroInternational({
               href="/selskaper"
               className="inline-flex items-center justify-center rounded-2xl bg-[rgb(var(--fg))] text-[rgb(var(--bg))] px-4 py-3 font-semibold shadow-soft hover:opacity-90 transition"
             >
-              Se norske aktører
+              See norwegian creators
             </a>
           </div>
 
