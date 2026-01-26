@@ -43,6 +43,10 @@ export default async function Topbar() {
   Om
 </Link>
 
+<Link href="/tips" className="hover:opacity-80 transition">
+  Tips
+</Link>
+
 <Link href="/kontakt" className="hover:opacity-80 transition">
     Kontakt
   </Link>
