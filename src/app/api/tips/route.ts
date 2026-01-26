@@ -23,17 +23,21 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Mangler URL-er" }, { status: 400 });
     }
 
+    // Én URL per linje -> én rad per URL, lagres i kolonnen "urls"
     const rows = urls
       .split("\n")
       .map((u) => u.trim())
       .filter(Boolean)
-      .map((url) => ({ url, email, comment }));
+      .map((u) => ({ urls: u, email, comment }));
 
     if (rows.length === 0) {
       return NextResponse.json({ error: "Ingen gyldige URL-er" }, { status: 400 });
     }
 
-    const { data, error } = await supabaseAdmin().from("tips").insert(rows).select("id,url");
+    const { data, error } = await supabaseAdmin()
+      .from("tips")
+      .insert(rows)
+      .select("id,urls");
 
     if (error) {
       console.error("Tips insert error:", error);
