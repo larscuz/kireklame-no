@@ -62,7 +62,8 @@ export async function POST(req: Request) {
 
     // Admin-epost (skal ikke stoppe tipset hvis epost feiler)
     try {
-      const adminEmail = (process.env.TIPS_NOTIFY_EMAIL ?? "").trim();
+      const adminEmail = (process.env.ADMIN_NOTIFY_EMAILS ?? "").trim();
+
       const resendKey = (process.env.RESEND_API_KEY ?? "").trim();
 
       if (adminEmail && resendKey) {
