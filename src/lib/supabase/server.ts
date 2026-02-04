@@ -165,7 +165,6 @@ export async function getCompanies(
   params: SearchParamsV1,
   opts?: { market?: "no" | "intl" }
 ): Promise<{
-
   companies: CompanyCardModel[];
   facets: Facets;
 }> {
@@ -184,22 +183,25 @@ export async function getCompanies(
     { value: "UB/SB", label: "UB/SB" },
   ];
 
+  const market = opts?.market ?? "no";
+  const weightColumn = market === "intl" ? "listing_weight_intl" : "listing_weight_no";
+
   let query = supabase
-  .from("companies")
-  .select(
-    `
+    .from("companies")
+    .select(
+      `
     id,name,slug,short_description,description,ai_level,price_level,company_type,website,email,phone,cover_image,video_url,is_verified,is_placeholder,
     locations:location_id (name,slug),
     links:links (id,kind,label,url),
     company_tags:company_tags ( tags:tag_id (name,slug) )
   `
-  )
-  .eq("is_active", true)
-  .eq("market", opts?.market ?? "no")
-  .order("is_verified", { ascending: false })
-  .order("ai_level", { ascending: false })
-  .order("name", { ascending: true });
-
+    )
+    .eq("is_active", true)
+    .eq("market", market)
+    .order(weightColumn, { ascending: false })
+    .order("is_verified", { ascending: false })
+    .order("ai_level", { ascending: false })
+    .order("name", { ascending: true });
 
   if (params.ai) query = query.eq("ai_level", Number(params.ai));
   if (params.type) query = query.eq("company_type", params.type);
@@ -335,7 +337,10 @@ export async function getCompaniesByLocationSlug(locationSlug: string) {
     )
     .eq("is_active", true)
     .eq("location_id", loc.id)
-    .order("ai_level", { ascending: false });
+    .order("listing_weight_no", { ascending: false })
+    .order("is_verified", { ascending: false })
+    .order("ai_level", { ascending: false })
+    .order("name", { ascending: true });
 
   return (data ?? []).map((row: any) => ({
     id: row.id,
@@ -374,7 +379,10 @@ export async function getCompaniesByTagSlug(tagSlug: string) {
     )
     .eq("is_active", true)
     .in("id", ids)
-    .order("ai_level", { ascending: false });
+    .order("listing_weight_no", { ascending: false })
+    .order("is_verified", { ascending: false })
+    .order("ai_level", { ascending: false })
+    .order("name", { ascending: true });
 
   return (data ?? []).map((row: any) => ({
     id: row.id,
