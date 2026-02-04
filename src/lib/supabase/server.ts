@@ -198,7 +198,7 @@ export async function getCompanies(
     )
     .eq("is_active", true)
     .eq("market", market)
-    .order(weightColumn, { ascending: false })
+    .order(weightColumn, { ascending: true })
     .order("is_verified", { ascending: false })
     .order("ai_level", { ascending: false })
     .order("name", { ascending: true });
@@ -337,7 +337,7 @@ export async function getCompaniesByLocationSlug(locationSlug: string) {
     )
     .eq("is_active", true)
     .eq("location_id", loc.id)
-    .order("listing_weight_no", { ascending: false })
+    .order("listing_weight_no", { ascending: true })
     .order("is_verified", { ascending: false })
     .order("ai_level", { ascending: false })
     .order("name", { ascending: true });
@@ -379,7 +379,7 @@ export async function getCompaniesByTagSlug(tagSlug: string) {
     )
     .eq("is_active", true)
     .in("id", ids)
-    .order("listing_weight_no", { ascending: false })
+    .order("listing_weight_no", { ascending: true })
     .order("is_verified", { ascending: false })
     .order("ai_level", { ascending: false })
     .order("name", { ascending: true });
