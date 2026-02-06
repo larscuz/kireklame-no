@@ -123,7 +123,7 @@ export default function HeroSearch({
                       <img
                         src={mobileImg}
                         alt={sponsorAd.alt}
-                        className="absolute inset-0 h-full w-full object-cover object-center"
+                        className="absolute inset-0 h-full w-full object-contain object-center"
                         loading="lazy"
                       />
                     ) : null}
@@ -162,11 +162,11 @@ export default function HeroSearch({
                   sponsorAd.title ?? "Åpne lenke"
                 }`}
               >
-                <div className="relative h-full overflow-hidden">
+                <div className="relative h-full overflow-hidden bg-[rgb(var(--bg))]">
                   <img
                     src={sponsorAd.image_url}
                     alt={sponsorAd.alt}
-                    className="absolute inset-0 h-full w-full object-cover object-center"
+                    className="absolute inset-0 h-full w-full object-contain object-center"
                     loading="lazy"
                   />
                   <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition" />
