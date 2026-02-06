@@ -198,6 +198,8 @@ export default async function CompanyPage({
   const mp4 = isMp4Url(rawVideo);
   const embedSrc = mp4 ? null : normalizeVideoUrl(rawVideo);
 
+  
+
   const websiteRaw: string | null =
     (company as any).website ??
     (company as any).links?.find((l: any) => {

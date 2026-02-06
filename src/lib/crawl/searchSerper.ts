@@ -1,7 +1,16 @@
 // src/lib/crawl/searchSerper.ts
 type SerperOrganic = { link?: string; title?: string; snippet?: string };
 
-export async function googleSearchTopLink(query: string): Promise<string | null> {
+type GoogleSearchOpts = {
+  gl?: string;
+  hl?: string;
+  num?: number;
+};
+
+async function googleSearchOrganic(
+  query: string,
+  opts?: GoogleSearchOpts
+): Promise<SerperOrganic[]> {
   const key = process.env.SERPER_API_KEY;
   if (!key) throw new Error("Missing SERPER_API_KEY");
 
@@ -13,9 +22,9 @@ export async function googleSearchTopLink(query: string): Promise<string | null>
     },
     body: JSON.stringify({
       q: query,
-      gl: "no",
-      hl: "no",
-      num: 5,
+      gl: opts?.gl ?? "no",
+      hl: opts?.hl ?? "no",
+      num: opts?.num ?? 5,
     }),
   });
 
@@ -26,6 +35,24 @@ export async function googleSearchTopLink(query: string): Promise<string | null>
 
   const json = await res.json();
   const organic: SerperOrganic[] = json?.organic ?? [];
+  return organic;
+}
+
+export async function googleSearchOrganicLinks(
+  query: string,
+  opts?: GoogleSearchOpts
+): Promise<string[]> {
+  const organic = await googleSearchOrganic(query, opts);
+  return organic
+    .map((o) => (typeof o?.link === "string" ? o.link : ""))
+    .filter((link) => link.startsWith("http"));
+}
+
+export async function googleSearchTopLink(
+  query: string,
+  opts?: GoogleSearchOpts
+): Promise<string | null> {
+  const organic = await googleSearchOrganic(query, opts);
   const first = organic.find(o => typeof o?.link === "string" && o.link.startsWith("http"));
   return first?.link ?? null;
 }
