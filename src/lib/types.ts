@@ -29,6 +29,7 @@ export type CompanyCardModel = {
   company_type: string;
   cover_image: string | null;
   video_url?: string | null;
+  email?: string | null;
   is_verified: boolean;
   is_placeholder: boolean;
   location: { name: string; slug: string } | null;

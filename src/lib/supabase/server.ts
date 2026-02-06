@@ -244,6 +244,7 @@ export async function getCompanies(
       company_type: row.company_type,
       cover_image: row.cover_image,
       video_url: row.video_url ?? null,
+      email: row.email ?? null,
       is_verified: row.is_verified,
       is_placeholder: row.is_placeholder,
       location: normalizeLocation(row.locations),
@@ -330,7 +331,7 @@ export async function getCompaniesByLocationSlug(locationSlug: string) {
     .from("companies")
     .select(
       `
-      id,name,slug,short_description,ai_level,price_level,company_type,cover_image,is_verified,is_placeholder,
+      id,name,slug,short_description,ai_level,price_level,company_type,cover_image,email,is_verified,is_placeholder,
       locations:location_id (name,slug),
       company_tags:company_tags ( tags:tag_id (name,slug) )
     `
@@ -351,6 +352,7 @@ export async function getCompaniesByLocationSlug(locationSlug: string) {
     price_level: row.price_level,
     company_type: row.company_type,
     cover_image: row.cover_image,
+    email: row.email ?? null,
     is_verified: row.is_verified,
     is_placeholder: row.is_placeholder,
     location: normalizeLocation(row.locations),
@@ -372,7 +374,7 @@ export async function getCompaniesByTagSlug(tagSlug: string) {
     .from("companies")
     .select(
       `
-      id,name,slug,short_description,ai_level,price_level,company_type,cover_image,is_verified,is_placeholder,
+      id,name,slug,short_description,ai_level,price_level,company_type,cover_image,email,is_verified,is_placeholder,
       locations:location_id (name,slug),
       company_tags:company_tags ( tags:tag_id (name,slug) )
     `
@@ -393,6 +395,7 @@ export async function getCompaniesByTagSlug(tagSlug: string) {
     price_level: row.price_level,
     company_type: row.company_type,
     cover_image: row.cover_image,
+    email: row.email ?? null,
     is_verified: row.is_verified,
     is_placeholder: row.is_placeholder,
     location: normalizeLocation(row.locations),

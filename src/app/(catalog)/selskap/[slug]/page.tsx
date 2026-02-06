@@ -301,7 +301,12 @@ export default async function CompanyPage({
                   Kontakt bedrift
                 </a>
               ) : (
-                <div />
+                <div
+                  aria-disabled="true"
+                  className="block text-center rounded-xl border px-4 py-3 font-semibold opacity-50 cursor-not-allowed select-none"
+                >
+                  Kontakt bedrift
+                </div>
               )}
 
               {websiteUrl ? (
