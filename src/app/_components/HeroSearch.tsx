@@ -36,7 +36,7 @@ export default function HeroSearch({
   sponsorAd?: SponsorAd | null;
 }) {
   const subtitle =
-    "En kuratert katalog over norske aktører som bruker AI i reklame og kreativ produksjon.";
+    "Finn norske KI‑byråer og studioer for reklame, AI‑video og markedsføring.";
 
   // Bruk banner om den finnes, ellers desktop-bilde som fallback
   const mobileImg = sponsorAd?.mobile_image_url ?? sponsorAd?.image_url ?? null;
@@ -61,8 +61,8 @@ export default function HeroSearch({
             {/* Title + CTA */}
             <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
               <h1 className="text-4xl md:text-5xl font-semibold tracking-tight">
-                KiReklame{" "}
-                <span className="text-[rgb(var(--muted))] font-normal"> – katalog</span>
+                KI reklame{" "}
+                <span className="text-[rgb(var(--muted))] font-normal"> i Norge</span>
               </h1>
 
               <a

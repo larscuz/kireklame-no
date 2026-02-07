@@ -5,10 +5,11 @@ export function siteMeta(args: {
   description: string;
   path: string;
 }): Metadata {
-  const site = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+  const site = process.env.NEXT_PUBLIC_SITE_URL || "https://kireklame.no";
   const url = new URL(args.path, site).toString();
 
   return {
+    metadataBase: new URL(site),
     title: args.title,
     description: args.description,
     alternates: { canonical: url },

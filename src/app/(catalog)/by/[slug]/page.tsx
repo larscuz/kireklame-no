@@ -39,6 +39,30 @@ export default async function CityPage({
         Kuratert oversikt (v1) – flere kilder kommer via autofyll.
       </p>
 
+      <section className="mt-6 rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] p-5 shadow-soft">
+        <div className="text-sm font-semibold">Relaterte temaer</div>
+        <div className="mt-2 flex flex-wrap gap-2 text-sm">
+          <a
+            href="/ki-reklamebyra"
+            className="rounded-full border border-[rgb(var(--border))] bg-[rgb(var(--bg))] px-3 py-1.5 text-[rgb(var(--fg))] hover:opacity-80 transition"
+          >
+            KI reklamebyrå
+          </a>
+          <a
+            href="/ai-video"
+            className="rounded-full border border-[rgb(var(--border))] bg-[rgb(var(--bg))] px-3 py-1.5 text-[rgb(var(--fg))] hover:opacity-80 transition"
+          >
+            AI‑video produksjon
+          </a>
+          <a
+            href="/ki-markedsforing"
+            className="rounded-full border border-[rgb(var(--border))] bg-[rgb(var(--bg))] px-3 py-1.5 text-[rgb(var(--fg))] hover:opacity-80 transition"
+          >
+            KI markedsføring
+          </a>
+        </div>
+      </section>
+
       <div className="mt-8">
         <ListingGrid companies={companies} />
       </div>

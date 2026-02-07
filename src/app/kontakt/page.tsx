@@ -4,7 +4,7 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = siteMeta({
   title: "Kontakt – KiReklame.no",
-  description: "Kontakt KiReklame. Send oss en melding via skjema.",
+  description: "Kontakt KiReklame for KI‑reklame, AI‑video og markedsføring. Send oss en melding via skjema.",
   path: "/kontakt",
 });
 
@@ -14,7 +14,8 @@ export default function ContactPage() {
       <div className="rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] p-8 shadow-soft">
         <h1 className="text-3xl md:text-4xl font-semibold tracking-tight">Kontakt</h1>
         <p className="mt-3 text-[rgb(var(--muted))] leading-relaxed">
-          Send en melding  <span className="font-medium"></span>.
+          Send en melding om KI‑reklame, AI‑video eller markedsføring. Vi svarer
+          normalt innen kort tid.
         </p>
 
         <form
@@ -91,8 +92,28 @@ export default function ContactPage() {
             Ved å sende inn skjemaet godtar du at vi kan kontakte deg på e-post for å følge opp henvendelsen.
           </p>
         </form>
+
+        <div className="mt-6 flex flex-wrap gap-2 text-sm">
+          <Link
+            href="/ki-reklamebyra"
+            className="rounded-full border border-[rgb(var(--border))] bg-[rgb(var(--bg))] px-3 py-1.5 text-[rgb(var(--fg))] hover:opacity-80 transition"
+          >
+            KI reklamebyrå
+          </Link>
+          <Link
+            href="/ai-video"
+            className="rounded-full border border-[rgb(var(--border))] bg-[rgb(var(--bg))] px-3 py-1.5 text-[rgb(var(--fg))] hover:opacity-80 transition"
+          >
+            AI‑video produksjon
+          </Link>
+          <Link
+            href="/ki-markedsforing"
+            className="rounded-full border border-[rgb(var(--border))] bg-[rgb(var(--bg))] px-3 py-1.5 text-[rgb(var(--fg))] hover:opacity-80 transition"
+          >
+            KI markedsføring
+          </Link>
+        </div>
       </div>
     </main>
   );
 }
-

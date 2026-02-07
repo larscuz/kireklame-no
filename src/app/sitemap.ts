@@ -11,12 +11,15 @@ function uniqByUrl(items: MetadataRoute.Sitemap) {
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const site = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+  const site = process.env.NEXT_PUBLIC_SITE_URL || "https://kireklame.no";
   const { companies, locations, tags } = await adminListSitemapEntities();
 
   const base: MetadataRoute.Sitemap = [
     { url: `${site}/`, changeFrequency: "daily", priority: 1 },
     { url: `${site}/selskaper`, changeFrequency: "daily", priority: 0.9 },
+    { url: `${site}/ki-reklamebyra`, changeFrequency: "weekly", priority: 0.8 },
+    { url: `${site}/ai-video`, changeFrequency: "weekly", priority: 0.8 },
+    { url: `${site}/ki-markedsforing`, changeFrequency: "weekly", priority: 0.8 },
   ];
 
   const companyUrls: MetadataRoute.Sitemap = (companies ?? [])

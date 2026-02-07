@@ -6,7 +6,7 @@ import type { Metadata } from "next";
 export const metadata: Metadata = siteMeta({
   title: "Om – KiReklame.no",
   description:
-    "Hvorfor KiReklame finnes: en kuratert katalog over norske AI-first aktører i reklame og kreativ produksjon.",
+    "Hvorfor KiReklame finnes: en kuratert katalog over norske KI‑byråer og AI‑first aktører i reklame, video og kreativ produksjon.",
   path: "/om",
 });
 
@@ -60,6 +60,27 @@ export default function AboutPage() {
             className="inline-flex items-center justify-center rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-5 py-3 font-semibold shadow-soft hover:shadow-lift transition"
           >
             Utforsk katalogen
+          </Link>
+        </div>
+
+        <div className="mt-4 flex flex-wrap gap-2 text-sm">
+          <Link
+            href="/ki-reklamebyra"
+            className="rounded-full border border-[rgb(var(--border))] bg-[rgb(var(--bg))] px-3 py-1.5 text-[rgb(var(--fg))] hover:opacity-80 transition"
+          >
+            KI reklamebyrå
+          </Link>
+          <Link
+            href="/ai-video"
+            className="rounded-full border border-[rgb(var(--border))] bg-[rgb(var(--bg))] px-3 py-1.5 text-[rgb(var(--fg))] hover:opacity-80 transition"
+          >
+            AI‑video produksjon
+          </Link>
+          <Link
+            href="/ki-markedsforing"
+            className="rounded-full border border-[rgb(var(--border))] bg-[rgb(var(--bg))] px-3 py-1.5 text-[rgb(var(--fg))] hover:opacity-80 transition"
+          >
+            KI markedsføring
           </Link>
         </div>
       </div>

@@ -7,8 +7,8 @@ import { parseSearchParams } from "@/lib/utils";
 import { siteMeta } from "@/lib/seo";
 
 export const metadata: Metadata = siteMeta({
-  title: "Internasjonal – KiReklame.no",
-  description: "Internasjonale AI-first aktører og aigencies innen reklame og kreativ produksjon.",
+  title: "Internasjonale AI‑byråer og reklameaktører | KiReklame",
+  description: "Utvalgte internasjonale AI‑first byråer og studioer for reklame, AI‑video og markedsføring.",
   path: "/internasjonalt",
 });
 

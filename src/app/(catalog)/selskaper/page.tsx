@@ -8,9 +8,9 @@ import { parseSearchParams } from "@/lib/utils";
 import { siteMeta } from "@/lib/seo";
 
 export const metadata: Metadata = siteMeta({
-  title: "Selskaper – KiReklame.no",
+  title: "KI‑byråer og reklamebyråer – Norge | KiReklame",
   description:
-    "Bla i katalogen over norske AI/KI-aktører innen reklame og kreativ produksjon.",
+    "Katalog over norske KI‑byråer, reklamebyråer og studioer for AI‑video, annonser og markedsføring.",
   path: "/selskaper",
 });
 
@@ -60,6 +60,30 @@ export default async function CompaniesPage({
       <div className="mt-6">
         <FilterChips facets={facets} params={params} />
       </div>
+
+      <section className="mt-6 rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] p-5 shadow-soft">
+        <div className="text-sm font-semibold">Relaterte temaer</div>
+        <div className="mt-2 flex flex-wrap gap-2 text-sm">
+          <Link
+            href="/ki-reklamebyra"
+            className="rounded-full border border-[rgb(var(--border))] bg-[rgb(var(--bg))] px-3 py-1.5 text-[rgb(var(--fg))] hover:opacity-80 transition"
+          >
+            KI reklamebyrå
+          </Link>
+          <Link
+            href="/ai-video"
+            className="rounded-full border border-[rgb(var(--border))] bg-[rgb(var(--bg))] px-3 py-1.5 text-[rgb(var(--fg))] hover:opacity-80 transition"
+          >
+            AI‑video produksjon
+          </Link>
+          <Link
+            href="/ki-markedsforing"
+            className="rounded-full border border-[rgb(var(--border))] bg-[rgb(var(--bg))] px-3 py-1.5 text-[rgb(var(--fg))] hover:opacity-80 transition"
+          >
+            KI markedsføring
+          </Link>
+        </div>
+      </section>
 
       <div className="mt-8">
         <ListingGrid companies={companies} />
