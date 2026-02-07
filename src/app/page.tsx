@@ -62,18 +62,33 @@ export default async function Home(props: any) {
         sponsorAd={ad ?? null}
       />
 
-      <section className="mx-auto max-w-6xl px-4 pb-6">
-        <div className="rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] p-6 shadow-soft">
-          <h2 className="text-2xl font-semibold tracking-tight">
+      {/* FILTER (kun desktop/tablet) */}
+      <section className="hidden md:block mx-auto max-w-6xl px-4 pb-4">
+        <div className="rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] shadow-soft px-3 py-3">
+          <FilterChips facets={facets} params={params} />
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-6xl px-4 pb-10">
+        <ListingGrid companies={companies} />
+      </section>
+
+      {/* SEO: hold this at the bottom */}
+      <section className="mx-auto max-w-6xl px-4 pb-14">
+        <div className="rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))]/60 p-6 shadow-soft">
+          <div className="text-xs uppercase tracking-wide text-[rgb(var(--muted))]">
+            Om katalogen
+          </div>
+          <h2 className="mt-2 text-xl font-semibold tracking-tight">
             KI reklame, AI‑video og markedsføring i Norge
           </h2>
-          <p className="mt-3 text-[rgb(var(--muted))] leading-relaxed">
+          <p className="mt-3 text-sm text-[rgb(var(--muted))] leading-relaxed">
             KiReklame er en kuratert oversikt over norske aktører som jobber med KI i reklame,
             annonser, video og kreativ produksjon. Enten du trenger et KI‑byrå, AI‑drevet
-            reklamefilm, eller produksjon av innhold for performance marketing, finner du
+            reklamefilm eller produksjon av innhold for performance marketing, finner du
             relevante leverandører her.
           </p>
-          <p className="mt-3 text-[rgb(var(--muted))] leading-relaxed">
+          <p className="mt-3 text-sm text-[rgb(var(--muted))] leading-relaxed">
             Bruk filtrene for å finne byråer med riktig tjenesteområde, prispunkt og AI‑nivå.
             Du kan også utforske steder og tags for mer nisjet søk innen markedsføring og
             reklame.
@@ -105,17 +120,6 @@ export default async function Home(props: any) {
             </Link>
           </div>
         </div>
-      </section>
-
-      {/* FILTER (kun desktop/tablet) */}
-      <section className="hidden md:block mx-auto max-w-6xl px-4 pb-4">
-        <div className="rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] shadow-soft px-3 py-3">
-          <FilterChips facets={facets} params={params} />
-        </div>
-      </section>
-
-      <section className="mx-auto max-w-6xl px-4 pb-14">
-        <ListingGrid companies={companies} />
       </section>
     </div>
   );
