@@ -321,24 +321,32 @@ export default function OutreachApp() {
     setCompaniesLoading(true);
     setCompaniesError(null);
 
-    supabase
-      .from("companies")
-      .select("id,name,email,website,slug,market,cover_image")
-      .eq("is_active", true)
-      .is("deleted_at", null)
-      .eq("market", marketCode)
-      .order("name", { ascending: true })
-      .then(({ data, error }) => {
+    let active = true;
+    (async () => {
+      try {
+        const { data, error } = await supabase
+          .from("companies")
+          .select("id,name,email,website,slug,market,cover_image")
+          .eq("is_active", true)
+          .is("deleted_at", null)
+          .eq("market", marketCode)
+          .order("name", { ascending: true });
+
+        if (!active) return;
         if (error) {
           setCompaniesError(error.message);
           setCompanies([]);
         } else {
           setCompanies((data || []) as CompanyRecord[]);
         }
-      })
-      .finally(() => {
-        setCompaniesLoading(false);
-      });
+      } finally {
+        if (active) setCompaniesLoading(false);
+      }
+    })();
+
+    return () => {
+      active = false;
+    };
   }, [market, hasSupabaseConfig, supabase]);
 
   useEffect(() => {
@@ -353,21 +361,29 @@ export default function OutreachApp() {
     setAdLeadsLoading(true);
     setAdLeadsError(null);
 
-    supabase
-      .from("ad_leads")
-      .select("id,name,email,website,source_url,market,status")
-      .order("name", { ascending: true })
-      .then(({ data, error }) => {
+    let active = true;
+    (async () => {
+      try {
+        const { data, error } = await supabase
+          .from("ad_leads")
+          .select("id,name,email,website,source_url,market,status")
+          .order("name", { ascending: true });
+
+        if (!active) return;
         if (error) {
           setAdLeadsError(error.message);
           setAdLeads([]);
         } else {
           setAdLeads((data || []) as AdLeadRecord[]);
         }
-      })
-      .finally(() => {
-        setAdLeadsLoading(false);
-      });
+      } finally {
+        if (active) setAdLeadsLoading(false);
+      }
+    })();
+
+    return () => {
+      active = false;
+    };
   }, [activeMode, hasSupabaseConfig, supabase]);
 
   useEffect(() => {
@@ -380,10 +396,14 @@ export default function OutreachApp() {
     setSentEmailsLoading(true);
     setSentEmailsError(null);
 
-    supabase
-      .from("outreach_sends")
-      .select("recipient_email")
-      .then(({ data, error }) => {
+    let active = true;
+    (async () => {
+      try {
+        const { data, error } = await supabase
+          .from("outreach_sends")
+          .select("recipient_email");
+
+        if (!active) return;
         if (error) {
           setSentEmailsError(error.message);
           setSentEmails(new Set());
@@ -396,10 +416,14 @@ export default function OutreachApp() {
           });
           setSentEmails(next);
         }
-      })
-      .finally(() => {
-        setSentEmailsLoading(false);
-      });
+      } finally {
+        if (active) setSentEmailsLoading(false);
+      }
+    })();
+
+    return () => {
+      active = false;
+    };
   }, [hasSupabaseConfig, supabase]);
 
   useEffect(() => {
