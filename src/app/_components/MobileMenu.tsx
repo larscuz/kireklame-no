@@ -73,10 +73,6 @@ export default function MobileMenu({ isAuthed, isAdmin }: Props) {
                 Kontakt
               </Link>
 
-              <Link href="/register/company" onClick={close} className={itemClass}>
-                Registrer bedrift
-              </Link>
-
               {isAdmin ? (
                 <Link href="/admin" onClick={close} className={itemClass}>
                   Admin
@@ -92,6 +88,10 @@ export default function MobileMenu({ isAuthed, isAdmin }: Props) {
                     Min side
                   </Link>
 
+                  <Link href="/andre-ki-tjenester" onClick={close} className={itemClass}>
+                    Andre KI-tjenester
+                  </Link>
+
                   {/* SignOutButton støtter ikke onClick -> vi lukker via wrapper */}
                   <div onClick={close}>
                     <SignOutButton className={`${itemClass} text-left`}>
@@ -100,9 +100,15 @@ export default function MobileMenu({ isAuthed, isAdmin }: Props) {
                   </div>
                 </>
               ) : (
-                <Link href="/auth" onClick={close} className={itemClass}>
-                  Logg inn
-                </Link>
+                <>
+                  <Link href="/andre-ki-tjenester" onClick={close} className={itemClass}>
+                    Andre KI-tjenester
+                  </Link>
+
+                  <Link href="/auth" onClick={close} className={itemClass}>
+                    Logg inn
+                  </Link>
+                </>
               )}
             </nav>
           </div>

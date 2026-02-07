@@ -38,7 +38,7 @@ export default async function Topbar() {
   <Link href="/selskaper" className="hover:opacity-80 transition">
     Norge
   </Link>
-  
+
   <Link href="/om" className="hover:opacity-80 transition">
   Om
 </Link>
@@ -52,10 +52,6 @@ export default async function Topbar() {
   </Link>
 
 
-  <Link href="/register/company" className="hover:opacity-80 transition">
-    Registrer bedrift
-  </Link>
-
   {isAdmin ? (
     <Link href="/admin" className="hover:opacity-80 transition">
       Admin
@@ -67,6 +63,10 @@ export default async function Topbar() {
       Min side
     </Link>
   ) : null}
+
+  <Link href="/andre-ki-tjenester" className="hover:opacity-80 transition">
+    Andre KI-tjenester
+  </Link>
 </nav>
 
 
