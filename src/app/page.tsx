@@ -75,49 +75,66 @@ export default async function Home(props: any) {
 
       {/* SEO: hold this at the bottom */}
       <section className="mx-auto max-w-6xl px-4 pb-14">
-        <div className="rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))]/60 p-6 shadow-soft">
-          <div className="text-xs uppercase tracking-wide text-[rgb(var(--muted))]">
+        <div className="rounded-2xl border border-[rgb(var(--border))] bg-gradient-to-b from-[rgb(var(--card))]/80 to-[rgb(var(--card))]/40 p-6 shadow-soft ring-1 ring-[rgb(var(--border))]/60">
+          <div className="text-[11px] uppercase tracking-[0.22em] text-[rgb(var(--muted))]">
             Om katalogen
           </div>
-          <h2 className="mt-2 text-xl font-semibold tracking-tight">
-            KI reklame, AI‑video og markedsføring i Norge
-          </h2>
-          <p className="mt-3 text-sm text-[rgb(var(--muted))] leading-relaxed">
-            KiReklame er en kuratert oversikt over norske aktører som jobber med KI i reklame,
-            annonser, video og kreativ produksjon. Enten du trenger et KI‑byrå, AI‑drevet
-            reklamefilm eller produksjon av innhold for performance marketing, finner du
-            relevante leverandører her.
-          </p>
-          <p className="mt-3 text-sm text-[rgb(var(--muted))] leading-relaxed">
-            Bruk filtrene for å finne byråer med riktig tjenesteområde, prispunkt og AI‑nivå.
-            Du kan også utforske steder og tags for mer nisjet søk innen markedsføring og
-            reklame.
-          </p>
-          <ul className="mt-4 text-sm text-[rgb(var(--muted))] grid gap-1">
-            <li>KI reklamebyråer og AI‑first studioer</li>
-            <li>AI‑video, reklamefilm og kreativ produksjon</li>
-            <li>Markedsføring, performance og innholdsproduksjon</li>
-            <li>Generativ design, post‑produksjon og automatisering</li>
-          </ul>
-          <div className="mt-5 flex flex-wrap gap-2 text-sm">
-            <Link
-              href="/ki-reklamebyra"
-              className="rounded-full border border-[rgb(var(--border))] bg-[rgb(var(--bg))] px-3 py-1.5 text-[rgb(var(--fg))] hover:opacity-80 transition"
-            >
-              KI reklamebyrå
-            </Link>
-            <Link
-              href="/ai-video"
-              className="rounded-full border border-[rgb(var(--border))] bg-[rgb(var(--bg))] px-3 py-1.5 text-[rgb(var(--fg))] hover:opacity-80 transition"
-            >
-              AI‑video produksjon
-            </Link>
-            <Link
-              href="/ki-markedsforing"
-              className="rounded-full border border-[rgb(var(--border))] bg-[rgb(var(--bg))] px-3 py-1.5 text-[rgb(var(--fg))] hover:opacity-80 transition"
-            >
-              KI markedsføring
-            </Link>
+          <div className="mt-3 grid gap-6 md:grid-cols-[1.1fr,0.9fr]">
+            <div>
+              <h2 className="text-3xl md:text-4xl font-semibold tracking-tight">
+                KI reklame, AI‑video og markedsføring i Norge
+              </h2>
+              <p className="mt-3 max-w-2xl text-sm leading-relaxed text-[rgb(var(--muted))]">
+                KiReklame er en kuratert oversikt over norske aktører som jobber med KI i
+                reklame, annonser, video og kreativ produksjon. Enten du trenger et KI‑byrå,
+                AI‑drevet reklamefilm eller produksjon av innhold for performance marketing,
+                finner du relevante leverandører her.
+              </p>
+              <p className="mt-3 max-w-2xl text-sm leading-relaxed text-[rgb(var(--muted))]">
+                Bruk filtrene for å finne byråer med riktig tjenesteområde, prispunkt og
+                AI‑nivå. Du kan også utforske steder og tags for mer nisjet søk innen
+                markedsføring og reklame.
+              </p>
+            </div>
+            <div className="rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/40 p-4">
+              <div className="text-[11px] uppercase tracking-[0.22em] text-[rgb(var(--muted))]">
+                Fokusområder
+              </div>
+              <ul className="mt-3 grid gap-2 text-[11px] text-[rgb(var(--muted))] sm:grid-cols-2">
+                <li className="rounded-full border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-3 py-1.5">
+                  KI reklamebyråer og AI‑first studioer
+                </li>
+                <li className="rounded-full border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-3 py-1.5">
+                  AI‑video, reklamefilm og kreativ produksjon
+                </li>
+                <li className="rounded-full border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-3 py-1.5">
+                  Markedsføring, performance og innholdsproduksjon
+                </li>
+                <li className="rounded-full border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-3 py-1.5">
+                  Generativ design, post‑produksjon og automatisering
+                </li>
+              </ul>
+              <div className="mt-4 flex flex-wrap gap-2 text-sm">
+                <Link
+                  href="/ki-reklamebyra"
+                  className="rounded-full border border-[rgb(var(--border))] bg-[rgb(var(--bg))] px-3 py-1.5 text-[rgb(var(--fg))] hover:opacity-80 transition"
+                >
+                  KI reklamebyrå
+                </Link>
+                <Link
+                  href="/ai-video"
+                  className="rounded-full border border-[rgb(var(--border))] bg-[rgb(var(--bg))] px-3 py-1.5 text-[rgb(var(--fg))] hover:opacity-80 transition"
+                >
+                  AI‑video produksjon
+                </Link>
+                <Link
+                  href="/ki-markedsforing"
+                  className="rounded-full border border-[rgb(var(--border))] bg-[rgb(var(--bg))] px-3 py-1.5 text-[rgb(var(--fg))] hover:opacity-80 transition"
+                >
+                  KI markedsføring
+                </Link>
+              </div>
+            </div>
           </div>
         </div>
       </section>
