@@ -1,4 +1,5 @@
 // src/app/kontakt/page.tsx
+import Link from "next/link";
 import { siteMeta } from "@/lib/seo";
 import type { Metadata } from "next";
 
