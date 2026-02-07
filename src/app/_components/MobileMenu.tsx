@@ -65,7 +65,7 @@ export default function MobileMenu({ isAuthed, isAdmin }: Props) {
                 Selskaper
               </Link>
 
-              <Link href="/om" onClick={close} className={itemClass}>
+              <Link href="/ki-reklamebyra" onClick={close} className={itemClass}>
                 Om
               </Link>
 

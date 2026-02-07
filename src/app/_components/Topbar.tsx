@@ -39,7 +39,7 @@ export default async function Topbar() {
     Norge
   </Link>
 
-  <Link href="/om" className="hover:opacity-80 transition">
+  <Link href="/ki-reklamebyra" className="hover:opacity-80 transition">
   Om
 </Link>
 

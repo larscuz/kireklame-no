@@ -19,6 +19,11 @@ const nextConfig = {
   async redirects() {
     return [
       {
+        source: "/om",
+        destination: "https://kireklame.no/ki-reklamebyra",
+        permanent: true,
+      },
+      {
         source: "/:path*",
         has: [{ type: "host", value: "www.kireklame.no" }],
         destination: "https://kireklame.no/:path*",
