@@ -66,6 +66,11 @@ export default async function AdminDashboardPage() {
           title="Selskaper"
           desc="Admin-visning av selskaper (status, lenker, redigering)."
         />
+        <Card
+          href="/admin/outreach"
+          title="Outreach"
+          desc="Send personlige e-poster med cover image."
+        />
       </div>
     </main>
   );
