@@ -13,6 +13,9 @@ export function siteMeta(args: {
     title: args.title,
     description: args.description,
     alternates: { canonical: url },
+    icons: {
+      icon: "/KIREKLAMElogo-black.gif",
+    },
     openGraph: {
       title: args.title,
       description: args.description,
@@ -21,20 +24,18 @@ export function siteMeta(args: {
       locale: "nb_NO",
       type: "website",
       images: [
-  {
-    url: `${site}/og-linkedin.jpg`,
-    width: 1200,
-    height: 627
-  }
-]
-
+        {
+          url: `${site}/og-linkedin.jpg`,
+          width: 1200,
+          height: 627,
+        },
+      ],
     },
     twitter: {
       card: "summary_large_image",
       title: args.title,
       description: args.description,
-      images: [`${site}/og-linkedin.jpg`]
-
-    }
+      images: [`${site}/og-linkedin.jpg`],
+    },
   };
 }

@@ -23,7 +23,7 @@ const jsonLd = {
       url: "https://kireklame.no/",
       logo: {
         "@type": "ImageObject",
-        url: "https://kireklame.no/favicon.ico",
+        url: "https://kireklame.no/KIREKLAMElogo-black.gif",
       },
     },
     {
