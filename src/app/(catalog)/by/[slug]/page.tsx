@@ -4,6 +4,7 @@ import { getCompaniesByLocationSlug, getLocationBySlug } from "@/lib/supabase/se
 import { siteMeta } from "@/lib/seo";
 import { localizePath } from "@/lib/i18n";
 import { getLocale } from "@/lib/i18n.server";
+import { getAdForPlacement } from "@/lib/ads";
 
 export async function generateMetadata({
   params,
@@ -29,8 +30,11 @@ export default async function CityPage({
   const locale = await getLocale();
   const { slug } = await params;
 
-  const location = await getLocationBySlug(slug);
-  const companies = await getCompaniesByLocationSlug(slug);
+  const [location, companies, inlineAd] = await Promise.all([
+    getLocationBySlug(slug),
+    getCompaniesByLocationSlug(slug),
+    getAdForPlacement("catalog_inline_card"),
+  ]);
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-10">
@@ -71,7 +75,7 @@ export default async function CityPage({
       </section>
 
       <div className="mt-8">
-        <ListingGrid companies={companies} />
+        <ListingGrid companies={companies} inlineAd={inlineAd} />
       </div>
     </div>
   );

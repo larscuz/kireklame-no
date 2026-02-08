@@ -52,6 +52,11 @@ export default async function AdminDashboardPage() {
           desc="Featured selskap + hero video på forsiden."
         />
         <Card
+          href="/admin/ads"
+          title="Annonser"
+          desc="Legg til og administrer annonse-plasseringer."
+        />
+        <Card
           href="/admin/moderate"
           title="Moderering"
           desc="Godkjenn/avslå innsendinger og publisering."

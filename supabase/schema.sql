@@ -100,6 +100,28 @@ create table if not exists public.submissions (
   created_at timestamptz not null default now()
 );
 
+create table if not exists public.ads (
+  id bigserial primary key,
+  placement text not null,
+  title text,
+  meta text,
+  description text,
+  image_url text not null,
+  mobile_image_url text,
+  href text not null,
+  alt text not null,
+  label text,
+  cta_text text,
+  priority int not null default 0,
+  is_active boolean not null default true,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create trigger trg_ads_updated_at
+before update on public.ads
+for each row execute function public.set_updated_at();
+
 alter table public.locations enable row level security;
 alter table public.tags enable row level security;
 alter table public.companies enable row level security;
@@ -108,6 +130,7 @@ alter table public.links enable row level security;
 alter table public.profiles enable row level security;
 alter table public.claims enable row level security;
 alter table public.submissions enable row level security;
+alter table public.ads enable row level security;
 
 create policy "public read locations" on public.locations
 for select using (true);
@@ -141,3 +164,6 @@ for select using (auth.uid() = user_id);
 
 create policy "insert submissions" on public.submissions
 for insert with check (true);
+
+create policy "public read ads" on public.ads
+for select using (true);

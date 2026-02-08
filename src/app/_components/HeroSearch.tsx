@@ -3,22 +3,7 @@
 
 import HeroBackgroundVideo from "./HeroBackgroundVideo";
 import { localizePath, type Locale } from "@/lib/i18n";
-
-type SponsorAd = {
-  id: number;
-  title?: string | null;
-
-  // Desktop (høyre kolonne)
-  image_url: string;
-
-  // Mobil (banner) – fallbacker til image_url hvis null/undefined
-  mobile_image_url?: string | null;
-
-  href: string;
-  alt: string;
-  label?: string | null;
-  cta_text?: string | null;
-};
+import type { SponsorAd } from "@/lib/ads";
 
 export default function HeroSearch({
   initialQuery,
@@ -50,9 +35,13 @@ export default function HeroSearch({
 }) {
   // Bruk banner om den finnes, ellers desktop-bilde som fallback
   const mobileImg = sponsorAd?.mobile_image_url ?? sponsorAd?.image_url ?? null;
+  const sponsorLabel = normalizeSponsorLabel(
+    sponsorAd?.label ?? copy.sponsorLabel,
+    locale
+  );
 
   return (
-    <section className="mx-auto max-w-6xl px-4 pt-10 pb-8">
+    <section className="mx-auto max-w-6xl px-4 pt-4 pb-4">
       {/* HERO + SPONSOR SLOT */}
       <div
         className={
@@ -125,7 +114,7 @@ export default function HeroSearch({
                   target="_blank"
                   rel="noreferrer"
                   className="group block"
-                  aria-label={`${sponsorAd.label ?? copy.sponsorLabel}: ${
+                  aria-label={`${sponsorLabel}: ${
                     sponsorAd.title ?? copy.openLinkFallback
                   }`}
                 >
@@ -147,7 +136,7 @@ export default function HeroSearch({
 <div className="absolute inset-0 p-3 sm:p-4 flex flex-col justify-between">
   <div>
     <span className="inline-flex items-center rounded-full border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/80 backdrop-blur px-2 py-0.5 text-[10px] sm:text-[11px] font-semibold uppercase tracking-wide text-[rgb(var(--muted))]">
-                      {sponsorAd.label ?? copy.sponsorLabel}
+                      {sponsorLabel}
                     </span>
   </div>
 
@@ -170,7 +159,7 @@ export default function HeroSearch({
                 target="_blank"
                 rel="noreferrer"
                 className="group block h-full"
-                aria-label={`${sponsorAd.label ?? copy.sponsorLabel}: ${
+                aria-label={`${sponsorLabel}: ${
                   sponsorAd.title ?? copy.openLinkFallback
                 }`}
               >
@@ -185,7 +174,7 @@ export default function HeroSearch({
                   <div className="absolute inset-0 p-4 flex flex-col justify-between">
                     <div>
                       <span className="inline-flex items-center rounded-full border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/80 backdrop-blur px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-[rgb(var(--muted))]">
-                        {sponsorAd.label ?? copy.sponsorLabel}
+                        {sponsorLabel}
                       </span>
                     </div>
 
@@ -203,4 +192,13 @@ export default function HeroSearch({
       </div>
     </section>
   );
+}
+
+function normalizeSponsorLabel(label: string, locale: string) {
+  if (locale !== "en") return label;
+  const lowered = label.trim().toLowerCase();
+  if (lowered === "sponset" || lowered === "sponset arrangement") {
+    return "Sponsored";
+  }
+  return label;
 }

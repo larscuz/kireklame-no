@@ -4,6 +4,7 @@ import { getCompaniesByTagSlug, getTagBySlug } from "@/lib/supabase/server";
 import { siteMeta } from "@/lib/seo";
 import { localizePath } from "@/lib/i18n";
 import { getLocale } from "@/lib/i18n.server";
+import { getAdForPlacement } from "@/lib/ads";
 
 export async function generateMetadata({
   params,
@@ -30,8 +31,11 @@ export default async function TagPage({
   const locale = await getLocale();
   const { slug } = await params;
 
-  const tag = await getTagBySlug(slug);
-  const companies = await getCompaniesByTagSlug(slug);
+  const [tag, companies, inlineAd] = await Promise.all([
+    getTagBySlug(slug),
+    getCompaniesByTagSlug(slug),
+    getAdForPlacement("catalog_inline_card"),
+  ]);
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-10">
@@ -75,7 +79,7 @@ export default async function TagPage({
       </section>
 
       <div className="mt-8">
-        <ListingGrid companies={companies} />
+        <ListingGrid companies={companies} inlineAd={inlineAd} />
       </div>
     </div>
   );

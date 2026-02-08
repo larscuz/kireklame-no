@@ -16,15 +16,38 @@ async function updateSettingsAction(formData: FormData) {
   const featured_hero_video_url =
     String(formData.get("featured_hero_video_url") ?? "").trim() || null;
 
+  const companies_featured_company_slug =
+    String(formData.get("companies_featured_company_slug") ?? "").trim() || null;
+
+  const companies_hero_video_url =
+    String(formData.get("companies_hero_video_url") ?? "").trim() || null;
+
+  const international_featured_company_slug =
+    String(formData.get("international_featured_company_slug") ?? "").trim() ||
+    null;
+
+  const international_hero_video_url =
+    String(formData.get("international_hero_video_url") ?? "").trim() || null;
+
   const db = supabaseAdmin();
   const { error } = await db
     .from("site_settings")
-    .upsert({ id: 1, featured_company_slug, featured_hero_video_url });
+    .upsert({
+      id: 1,
+      featured_company_slug,
+      featured_hero_video_url,
+      companies_featured_company_slug,
+      companies_hero_video_url,
+      international_featured_company_slug,
+      international_hero_video_url,
+    });
 
   if (error) throw new Error(error.message);
 
   // bust cache
   revalidatePath("/");
+  revalidatePath("/selskaper");
+  revalidatePath("/internasjonalt");
   revalidatePath("/admin/settings");
 }
 
@@ -36,7 +59,9 @@ export default async function AdminSettingsPage() {
     await Promise.all([
       db
         .from("site_settings")
-        .select("featured_company_slug, featured_hero_video_url")
+        .select(
+          "featured_company_slug, featured_hero_video_url, companies_featured_company_slug, companies_hero_video_url, international_featured_company_slug, international_hero_video_url"
+        )
         .eq("id", 1)
         .maybeSingle(),
       db.from("companies").select("name, slug, is_active").order("name", { ascending: true }),
@@ -87,6 +112,10 @@ export default async function AdminSettingsPage() {
         action={updateSettingsAction}
         className="mt-8 grid gap-4 rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] p-6 shadow-soft"
       >
+        <div className="text-sm font-semibold text-[rgb(var(--muted))]">
+          Forside
+        </div>
+
         <div className="grid gap-2">
           <label className="text-sm font-semibold">Featured selskap</label>
           <select
@@ -129,6 +158,108 @@ export default async function AdminSettingsPage() {
           />
           <p className="text-xs text-[rgb(var(--muted))]">
             Bruk en direkte .mp4-url. Tomt felt = ingen bakgrunnsvideo.
+          </p>
+        </div>
+
+        <div className="mt-2 text-sm font-semibold text-[rgb(var(--muted))]">
+          Selskaper
+        </div>
+
+        <div className="grid gap-2">
+          <label className="text-sm font-semibold">Featured selskap</label>
+          <select
+            name="companies_featured_company_slug"
+            defaultValue={settings?.companies_featured_company_slug ?? ""}
+            className="w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-4 py-2"
+          >
+            <option value="">— Ingen —</option>
+
+            <optgroup label="Aktive">
+              {active.map((c: any) => (
+                <option key={c.slug} value={c.slug}>
+                  {c.name} ({c.slug})
+                </option>
+              ))}
+            </optgroup>
+
+            {inactive.length ? (
+              <optgroup label="Ikke aktive">
+                {inactive.map((c: any) => (
+                  <option key={c.slug} value={c.slug}>
+                    {c.name} ({c.slug})
+                  </option>
+                ))}
+              </optgroup>
+            ) : null}
+          </select>
+          <p className="text-xs text-[rgb(var(--muted))]">
+            Vises i hero-blokken på /selskaper og lenker til /selskap/[slug].
+          </p>
+        </div>
+
+        <div className="grid gap-2">
+          <label className="text-sm font-semibold">
+            Hero video URL (.mp4)
+          </label>
+          <input
+            name="companies_hero_video_url"
+            defaultValue={settings?.companies_hero_video_url ?? ""}
+            placeholder="https://.../video.mp4"
+            className="w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-4 py-2"
+          />
+          <p className="text-xs text-[rgb(var(--muted))]">
+            Tomt felt = ingen bakgrunnsvideo.
+          </p>
+        </div>
+
+        <div className="mt-2 text-sm font-semibold text-[rgb(var(--muted))]">
+          Internasjonalt
+        </div>
+
+        <div className="grid gap-2">
+          <label className="text-sm font-semibold">Featured selskap</label>
+          <select
+            name="international_featured_company_slug"
+            defaultValue={settings?.international_featured_company_slug ?? ""}
+            className="w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-4 py-2"
+          >
+            <option value="">— Ingen —</option>
+
+            <optgroup label="Aktive">
+              {active.map((c: any) => (
+                <option key={c.slug} value={c.slug}>
+                  {c.name} ({c.slug})
+                </option>
+              ))}
+            </optgroup>
+
+            {inactive.length ? (
+              <optgroup label="Ikke aktive">
+                {inactive.map((c: any) => (
+                  <option key={c.slug} value={c.slug}>
+                    {c.name} ({c.slug})
+                  </option>
+                ))}
+              </optgroup>
+            ) : null}
+          </select>
+          <p className="text-xs text-[rgb(var(--muted))]">
+            Vises i hero-blokken på /internasjonalt og lenker til /selskap/[slug].
+          </p>
+        </div>
+
+        <div className="grid gap-2">
+          <label className="text-sm font-semibold">
+            Hero video URL (.mp4)
+          </label>
+          <input
+            name="international_hero_video_url"
+            defaultValue={settings?.international_hero_video_url ?? ""}
+            placeholder="https://.../video.mp4"
+            className="w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-4 py-2"
+          />
+          <p className="text-xs text-[rgb(var(--muted))]">
+            Tomt felt = ingen bakgrunnsvideo.
           </p>
         </div>
 

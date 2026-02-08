@@ -1,8 +1,16 @@
 import { CompanyCardModel } from "@/lib/types";
 import CompanyCard from "./CompanyCard";
 import { getLocale } from "@/lib/i18n.server";
+import AdSlot from "./AdSlot";
+import type { SponsorAd } from "@/lib/ads";
 
-export default async function ListingGrid({ companies }: { companies: CompanyCardModel[] }) {
+export default async function ListingGrid({
+  companies,
+  inlineAd,
+}: {
+  companies: CompanyCardModel[];
+  inlineAd?: SponsorAd | null;
+}) {
   const locale = await getLocale();
   if (!companies.length) {
     return (
@@ -14,10 +22,24 @@ export default async function ListingGrid({ companies }: { companies: CompanyCar
     );
   }
 
+  const insertAt = 3;
+  const shouldInsert = Boolean(inlineAd) && companies.length > insertAt;
+
   return (
     <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-      {companies.map((c) => (
-        <CompanyCard key={c.id} company={c} />
+      {companies.map((c, index) => (
+        <div key={c.id} className="contents">
+          <CompanyCard company={c} />
+          {shouldInsert && index === insertAt - 1 ? (
+            <AdSlot
+              ad={inlineAd ?? null}
+              sponsorLabel={locale === "en" ? "Sponsored" : "Sponset"}
+              openLinkFallback={locale === "en" ? "Open link" : "Åpne lenke"}
+              variant="card"
+              locale={locale}
+            />
+          ) : null}
+        </div>
       ))}
     </div>
   );

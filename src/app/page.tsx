@@ -9,6 +9,8 @@ import { supabaseAdmin } from "@/lib/supabase/admin";
 import { siteMeta } from "@/lib/seo";
 import { localizePath } from "@/lib/i18n";
 import { getLocale } from "@/lib/i18n.server";
+import { getAdForPlacement } from "@/lib/ads";
+import AdSlot from "./_components/AdSlot";
 
 export const metadata = siteMeta({
   title: "KI reklame i Norge – byråer, video og markedsføring | KiReklame",
@@ -46,18 +48,27 @@ export default async function Home(props: any) {
         }
       : null;
 
-  // 3) Hent aktiv annonse for hero sidebar
-  const { data: ad } = await supabaseAdmin()
-    .from("ads")
-    .select("id, title, image_url, mobile_image_url, href, alt, label, cta_text, priority")
-    .eq("placement", "home_hero_sidebar")
-    .eq("is_active", true)
-    .order("priority", { ascending: true })
-    .limit(1)
-    .maybeSingle();
+  // 3) Annonser
+  const [ad, bannerAd, inlineAd] = await Promise.all([
+    getAdForPlacement("home_hero_sidebar"),
+    getAdForPlacement("catalog_top_banner"),
+    getAdForPlacement("catalog_inline_card"),
+  ]);
 
   return (
     <div className="bg-[rgb(var(--bg))]">
+      {bannerAd ? (
+        <section className="mx-auto max-w-6xl px-4 pt-3 mb-2">
+          <AdSlot
+            ad={bannerAd}
+            sponsorLabel={locale === "en" ? "Sponsored" : "Sponset"}
+            openLinkFallback={locale === "en" ? "Open link" : "Åpne lenke"}
+            variant="banner"
+            locale={locale}
+          />
+        </section>
+      ) : null}
+
       <HeroSearch
         initialQuery={params.q ?? ""}
         heroVideoUrl={heroVideoUrl}
@@ -86,7 +97,7 @@ export default async function Home(props: any) {
       </section>
 
       <section className="mx-auto max-w-6xl px-4 pb-10">
-        <ListingGrid companies={companies} />
+        <ListingGrid companies={companies} inlineAd={inlineAd} />
       </section>
 
       {/* SEO: hold this at the bottom */}

@@ -13,11 +13,11 @@ export default async function CompanyCard({ company }: { company: CompanyCardMod
   return (
     <div className="group rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] shadow-soft hover:shadow-lift transition overflow-hidden">
       <Link href={localizePath(locale, `/selskap/${company.slug}`)} className="block">
-        <div className="relative aspect-[16/11] overflow-hidden">
+        <div className="relative aspect-[16/11] overflow-hidden bg-[rgb(var(--bg))]">
           <CoverImg
             src={cover}
             alt={company.name}
-            className="h-full w-full object-cover group-hover:scale-[1.02] transition duration-300"
+            className="h-full w-full object-contain object-center group-hover:scale-[1.02] transition duration-300"
           />
 
           <div className="absolute left-3 top-3 flex gap-2">
