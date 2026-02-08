@@ -37,7 +37,7 @@ export async function getAdForPlacement(placement: string) {
 }
 
 function getFallbackAd(placement: string): SponsorAd | null {
-  const banner = "/ads/GullhaienBanner.png";
+  const banner = "/ads/GullhaienBanner.svg";
   const hero = "/ads/Gullhaien.png";
 
   const base: SponsorAd = {
@@ -47,7 +47,7 @@ function getFallbackAd(placement: string): SponsorAd | null {
     description: "Celebrating Excellence in AI‑Driven Creative Communication.",
     image_url: hero,
     mobile_image_url: banner,
-    href: "https://kireklame.no",
+    href: "https://gullhaien.no/",
     alt: "Gullhaien 2026",
     label: "Sponset",
     cta_text: "Se event →",
