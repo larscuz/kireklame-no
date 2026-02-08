@@ -18,7 +18,7 @@ type AdLead = {
 };
 
 export default async function OtherAiServicesPage() {
-  const locale = getLocale();
+  const locale = await getLocale();
   const supabase = await supabaseServerClient();
   const { data, error } = await supabase
     .from("ad_leads")

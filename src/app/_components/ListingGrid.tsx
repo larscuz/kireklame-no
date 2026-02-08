@@ -2,8 +2,8 @@ import { CompanyCardModel } from "@/lib/types";
 import CompanyCard from "./CompanyCard";
 import { getLocale } from "@/lib/i18n.server";
 
-export default function ListingGrid({ companies }: { companies: CompanyCardModel[] }) {
-  const locale = getLocale();
+export default async function ListingGrid({ companies }: { companies: CompanyCardModel[] }) {
+  const locale = await getLocale();
   if (!companies.length) {
     return (
       <div className="rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] p-8 text-[rgb(var(--muted))] shadow-soft">

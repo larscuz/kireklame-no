@@ -11,8 +11,8 @@ export const metadata: Metadata = siteMeta({
   path: "/kontakt",
 });
 
-export default function ContactPage() {
-  const locale = getLocale();
+export default async function ContactPage() {
+  const locale = await getLocale();
   return (
     <main className="mx-auto max-w-4xl px-4 py-12">
       <div className="rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] p-8 shadow-soft">

@@ -18,7 +18,7 @@ export const metadata = siteMeta({
 });
 
 export default async function Home(props: any) {
-  const locale = getLocale();
+  const locale = await getLocale();
   const params = await parseSearchParamsAsync(props?.searchParams);
 
   // 1) Hent katalog-data som før

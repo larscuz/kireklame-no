@@ -21,7 +21,7 @@ export default async function CompaniesPage({
 }: {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
-  const locale = getLocale();
+  const locale = await getLocale();
   const sp = await searchParams;
   const params = parseSearchParams(sp);
   const { companies, facets } = await getCompanies(params);

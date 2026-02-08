@@ -18,7 +18,7 @@ export default async function InternasjonaltPage({
 }: {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
-  const locale = getLocale();
+  const locale = await getLocale();
   const sp = await searchParams;
   const params = parseSearchParams(sp);
 

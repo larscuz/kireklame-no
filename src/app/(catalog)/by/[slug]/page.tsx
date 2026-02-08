@@ -26,7 +26,7 @@ export default async function CityPage({
 }: {
   params: Promise<{ slug: string }>;
 }) {
-  const locale = getLocale();
+  const locale = await getLocale();
   const { slug } = await params;
 
   const location = await getLocationBySlug(slug);

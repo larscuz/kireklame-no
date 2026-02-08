@@ -92,7 +92,7 @@ export async function generateMetadata({
 }: {
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
-  const locale = getLocale();
+  const locale = await getLocale();
   const { slug } = await params;
   const company = await getCompanyBySlug(slug);
 
@@ -163,7 +163,7 @@ export default async function CompanyPage({
 }: {
   params: Promise<{ slug: string }>;
 }) {
-  const locale = getLocale();
+  const locale = await getLocale();
   const { slug } = await params;
   const company = await getCompanyBySlug(slug);
 

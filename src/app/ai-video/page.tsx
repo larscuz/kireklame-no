@@ -11,8 +11,8 @@ export const metadata: Metadata = siteMeta({
   path: "/ai-video",
 });
 
-export default function AiVideoPage() {
-  const locale = getLocale();
+export default async function AiVideoPage() {
+  const locale = await getLocale();
   const copy =
     locale === "en"
       ? {

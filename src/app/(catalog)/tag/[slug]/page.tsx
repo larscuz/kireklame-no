@@ -27,7 +27,7 @@ export default async function TagPage({
 }: {
   params: Promise<{ slug: string }>;
 }) {
-  const locale = getLocale();
+  const locale = await getLocale();
   const { slug } = await params;
 
   const tag = await getTagBySlug(slug);

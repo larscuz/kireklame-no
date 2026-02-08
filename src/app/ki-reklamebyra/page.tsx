@@ -11,8 +11,8 @@ export const metadata: Metadata = siteMeta({
   path: "/ki-reklamebyra",
 });
 
-export default function KiReklamebyraPage() {
-  const locale = getLocale();
+export default async function KiReklamebyraPage() {
+  const locale = await getLocale();
   const copy =
     locale === "en"
       ? {

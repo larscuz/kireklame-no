@@ -14,8 +14,8 @@ export const metadata: Metadata = siteMeta({
   path: "/",
 });
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
-  const locale = getLocale();
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const locale = await getLocale();
   const jsonLd = {
     "@context": "https://schema.org",
     "@graph": [

@@ -6,8 +6,8 @@ import { aiLevelLabel, priceLevelLabel, typeLabel } from "@/lib/utils";
 import { localizePath } from "@/lib/i18n";
 import { getLocale } from "@/lib/i18n.server";
 
-export default function CompanyCard({ company }: { company: CompanyCardModel }) {
-  const locale = getLocale();
+export default async function CompanyCard({ company }: { company: CompanyCardModel }) {
+  const locale = await getLocale();
   const cover = company.cover_image || "/covers/cover-1.jpg";
 
   return (

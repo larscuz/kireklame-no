@@ -11,8 +11,8 @@ export const metadata: Metadata = siteMeta({
   path: "/ki-markedsforing",
 });
 
-export default function KiMarkedsforingPage() {
-  const locale = getLocale();
+export default async function KiMarkedsforingPage() {
+  const locale = await getLocale();
   const copy =
     locale === "en"
       ? {

@@ -2,8 +2,8 @@ import Link from "next/link";
 import { localizePath } from "@/lib/i18n";
 import { getLocale } from "@/lib/i18n.server";
 
-export default function Footer() {
-  const locale = getLocale();
+export default async function Footer() {
+  const locale = await getLocale();
   return (
     <footer className="border-t border-[rgb(var(--border))]">
       <div className="mx-auto max-w-6xl px-4 py-10">

@@ -11,7 +11,7 @@ import { getLocale } from "@/lib/i18n.server";
 
 
 export default async function Topbar() {
-  const locale = getLocale();
+  const locale = await getLocale();
   const supabase = await supabaseServerClient();
   const { data } = await supabase.auth.getUser();
   const user = data.user;
