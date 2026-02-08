@@ -39,6 +39,7 @@ export async function getAdForPlacement(placement: string) {
 function getFallbackAd(placement: string): SponsorAd | null {
   const banner = "/ads/GullhaienBanner.png";
   const hero = "/ads/Gullhaien.png";
+  const aigency = "/ads/AigencyAmsterdam.png";
 
   const base: SponsorAd = {
     id: 0,
@@ -55,6 +56,14 @@ function getFallbackAd(placement: string): SponsorAd | null {
 
   switch (placement) {
     case "home_hero_sidebar":
+      return {
+        ...base,
+        title: "Aigency Amsterdam",
+        image_url: aigency,
+        mobile_image_url: aigency,
+        alt: "Aigency Amsterdam",
+        cta_text: "Se mer →",
+      };
     case "international_hero_sidebar":
     case "companies_hero_sidebar":
       return base;
