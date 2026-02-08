@@ -42,7 +42,7 @@ export default function AdSlot({
               <img
                 src={img}
                 alt={ad.alt}
-                className="absolute inset-0 h-full w-full object-contain object-center"
+                className="absolute inset-0 h-full w-full object-cover object-center"
                 loading="lazy"
               />
             ) : null}

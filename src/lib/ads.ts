@@ -37,7 +37,7 @@ export async function getAdForPlacement(placement: string) {
 }
 
 function getFallbackAd(placement: string): SponsorAd | null {
-  const banner = "/ads/GullhaienBanner.svg";
+  const banner = "/ads/GullhaienBanner.png";
   const hero = "/ads/Gullhaien.png";
 
   const base: SponsorAd = {
