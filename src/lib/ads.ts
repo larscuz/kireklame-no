@@ -56,14 +56,7 @@ function getFallbackAd(placement: string): SponsorAd | null {
 
   switch (placement) {
     case "home_hero_sidebar":
-      return {
-        ...base,
-        title: "Aigency Amsterdam",
-        image_url: aigency,
-        mobile_image_url: aigency,
-        alt: "Aigency Amsterdam",
-        cta_text: "Se mer →",
-      };
+      return base;
     case "international_hero_sidebar":
     case "companies_hero_sidebar":
       return base;
