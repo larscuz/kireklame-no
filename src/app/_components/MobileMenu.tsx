@@ -3,13 +3,16 @@
 import Link from "next/link";
 import { useState } from "react";
 import SignOutButton from "./SignOutButton";
+import LanguageSwitcher from "./LanguageSwitcher";
+import { localizePath, type Locale } from "@/lib/i18n";
 
 type Props = {
   isAuthed: boolean;
   isAdmin: boolean;
+  locale: Locale;
 };
 
-export default function MobileMenu({ isAuthed, isAdmin }: Props) {
+export default function MobileMenu({ isAuthed, isAdmin, locale }: Props) {
   const [open, setOpen] = useState(false);
 
   const close = () => setOpen(false);
@@ -57,24 +60,34 @@ export default function MobileMenu({ isAuthed, isAdmin }: Props) {
 
             {/* Block list */}
             <nav className="mt-4 grid gap-2">
-              <Link href="/internasjonalt" onClick={close} className={itemClass}>
-                Internasjonal
+              <LanguageSwitcher className={itemClass} onClick={close} />
+
+              <Link
+                href={localizePath(locale, "/internasjonalt")}
+                onClick={close}
+                className={itemClass}
+              >
+                {locale === "en" ? "International" : "Internasjonal"}
               </Link>
 
-              <Link href="/selskaper" onClick={close} className={itemClass}>
-                Selskaper
+              <Link href={localizePath(locale, "/selskaper")} onClick={close} className={itemClass}>
+                {locale === "en" ? "Companies" : "Selskaper"}
               </Link>
 
-              <Link href="/ki-reklamebyra" onClick={close} className={itemClass}>
-                Om
+              <Link
+                href={localizePath(locale, "/ki-reklamebyra")}
+                onClick={close}
+                className={itemClass}
+              >
+                {locale === "en" ? "About" : "Om"}
               </Link>
 
-              <Link href="/kontakt" onClick={close} className={itemClass}>
-                Kontakt
+              <Link href={localizePath(locale, "/kontakt")} onClick={close} className={itemClass}>
+                {locale === "en" ? "Contact" : "Kontakt"}
               </Link>
 
               {isAdmin ? (
-                <Link href="/admin" onClick={close} className={itemClass}>
+                <Link href={localizePath(locale, "/admin")} onClick={close} className={itemClass}>
                   Admin
                 </Link>
               ) : null}
@@ -84,29 +97,37 @@ export default function MobileMenu({ isAuthed, isAdmin }: Props) {
 
               {isAuthed ? (
                 <>
-                  <Link href="/me" onClick={close} className={itemClass}>
-                    Min side
+                  <Link href={localizePath(locale, "/me")} onClick={close} className={itemClass}>
+                    {locale === "en" ? "My page" : "Min side"}
                   </Link>
 
-                  <Link href="/andre-ki-tjenester" onClick={close} className={itemClass}>
-                    Andre KI-tjenester
+                  <Link
+                    href={localizePath(locale, "/andre-ki-tjenester")}
+                    onClick={close}
+                    className={itemClass}
+                  >
+                    {locale === "en" ? "Other AI services" : "Andre KI-tjenester"}
                   </Link>
 
                   {/* SignOutButton støtter ikke onClick -> vi lukker via wrapper */}
                   <div onClick={close}>
                     <SignOutButton className={`${itemClass} text-left`}>
-                      Logg ut
+                      {locale === "en" ? "Sign out" : "Logg ut"}
                     </SignOutButton>
                   </div>
                 </>
               ) : (
                 <>
-                  <Link href="/andre-ki-tjenester" onClick={close} className={itemClass}>
-                    Andre KI-tjenester
+                  <Link
+                    href={localizePath(locale, "/andre-ki-tjenester")}
+                    onClick={close}
+                    className={itemClass}
+                  >
+                    {locale === "en" ? "Other AI services" : "Andre KI-tjenester"}
                   </Link>
 
-                  <Link href="/auth" onClick={close} className={itemClass}>
-                    Logg inn
+                  <Link href={localizePath(locale, "/auth")} onClick={close} className={itemClass}>
+                    {locale === "en" ? "Sign in" : "Logg inn"}
                   </Link>
                 </>
               )}

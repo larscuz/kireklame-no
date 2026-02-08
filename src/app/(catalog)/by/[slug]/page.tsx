@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import ListingGrid from "@/app/_components/ListingGrid";
 import { getCompaniesByLocationSlug, getLocationBySlug } from "@/lib/supabase/server";
 import { siteMeta } from "@/lib/seo";
+import { localizePath } from "@/lib/i18n";
+import { getLocale } from "@/lib/i18n.server";
 
 export async function generateMetadata({
   params,
@@ -24,6 +26,7 @@ export default async function CityPage({
 }: {
   params: Promise<{ slug: string }>;
 }) {
+  const locale = getLocale();
   const { slug } = await params;
 
   const location = await getLocationBySlug(slug);
@@ -36,29 +39,33 @@ export default async function CityPage({
         <span className="text-[rgb(var(--muted))] font-normal">({companies.length})</span>
       </h1>
       <p className="mt-2 text-[rgb(var(--muted))]">
-        Kuratert oversikt (v1) – flere kilder kommer via autofyll.
+        {locale === "en"
+          ? "Curated overview (v1) — more sources will be added via autofill."
+          : "Kuratert oversikt (v1) – flere kilder kommer via autofyll."}
       </p>
 
       <section className="mt-6 rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] p-5 shadow-soft">
-        <div className="text-sm font-semibold">Relaterte temaer</div>
+        <div className="text-sm font-semibold">
+          {locale === "en" ? "Related topics" : "Relaterte temaer"}
+        </div>
         <div className="mt-2 flex flex-wrap gap-2 text-sm">
           <a
-            href="/ki-reklamebyra"
+            href={localizePath(locale, "/ki-reklamebyra")}
             className="rounded-full border border-[rgb(var(--border))] bg-[rgb(var(--bg))] px-3 py-1.5 text-[rgb(var(--fg))] hover:opacity-80 transition"
           >
-            KI reklamebyrå
+            {locale === "en" ? "AI advertising agencies" : "KI reklamebyrå"}
           </a>
           <a
-            href="/ai-video"
+            href={localizePath(locale, "/ai-video")}
             className="rounded-full border border-[rgb(var(--border))] bg-[rgb(var(--bg))] px-3 py-1.5 text-[rgb(var(--fg))] hover:opacity-80 transition"
           >
-            AI‑video produksjon
+            {locale === "en" ? "AI video production" : "AI‑video produksjon"}
           </a>
           <a
-            href="/ki-markedsforing"
+            href={localizePath(locale, "/ki-markedsforing")}
             className="rounded-full border border-[rgb(var(--border))] bg-[rgb(var(--bg))] px-3 py-1.5 text-[rgb(var(--fg))] hover:opacity-80 transition"
           >
-            KI markedsføring
+            {locale === "en" ? "AI marketing" : "KI markedsføring"}
           </a>
         </div>
       </section>

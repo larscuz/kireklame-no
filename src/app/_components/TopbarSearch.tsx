@@ -1,10 +1,13 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 export default function TopbarSearch() {
   const router = useRouter();
+  const pathname = usePathname() || "/";
+  const isEn = pathname === "/en" || pathname.startsWith("/en/");
+  const basePath = isEn ? "/en/selskaper" : "/selskaper";
   const [open, setOpen] = useState(false);
   const [q, setQ] = useState("");
   const inputRef = useRef<HTMLInputElement | null>(null);
@@ -20,7 +23,7 @@ export default function TopbarSearch() {
     const query = q.trim();
     const params = new URLSearchParams();
     if (query) params.set("q", query);
-    router.push(`/selskaper${params.toString() ? `?${params.toString()}` : ""}`);
+    router.push(`${basePath}${params.toString() ? `?${params.toString()}` : ""}`);
     setOpen(false);
   }
 
@@ -31,7 +34,7 @@ export default function TopbarSearch() {
         type="button"
         onClick={() => setOpen((v) => !v)}
         className="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] shadow-soft hover:shadow-lift transition"
-        aria-label="Søk"
+        aria-label={isEn ? "Search" : "Søk"}
         aria-expanded={open}
       >
         {/* enkel søk-ikon (SVG) */}
@@ -65,7 +68,7 @@ export default function TopbarSearch() {
               value={q}
               onChange={(e) => setQ(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && submit()}
-              placeholder="Søk i selskaper…"
+              placeholder={isEn ? "Search companies…" : "Søk i selskaper…"}
               className="h-9 w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))] px-3 text-sm outline-none"
             />
             <button
@@ -73,20 +76,20 @@ export default function TopbarSearch() {
               onClick={submit}
               className="h-9 rounded-xl bg-[rgb(var(--fg))] text-[rgb(var(--bg))] px-3 text-sm font-semibold hover:opacity-90 transition"
             >
-              Søk
+              {isEn ? "Search" : "Søk"}
             </button>
           </div>
 
           <div className="mt-2 flex items-center justify-between">
             <span className="text-[11px] text-[rgb(var(--muted))]">
-              Enter for å søke
+              {isEn ? "Press Enter to search" : "Enter for å søke"}
             </span>
             <button
               type="button"
               onClick={() => setOpen(false)}
               className="text-[11px] text-[rgb(var(--muted))] hover:opacity-80"
             >
-              Lukk
+              {isEn ? "Close" : "Lukk"}
             </button>
           </div>
         </div>

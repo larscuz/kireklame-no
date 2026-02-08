@@ -1,4 +1,5 @@
 import { clsx as cx } from "clsx";
+import type { Locale } from "./i18n";
 
 export const clsx = cx;
 
@@ -68,7 +69,14 @@ export function buildUrlWithParams(
   return qs ? `${basePath}?${qs}` : basePath;
 }
 
-export function aiLevelLabel(level: number) {
+export function aiLevelLabel(level: number, locale: Locale = "no") {
+  if (locale === "en") {
+    if (level <= 0) return "Student";
+    if (level === 1) return "Apprentice";
+    if (level === 2) return "Advanced";
+    if (level === 3) return "Expert";
+    return "Master"; // 4+
+  }
   if (level <= 0) return "Student";
   if (level === 1) return "Lærling";
   if (level === 2) return "Avansert";
@@ -76,8 +84,14 @@ export function aiLevelLabel(level: number) {
   return "Mester"; // 4+
 }
 
-
-export function priceLevelLabel(level: number) {
+export function priceLevelLabel(level: number, locale: Locale = "no") {
+  if (locale === "en") {
+    if (level <= 0) return "Low";
+    if (level === 1) return "Affordable";
+    if (level === 2) return "Mid";
+    if (level === 3) return "Premium";
+    return "Enterprise"; // 4+
+  }
   if (level <= 0) return "Lav";
   if (level === 1) return "Rimelig";
   if (level === 2) return "Mellom";
@@ -85,17 +99,24 @@ export function priceLevelLabel(level: number) {
   return "Enterprise"; // 4+
 }
 
-
-export function typeLabel(type: string) {
+export function typeLabel(type: string, locale: Locale = "no") {
   const key = String(type ?? "").trim().toLowerCase();
-  const map: Record<string, string> = {
-    "byrå": "Byrå",
-    "studio": "Studio",
-    "miljø": "Miljø",
-    "frilans": "Frilans",
-    "ub/sb": "UB/SB",
-  };
+  const map: Record<string, string> =
+    locale === "en"
+      ? {
+          "byrå": "Agency",
+          "studio": "Studio",
+          "miljø": "Collective",
+          "frilans": "Freelance",
+          "ub/sb": "Student",
+        }
+      : {
+          "byrå": "Byrå",
+          "studio": "Studio",
+          "miljø": "Miljø",
+          "frilans": "Frilans",
+          "ub/sb": "UB/SB",
+        };
   return map[key] || type;
 }
-
 

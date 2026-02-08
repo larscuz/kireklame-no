@@ -2,7 +2,9 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import { supabaseBrowser } from "@/lib/supabase/client";
+import { localizePath } from "@/lib/i18n";
 
 type ClaimRow = {
   id: string;
@@ -16,6 +18,9 @@ export default function ClaimCta({
   companyId: string;
   companySlug: string;
 }) {
+  const pathname = usePathname() || "/";
+  const isEn = pathname === "/en" || pathname.startsWith("/en/");
+  const locale = isEn ? "en" : "no";
 
   const [loggedIn, setLoggedIn] = useState(false);
   const [claimStatus, setClaimStatus] = useState<string | null>(null);
@@ -80,49 +85,52 @@ export default function ClaimCta({
       {!loggedIn ? (
         <>
           <Link
-  href={`/auth?mode=signup&next=${encodeURIComponent(
-  `/me?claim=${encodeURIComponent(`/claim/company/${companySlug}`)}`
-)}`}
-
-
-  className="rounded-xl bg-[rgb(var(--fg))] text-[rgb(var(--bg))] px-4 py-2.5 text-sm font-semibold hover:opacity-90 transition text-center"
->
-  Opprett konto for å claime
-</Link>
+            href={localizePath(
+              locale,
+              `/auth?mode=signup&next=${encodeURIComponent(
+                `/me?claim=${encodeURIComponent(`/claim/company/${companySlug}`)}`
+              )}`
+            )}
+            className="rounded-xl bg-[rgb(var(--fg))] text-[rgb(var(--bg))] px-4 py-2.5 text-sm font-semibold hover:opacity-90 transition text-center"
+          >
+            {isEn ? "Create account to claim" : "Opprett konto for å claime"}
+          </Link>
 
 
           <Link
-            href="/admin/submit"
+            href={localizePath(locale, "/admin/submit")}
             className="rounded-xl border border-[rgb(var(--border))] px-4 py-2.5 text-sm font-semibold hover:shadow-soft transition text-center"
           >
-            Tips oss om endringer
+            {isEn ? "Suggest updates" : "Tips oss om endringer"}
           </Link>
         </>
       ) : loading ? (
-        <div className="text-sm text-[rgb(var(--muted))]">Laster…</div>
+        <div className="text-sm text-[rgb(var(--muted))]">
+          {isEn ? "Loading…" : "Laster…"}
+        </div>
       ) : isApproved ? (
         // ✅ Her: bare én knapp
         <Link
-          href={`/me/company/${companyId}`}
+          href={localizePath(locale, `/me/company/${companyId}`)}
           className="rounded-xl bg-[rgb(var(--fg))] text-[rgb(var(--bg))] px-4 py-2.5 text-sm font-semibold hover:opacity-90 transition text-center"
         >
-          Rediger profil
+          {isEn ? "Edit profile" : "Rediger profil"}
         </Link>
       ) : (
         <>
           <Link
-            href={`/claim/company/${companySlug}`}
+            href={localizePath(locale, `/claim/company/${companySlug}`)}
 
             className="rounded-xl bg-[rgb(var(--fg))] text-[rgb(var(--bg))] px-4 py-2.5 text-sm font-semibold hover:opacity-90 transition text-center"
           >
-            Claim
+            {isEn ? "Claim" : "Claim"}
           </Link>
 
           <Link
-            href="/admin/submit"
+            href={localizePath(locale, "/admin/submit")}
             className="rounded-xl border border-[rgb(var(--border))] px-4 py-2.5 text-sm font-semibold hover:shadow-soft transition text-center"
           >
-            Tips oss om endringer
+            {isEn ? "Suggest updates" : "Tips oss om endringer"}
           </Link>
         </>
       )}

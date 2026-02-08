@@ -11,6 +11,8 @@ import { supabaseAdmin } from "@/lib/supabase/admin";
 import { siteMeta } from "@/lib/seo";
 import { aiLevelLabel, priceLevelLabel, typeLabel } from "@/lib/utils";
 import type { Metadata } from "next";
+import { localizePath } from "@/lib/i18n";
+import { getLocale } from "@/lib/i18n.server";
 
 function normalizeVideoUrl(url: string | null): string | null {
   if (!url) return null;
@@ -90,14 +92,20 @@ export async function generateMetadata({
 }: {
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
+  const locale = getLocale();
   const { slug } = await params;
   const company = await getCompanyBySlug(slug);
 
   if (!company) {
     return siteMeta({
-      title: "Fant ikke selskap – KiReklame.no",
+      title:
+        locale === "en"
+          ? "Company not found – KiReklame.no"
+          : "Fant ikke selskap – KiReklame.no",
       description:
-        "Detaljside i KiReklame.no – katalog over KI i reklame og kreativ produksjon.",
+        locale === "en"
+          ? "Detail page in KiReklame.no – a directory for AI in advertising and creative production."
+          : "Detaljside i KiReklame.no – katalog over KI i reklame og kreativ produksjon.",
       path: `/selskap/${slug}`,
     });
   }
@@ -106,7 +114,9 @@ export async function generateMetadata({
 
   const rawDesc =
     (company.short_description ?? company.description ?? "").trim() ||
-    "Finn kontaktinfo, tjenester og AI-nivå for aktører i reklame og kreativ produksjon.";
+    (locale === "en"
+      ? "Find contact info, services, and AI level for actors in advertising and creative production."
+      : "Finn kontaktinfo, tjenester og AI-nivå for aktører i reklame og kreativ produksjon.");
 
   const desc = trimDescription(rawDesc, 160);
 
@@ -114,7 +124,10 @@ export async function generateMetadata({
   const ogImage =
     toAbsoluteSiteUrl(company.cover_image) ?? "https://kireklame.no/covers/cover-1.jpg";
 
-  const title = `${name} – AI-first reklame og kreativ produksjon | KiReklame.no`;
+  const title =
+    locale === "en"
+      ? `${name} – AI-first advertising and creative production | KiReklame.no`
+      : `${name} – AI-first reklame og kreativ produksjon | KiReklame.no`;
 
   // siteMeta håndterer canonical/path; vi legger på OG/Twitter eksplisitt
   const base = siteMeta({
@@ -150,15 +163,21 @@ export default async function CompanyPage({
 }: {
   params: Promise<{ slug: string }>;
 }) {
+  const locale = getLocale();
   const { slug } = await params;
   const company = await getCompanyBySlug(slug);
 
   if (!company) {
     return (
       <div className="mx-auto max-w-3xl px-4 py-16">
-        <h1 className="text-2xl font-semibold">Fant ikke selskapet</h1>
-        <Link href="/selskaper" className="mt-4 inline-block underline">
-          Tilbake til katalog
+        <h1 className="text-2xl font-semibold">
+          {locale === "en" ? "Company not found" : "Fant ikke selskapet"}
+        </h1>
+        <Link
+          href={localizePath(locale, "/selskaper")}
+          className="mt-4 inline-block underline"
+        >
+          {locale === "en" ? "Back to directory" : "Tilbake til katalog"}
         </Link>
       </div>
     );
@@ -251,7 +270,7 @@ export default async function CompanyPage({
         <div className="relative md:col-span-3 md:row-span-2 aspect-[16/10] overflow-hidden rounded-2xl border bg-black">
           {!rawVideo ? (
             <div className="absolute inset-0 flex items-center justify-center text-sm text-muted">
-              Ingen video
+              {locale === "en" ? "No video" : "Ingen video"}
             </div>
           ) : mp4 ? (
             <video
@@ -275,13 +294,15 @@ export default async function CompanyPage({
         <h1 className="text-3xl md:text-4xl font-semibold">{company.name}</h1>
 
         <div className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-sm text-[rgb(var(--muted))]">
-          <span>{company.location?.name ?? "Ukjent sted"}</span>
+          <span>{company.location?.name ?? (locale === "en" ? "Unknown location" : "Ukjent sted")}</span>
           <span aria-hidden>•</span>
-          <span>{typeLabel(company.company_type)}</span>
+          <span>{typeLabel(company.company_type, locale)}</span>
           <span aria-hidden>•</span>
-          <span>AI: {aiLevelLabel(company.ai_level)}</span>
+          <span>AI: {aiLevelLabel(company.ai_level, locale)}</span>
           <span aria-hidden>•</span>
-          <span>Pris: {priceLevelLabel(company.price_level)}</span>
+          <span>
+            {locale === "en" ? "Price" : "Pris"}: {priceLevelLabel(company.price_level, locale)}
+          </span>
         </div>
       </div>
 
@@ -295,28 +316,28 @@ export default async function CompanyPage({
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               {company.email ? (
                 <a
-                  href={`/c/email/${slug}`}
+                  href={localizePath(locale, `/c/email/${slug}`)}
                   className="block text-center rounded-xl border px-4 py-3 font-semibold"
                 >
-                  Kontakt bedrift
+                  {locale === "en" ? "Contact company" : "Kontakt bedrift"}
                 </a>
               ) : (
                 <div
                   aria-disabled="true"
                   className="block text-center rounded-xl border px-4 py-3 font-semibold opacity-50 cursor-not-allowed select-none"
                 >
-                  Kontakt bedrift
+                  {locale === "en" ? "Contact company" : "Kontakt bedrift"}
                 </div>
               )}
 
               {websiteUrl ? (
                 <a
-                  href={`/go/${slug}`}
+                  href={localizePath(locale, `/go/${slug}`)}
                   target="_blank"
                   rel="noopener"
                   className="block text-center rounded-lg border px-3 py-2 text-sm font-medium hover:bg-[rgb(var(--bg))]"
                 >
-                  Besøk nettside ↗
+                  {locale === "en" ? "Visit website ↗" : "Besøk nettside ↗"}
                 </a>
               ) : (
                 <div />
@@ -330,20 +351,22 @@ export default async function CompanyPage({
             {!user ? (
               !isClaimed ? (
                 <Link
-                  href={`/claim/company/${company.slug}`}
+                  href={localizePath(locale, `/claim/company/${company.slug}`)}
                   className="inline-flex items-center justify-center rounded-lg border px-3 py-2 text-sm font-medium opacity-80 hover:opacity-100 transition"
                 >
-                  Claim bedrift
+                  {locale === "en" ? "Claim company" : "Claim bedrift"}
                 </Link>
               ) : (
-                <p className="text-sm text-muted">Allerede claimet</p>
+                <p className="text-sm text-muted">
+                  {locale === "en" ? "Already claimed" : "Allerede claimet"}
+                </p>
               )
             ) : isOwner ? (
               <Link
-                href={`/me/company/${company.id}`}
+                href={localizePath(locale, `/me/company/${company.id}`)}
                 className="block text-center rounded-xl border px-4 py-3 font-semibold"
               >
-                Rediger profil
+                {locale === "en" ? "Edit profile" : "Rediger profil"}
               </Link>
             ) : (
               <ClaimCta companyId={company.id} companySlug={company.slug} />

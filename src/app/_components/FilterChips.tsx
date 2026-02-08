@@ -1,12 +1,14 @@
 import { type Facets, type SearchParamsV1 } from "@/lib/utils";
+import { localizePath, type Locale } from "@/lib/i18n";
 
 type Props = {
   facets: Facets;
   params: SearchParamsV1;
   basePath?: string;
+  locale: Locale;
 };
 
-export default function FilterChips({ facets, params, basePath }: Props) {
+export default function FilterChips({ facets, params, basePath, locale }: Props) {
   // ---- Clear href: behold alt annet (f.eks. q), men fjern filter-feltene vi kontrollerer her
   const keptParams = Object.fromEntries(
     Object.entries(params as any).filter(([k, v]) => {
@@ -17,7 +19,10 @@ export default function FilterChips({ facets, params, basePath }: Props) {
   );
 
   const qs = new URLSearchParams(keptParams as any).toString();
-  const clearHref = qs ? `/selskaper?${qs}` : "/selskaper";
+  const clearHref = localizePath(
+    locale,
+    qs ? `/selskaper?${qs}` : "/selskaper"
+  );
 
   // ---- Sted options (defensivt)
   const locOptions: Array<{ value: string; label: string }> = (() => {
@@ -46,8 +51,10 @@ export default function FilterChips({ facets, params, basePath }: Props) {
   const btnClass =
     "h-10 inline-flex items-center justify-center rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-4 text-sm font-medium shadow-soft hover:shadow-lift transition whitespace-nowrap";
 
+  const actionPath = basePath ?? localizePath(locale, "/selskaper");
+
   return (
-    <form action={basePath ?? "/selskaper"} method="get" className="w-full">
+    <form action={actionPath} method="get" className="w-full">
       {/* Behold eksisterende params som skjulte inputs, ellers mister du søk/andre filtre */}
       {Object.entries(params as any).map(([k, v]) =>
         v == null || v === "" || k === "ai" || k === "price" || k === "type" || k === "loc" ? null : (
@@ -62,12 +69,12 @@ export default function FilterChips({ facets, params, basePath }: Props) {
           defaultValue={(params as any).ai ?? ""}
           className={`${selectClass} w-[160px] flex-none`}
         >
-          <option value="">AI-nivå</option>
-          <option value="0">0 – Student</option>
-          <option value="1">1 – Lærling</option>
-          <option value="2">2 – Avansert</option>
-          <option value="3">3 – Ekspert</option>
-          <option value="4">4 – Mester</option>
+          <option value="">{locale === "en" ? "AI level" : "AI-nivå"}</option>
+          <option value="0">0 – {locale === "en" ? "Student" : "Student"}</option>
+          <option value="1">1 – {locale === "en" ? "Apprentice" : "Lærling"}</option>
+          <option value="2">2 – {locale === "en" ? "Advanced" : "Avansert"}</option>
+          <option value="3">3 – {locale === "en" ? "Expert" : "Ekspert"}</option>
+          <option value="4">4 – {locale === "en" ? "Master" : "Mester"}</option>
         </select>
 
         <select
@@ -75,10 +82,10 @@ export default function FilterChips({ facets, params, basePath }: Props) {
           defaultValue={(params as any).price ?? ""}
           className={`${selectClass} w-[140px] flex-none`}
         >
-          <option value="">Pris</option>
-          <option value="0">0 – Lav</option>
-          <option value="1">1 – Rimelig</option>
-          <option value="2">2 – Mellom</option>
+          <option value="">{locale === "en" ? "Price" : "Pris"}</option>
+          <option value="0">0 – {locale === "en" ? "Low" : "Lav"}</option>
+          <option value="1">1 – {locale === "en" ? "Affordable" : "Rimelig"}</option>
+          <option value="2">2 – {locale === "en" ? "Mid" : "Mellom"}</option>
           <option value="3">3 – Premium</option>
           <option value="4">4 – Enterprise</option>
         </select>
@@ -88,12 +95,12 @@ export default function FilterChips({ facets, params, basePath }: Props) {
           defaultValue={(params as any).type ?? ""}
           className={`${selectClass} w-[150px] flex-none`}
         >
-          <option value="">Type</option>
-          <option value="byrå">Byrå</option>
+          <option value="">{locale === "en" ? "Type" : "Type"}</option>
+          <option value="byrå">{locale === "en" ? "Agency" : "Byrå"}</option>
           <option value="studio">Studio</option>
-          <option value="miljø">Miljø</option>
-          <option value="frilans">Frilans</option>
-          <option value="ub/sb">UB/SB</option>
+          <option value="miljø">{locale === "en" ? "Collective" : "Miljø"}</option>
+          <option value="frilans">{locale === "en" ? "Freelance" : "Frilans"}</option>
+          <option value="ub/sb">{locale === "en" ? "Student" : "UB/SB"}</option>
         </select>
 
         <select
@@ -101,7 +108,7 @@ export default function FilterChips({ facets, params, basePath }: Props) {
           defaultValue={(params as any).loc ?? ""}
           className={`${selectClass} w-[220px] flex-none`}
         >
-          <option value="">Sted</option>
+          <option value="">{locale === "en" ? "Location" : "Sted"}</option>
           {locOptions.map((o) => (
             <option key={o.value} value={o.value}>
               {o.label}
@@ -110,11 +117,11 @@ export default function FilterChips({ facets, params, basePath }: Props) {
         </select>
 
         <button type="submit" className={`${btnClass} flex-none`}>
-          Bruk
+          {locale === "en" ? "Apply" : "Bruk"}
         </button>
 
         <a href={clearHref} className={`${btnClass} flex-none`}>
-          Fjern
+          {locale === "en" ? "Clear" : "Fjern"}
         </a>
       </div>
     </form>

@@ -3,13 +3,16 @@ import Badge from "./Badge";
 import CoverImg from "./CoverImg";
 import { CompanyCardModel } from "@/lib/types";
 import { aiLevelLabel, priceLevelLabel, typeLabel } from "@/lib/utils";
+import { localizePath } from "@/lib/i18n";
+import { getLocale } from "@/lib/i18n.server";
 
 export default function CompanyCard({ company }: { company: CompanyCardModel }) {
+  const locale = getLocale();
   const cover = company.cover_image || "/covers/cover-1.jpg";
 
   return (
     <div className="group rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] shadow-soft hover:shadow-lift transition overflow-hidden">
-      <Link href={`/selskap/${company.slug}`} className="block">
+      <Link href={localizePath(locale, `/selskap/${company.slug}`)} className="block">
         <div className="relative aspect-[16/11] overflow-hidden">
           <CoverImg
             src={cover}
@@ -18,9 +21,14 @@ export default function CompanyCard({ company }: { company: CompanyCardModel }) 
           />
 
           <div className="absolute left-3 top-3 flex gap-2">
-            <Badge>AI: {aiLevelLabel(company.ai_level)}</Badge>
-            <Badge variant="muted">Pris: {priceLevelLabel(company.price_level)}</Badge>
-            {company.is_verified && <Badge variant="muted">Verifisert</Badge>}
+            <Badge>AI: {aiLevelLabel(company.ai_level, locale)}</Badge>
+            <Badge variant="muted">
+              {locale === "en" ? "Price" : "Pris"}:{" "}
+              {priceLevelLabel(company.price_level, locale)}
+            </Badge>
+            {company.is_verified && (
+              <Badge variant="muted">{locale === "en" ? "Verified" : "Verifisert"}</Badge>
+            )}
           </div>
         </div>
 
@@ -30,7 +38,7 @@ export default function CompanyCard({ company }: { company: CompanyCardModel }) 
               <div className="font-semibold tracking-tight">{company.name}</div>
               <div className="mt-1 text-sm text-[rgb(var(--muted))]">
                 {company.location?.name ? `${company.location.name} • ` : ""}
-                {typeLabel(company.company_type)}
+                {typeLabel(company.company_type, locale)}
               </div>
             </div>
           </div>

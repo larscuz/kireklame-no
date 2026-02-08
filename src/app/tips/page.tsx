@@ -2,8 +2,11 @@
 "use client";
 
 import { useState } from "react";
+import { usePathname } from "next/navigation";
 
 export default function TipsPage() {
+  const pathname = usePathname() || "/";
+  const isEn = pathname === "/en" || pathname.startsWith("/en/");
   const [urls, setUrls] = useState("");
   const [email, setEmail] = useState("");
   const [comment, setComment] = useState("");
@@ -30,31 +33,35 @@ export default function TipsPage() {
 
       if (!res.ok) {
         setStatus("error");
-        setMsg(data?.error || "Noe gikk galt.");
+        setMsg(data?.error || (isEn ? "Something went wrong." : "Noe gikk galt."));
         return;
       }
 
       setStatus("ok");
-      setMsg("Takk! Tipset er sendt.");
+      setMsg(isEn ? "Thanks! Your tip was sent." : "Takk! Tipset er sendt.");
       setUrls("");
       setEmail("");
       setComment("");
     } catch {
       setStatus("error");
-      setMsg("Kunne ikke sende. Prøv igjen.");
+      setMsg(isEn ? "Could not send. Try again." : "Kunne ikke sende. Prøv igjen.");
     }
   }
 
   return (
     <main className="mx-auto max-w-2xl px-4 py-12">
-      <h1 className="text-3xl font-semibold tracking-tight">Tips oss</h1>
+      <h1 className="text-3xl font-semibold tracking-tight">
+        {isEn ? "Send a tip" : "Tips oss"}
+      </h1>
       <p className="mt-2 text-sm text-[rgb(var(--muted))]">
-        Legg inn én eller flere URL-er (én per linje). E-post er valgfritt.
+        {isEn
+          ? "Add one or more URLs (one per line). Email is optional."
+          : "Legg inn én eller flere URL-er (én per linje). E-post er valgfritt."}
       </p>
 
       <form onSubmit={submit} className="mt-6 grid gap-4 rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] p-6 shadow-soft">
         <label className="grid gap-2">
-          <span className="text-sm font-semibold">URL-er</span>
+          <span className="text-sm font-semibold">{isEn ? "URLs" : "URL-er"}</span>
           <textarea
             value={urls}
             onChange={(e) => setUrls(e.target.value)}
@@ -63,25 +70,33 @@ export default function TipsPage() {
             className="w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))] px-3 py-2 text-sm outline-none"
             required
           />
-          <span className="text-xs text-[rgb(var(--muted))]">Tips: én URL per linje.</span>
+          <span className="text-xs text-[rgb(var(--muted))]">
+            {isEn ? "Tip: one URL per line." : "Tips: én URL per linje."}
+          </span>
         </label>
 
         <label className="grid gap-2">
-          <span className="text-sm font-semibold">E-post (valgfritt)</span>
+          <span className="text-sm font-semibold">
+            {isEn ? "Email (optional)" : "E-post (valgfritt)"}
+          </span>
           <input
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            placeholder="din@epost.no"
+            placeholder={isEn ? "you@email.com" : "din@epost.no"}
             className="w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))] px-3 py-2 text-sm outline-none"
           />
         </label>
 
         <label className="grid gap-2">
-          <span className="text-sm font-semibold">Kommentar (valgfritt)</span>
+          <span className="text-sm font-semibold">
+            {isEn ? "Comment (optional)" : "Kommentar (valgfritt)"}
+          </span>
           <input
             value={comment}
             onChange={(e) => setComment(e.target.value)}
-            placeholder="Kort begrunnelse / ekstra info…"
+            placeholder={
+              isEn ? "Short reason / extra info…" : "Kort begrunnelse / ekstra info…"
+            }
             className="w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))] px-3 py-2 text-sm outline-none"
           />
         </label>
@@ -92,7 +107,13 @@ export default function TipsPage() {
             disabled={status === "sending"}
             className="inline-flex items-center justify-center rounded-xl bg-[rgb(var(--fg))] text-[rgb(var(--bg))] px-4 py-2 text-sm font-semibold hover:opacity-90 disabled:opacity-60"
           >
-            {status === "sending" ? "Sender…" : "Send tips"}
+            {status === "sending"
+              ? isEn
+                ? "Sending…"
+                : "Sender…"
+              : isEn
+                ? "Send tip"
+                : "Send tips"}
           </button>
 
           {status !== "idle" ? (
@@ -104,7 +125,9 @@ export default function TipsPage() {
       </form>
 
       <p className="mt-6 text-xs text-[rgb(var(--muted))]">
-        Hvis du legger inn e-post, sender vi en kort bekreftelse (når vi har aktivert det).
+        {isEn
+          ? "If you include an email, we’ll send a short confirmation (once enabled)."
+          : "Hvis du legger inn e-post, sender vi en kort bekreftelse (når vi har aktivert det)."}
       </p>
     </main>
   );

@@ -2,6 +2,7 @@
 "use client";
 
 import HeroBackgroundVideo from "./HeroBackgroundVideo";
+import { localizePath, type Locale } from "@/lib/i18n";
 
 type SponsorAd = {
   id: number;
@@ -24,6 +25,8 @@ export default function HeroSearch({
   heroVideoUrl,
   featuredCompany,
   sponsorAd,
+  locale,
+  copy,
 }: {
   initialQuery: string; // beholdes for kompatibilitet (kan fjernes senere)
   heroVideoUrl?: string | null;
@@ -34,10 +37,17 @@ export default function HeroSearch({
     locationName?: string | null;
   } | null;
   sponsorAd?: SponsorAd | null;
+  locale: Locale;
+  copy: {
+    title: string;
+    titleMuted: string;
+    subtitle: string;
+    ctaRegister: string;
+    featuredLabel: string;
+    sponsorLabel: string;
+    openLinkFallback: string;
+  };
 }) {
-  const subtitle =
-    "Finn norske KI‑byråer og studioer for reklame, AI‑video og markedsføring.";
-
   // Bruk banner om den finnes, ellers desktop-bilde som fallback
   const mobileImg = sponsorAd?.mobile_image_url ?? sponsorAd?.image_url ?? null;
 
@@ -61,30 +71,32 @@ export default function HeroSearch({
             {/* Title + CTA */}
             <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
               <h1 className="text-4xl md:text-5xl font-semibold tracking-tight">
-                KI reklame{" "}
-                <span className="text-[rgb(var(--muted))] font-normal"> i Norge</span>
+                {copy.title}{" "}
+                <span className="text-[rgb(var(--muted))] font-normal">
+                  {copy.titleMuted}
+                </span>
               </h1>
 
               <a
-                href="/register/company"
+                href={localizePath(locale, "/register/company")}
                 className="inline-flex items-center justify-center rounded-2xl bg-[rgb(var(--fg))] text-[rgb(var(--bg))] px-4 py-3 font-semibold shadow-soft hover:opacity-90 transition"
               >
-                Registrer bedrift
+                {copy.ctaRegister}
               </a>
             </div>
 
             <p className="mt-4 max-w-2xl text-[rgb(var(--muted))] leading-relaxed">
-              {subtitle}
+              {copy.subtitle}
             </p>
 
             {/* Featured */}
             {featuredCompany?.slug ? (
               <div className="mt-6 text-sm text-[rgb(var(--muted))]">
                 <span className="mr-2 inline-flex items-center rounded-full border border-[rgb(var(--border))] bg-[rgb(var(--bg))] px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide">
-                  Featured
+                  {copy.featuredLabel}
                 </span>
                 <a
-                  href={`/selskap/${featuredCompany.slug}`}
+                  href={localizePath(locale, `/selskap/${featuredCompany.slug}`)}
                   className="font-semibold underline-offset-2 hover:underline text-[rgb(var(--fg))]"
                 >
                   {featuredCompany.name}
@@ -113,8 +125,8 @@ export default function HeroSearch({
                   target="_blank"
                   rel="noreferrer"
                   className="group block"
-                  aria-label={`${sponsorAd.label ?? "Sponset"}: ${
-                    sponsorAd.title ?? "Åpne lenke"
+                  aria-label={`${sponsorAd.label ?? copy.sponsorLabel}: ${
+                    sponsorAd.title ?? copy.openLinkFallback
                   }`}
                 >
                   {/* Stabil banner-høyde via aspect ratio (hindrer at bildet “blåser opp”) */}
@@ -135,8 +147,8 @@ export default function HeroSearch({
 <div className="absolute inset-0 p-3 sm:p-4 flex flex-col justify-between">
   <div>
     <span className="inline-flex items-center rounded-full border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/80 backdrop-blur px-2 py-0.5 text-[10px] sm:text-[11px] font-semibold uppercase tracking-wide text-[rgb(var(--muted))]">
-      {sponsorAd.label ?? "Sponset"}
-    </span>
+                      {sponsorAd.label ?? copy.sponsorLabel}
+                    </span>
   </div>
 
   <div className="flex items-end justify-end">
@@ -158,8 +170,8 @@ export default function HeroSearch({
                 target="_blank"
                 rel="noreferrer"
                 className="group block h-full"
-                aria-label={`${sponsorAd.label ?? "Sponset"}: ${
-                  sponsorAd.title ?? "Åpne lenke"
+                aria-label={`${sponsorAd.label ?? copy.sponsorLabel}: ${
+                  sponsorAd.title ?? copy.openLinkFallback
                 }`}
               >
                 <div className="relative h-full overflow-hidden bg-[rgb(var(--bg))]">
@@ -173,7 +185,7 @@ export default function HeroSearch({
                   <div className="absolute inset-0 p-4 flex flex-col justify-between">
                     <div>
                       <span className="inline-flex items-center rounded-full border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/80 backdrop-blur px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-[rgb(var(--muted))]">
-                        {sponsorAd.label ?? "Sponset"}
+                        {sponsorAd.label ?? copy.sponsorLabel}
                       </span>
                     </div>
 

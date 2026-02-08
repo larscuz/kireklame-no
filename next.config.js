@@ -31,6 +31,20 @@ const nextConfig = {
       },
     ];
   },
+
+  // rewrites handled in middleware to preserve locale header
+  async rewrites() {
+    return [
+      {
+        source: "/en",
+        destination: "/",
+      },
+      {
+        source: "/en/:path*",
+        destination: "/:path*",
+      },
+    ];
+  },
 };
 
 export default nextConfig;

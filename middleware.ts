@@ -11,8 +11,17 @@ export async function middleware(req: NextRequest) {
     return NextResponse.redirect(url, 308);
   }
 
-  // ✅ 2) Fortsett normal flyt (cookie refresh osv.)
-  const res = NextResponse.next();
+  // ✅ 2) Locale detection for /en (cookie + header)
+  const requestHeaders = new Headers(req.headers);
+  let locale = "no";
+
+  if (req.nextUrl.pathname === "/en" || req.nextUrl.pathname.startsWith("/en/")) {
+    locale = "en";
+  }
+
+  requestHeaders.set("x-lang", locale);
+  const res = NextResponse.next({ request: { headers: requestHeaders } });
+  res.cookies.set("lang", locale, { path: "/" });
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -45,6 +54,7 @@ export async function middleware(req: NextRequest) {
 
 export const config = {
   matcher: [
+    "/en/:path*",
     // ✅ Match alt vi bryr oss om, inkludert /api
     "/((?!_next/static|_next/image|favicon.ico|og.png|logo-mark.svg|covers/).*)",
   ],
