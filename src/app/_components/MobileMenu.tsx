@@ -17,9 +17,9 @@ export default function MobileMenu({ isAuthed, isAdmin, locale }: Props) {
 
   const close = () => setOpen(false);
 
-  // Felles styling: én "block list" i stedet for mange separate knapper
+  // Enkel listestil på solid panel (ikke separate kort-knapper)
   const itemClass =
-    "block w-full rounded-xl px-4 py-3 text-sm font-medium border border-[rgb(var(--border))] bg-[rgb(var(--card))] shadow-soft hover:shadow-lift transition";
+    "block w-full px-4 py-3.5 text-base font-medium text-[rgb(var(--fg))] hover:bg-[rgb(var(--bg))]/60 transition text-left";
 
   return (
     <>
@@ -58,8 +58,7 @@ export default function MobileMenu({ isAuthed, isAdmin, locale }: Props) {
               </button>
             </div>
 
-            {/* Block list */}
-            <nav className="mt-4 grid gap-2">
+            <nav className="mt-4 max-h-[calc(100vh-6.5rem)] overflow-y-auto rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))]/95 backdrop-blur-sm divide-y divide-[rgb(var(--border))]/70">
               <LanguageSwitcher className={itemClass} onClick={close} />
 
               <Link
@@ -92,9 +91,6 @@ export default function MobileMenu({ isAuthed, isAdmin, locale }: Props) {
                 </Link>
               ) : null}
 
-              {/* Divider-ish spacing */}
-              <div className="h-2" />
-
               {isAuthed ? (
                 <>
                   <Link href={localizePath(locale, "/me")} onClick={close} className={itemClass}>
@@ -111,7 +107,7 @@ export default function MobileMenu({ isAuthed, isAdmin, locale }: Props) {
 
                   {/* SignOutButton støtter ikke onClick -> vi lukker via wrapper */}
                   <div onClick={close}>
-                    <SignOutButton className={`${itemClass} text-left`}>
+                    <SignOutButton className={itemClass}>
                       {locale === "en" ? "Sign out" : "Logg ut"}
                     </SignOutButton>
                   </div>
