@@ -12,7 +12,7 @@ function uniqByUrl(items: MetadataRoute.Sitemap) {
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const site = process.env.NEXT_PUBLIC_SITE_URL || "https://kireklame.no";
-  const { companies, locations, tags } = await adminListSitemapEntities();
+  const { companies, locations, tags, newsArticles } = await adminListSitemapEntities();
 
   const base: MetadataRoute.Sitemap = [
     { url: `${site}/`, changeFrequency: "daily", priority: 1 },
@@ -22,6 +22,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${site}/ki-reklamebyra`, changeFrequency: "weekly", priority: 0.8 },
     { url: `${site}/ai-video`, changeFrequency: "weekly", priority: 0.8 },
     { url: `${site}/ki-markedsforing`, changeFrequency: "weekly", priority: 0.8 },
+    { url: `${site}/ki-avis`, changeFrequency: "daily", priority: 0.9 },
   ];
 
   const companyUrls: MetadataRoute.Sitemap = (companies ?? [])
@@ -54,5 +55,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.6,
     }));
 
-  return uniqByUrl([...base, ...companyUrls, ...cityUrls, ...tagUrls]);
+  const newsUrls: MetadataRoute.Sitemap = (newsArticles ?? [])
+    .filter((n: any) => {
+      const slug = String(n?.slug ?? "").trim().toLowerCase();
+      return slug && slug !== "null" && slug !== "undefined";
+    })
+    .map((n: any) => ({
+      url: `${site}/ki-avis/${n.slug}`,
+      changeFrequency: "daily" as const,
+      priority: 0.8,
+    }));
+
+  return uniqByUrl([...base, ...companyUrls, ...cityUrls, ...tagUrls, ...newsUrls]);
 }

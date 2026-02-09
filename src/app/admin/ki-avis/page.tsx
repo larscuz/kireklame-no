@@ -1,0 +1,503 @@
+import Link from "next/link";
+import type { Metadata } from "next";
+import { Bodoni_Moda, Manrope, Source_Serif_4 } from "next/font/google";
+import { revalidatePath } from "next/cache";
+import { requireAdmin } from "@/lib/supabase/server";
+import { supabaseAdmin } from "@/lib/supabase/admin";
+import { listNewsForAdmin, normalizeNewsUpsert } from "@/lib/news/articles";
+import {
+  coerceNewsPerspective,
+  coerceNewsStatus,
+  parseTopicTagsCsv,
+  topicTagsToCsv,
+} from "@/lib/news/utils";
+
+const masthead = Bodoni_Moda({
+  subsets: ["latin"],
+  weight: ["500", "700"],
+});
+
+const headline = Source_Serif_4({
+  subsets: ["latin"],
+  weight: ["400", "600", "700"],
+});
+
+const uiSans = Manrope({
+  subsets: ["latin"],
+  weight: ["400", "500", "700"],
+});
+
+const FIELD_CLASS =
+  "w-full border border-black/20 bg-[#fcf8ef] px-3 py-2 text-sm text-[#191919] outline-none focus:border-black/45";
+const TEXTAREA_CLASS = `${FIELD_CLASS} min-h-[90px]`;
+const LABEL_CLASS = "grid gap-1";
+const LABEL_TEXT_CLASS = "text-[11px] font-semibold uppercase tracking-[0.15em] text-black/60";
+const PRIMARY_BUTTON_CLASS =
+  "border border-black bg-black px-4 py-2 text-xs font-semibold uppercase tracking-[0.15em] text-white hover:bg-black/90";
+const SECONDARY_BUTTON_CLASS =
+  "border border-black/30 bg-[#f8f4eb] px-4 py-2 text-xs font-semibold uppercase tracking-[0.15em] text-black hover:bg-[#f1ede4]";
+
+export const dynamic = "force-dynamic";
+
+export const metadata: Metadata = {
+  title: "KiR Nyheter CMS – Admin",
+  description: "Redaksjonelt CMS for KiR Nyheter.",
+};
+
+function toDateInput(iso: string | null): string {
+  if (!iso) return "";
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return "";
+  return d.toISOString().slice(0, 16);
+}
+
+function parseDateInput(raw: string): string | null {
+  if (!raw) return null;
+  const d = new Date(raw);
+  if (Number.isNaN(d.getTime())) return null;
+  return d.toISOString();
+}
+
+async function saveArticle(formData: FormData) {
+  "use server";
+
+  await requireAdmin("/admin/ki-avis");
+
+  const id = String(formData.get("id") ?? "").trim() || null;
+  const title = String(formData.get("title") ?? "").trim();
+  const source_url = String(formData.get("source_url") ?? "").trim();
+  const source_name = String(formData.get("source_name") ?? "").trim();
+  const slug = String(formData.get("slug") ?? "").trim() || null;
+  const language = String(formData.get("language") ?? "no").trim() || "no";
+  const publishedAtRaw = String(formData.get("published_at") ?? "").trim();
+  const published_at = parseDateInput(publishedAtRaw);
+  const status = coerceNewsStatus(String(formData.get("status") ?? "draft").trim(), "draft");
+  const perspective = coerceNewsPerspective(
+    String(formData.get("perspective") ?? "neutral").trim(),
+    "neutral"
+  );
+  const topic_tags = parseTopicTagsCsv(String(formData.get("topic_tags") ?? ""));
+  const is_paywalled = formData.get("is_paywalled") === "on";
+  const paywall_note = String(formData.get("paywall_note") ?? "").trim() || null;
+  const excerpt = String(formData.get("excerpt") ?? "").trim() || null;
+  const summary = String(formData.get("summary") ?? "").trim() || null;
+  const body = String(formData.get("body") ?? "").trim() || null;
+  const editor_note = String(formData.get("editor_note") ?? "").trim() || null;
+  const hero_image_url = String(formData.get("hero_image_url") ?? "").trim() || null;
+  const cloudflare_worker_hint =
+    String(formData.get("cloudflare_worker_hint") ?? "").trim() || null;
+
+  if (!title || !source_url) {
+    throw new Error("Mangler tittel eller source_url");
+  }
+
+  const row = normalizeNewsUpsert({
+    id,
+    slug,
+    title,
+    source_name: source_name || "Ukjent kilde",
+    source_url,
+    language,
+    published_at,
+    status,
+    perspective,
+    topic_tags,
+    is_paywalled,
+    paywall_note,
+    excerpt,
+    summary,
+    body,
+    editor_note,
+    hero_image_url,
+    cloudflare_worker_hint,
+  });
+
+  const db = supabaseAdmin();
+  const payload = { ...row };
+  delete (payload as { id?: string | null }).id;
+
+  if (id) {
+    const { error } = await db.from("news_articles").update(payload).eq("id", id);
+    if (error) throw new Error(error.message);
+  } else {
+    const { error } = await db
+      .from("news_articles")
+      .upsert(payload, { onConflict: "source_url", ignoreDuplicates: false });
+    if (error) throw new Error(error.message);
+  }
+
+  revalidatePath("/ki-avis");
+  if (row.slug) revalidatePath(`/ki-avis/${row.slug}`);
+  revalidatePath("/admin/ki-avis");
+  revalidatePath("/sitemap.xml");
+}
+
+async function deleteArticle(formData: FormData) {
+  "use server";
+  await requireAdmin("/admin/ki-avis");
+  const id = String(formData.get("id") ?? "").trim();
+  if (!id) throw new Error("Mangler id");
+
+  const db = supabaseAdmin();
+  const { error } = await db.from("news_articles").delete().eq("id", id);
+  if (error) throw new Error(error.message);
+
+  revalidatePath("/ki-avis");
+  revalidatePath("/admin/ki-avis");
+  revalidatePath("/sitemap.xml");
+}
+
+export default async function KIAvisAdminPage() {
+  await requireAdmin("/admin/ki-avis");
+  const rows = await listNewsForAdmin(240);
+  const issueStamp = new Date().toLocaleString("nb-NO", {
+    dateStyle: "medium",
+    timeStyle: "short",
+  });
+
+  return (
+    <main className={`${uiSans.className} min-h-screen bg-[#f1ede4] text-[#191919]`}>
+      <div className="mx-auto max-w-[1280px] px-3 py-5 md:px-4 md:py-6">
+        <header className="border-y border-black/20 bg-[#f6f2e9]">
+          <div className="border-b border-black/15 px-3 py-2 text-[10px] uppercase tracking-[0.21em] text-black/65 md:px-4">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <span>Admin-utgave · KiR Nyheter</span>
+              <span>Oppdatert {issueStamp}</span>
+              <span>Avisa drives av Cuz Media AS</span>
+            </div>
+          </div>
+
+          <div className="px-3 py-4 md:px-4 md:py-5">
+            <div className="grid grid-cols-[1fr_auto_1fr] items-end gap-2 border-b border-black/20 pb-3">
+              <p className="hidden text-[10px] uppercase tracking-[0.22em] text-black/55 md:block">
+                Redaksjonell kontrollflate
+              </p>
+
+              <div className="text-center">
+                <div className="mx-auto mb-2 flex items-center justify-center gap-3">
+                  <img src="/KIREKLAMElogo.gif" alt="KiR Nyheter logo" className="h-11 w-11" />
+                  <span className={`${masthead.className} text-4xl leading-none md:text-6xl`}>
+                    KiR Nyheter CMS
+                  </span>
+                </div>
+                <p className="text-[10px] uppercase tracking-[0.24em] text-black/60 md:text-[11px]">
+                  Nasjonal desk for KI-stoff
+                </p>
+              </div>
+
+              <p className="hidden text-right text-[10px] uppercase tracking-[0.22em] text-black/55 md:block">
+                Cuz Media AS
+              </p>
+            </div>
+
+            <div className="mt-3 flex flex-wrap items-center justify-center gap-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-black/72 md:gap-4">
+              <Link href="/ki-avis" className="hover:text-black">
+                Åpne nettavis
+              </Link>
+              <span className="text-black/35">|</span>
+              <Link href="/admin" className="hover:text-black">
+                Til admin
+              </Link>
+              <span className="text-black/35">|</span>
+              <span>{rows.length} saker i arkivet</span>
+            </div>
+          </div>
+        </header>
+
+        <section className="mt-4 border border-black/20 bg-[#f8f4eb] p-4">
+          <h1 className={`${headline.className} text-[36px] leading-[1.02] md:text-[44px]`}>Ny sak</h1>
+          <p className="mt-1 text-sm text-black/68">
+            Opprett ny artikkel for <code className="bg-black/5 px-1">/ki-avis</code>. Publiserte saker
+            går rett ut i avisen.
+          </p>
+
+          <form action={saveArticle} className="mt-4 grid gap-3 md:grid-cols-2">
+            <input type="hidden" name="id" value="" />
+
+            <label className={LABEL_CLASS}>
+              <span className={LABEL_TEXT_CLASS}>Tittel</span>
+              <input name="title" required className={FIELD_CLASS} />
+            </label>
+
+            <label className={LABEL_CLASS}>
+              <span className={LABEL_TEXT_CLASS}>Slug (valgfri)</span>
+              <input name="slug" className={FIELD_CLASS} />
+            </label>
+
+            <label className={`${LABEL_CLASS} md:col-span-2`}>
+              <span className={LABEL_TEXT_CLASS}>Kilde-URL</span>
+              <input name="source_url" required className={FIELD_CLASS} />
+            </label>
+
+            <label className={LABEL_CLASS}>
+              <span className={LABEL_TEXT_CLASS}>Kilde-navn</span>
+              <input name="source_name" placeholder="f.eks. Kampanje" className={FIELD_CLASS} />
+            </label>
+
+            <label className={LABEL_CLASS}>
+              <span className={LABEL_TEXT_CLASS}>Språk</span>
+              <input name="language" defaultValue="no" className={FIELD_CLASS} />
+            </label>
+
+            <label className={LABEL_CLASS}>
+              <span className={LABEL_TEXT_CLASS}>Publisert dato</span>
+              <input type="datetime-local" name="published_at" className={FIELD_CLASS} />
+            </label>
+
+            <label className={LABEL_CLASS}>
+              <span className={LABEL_TEXT_CLASS}>Status</span>
+              <select name="status" defaultValue="draft" className={FIELD_CLASS}>
+                <option value="draft">draft</option>
+                <option value="published">published</option>
+                <option value="archived">archived</option>
+              </select>
+            </label>
+
+            <label className={LABEL_CLASS}>
+              <span className={LABEL_TEXT_CLASS}>Vinkel</span>
+              <select name="perspective" defaultValue="neutral" className={FIELD_CLASS}>
+                <option value="neutral">neutral</option>
+                <option value="critical">critical</option>
+                <option value="adoption">adoption</option>
+              </select>
+            </label>
+
+            <label className={LABEL_CLASS}>
+              <span className={LABEL_TEXT_CLASS}>Tema-tags (CSV)</span>
+              <input name="topic_tags" placeholder="ki_reklame, kritikk, betalingsmur" className={FIELD_CLASS} />
+            </label>
+
+            <label className={LABEL_CLASS}>
+              <span className={LABEL_TEXT_CLASS}>Hero image URL</span>
+              <input name="hero_image_url" className={FIELD_CLASS} />
+            </label>
+
+            <label className="md:col-span-2 inline-flex items-center gap-2 text-sm text-black/75">
+              <input type="checkbox" name="is_paywalled" className="h-4 w-4 border-black/30" />
+              Bak betalingsmur
+            </label>
+
+            <label className={`${LABEL_CLASS} md:col-span-2`}>
+              <span className={LABEL_TEXT_CLASS}>Paywall-notat</span>
+              <input name="paywall_note" className={FIELD_CLASS} />
+            </label>
+
+            <label className={`${LABEL_CLASS} md:col-span-2`}>
+              <span className={LABEL_TEXT_CLASS}>Ingress/Excerpt</span>
+              <textarea name="excerpt" rows={2} className={TEXTAREA_CLASS} />
+            </label>
+
+            <label className={`${LABEL_CLASS} md:col-span-2`}>
+              <span className={LABEL_TEXT_CLASS}>Oppsummering</span>
+              <textarea name="summary" rows={4} className={TEXTAREA_CLASS} />
+            </label>
+
+            <label className={`${LABEL_CLASS} md:col-span-2`}>
+              <span className={LABEL_TEXT_CLASS}>Redaksjonell tekst</span>
+              <textarea name="body" rows={6} className={TEXTAREA_CLASS} />
+            </label>
+
+            <label className={`${LABEL_CLASS} md:col-span-2`}>
+              <span className={LABEL_TEXT_CLASS}>Redaksjonell note</span>
+              <textarea name="editor_note" rows={2} className={TEXTAREA_CLASS} />
+            </label>
+
+            <label className={`${LABEL_CLASS} md:col-span-2`}>
+              <span className={LABEL_TEXT_CLASS}>Cloudflare worker hint</span>
+              <input
+                name="cloudflare_worker_hint"
+                defaultValue="ready_for_worker_enrichment"
+                className={FIELD_CLASS}
+              />
+            </label>
+
+            <div className="md:col-span-2 pt-1">
+              <button className={PRIMARY_BUTTON_CLASS}>Lagre ny sak</button>
+            </div>
+          </form>
+        </section>
+
+        <section className="mt-5 border-t border-black/20 pt-4">
+          <h2 className={`${masthead.className} text-[36px] leading-none md:text-[44px]`}>
+            Eksisterende saker ({rows.length})
+          </h2>
+
+          <div className="mt-3 border-y border-black/15 bg-[#f8f4eb]">
+            {rows.map((row) => (
+              <article key={row.id} className="border-b border-black/15 px-3 py-4 last:border-b-0 md:px-4">
+                <div className="mb-3 flex flex-wrap items-start justify-between gap-2 border-b border-black/10 pb-2">
+                  <div>
+                    <p className={`${headline.className} text-[30px] leading-[1.03] md:text-[35px]`}>
+                      {row.title}
+                    </p>
+                    <p className="mt-1 text-[11px] uppercase tracking-[0.14em] text-black/58">
+                      {row.source_name} · {row.status} · {row.perspective}
+                    </p>
+                  </div>
+                  <Link
+                    href={`/ki-avis/${row.slug}`}
+                    className="text-[11px] font-semibold uppercase tracking-[0.14em] underline underline-offset-4 hover:opacity-75"
+                  >
+                    Åpne sak
+                  </Link>
+                </div>
+
+                <form action={saveArticle} className="grid gap-3 md:grid-cols-2">
+                  <input type="hidden" name="id" value={row.id} />
+
+                  <label className={`${LABEL_CLASS} md:col-span-2`}>
+                    <span className={LABEL_TEXT_CLASS}>Tittel</span>
+                    <input name="title" defaultValue={row.title} required className={FIELD_CLASS} />
+                  </label>
+
+                  <label className={LABEL_CLASS}>
+                    <span className={LABEL_TEXT_CLASS}>Slug</span>
+                    <input name="slug" defaultValue={row.slug} className={FIELD_CLASS} />
+                  </label>
+
+                  <label className={LABEL_CLASS}>
+                    <span className={LABEL_TEXT_CLASS}>Kilde-navn</span>
+                    <input name="source_name" defaultValue={row.source_name} className={FIELD_CLASS} />
+                  </label>
+
+                  <label className={`${LABEL_CLASS} md:col-span-2`}>
+                    <span className={LABEL_TEXT_CLASS}>Kilde-URL</span>
+                    <input name="source_url" defaultValue={row.source_url} required className={FIELD_CLASS} />
+                  </label>
+
+                  <label className={LABEL_CLASS}>
+                    <span className={LABEL_TEXT_CLASS}>Språk</span>
+                    <input name="language" defaultValue={row.language} className={FIELD_CLASS} />
+                  </label>
+
+                  <label className={LABEL_CLASS}>
+                    <span className={LABEL_TEXT_CLASS}>Publisert dato</span>
+                    <input
+                      type="datetime-local"
+                      name="published_at"
+                      defaultValue={toDateInput(row.published_at)}
+                      className={FIELD_CLASS}
+                    />
+                  </label>
+
+                  <label className={LABEL_CLASS}>
+                    <span className={LABEL_TEXT_CLASS}>Status</span>
+                    <select name="status" defaultValue={row.status} className={FIELD_CLASS}>
+                      <option value="draft">draft</option>
+                      <option value="published">published</option>
+                      <option value="archived">archived</option>
+                    </select>
+                  </label>
+
+                  <label className={LABEL_CLASS}>
+                    <span className={LABEL_TEXT_CLASS}>Vinkel</span>
+                    <select name="perspective" defaultValue={row.perspective} className={FIELD_CLASS}>
+                      <option value="neutral">neutral</option>
+                      <option value="critical">critical</option>
+                      <option value="adoption">adoption</option>
+                    </select>
+                  </label>
+
+                  <label className={`${LABEL_CLASS} md:col-span-2`}>
+                    <span className={LABEL_TEXT_CLASS}>Tema-tags (CSV)</span>
+                    <input
+                      name="topic_tags"
+                      defaultValue={topicTagsToCsv(row.topic_tags)}
+                      className={FIELD_CLASS}
+                    />
+                  </label>
+
+                  <label className="md:col-span-2 inline-flex items-center gap-2 text-sm text-black/75">
+                    <input
+                      type="checkbox"
+                      name="is_paywalled"
+                      defaultChecked={row.is_paywalled}
+                      className="h-4 w-4 border-black/30"
+                    />
+                    Bak betalingsmur
+                  </label>
+
+                  <label className={`${LABEL_CLASS} md:col-span-2`}>
+                    <span className={LABEL_TEXT_CLASS}>Paywall-notat</span>
+                    <input
+                      name="paywall_note"
+                      defaultValue={row.paywall_note ?? ""}
+                      className={FIELD_CLASS}
+                    />
+                  </label>
+
+                  <label className={`${LABEL_CLASS} md:col-span-2`}>
+                    <span className={LABEL_TEXT_CLASS}>Ingress/Excerpt</span>
+                    <textarea
+                      name="excerpt"
+                      rows={2}
+                      defaultValue={row.excerpt ?? ""}
+                      className={TEXTAREA_CLASS}
+                    />
+                  </label>
+
+                  <label className={`${LABEL_CLASS} md:col-span-2`}>
+                    <span className={LABEL_TEXT_CLASS}>Oppsummering</span>
+                    <textarea
+                      name="summary"
+                      rows={4}
+                      defaultValue={row.summary ?? ""}
+                      className={TEXTAREA_CLASS}
+                    />
+                  </label>
+
+                  <label className={`${LABEL_CLASS} md:col-span-2`}>
+                    <span className={LABEL_TEXT_CLASS}>Redaksjonell tekst</span>
+                    <textarea
+                      name="body"
+                      rows={6}
+                      defaultValue={row.body ?? ""}
+                      className={TEXTAREA_CLASS}
+                    />
+                  </label>
+
+                  <label className={`${LABEL_CLASS} md:col-span-2`}>
+                    <span className={LABEL_TEXT_CLASS}>Redaksjonell note</span>
+                    <textarea
+                      name="editor_note"
+                      rows={2}
+                      defaultValue={row.editor_note ?? ""}
+                      className={TEXTAREA_CLASS}
+                    />
+                  </label>
+
+                  <label className={LABEL_CLASS}>
+                    <span className={LABEL_TEXT_CLASS}>Hero image URL</span>
+                    <input
+                      name="hero_image_url"
+                      defaultValue={row.hero_image_url ?? ""}
+                      className={FIELD_CLASS}
+                    />
+                  </label>
+
+                  <label className={LABEL_CLASS}>
+                    <span className={LABEL_TEXT_CLASS}>Cloudflare worker hint</span>
+                    <input
+                      name="cloudflare_worker_hint"
+                      defaultValue={row.cloudflare_worker_hint ?? ""}
+                      className={FIELD_CLASS}
+                    />
+                  </label>
+
+                  <div className="md:col-span-2 flex flex-wrap items-center gap-2 pt-1">
+                    <button className={PRIMARY_BUTTON_CLASS}>Lagre endringer</button>
+                  </div>
+                </form>
+
+                <form action={deleteArticle} className="mt-3">
+                  <input type="hidden" name="id" value={row.id} />
+                  <button className={SECONDARY_BUTTON_CLASS}>Slett sak</button>
+                </form>
+              </article>
+            ))}
+          </div>
+        </section>
+      </div>
+    </main>
+  );
+}

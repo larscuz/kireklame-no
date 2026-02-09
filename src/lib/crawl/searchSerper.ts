@@ -1,5 +1,5 @@
 // src/lib/crawl/searchSerper.ts
-type SerperOrganic = { link?: string; title?: string; snippet?: string };
+export type SerperOrganic = { link?: string; title?: string; snippet?: string };
 
 type GoogleSearchOpts = {
   gl?: string;
@@ -7,7 +7,7 @@ type GoogleSearchOpts = {
   num?: number;
 };
 
-async function googleSearchOrganic(
+export async function googleSearchOrganicResults(
   query: string,
   opts?: GoogleSearchOpts
 ): Promise<SerperOrganic[]> {
@@ -42,7 +42,7 @@ export async function googleSearchOrganicLinks(
   query: string,
   opts?: GoogleSearchOpts
 ): Promise<string[]> {
-  const organic = await googleSearchOrganic(query, opts);
+  const organic = await googleSearchOrganicResults(query, opts);
   return organic
     .map((o) => (typeof o?.link === "string" ? o.link : ""))
     .filter((link) => link.startsWith("http"));
@@ -52,7 +52,7 @@ export async function googleSearchTopLink(
   query: string,
   opts?: GoogleSearchOpts
 ): Promise<string | null> {
-  const organic = await googleSearchOrganic(query, opts);
+  const organic = await googleSearchOrganicResults(query, opts);
   const first = organic.find(o => typeof o?.link === "string" && o.link.startsWith("http"));
   return first?.link ?? null;
 }

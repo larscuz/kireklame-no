@@ -48,6 +48,10 @@ export default async function Topbar() {
             {locale === "en" ? "Advertise" : "Annonsere"}
           </Link>
 
+          <Link href={localizePath(locale, "/ki-avis")} className="hover:opacity-80 transition">
+            {locale === "en" ? "KiR News" : "KiR Nyheter"}
+          </Link>
+
           <Link href={localizePath(locale, "/ki-reklamebyra")} className="hover:opacity-80 transition">
             {locale === "en" ? "About" : "Om"}
           </Link>

@@ -38,6 +38,7 @@ SUPABASE_SERVICE_ROLE_KEY="YOUR_SERVICE_ROLE_KEY"
 INGEST_API_KEY="change-me-long-random"
 REVALIDATE_API_KEY="change-me-too"
 NEXT_PUBLIC_SITE_URL="http://localhost:3000"
+SERPER_API_KEY="serper-key-for-news-crawl"
 ```
 
 ## 3) Auth (passord)
@@ -88,17 +89,61 @@ Payload:
    - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
    - `SUPABASE_SERVICE_ROLE_KEY`
    - `INGEST_API_KEY`
+   - `SERPER_API_KEY`
    - `REVALIDATE_API_KEY`
    - `NEXT_PUBLIC_SITE_URL` (f.eks. `https://kireklame.no`)
 
 4. Deploy
 
-## 7) Seed-data
+## 7) KI-Avis (nettavis + crawler + CMS)
+
+1. Kjør SQL:
+   - `supabase/news-avis.sql` for eksisterende prosjekt
+   - eller oppdatert `supabase/schema.sql` for nytt prosjekt.
+2. Public side:
+   - `/ki-avis` (avisforside)
+   - `/ki-avis/[slug]` (artikler)
+3. Admin CMS:
+   - `/admin/ki-avis`
+4. Crawler (Serper + metadata):
+   - `POST /api/news/crawl`
+   - Header: `x-ingest-key: <INGEST_API_KEY>`
+   - Valgfri body:
+```json
+{
+  "dryRun": true,
+  "autoPublish": true,
+  "maxQueries": 12,
+  "maxArticles": 60,
+  "resultsPerQuery": 8
+}
+```
+5. Worker-ingest (Cloudflare-klargjort):
+   - `POST /api/news/ingest`
+   - Header: `x-ingest-key: <INGEST_API_KEY>`
+   - Body:
+```json
+{
+  "autoPublish": true,
+  "articles": [
+    {
+      "title": "Eksempel sak",
+      "source_url": "https://example.no/sak",
+      "source_name": "Example",
+      "summary": "Kort oppsummering",
+      "is_paywalled": false,
+      "topic_tags": ["ki_reklame", "kritikk"]
+    }
+  ]
+}
+```
+
+## 8) Seed-data
 
 Seed-data inneholder minst 20 norske aktører, men **v1 er placeholders** og må verifiseres.
 Når du har verifisert: sett `is_placeholder=false` og evt. `is_verified=true`.
 
-## 8) Design (Airbnb-inspirert)
+## 9) Design (Airbnb-inspirert)
 
 - Sticky topbar
 - “Hero” med stor typografi + søkefelt

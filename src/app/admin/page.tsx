@@ -47,6 +47,11 @@ export default async function AdminDashboardPage() {
 
       <div className="mt-8 grid gap-4 sm:grid-cols-2">
         <Card
+          href="/admin/ki-avis"
+          title="KiR Nyheter CMS"
+          desc="Rediger og publiser saker til KiR Nyheter."
+        />
+        <Card
           href="/admin/settings"
           title="Innstillinger"
           desc="Featured selskap + hero video på forsiden."
