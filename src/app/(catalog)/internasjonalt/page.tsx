@@ -26,12 +26,13 @@ export default async function InternasjonaltPage({
   const sp = await searchParams;
   const params = parseSearchParams(sp);
 
-  const [{ companies }, heroAd, bannerAd, inlineAd, gridBannerAd, settings] = await Promise.all([
+  const [{ companies }, heroAd, bannerAd, inlineAd, gridBannerAd, gridBannerAd2, settings] = await Promise.all([
     getCompanies(params, { market: "intl" }),
     getAdForPlacement("international_hero_sidebar"),
     getAdForPlacement("catalog_top_banner"),
     getAdForPlacement("catalog_inline_card"),
     getAdForPlacement("catalog_grid_banner"),
+    getAdForPlacement("catalog_grid_banner_2"),
     supabaseAdmin()
       .from("site_settings")
       .select("international_featured_company_slug, international_hero_video_url")
@@ -100,6 +101,7 @@ export default async function InternasjonaltPage({
             companies={intl}
             inlineAd={inlineAd}
             gridBannerAd={gridBannerAd}
+            gridBannerAd2={gridBannerAd2}
           />
         </div>
       </div>

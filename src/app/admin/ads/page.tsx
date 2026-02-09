@@ -13,6 +13,7 @@ const placements = [
   "catalog_top_banner",
   "catalog_inline_card",
   "catalog_grid_banner",
+  "catalog_grid_banner_2",
   "other_top_banner",
   "other_mid_banner",
   "other_hero_sidebar",
