@@ -32,7 +32,7 @@ export default async function Topbar() {
             />
           </div>
           <div className="leading-tight">
-            <div className="text-sm font-semibold tracking-tight">KiReklame</div>
+            <div className="text-base sm:text-lg font-semibold tracking-tight">KiReklame</div>
           </div>
         </Link>
 

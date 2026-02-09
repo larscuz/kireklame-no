@@ -23,8 +23,10 @@ export default function AdSlot({
   const isBanner = variant === "banner";
   const isSidebar = variant === "sidebar";
   const isHero = variant === "hero";
+  const bannerMobileImg = ad.mobile_image_url ?? ad.image_url;
+  const bannerDesktopImg = ad.image_url;
   const img = isBanner
-    ? ad.mobile_image_url ?? ad.image_url
+    ? bannerDesktopImg
     : isHero
       ? ad.image_url ?? ad.mobile_image_url ?? null
       : ad.image_url;
@@ -87,15 +89,18 @@ export default function AdSlot({
             </div>
           </div>
         ) : isBanner ? (
-          <div className="relative isolate h-[54px] w-full overflow-hidden bg-[rgb(var(--bg))] sm:h-[62px] lg:h-[72px]">
-            {img ? (
-              <img
-                src={img}
-                alt={ad.alt}
-                className="absolute inset-0 h-full w-full object-cover object-center"
-                style={{ objectPosition: "center center" }}
-                loading="lazy"
-              />
+          <div className="relative isolate h-[54px] w-full overflow-hidden bg-[rgb(var(--bg))] sm:h-[62px] md:h-[84px] lg:h-[108px] xl:h-[120px]">
+            {bannerDesktopImg ? (
+              <picture className="absolute inset-0 block h-full w-full">
+                <source media="(max-width: 767px)" srcSet={bannerMobileImg} />
+                <img
+                  src={bannerDesktopImg}
+                  alt={ad.alt}
+                  className="h-full w-full object-cover object-center"
+                  style={{ objectPosition: "center center" }}
+                  loading="lazy"
+                />
+              </picture>
             ) : null}
 
             <div className="absolute inset-0 bg-gradient-to-t from-black/22 via-black/6 to-transparent group-hover:from-black/14 transition" />
