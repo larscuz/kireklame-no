@@ -36,6 +36,7 @@ export default async function CompaniesPage({
     inlineAd,
     gridBannerAd,
     gridBannerAd2,
+    gridBannerAd3,
     settings,
   ] = await Promise.all([
     getCompanies(params),
@@ -44,6 +45,7 @@ export default async function CompaniesPage({
     getAdForPlacement("catalog_inline_card"),
     getAdForPlacement("catalog_grid_banner"),
     getAdForPlacement("catalog_grid_banner_2"),
+    getAdForPlacement("catalog_grid_banner_3"),
     supabaseAdmin()
       .from("site_settings")
       .select("companies_featured_company_slug, companies_hero_video_url")
@@ -196,6 +198,7 @@ export default async function CompaniesPage({
           inlineAd={inlineAd}
           gridBannerAd={gridBannerAd}
           gridBannerAd2={gridBannerAd2}
+          gridBannerAd3={gridBannerAd3}
         />
       </div>
     </div>

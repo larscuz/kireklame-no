@@ -49,12 +49,13 @@ export default async function Home(props: any) {
       : null;
 
   // 3) Annonser
-  const [ad, bannerAd, inlineAd, gridBannerAd, gridBannerAd2] = await Promise.all([
+  const [ad, bannerAd, inlineAd, gridBannerAd, gridBannerAd2, gridBannerAd3] = await Promise.all([
     getAdForPlacement("home_hero_sidebar"),
     getAdForPlacement("catalog_top_banner"),
     getAdForPlacement("catalog_inline_card"),
     getAdForPlacement("catalog_grid_banner"),
     getAdForPlacement("catalog_grid_banner_2"),
+    getAdForPlacement("catalog_grid_banner_3"),
   ]);
 
   return (
@@ -104,6 +105,7 @@ export default async function Home(props: any) {
           inlineAd={inlineAd}
           gridBannerAd={gridBannerAd}
           gridBannerAd2={gridBannerAd2}
+          gridBannerAd3={gridBannerAd3}
         />
       </section>
 

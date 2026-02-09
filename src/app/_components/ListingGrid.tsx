@@ -9,11 +9,13 @@ export default async function ListingGrid({
   inlineAd,
   gridBannerAd,
   gridBannerAd2,
+  gridBannerAd3,
 }: {
   companies: CompanyCardModel[];
   inlineAd?: SponsorAd | null;
   gridBannerAd?: SponsorAd | null;
   gridBannerAd2?: SponsorAd | null;
+  gridBannerAd3?: SponsorAd | null;
 }) {
   const locale = await getLocale();
   if (!companies.length) {
@@ -40,6 +42,11 @@ export default async function ListingGrid({
   const banner2InsertAfterCompanyIndex = shouldInsertInline ? 10 : 11;
   const shouldInsertGridBanner2 =
     Boolean(gridBannerAd2) && companies.length >= banner2InsertAfterCompanyIndex + 2;
+
+  // Third full-width grid banner between row 6 and row 7.
+  const banner3InsertAfterCompanyIndex = shouldInsertInline ? 16 : 17;
+  const shouldInsertGridBanner3 =
+    Boolean(gridBannerAd3) && companies.length >= banner3InsertAfterCompanyIndex + 2;
 
   return (
     <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
@@ -70,6 +77,17 @@ export default async function ListingGrid({
             <div className="sm:col-span-2 lg:col-span-3">
               <AdSlot
                 ad={gridBannerAd2 ?? null}
+                sponsorLabel={locale === "en" ? "Sponsored" : "Sponset"}
+                openLinkFallback={locale === "en" ? "Open link" : "Åpne lenke"}
+                variant="banner"
+                locale={locale}
+              />
+            </div>
+          ) : null}
+          {shouldInsertGridBanner3 && index === banner3InsertAfterCompanyIndex ? (
+            <div className="sm:col-span-2 lg:col-span-3">
+              <AdSlot
+                ad={gridBannerAd3 ?? null}
                 sponsorLabel={locale === "en" ? "Sponsored" : "Sponset"}
                 openLinkFallback={locale === "en" ? "Open link" : "Åpne lenke"}
                 variant="banner"
