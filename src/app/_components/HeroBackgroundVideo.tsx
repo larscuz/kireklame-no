@@ -8,9 +8,9 @@ export default function HeroBackgroundVideo({
   if (!src) return null;
 
   return (
-    <div className="absolute inset-0 overflow-hidden rounded-[inherit]">
+    <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-[inherit]">
       <video
-        className="h-full w-full object-cover"
+        className="absolute inset-0 block h-full w-full max-w-full object-cover object-center"
         src={src}
         poster={poster ?? undefined}
         autoPlay

@@ -38,7 +38,7 @@ export default function AdSlot({
         aria-label={`${label}: ${ad.title ?? openLinkFallback}`}
       >
         {isSidebar ? (
-          <div className="relative isolate h-full min-h-[280px] overflow-hidden bg-[rgb(var(--bg))]">
+          <div className="relative isolate h-full min-h-[190px] sm:min-h-[220px] lg:min-h-[280px] overflow-hidden bg-[rgb(var(--bg))]">
             {img ? (
               <img
                 src={img}
@@ -59,12 +59,12 @@ export default function AdSlot({
             </div>
           </div>
         ) : isBanner ? (
-          <div className="relative isolate overflow-hidden min-h-[72px] aspect-[16/2.4] sm:min-h-[80px] sm:aspect-[16/2.15] lg:aspect-[16/1.95] bg-[rgb(var(--bg))]">
+          <div className="relative isolate overflow-hidden min-h-[52px] aspect-[8/1] sm:min-h-[58px] sm:aspect-[8/1] lg:min-h-[64px] lg:aspect-[8/1] bg-[rgb(var(--bg))]">
             {img ? (
               <img
                 src={img}
                 alt={ad.alt}
-                className="absolute inset-0 h-full w-full object-contain object-center"
+                className="absolute inset-0 h-full w-full object-cover object-center"
                 loading="lazy"
               />
             ) : null}
