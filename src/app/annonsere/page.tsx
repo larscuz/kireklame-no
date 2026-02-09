@@ -34,6 +34,8 @@ type PlacementStats = {
   activeNowTitles: string[];
 };
 
+const durationOptionsMonths = [1, 3, 6] as const;
+
 function parseTime(value: string | null) {
   if (!value) return null;
   const parsed = Date.parse(value);
@@ -216,16 +218,12 @@ export default async function AdvertisePage() {
             >
               {locale === "en" ? "Contact sales" : "Kontakt salg"}
             </Link>
-            <a
-              href={`mailto:kontakt@kireklame.no?subject=${encodeURIComponent(
-                locale === "en"
-                  ? "Advertise on KiReklame"
-                  : "Annonsere på KiReklame"
-              )}`}
+            <Link
+              href={`${contactPath}?topic=${encodeURIComponent("annonsere")}`}
               className="inline-flex items-center rounded-xl border border-[rgb(var(--border))] px-4 py-2 text-sm font-semibold hover:bg-[rgb(var(--bg))] transition"
             >
-              kontakt@kireklame.no
-            </a>
+              {locale === "en" ? "Request ad placement" : "Be om annonseplass"}
+            </Link>
           </div>
         </div>
       </section>
@@ -281,9 +279,9 @@ export default async function AdvertisePage() {
               activeNowTitles: [],
             };
             const availability = availabilityLabel(stats, locale);
-            const durationLabels = placement.durationsDays.map((days) =>
-              locale === "en" ? `${days} days` : `${days} dager`
-            );
+            const contactHref = `${contactPath}?placement=${encodeURIComponent(
+              placement.key
+            )}&topic=${encodeURIComponent("annonsere")}`;
 
             return (
               <article
@@ -309,7 +307,7 @@ export default async function AdvertisePage() {
                   </div>
                 </div>
 
-                <div className="mt-4 grid gap-3 md:grid-cols-2 lg:grid-cols-4">
+                <div className="mt-4 grid gap-3 md:grid-cols-2 lg:grid-cols-3">
                   <div>
                     <div className="text-xs uppercase tracking-wide text-[rgb(var(--muted))]">
                       {locale === "en" ? "Format" : "Format"}
@@ -330,22 +328,19 @@ export default async function AdvertisePage() {
                     <div className="text-xs uppercase tracking-wide text-[rgb(var(--muted))]">
                       {locale === "en" ? "Duration options" : "Varighetsvalg"}
                     </div>
-                    <div className="mt-1 flex flex-wrap gap-1.5">
-                      {durationLabels.map((durationLabel) => (
-                        <span
-                          key={`${placement.key}-${durationLabel}`}
-                          className="rounded-full border border-[rgb(var(--border))] bg-[rgb(var(--bg))] px-2 py-0.5 text-xs"
-                        >
-                          {durationLabel}
-                        </span>
+                    <select
+                      name={`duration-${placement.key}`}
+                      defaultValue="3"
+                      className="mt-1 w-full rounded-lg border border-[rgb(var(--border))] bg-[rgb(var(--bg))] px-2 py-1.5 text-sm"
+                    >
+                      {durationOptionsMonths.map((months) => (
+                        <option key={`${placement.key}-duration-${months}`} value={months}>
+                          {locale === "en"
+                            ? `${months} month${months > 1 ? "s" : ""}`
+                            : `${months} måned${months > 1 ? "er" : ""}`}
+                        </option>
                       ))}
-                    </div>
-                  </div>
-                  <div>
-                    <div className="text-xs uppercase tracking-wide text-[rgb(var(--muted))]">
-                      {locale === "en" ? "Placement status" : "Plasseringsstatus"}
-                    </div>
-                    <div className="mt-1 text-sm font-medium">{availability.detail}</div>
+                    </select>
                   </div>
                 </div>
 
@@ -379,21 +374,17 @@ export default async function AdvertisePage() {
 
                   <div className="flex flex-wrap items-center gap-2">
                     <Link
-                      href={`${contactPath}?placement=${encodeURIComponent(placement.key)}`}
+                      href={contactHref}
                       className="inline-flex items-center rounded-xl bg-[rgb(var(--fg))] px-3 py-2 text-xs font-semibold text-[rgb(var(--bg))] hover:opacity-90 transition"
                     >
                       {locale === "en" ? "Request this slot" : "Be om denne plassen"}
                     </Link>
-                    <a
-                      href={`mailto:kontakt@kireklame.no?subject=${encodeURIComponent(
-                        locale === "en"
-                          ? `Placement inquiry: ${placement.key}`
-                          : `Forespørsel annonseplass: ${placement.key}`
-                      )}`}
+                    <Link
+                      href={contactHref}
                       className="inline-flex items-center rounded-xl border border-[rgb(var(--border))] px-3 py-2 text-xs font-semibold hover:bg-[rgb(var(--bg))] transition"
                     >
-                      {locale === "en" ? "Email sales" : "Send e-post"}
-                    </a>
+                      {locale === "en" ? "Open contact form" : "Åpne kontaktskjema"}
+                    </Link>
                   </div>
                 </div>
               </article>
