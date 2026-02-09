@@ -22,21 +22,42 @@ type AdLead = {
 export default async function OtherAiServicesPage() {
   const locale = await getLocale();
   const supabase = await supabaseServerClient();
-  const [{ data, error }, topBannerAd, midBannerAd, heroAd, inlineAd, inlineAd2] = await Promise.all([
+  const [
+    { data, error },
+    topBannerAd,
+    heroAd,
+    inlineAd,
+    gridBannerAd,
+    gridBannerAd2,
+    gridBannerAd3,
+  ] = await Promise.all([
     supabase
       .from("ad_leads")
       .select("id,name,website,description")
       .order("name", { ascending: true }),
-    getAdForPlacement("other_top_banner"),
-    getAdForPlacement("other_mid_banner"),
+    getAdForPlacement("catalog_top_banner"),
     getAdForPlacement("other_hero_sidebar"),
-    getAdForPlacement("other_inline_card"),
-    getAdForPlacement("other_inline_card_2"),
+    getAdForPlacement("catalog_inline_card"),
+    getAdForPlacement("catalog_grid_banner"),
+    getAdForPlacement("catalog_grid_banner_2"),
+    getAdForPlacement("catalog_grid_banner_3"),
   ]);
 
   const leads: AdLead[] = (data ?? []) as AdLead[];
-  const insertAt = 3;
-  const insertAt2 = 8;
+  const inlineInsertAt = 3;
+  const shouldInsertInline = Boolean(inlineAd) && leads.length > inlineInsertAt;
+
+  const bannerInsertAfterLeadIndex = shouldInsertInline ? 4 : 5;
+  const shouldInsertGridBanner =
+    Boolean(gridBannerAd) && leads.length > bannerInsertAfterLeadIndex;
+
+  const banner2InsertAfterLeadIndex = shouldInsertInline ? 10 : 11;
+  const shouldInsertGridBanner2 =
+    Boolean(gridBannerAd2) && leads.length >= banner2InsertAfterLeadIndex + 2;
+
+  const banner3InsertAfterLeadIndex = shouldInsertInline ? 16 : 17;
+  const shouldInsertGridBanner3 =
+    Boolean(gridBannerAd3) && leads.length >= banner3InsertAfterLeadIndex + 2;
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-12">
@@ -122,18 +143,6 @@ export default async function OtherAiServicesPage() {
         </div>
       ) : null}
 
-      {midBannerAd ? (
-        <div className="mt-6">
-          <AdSlot
-            ad={midBannerAd}
-            sponsorLabel={locale === "en" ? "Sponsored" : "Sponset"}
-            openLinkFallback={locale === "en" ? "Open link" : "Åpne lenke"}
-            variant="banner"
-            locale={locale}
-          />
-        </div>
-      ) : null}
-
       <div className="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {leads.map((lead, index) => (
           <div key={lead.id} className="contents">
@@ -169,7 +178,7 @@ export default async function OtherAiServicesPage() {
               )}
             </div>
 
-            {inlineAd && index === insertAt - 1 ? (
+            {shouldInsertInline && index === inlineInsertAt - 1 ? (
               <AdSlot
                 ad={inlineAd}
                 sponsorLabel={locale === "en" ? "Sponsored" : "Sponset"}
@@ -178,14 +187,38 @@ export default async function OtherAiServicesPage() {
                 locale={locale}
               />
             ) : null}
-            {inlineAd2 && index === insertAt2 - 1 ? (
-              <AdSlot
-                ad={inlineAd2}
-                sponsorLabel={locale === "en" ? "Sponsored" : "Sponset"}
-                openLinkFallback={locale === "en" ? "Open link" : "Åpne lenke"}
-                variant="card"
-                locale={locale}
-              />
+            {shouldInsertGridBanner && index === bannerInsertAfterLeadIndex ? (
+              <div className="sm:col-span-2 lg:col-span-3">
+                <AdSlot
+                  ad={gridBannerAd ?? null}
+                  sponsorLabel={locale === "en" ? "Sponsored" : "Sponset"}
+                  openLinkFallback={locale === "en" ? "Open link" : "Åpne lenke"}
+                  variant="banner"
+                  locale={locale}
+                />
+              </div>
+            ) : null}
+            {shouldInsertGridBanner2 && index === banner2InsertAfterLeadIndex ? (
+              <div className="sm:col-span-2 lg:col-span-3">
+                <AdSlot
+                  ad={gridBannerAd2 ?? null}
+                  sponsorLabel={locale === "en" ? "Sponsored" : "Sponset"}
+                  openLinkFallback={locale === "en" ? "Open link" : "Åpne lenke"}
+                  variant="banner"
+                  locale={locale}
+                />
+              </div>
+            ) : null}
+            {shouldInsertGridBanner3 && index === banner3InsertAfterLeadIndex ? (
+              <div className="sm:col-span-2 lg:col-span-3">
+                <AdSlot
+                  ad={gridBannerAd3 ?? null}
+                  sponsorLabel={locale === "en" ? "Sponsored" : "Sponset"}
+                  openLinkFallback={locale === "en" ? "Open link" : "Åpne lenke"}
+                  variant="banner"
+                  locale={locale}
+                />
+              </div>
             ) : null}
           </div>
         ))}
