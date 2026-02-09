@@ -49,16 +49,10 @@ export default function AdSlot({
 
             <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition" />
 
-            <div className="absolute inset-0 p-4 flex flex-col justify-between">
+            <div className="absolute inset-0 p-4 flex justify-end">
               <div className="flex justify-end">
                 <span className="inline-flex items-center rounded-full border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/80 backdrop-blur px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-[rgb(var(--muted))]">
                   {label}
-                </span>
-              </div>
-
-              <div className="flex items-center justify-between">
-                <span className="text-sm font-semibold text-white/90">
-                  {ad.cta_text ?? ""}
                 </span>
               </div>
             </div>
@@ -76,16 +70,10 @@ export default function AdSlot({
 
             <div className="absolute inset-0 bg-black/15 group-hover:bg-black/10 transition" />
 
-            <div className="absolute inset-0 p-3 sm:p-4 flex flex-col justify-between">
+            <div className="absolute inset-0 p-3 sm:p-4 flex justify-end">
               <div className="flex justify-end">
                 <span className="inline-flex items-center rounded-full border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/80 backdrop-blur px-2 py-0.5 text-[10px] sm:text-[11px] font-semibold uppercase tracking-wide text-[rgb(var(--muted))]">
                   {label}
-                </span>
-              </div>
-
-              <div className="flex items-end justify-end">
-                <span className="text-xs sm:text-sm font-semibold text-white/90">
-                  {ad.cta_text ?? ""}
                 </span>
               </div>
             </div>

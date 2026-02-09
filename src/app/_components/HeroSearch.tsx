@@ -132,20 +132,13 @@ export default function HeroSearch({
                     {/* Mild overlay på banner (for ikke å vaske ut motivet) */}
                     <div className="absolute inset-0 bg-black/15 group-hover:bg-black/10 transition" />
 
-                    {/* Diskré label + CTA (label på toppen, CTA på bunnen) */}
-<div className="absolute inset-0 p-3 sm:p-4 flex flex-col justify-between">
-  <div className="flex justify-end">
-    <span className="inline-flex items-center rounded-full border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/80 backdrop-blur px-2 py-0.5 text-[10px] sm:text-[11px] font-semibold uppercase tracking-wide text-[rgb(var(--muted))]">
-                      {sponsorLabel}
-                    </span>
-  </div>
-
-  <div className="flex items-end justify-end">
-    <span className="text-xs sm:text-sm font-semibold text-white/90">
-      {sponsorAd.cta_text ?? ""}
-    </span>
-  </div>
-</div>
+                    <div className="absolute inset-0 p-3 sm:p-4 flex justify-end">
+                      <div className="flex justify-end">
+                        <span className="inline-flex items-center rounded-full border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/80 backdrop-blur px-2 py-0.5 text-[10px] sm:text-[11px] font-semibold uppercase tracking-wide text-[rgb(var(--muted))]">
+                          {sponsorLabel}
+                        </span>
+                      </div>
+                    </div>
 
                   </div>
                 </a>
@@ -171,16 +164,10 @@ export default function HeroSearch({
                     loading="lazy"
                   />
                   <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition" />
-                  <div className="absolute inset-0 p-4 flex flex-col justify-between">
+                  <div className="absolute inset-0 p-4 flex justify-end">
                     <div className="flex justify-end">
                       <span className="inline-flex items-center rounded-full border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/80 backdrop-blur px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-[rgb(var(--muted))]">
                         {sponsorLabel}
-                      </span>
-                    </div>
-
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm font-semibold text-white/90">
-                        {sponsorAd.cta_text ?? ""}
                       </span>
                     </div>
                   </div>
