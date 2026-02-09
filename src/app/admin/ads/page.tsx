@@ -76,6 +76,44 @@ async function createAdAction(formData: FormData) {
   revalidatePath("/admin/ads");
 }
 
+async function updateAdAction(formData: FormData) {
+  "use server";
+  await requireAdmin();
+
+  const idRaw = String(formData.get("id") ?? "").trim();
+  const placement = String(formData.get("placement") ?? "").trim();
+  const priorityRaw = String(formData.get("priority") ?? "0").trim();
+  const is_active = formData.get("is_active") === "on";
+
+  const id = Number(idRaw);
+  const priority = Number.isFinite(Number(priorityRaw)) ? Number(priorityRaw) : 0;
+
+  if (!Number.isFinite(id) || id <= 0) {
+    throw new Error("Ugyldig annonse-id.");
+  }
+  if (!placement) {
+    throw new Error("Placement er påkrevd.");
+  }
+
+  const db = supabaseAdmin();
+  const { error } = await db
+    .from("ads")
+    .update({
+      placement,
+      priority,
+      is_active,
+    })
+    .eq("id", id);
+
+  if (error) throw new Error(error.message);
+
+  revalidatePath("/");
+  revalidatePath("/selskaper");
+  revalidatePath("/internasjonalt");
+  revalidatePath("/andre-ki-tjenester");
+  revalidatePath("/admin/ads");
+}
+
 export default async function AdminAdsPage() {
   await requireAdmin();
   const db = supabaseAdmin();
@@ -258,23 +296,52 @@ export default async function AdminAdsPage() {
         ) : null}
         <div className="mt-4 grid gap-3">
           {(ads ?? []).map((ad: any) => (
-            <div
+            <form
               key={ad.id}
+              action={updateAdAction}
               className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-[rgb(var(--border))] px-4 py-3 text-sm"
             >
+              <input type="hidden" name="id" value={ad.id} />
               <div className="font-semibold">#{ad.id}</div>
-              <div className="text-[rgb(var(--muted))]">{ad.placement}</div>
+              <select
+                name="placement"
+                defaultValue={ad.placement}
+                className="min-w-[220px] rounded-lg border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-3 py-1.5 text-sm text-[rgb(var(--fg))]"
+              >
+                {placements.map((p) => (
+                  <option key={`${ad.id}-${p}`} value={p}>
+                    {p}
+                  </option>
+                ))}
+              </select>
               <div>{ad.title ?? "—"}</div>
-              <div className="text-[rgb(var(--muted))]">
-                pri {ad.priority ?? 0}
-              </div>
-              <div className="text-[rgb(var(--muted))]">
-                {ad.is_active ? "aktiv" : "av"}
-              </div>
+              <label className="inline-flex items-center gap-2 text-[rgb(var(--muted))]">
+                pri
+                <input
+                  name="priority"
+                  type="number"
+                  defaultValue={ad.priority ?? 0}
+                  className="w-20 rounded-lg border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-2 py-1 text-sm text-[rgb(var(--fg))]"
+                />
+              </label>
+              <label className="inline-flex items-center gap-2 text-[rgb(var(--muted))]">
+                <input
+                  name="is_active"
+                  type="checkbox"
+                  defaultChecked={Boolean(ad.is_active)}
+                />
+                aktiv
+              </label>
               <div className="text-[rgb(var(--muted))]">
                 {ad.starts_at ? "start" : "—"} / {ad.ends_at ? "slutt" : "—"}
               </div>
-            </div>
+              <button
+                type="submit"
+                className="inline-flex rounded-lg border border-[rgb(var(--border))] px-3 py-1.5 text-sm font-semibold hover:bg-[rgb(var(--bg))] transition"
+              >
+                Lagre
+              </button>
+            </form>
           ))}
           {!ads?.length && !error ? (
             <p className="text-sm text-[rgb(var(--muted))]">Ingen annonser.</p>
