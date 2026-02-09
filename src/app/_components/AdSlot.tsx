@@ -59,19 +59,19 @@ export default function AdSlot({
             </div>
           </div>
         ) : isBanner ? (
-          <div className="relative isolate overflow-hidden min-h-[96px] aspect-[16/4.8] sm:min-h-[112px] sm:aspect-[16/3.4] lg:aspect-[16/2.1] bg-[rgb(var(--bg))]">
+          <div className="relative isolate overflow-hidden min-h-[72px] aspect-[16/2.4] sm:min-h-[80px] sm:aspect-[16/2.15] lg:aspect-[16/1.95] bg-[rgb(var(--bg))]">
             {img ? (
               <img
                 src={img}
                 alt={ad.alt}
-                className="absolute inset-0 h-full w-full object-cover object-center"
+                className="absolute inset-0 h-full w-full object-contain object-center"
                 loading="lazy"
               />
             ) : null}
 
-            <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-black/10 to-transparent group-hover:from-black/20 transition" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/22 via-black/6 to-transparent group-hover:from-black/14 transition" />
 
-            <div className="absolute inset-0 p-2.5 sm:p-4 flex justify-end">
+            <div className="absolute inset-0 p-2 sm:p-3 flex justify-end">
               <div className="flex justify-end self-start">
                 <span className="inline-flex items-center rounded-full border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/80 backdrop-blur px-2 py-0.5 text-[10px] sm:text-[11px] font-semibold uppercase tracking-wide text-[rgb(var(--muted))]">
                   {label}
