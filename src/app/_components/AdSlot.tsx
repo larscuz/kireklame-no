@@ -89,7 +89,7 @@ export default function AdSlot({
             </div>
           </div>
         ) : isBanner ? (
-          <div className="relative isolate h-[54px] w-full overflow-hidden bg-[rgb(var(--bg))] sm:h-[62px] md:h-[84px] lg:h-[108px] xl:h-[120px]">
+          <div className="relative isolate h-[54px] w-full overflow-hidden bg-[rgb(var(--bg))] sm:h-[62px] md:h-[102px] lg:h-[128px] xl:h-[144px]">
             {bannerDesktopImg ? (
               <picture className="absolute inset-0 block h-full w-full">
                 <source media="(max-width: 767px)" srcSet={bannerMobileImg} />
