@@ -23,8 +23,11 @@ export default function AdSlot({
   const isBanner = variant === "banner";
   const isSidebar = variant === "sidebar";
   const isHero = variant === "hero";
-  const img =
-    isBanner || isHero ? ad.mobile_image_url ?? ad.image_url : ad.image_url;
+  const img = isBanner
+    ? ad.mobile_image_url ?? ad.image_url
+    : isHero
+      ? ad.image_url ?? ad.mobile_image_url ?? null
+      : ad.image_url;
   const label = normalizeSponsorLabel(ad.label ?? sponsorLabel, locale);
   const title = ad.title ?? (locale === "en" ? "Sponsored" : "Sponset");
 
@@ -62,7 +65,7 @@ export default function AdSlot({
             </div>
           </div>
         ) : isHero ? (
-          <div className="relative isolate h-[122px] w-full overflow-hidden bg-[rgb(var(--bg))] sm:h-[136px]">
+          <div className="relative isolate h-[106px] w-full overflow-hidden bg-[rgb(var(--bg))] sm:h-[118px]">
             {img ? (
               <img
                 src={img}
