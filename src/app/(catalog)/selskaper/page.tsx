@@ -34,12 +34,14 @@ export default async function CompaniesPage({
     heroAd,
     bannerAd,
     inlineAd,
+    gridBannerAd,
     settings,
   ] = await Promise.all([
     getCompanies(params),
     getAdForPlacement("companies_hero_sidebar"),
     getAdForPlacement("catalog_top_banner"),
     getAdForPlacement("catalog_inline_card"),
+    getAdForPlacement("catalog_grid_banner"),
     supabaseAdmin()
       .from("site_settings")
       .select("companies_featured_company_slug, companies_hero_video_url")
@@ -187,7 +189,11 @@ export default async function CompaniesPage({
       </section>
 
       <div className="mt-8">
-        <ListingGrid companies={companies} inlineAd={inlineAd} />
+        <ListingGrid
+          companies={companies}
+          inlineAd={inlineAd}
+          gridBannerAd={gridBannerAd}
+        />
       </div>
     </div>
   );

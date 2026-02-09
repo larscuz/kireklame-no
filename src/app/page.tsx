@@ -49,10 +49,11 @@ export default async function Home(props: any) {
       : null;
 
   // 3) Annonser
-  const [ad, bannerAd, inlineAd] = await Promise.all([
+  const [ad, bannerAd, inlineAd, gridBannerAd] = await Promise.all([
     getAdForPlacement("home_hero_sidebar"),
     getAdForPlacement("catalog_top_banner"),
     getAdForPlacement("catalog_inline_card"),
+    getAdForPlacement("catalog_grid_banner"),
   ]);
 
   return (
@@ -97,7 +98,11 @@ export default async function Home(props: any) {
       </section>
 
       <section className="mx-auto max-w-6xl px-4 pb-10">
-        <ListingGrid companies={companies} inlineAd={inlineAd} />
+        <ListingGrid
+          companies={companies}
+          inlineAd={inlineAd}
+          gridBannerAd={gridBannerAd}
+        />
       </section>
 
       {/* SEO: hold this at the bottom */}
