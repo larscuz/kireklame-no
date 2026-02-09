@@ -2,6 +2,7 @@
 "use client";
 
 import HeroBackgroundVideo from "./HeroBackgroundVideo";
+import AdSlot from "./AdSlot";
 import { localizePath, type Locale } from "@/lib/i18n";
 import type { SponsorAd } from "@/lib/ads";
 
@@ -33,13 +34,6 @@ export default function HeroSearch({
     openLinkFallback: string;
   };
 }) {
-  // Bruk banner om den finnes, ellers desktop-bilde som fallback
-  const mobileImg = sponsorAd?.mobile_image_url ?? sponsorAd?.image_url ?? null;
-  const sponsorLabel = normalizeSponsorLabel(
-    sponsorAd?.label ?? copy.sponsorLabel,
-    locale
-  );
-
   return (
     <section className="mx-auto max-w-6xl px-4 pt-4 pb-4">
       {/* HERO + SPONSOR SLOT */}
@@ -106,86 +100,29 @@ export default function HeroSearch({
         {/* SPONSOR */}
         {sponsorAd ? (
           <>
-            {/* Mobil/tablet: banner under hero */}
             <div className="lg:hidden">
-              <aside className="rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] shadow-soft overflow-hidden">
-                <a
-                  href={sponsorAd.href}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="group block"
-                  aria-label={`${sponsorLabel}: ${
-                    sponsorAd.title ?? copy.openLinkFallback
-                  }`}
-                >
-                  {/* Stabil banner-høyde via aspect ratio (hindrer at bildet “blåser opp”) */}
-                  <div className="relative overflow-hidden aspect-[16/4] sm:aspect-[16/3]">
-                    {mobileImg ? (
-                      <img
-                        src={mobileImg}
-                        alt={sponsorAd.alt}
-                        className="absolute inset-0 h-full w-full object-contain object-center"
-                        loading="lazy"
-                      />
-                    ) : null}
-
-                    {/* Mild overlay på banner (for ikke å vaske ut motivet) */}
-                    <div className="absolute inset-0 bg-black/15 group-hover:bg-black/10 transition" />
-
-                    <div className="absolute inset-0 p-3 sm:p-4 flex justify-end">
-                      <div className="flex justify-end">
-                        <span className="inline-flex items-center rounded-full border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/80 backdrop-blur px-2 py-0.5 text-[10px] sm:text-[11px] font-semibold uppercase tracking-wide text-[rgb(var(--muted))]">
-                          {sponsorLabel}
-                        </span>
-                      </div>
-                    </div>
-
-                  </div>
-                </a>
-              </aside>
+              <AdSlot
+                ad={sponsorAd}
+                sponsorLabel={copy.sponsorLabel}
+                openLinkFallback={copy.openLinkFallback}
+                variant="banner"
+                locale={locale}
+              />
             </div>
 
-            {/* Desktop: høyre kolonne – match hero-høyde (og tving bilde til ramma) */}
-            <aside className="hidden lg:block rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] shadow-soft overflow-hidden">
-              <a
-                href={sponsorAd.href}
-                target="_blank"
-                rel="noreferrer"
-                className="group block h-full"
-                aria-label={`${sponsorLabel}: ${
-                  sponsorAd.title ?? copy.openLinkFallback
-                }`}
-              >
-                <div className="relative h-full overflow-hidden bg-[rgb(var(--bg))]">
-                  <img
-                    src={sponsorAd.image_url}
-                    alt={sponsorAd.alt}
-                    className="absolute inset-0 h-full w-full object-contain object-center"
-                    loading="lazy"
-                  />
-                  <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition" />
-                  <div className="absolute inset-0 p-4 flex justify-end">
-                    <div className="flex justify-end">
-                      <span className="inline-flex items-center rounded-full border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/80 backdrop-blur px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-[rgb(var(--muted))]">
-                        {sponsorLabel}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </a>
-            </aside>
+            <div className="hidden lg:block">
+              <AdSlot
+                ad={sponsorAd}
+                sponsorLabel={copy.sponsorLabel}
+                openLinkFallback={copy.openLinkFallback}
+                variant="sidebar"
+                className="h-full"
+                locale={locale}
+              />
+            </div>
           </>
         ) : null}
       </div>
     </section>
   );
-}
-
-function normalizeSponsorLabel(label: string, locale: string) {
-  if (locale !== "en") return label;
-  const lowered = label.trim().toLowerCase();
-  if (lowered === "sponset" || lowered === "sponset arrangement") {
-    return "Sponsored";
-  }
-  return label;
 }
