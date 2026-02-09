@@ -14,7 +14,7 @@ export default function AdSlot({
   ad: SponsorAd | null;
   sponsorLabel: string;
   openLinkFallback: string;
-  variant?: "card" | "banner" | "sidebar";
+  variant?: "card" | "banner" | "sidebar" | "hero";
   className?: string;
   locale: "en" | "no" | "nb" | string;
 }) {
@@ -22,7 +22,9 @@ export default function AdSlot({
 
   const isBanner = variant === "banner";
   const isSidebar = variant === "sidebar";
-  const img = isBanner ? ad.mobile_image_url ?? ad.image_url : ad.image_url;
+  const isHero = variant === "hero";
+  const img =
+    isBanner || isHero ? ad.mobile_image_url ?? ad.image_url : ad.image_url;
   const label = normalizeSponsorLabel(ad.label ?? sponsorLabel, locale);
   const title = ad.title ?? (locale === "en" ? "Sponsored" : "Sponset");
 
@@ -44,6 +46,7 @@ export default function AdSlot({
                 src={img}
                 alt={ad.alt}
                 className="absolute inset-0 h-full w-full object-cover object-center"
+                style={{ objectPosition: "center center" }}
                 loading="lazy"
               />
             ) : null}
@@ -58,13 +61,36 @@ export default function AdSlot({
               </div>
             </div>
           </div>
-        ) : isBanner ? (
-          <div className="relative isolate overflow-hidden min-h-[52px] aspect-[8/1] sm:min-h-[58px] sm:aspect-[8/1] lg:min-h-[64px] lg:aspect-[8/1] bg-[rgb(var(--bg))]">
+        ) : isHero ? (
+          <div className="relative isolate h-[122px] w-full overflow-hidden bg-[rgb(var(--bg))] sm:h-[136px]">
             {img ? (
               <img
                 src={img}
                 alt={ad.alt}
                 className="absolute inset-0 h-full w-full object-cover object-center"
+                style={{ objectPosition: "center center" }}
+                loading="lazy"
+              />
+            ) : null}
+
+            <div className="absolute inset-0 bg-gradient-to-t from-black/28 via-black/10 to-transparent group-hover:from-black/20 transition" />
+
+            <div className="absolute inset-0 p-2.5 sm:p-3 flex justify-end">
+              <div className="flex justify-end self-start">
+                <span className="inline-flex items-center rounded-full border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/80 backdrop-blur px-2 py-0.5 text-[10px] sm:text-[11px] font-semibold uppercase tracking-wide text-[rgb(var(--muted))]">
+                  {label}
+                </span>
+              </div>
+            </div>
+          </div>
+        ) : isBanner ? (
+          <div className="relative isolate h-[54px] w-full overflow-hidden bg-[rgb(var(--bg))] sm:h-[62px] lg:h-[72px]">
+            {img ? (
+              <img
+                src={img}
+                alt={ad.alt}
+                className="absolute inset-0 h-full w-full object-cover object-center"
+                style={{ objectPosition: "center center" }}
                 loading="lazy"
               />
             ) : null}

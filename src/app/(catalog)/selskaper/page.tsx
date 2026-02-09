@@ -144,7 +144,7 @@ export default async function CompaniesPage({
                 ad={heroAd}
                 sponsorLabel={locale === "en" ? "Sponsored" : "Sponset"}
                 openLinkFallback={locale === "en" ? "Open link" : "Åpne lenke"}
-                variant="banner"
+                variant="hero"
                 locale={locale}
               />
             </div>
