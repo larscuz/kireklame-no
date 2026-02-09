@@ -84,9 +84,13 @@ async function updateAdAction(formData: FormData) {
   const placement = String(formData.get("placement") ?? "").trim();
   const priorityRaw = String(formData.get("priority") ?? "0").trim();
   const is_active = formData.get("is_active") === "on";
+  const startsRaw = String(formData.get("starts_at") ?? "").trim();
+  const endsRaw = String(formData.get("ends_at") ?? "").trim();
 
   const id = Number(idRaw);
   const priority = Number.isFinite(Number(priorityRaw)) ? Number(priorityRaw) : 0;
+  const starts_at = startsRaw ? new Date(startsRaw).toISOString() : null;
+  const ends_at = endsRaw ? new Date(endsRaw).toISOString() : null;
 
   if (!Number.isFinite(id) || id <= 0) {
     throw new Error("Ugyldig annonse-id.");
@@ -102,6 +106,8 @@ async function updateAdAction(formData: FormData) {
       placement,
       priority,
       is_active,
+      starts_at,
+      ends_at,
     })
     .eq("id", id);
 
@@ -114,6 +120,28 @@ async function updateAdAction(formData: FormData) {
   revalidatePath("/admin/ads");
 }
 
+function toDateTimeLocalValue(value: string | null | undefined) {
+  if (!value) return "";
+  return value.replace(" ", "T").slice(0, 16);
+}
+
+function getScheduleStatus(
+  startsAt: string | null | undefined,
+  endsAt: string | null | undefined
+) {
+  const now = Date.now();
+  const starts = startsAt ? Date.parse(startsAt) : null;
+  const ends = endsAt ? Date.parse(endsAt) : null;
+
+  if (Number.isFinite(starts as number) && (starts as number) > now) {
+    return "fremtid";
+  }
+  if (Number.isFinite(ends as number) && (ends as number) < now) {
+    return "utløpt";
+  }
+  return "nå";
+}
+
 export default async function AdminAdsPage() {
   await requireAdmin();
   const db = supabaseAdmin();
@@ -121,8 +149,7 @@ export default async function AdminAdsPage() {
   const { data: ads, error } = await db
     .from("ads")
     .select("id, placement, title, is_active, priority, starts_at, ends_at")
-    .order("placement", { ascending: true })
-    .order("priority", { ascending: true });
+    .order("id", { ascending: true });
 
   return (
     <main className="mx-auto max-w-5xl px-4 py-10">
@@ -294,15 +321,18 @@ export default async function AdminAdsPage() {
         {error ? (
           <p className="mt-2 text-sm text-rose-500">DB‑feil: {error.message}</p>
         ) : null}
+        <p className="mt-2 text-xs text-[rgb(var(--muted))]">
+          Viser alle annonser (fortid, nåtid og fremtid).
+        </p>
         <div className="mt-4 grid gap-3">
           {(ads ?? []).map((ad: any) => (
             <form
               key={ad.id}
               action={updateAdAction}
-              className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-[rgb(var(--border))] px-4 py-3 text-sm"
+              className="grid gap-3 rounded-xl border border-[rgb(var(--border))] px-4 py-3 text-sm md:grid-cols-[auto,minmax(220px,1fr),minmax(180px,1fr),auto,auto,auto,auto,auto]"
             >
               <input type="hidden" name="id" value={ad.id} />
-              <div className="font-semibold">#{ad.id}</div>
+              <div className="font-semibold self-center">#{ad.id}</div>
               <select
                 name="placement"
                 defaultValue={ad.placement}
@@ -314,8 +344,8 @@ export default async function AdminAdsPage() {
                   </option>
                 ))}
               </select>
-              <div>{ad.title ?? "—"}</div>
-              <label className="inline-flex items-center gap-2 text-[rgb(var(--muted))]">
+              <div className="self-center">{ad.title ?? "—"}</div>
+              <label className="inline-flex items-center gap-2 text-[rgb(var(--muted))] self-center">
                 pri
                 <input
                   name="priority"
@@ -324,7 +354,7 @@ export default async function AdminAdsPage() {
                   className="w-20 rounded-lg border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-2 py-1 text-sm text-[rgb(var(--fg))]"
                 />
               </label>
-              <label className="inline-flex items-center gap-2 text-[rgb(var(--muted))]">
+              <label className="inline-flex items-center gap-2 text-[rgb(var(--muted))] self-center">
                 <input
                   name="is_active"
                   type="checkbox"
@@ -332,12 +362,30 @@ export default async function AdminAdsPage() {
                 />
                 aktiv
               </label>
-              <div className="text-[rgb(var(--muted))]">
-                {ad.starts_at ? "start" : "—"} / {ad.ends_at ? "slutt" : "—"}
+              <label className="grid gap-1 text-[rgb(var(--muted))]">
+                <span className="text-xs">start</span>
+                <input
+                  name="starts_at"
+                  type="datetime-local"
+                  defaultValue={toDateTimeLocalValue(ad.starts_at)}
+                  className="rounded-lg border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-2 py-1 text-sm text-[rgb(var(--fg))]"
+                />
+              </label>
+              <label className="grid gap-1 text-[rgb(var(--muted))]">
+                <span className="text-xs">slutt</span>
+                <input
+                  name="ends_at"
+                  type="datetime-local"
+                  defaultValue={toDateTimeLocalValue(ad.ends_at)}
+                  className="rounded-lg border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-2 py-1 text-sm text-[rgb(var(--fg))]"
+                />
+              </label>
+              <div className="self-center text-[rgb(var(--muted))]">
+                {getScheduleStatus(ad.starts_at, ad.ends_at)}
               </div>
               <button
                 type="submit"
-                className="inline-flex rounded-lg border border-[rgb(var(--border))] px-3 py-1.5 text-sm font-semibold hover:bg-[rgb(var(--bg))] transition"
+                className="inline-flex self-center rounded-lg border border-[rgb(var(--border))] px-3 py-1.5 text-sm font-semibold hover:bg-[rgb(var(--bg))] transition"
               >
                 Lagre
               </button>
