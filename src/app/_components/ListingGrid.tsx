@@ -22,8 +22,10 @@ export default async function ListingGrid({
     );
   }
 
-  const insertAt = 3;
-  const shouldInsert = Boolean(inlineAd) && companies.length > insertAt;
+  // Place the inline ad between row 2 and row 3 on 3-column grids:
+  // after 5 company cards (ad becomes card #6 in the stream).
+  const insertAt = 5;
+  const shouldInsert = Boolean(inlineAd) && companies.length >= 6;
 
   return (
     <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
