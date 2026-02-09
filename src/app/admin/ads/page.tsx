@@ -3,24 +3,11 @@ import Link from "next/link";
 import { revalidatePath } from "next/cache";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import { requireAdmin } from "@/lib/supabase/server";
+import { AD_PLACEMENT_KEYS } from "@/lib/adPlacements";
 
 export const dynamic = "force-dynamic";
 
-const placements = [
-  "home_hero_sidebar",
-  "companies_hero_sidebar",
-  "international_hero_sidebar",
-  "catalog_top_banner",
-  "catalog_inline_card",
-  "catalog_grid_banner",
-  "catalog_grid_banner_2",
-  "catalog_grid_banner_3",
-  "other_top_banner",
-  "other_mid_banner",
-  "other_hero_sidebar",
-  "other_inline_card",
-  "other_inline_card_2",
-];
+const placements = AD_PLACEMENT_KEYS;
 
 type AdRow = {
   id: number;
