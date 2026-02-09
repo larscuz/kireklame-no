@@ -36,7 +36,8 @@ export default async function ListingGrid({
     Boolean(gridBannerAd) && companies.length > bannerInsertAfterCompanyIndex;
 
   // Second full-width grid banner between row 4 and row 5.
-  const banner2InsertAfterCompanyIndex = shouldInsertInline ? 7 : 8;
+  // Keep one banner per two company rows.
+  const banner2InsertAfterCompanyIndex = shouldInsertInline ? 10 : 11;
   const shouldInsertGridBanner2 =
     Boolean(gridBannerAd2) && companies.length >= banner2InsertAfterCompanyIndex + 2;
 
