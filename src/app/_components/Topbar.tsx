@@ -21,8 +21,8 @@ export default async function Topbar() {
   return (
     <header className="sticky top-0 z-50 backdrop-blur supports-[backdrop-filter]:bg-white/70 dark:supports-[backdrop-filter]:bg-[rgb(var(--bg))]/70 border-b border-[rgb(var(--border))]">
       <div className="mx-auto max-w-6xl px-4 py-3 flex items-center justify-between gap-3">
-          <Link href={localizePath(locale, "/")} className="flex items-center gap-2 group">
-          <div className="h-9 w-9 rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] grid place-items-center shadow-soft group-hover:shadow-lift transition overflow-hidden">
+          <Link href={localizePath(locale, "/")} className="flex min-w-0 items-center gap-3 group">
+          <div className="h-10 w-10 shrink-0 rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] grid place-items-center shadow-soft group-hover:shadow-lift transition overflow-hidden">
             <img
               src="/KIREKLAMElogo.gif"
               alt="KiReklame"
@@ -31,9 +31,24 @@ export default async function Topbar() {
               className="h-8 w-8"
             />
           </div>
-          <div className="leading-tight">
-            <div className="text-sm font-semibold tracking-tight">KiReklame</div>
-            <div className="text-[11px] text-[rgb(var(--muted))] -mt-0.5">kireklame.no</div>
+          <div className="min-w-0">
+            <div className="flex items-center text-xl sm:text-2xl font-semibold tracking-tight leading-none">
+              <span>Ki</span>
+              <span
+                aria-hidden="true"
+                className="mx-0.5 inline-flex h-[0.92em] w-[0.92em] items-center justify-center overflow-hidden rounded-[0.18em] border border-[rgb(var(--border))] bg-[rgb(var(--card))] align-[-0.08em]"
+              >
+                <img
+                  src="/KIREKLAMElogo.gif"
+                  alt=""
+                  width={20}
+                  height={20}
+                  className="h-full w-full object-cover"
+                />
+              </span>
+              <span className="sr-only">R</span>
+              <span>eklame</span>
+            </div>
           </div>
         </Link>
 
