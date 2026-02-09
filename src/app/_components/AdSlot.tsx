@@ -47,13 +47,15 @@ export default function AdSlot({
         {isSidebar ? (
           <div className="relative isolate h-full min-h-[190px] sm:min-h-[220px] lg:min-h-[280px] overflow-hidden bg-[rgb(var(--bg))]">
             {img ? (
-              <img
-                src={img}
-                alt={ad.alt}
-                className="absolute inset-0 h-full w-full object-cover object-center"
-                style={{ objectPosition: "center center" }}
-                loading="lazy"
-              />
+              <div className="absolute inset-0 p-2 sm:p-3">
+                <img
+                  src={img}
+                  alt={ad.alt}
+                  className="h-full w-full object-contain object-center"
+                  style={{ objectPosition: "center center" }}
+                  loading="lazy"
+                />
+              </div>
             ) : null}
 
             <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-black/15 to-black/10 group-hover:from-black/20 transition" />
