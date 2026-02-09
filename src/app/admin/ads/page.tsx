@@ -424,7 +424,7 @@ export default async function AdminAdsPage() {
           <label className="text-sm font-semibold">CTA‑tekst (valgfri)</label>
           <input
             name="cta_text"
-            placeholder="Se event →"
+            placeholder="f.eks. Les mer"
             className="w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-4 py-2"
           />
         </div>

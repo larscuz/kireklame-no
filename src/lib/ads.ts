@@ -51,7 +51,7 @@ function getFallbackAd(placement: string): SponsorAd | null {
     href: "https://gullhaien.no/",
     alt: "Gullhaien 2026",
     label: "Sponset",
-    cta_text: "Se event →",
+    cta_text: null,
   };
 
   switch (placement) {
