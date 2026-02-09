@@ -22,6 +22,18 @@ const placements = [
   "other_inline_card_2",
 ];
 
+type AdRow = {
+  id: number;
+  placement: string;
+  title: string | null;
+  image_url: string | null;
+  href: string | null;
+  is_active: boolean;
+  priority: number | null;
+  starts_at: string | null;
+  ends_at: string | null;
+};
+
 async function createAdAction(formData: FormData) {
   "use server";
   await requireAdmin();
@@ -142,14 +154,62 @@ function getScheduleStatus(
   return "nå";
 }
 
+function isActiveNow(ad: {
+  is_active: boolean;
+  starts_at: string | null;
+  ends_at: string | null;
+}) {
+  if (!ad.is_active) return false;
+  const now = Date.now();
+  const starts = ad.starts_at ? Date.parse(ad.starts_at) : null;
+  const ends = ad.ends_at ? Date.parse(ad.ends_at) : null;
+  if (Number.isFinite(starts as number) && (starts as number) > now) return false;
+  if (Number.isFinite(ends as number) && (ends as number) < now) return false;
+  return true;
+}
+
+function pickEffectiveNowForPlacement(placement: string, ads: AdRow[]) {
+  const active = ads.filter((ad) => ad.placement === placement && isActiveNow(ad));
+  if (!active.length) return null;
+
+  const minPriority = active.reduce(
+    (min, ad) => Math.min(min, ad.priority ?? 0),
+    Number.POSITIVE_INFINITY
+  );
+  const pool = active.filter((ad) => (ad.priority ?? 0) === minPriority);
+  if (pool.length === 1) return pool[0];
+
+  const intervalMinutes = 30;
+  const bucket = Math.floor(Date.now() / (intervalMinutes * 60 * 1000));
+  const index = bucket % pool.length;
+  return pool[index];
+}
+
 export default async function AdminAdsPage() {
   await requireAdmin();
   const db = supabaseAdmin();
 
   const { data: ads, error } = await db
     .from("ads")
-    .select("id, placement, title, is_active, priority, starts_at, ends_at")
+    .select("id, placement, title, image_url, href, is_active, priority, starts_at, ends_at")
     .order("id", { ascending: true });
+
+  const adRows = ((ads ?? []) as AdRow[]).map((ad) => ({
+    ...ad,
+    image_url: ad.image_url ?? null,
+    href: ad.href ?? null,
+  }));
+
+  const effectiveNow = placements.map((placement) => {
+    const chosen = pickEffectiveNowForPlacement(placement, adRows);
+    const hasAnyRows = adRows.some((ad) => ad.placement === placement);
+    return {
+      placement,
+      chosen,
+      hasAnyRows,
+      source: chosen ? "db" : "fallback",
+    };
+  });
 
   return (
     <main className="mx-auto max-w-5xl px-4 py-10">
@@ -317,6 +377,49 @@ export default async function AdminAdsPage() {
       </form>
 
       <section className="mt-10 rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] p-6 shadow-soft">
+        <h2 className="text-lg font-semibold">Effektiv visning nå (UI)</h2>
+        <p className="mt-2 text-xs text-[rgb(var(--muted))]">
+          Viser hva nettstedet faktisk bruker per placement akkurat nå:
+          DB-rad eller kode-fallback (Gullhaien).
+        </p>
+        <div className="mt-4 grid gap-2">
+          {effectiveNow.map((slot) => (
+            <div
+              key={`effective-${slot.placement}`}
+              className="grid gap-2 rounded-xl border border-[rgb(var(--border))] px-4 py-3 text-sm md:grid-cols-[minmax(200px,1fr),minmax(120px,auto),minmax(220px,1fr),minmax(80px,auto)]"
+            >
+              <div className="font-mono text-[rgb(var(--muted))]">{slot.placement}</div>
+              <div
+                className={
+                  slot.source === "db"
+                    ? "text-emerald-400"
+                    : "text-amber-400"
+                }
+              >
+                {slot.source === "db" ? "DB" : "Fallback"}
+              </div>
+              <div>
+                {slot.chosen ? (
+                  <>
+                    #{slot.chosen.id} · {slot.chosen.title ?? "Uten tittel"}
+                  </>
+                ) : (
+                  "Gullhaien 2026 (kode-fallback)"
+                )}
+              </div>
+              <div className="text-[rgb(var(--muted))]">
+                {slot.chosen
+                  ? `pri ${slot.chosen.priority ?? 0}`
+                  : slot.hasAnyRows
+                    ? "ingen aktiv nå"
+                    : "ingen DB-rad"}
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="mt-10 rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] p-6 shadow-soft">
         <h2 className="text-lg font-semibold">Eksisterende annonser</h2>
         {error ? (
           <p className="mt-2 text-sm text-rose-500">DB‑feil: {error.message}</p>
@@ -325,7 +428,7 @@ export default async function AdminAdsPage() {
           Viser alle annonser (fortid, nåtid og fremtid).
         </p>
         <div className="mt-4 grid gap-3">
-          {(ads ?? []).map((ad: any) => (
+          {adRows.map((ad) => (
             <form
               key={ad.id}
               action={updateAdAction}
