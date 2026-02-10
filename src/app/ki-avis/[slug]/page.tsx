@@ -55,13 +55,6 @@ function hasImage(url: string | null): boolean {
   return /^https?:\/\//i.test(String(url ?? "").trim());
 }
 
-function toAbsoluteImageUrl(site: string, value: string | null | undefined): string {
-  const raw = String(value ?? "").trim();
-  if (!raw) return `${site}/og-linkedin.jpg`;
-  if (/^https?:\/\//i.test(raw)) return raw;
-  return `${site}${raw.startsWith("/") ? "" : "/"}${raw}`;
-}
-
 function shortShareDescription(value: string | null | undefined, maxLen = 180): string {
   const text = String(value ?? "").replace(/\s+/g, " ").trim();
   if (!text) return "";
@@ -196,7 +189,9 @@ export async function generateMetadata({
       article.excerpt ??
       "Redaksjonell dekning av KI/AI i reklame og markedsføring."
   );
-  const ogImage = toAbsoluteImageUrl(site, article.hero_image_url);
+  const ogImage = `${site}/api/news/og-image?slug=${encodeURIComponent(article.slug)}&v=${encodeURIComponent(
+    article.updated_at ?? article.created_at ?? ""
+  )}`;
   const pageTitle = `${article.title} | KiR Nyheter`;
   const shareTitle = article.title;
   const base = siteMeta({
