@@ -23,6 +23,7 @@ const uiSans = Manrope({
   subsets: ["latin"],
   weight: ["400", "500", "700"],
 });
+const FRONT_LEAD_OVERRIDE_TAG = "front_lead_override";
 
 export const metadata = siteMeta({
   title: "KiR Nyheter – ledende nettavis om KI i reklame og markedsføring",
@@ -201,7 +202,8 @@ export default async function KIRNyheterPage() {
   const internationalIds = new Set(internationalDesk.map((item) => item.id));
   const leadPool = imagedArticles.filter((item) => !internationalIds.has(item.id));
   const sourcePool = leadPool.length > 0 ? leadPool : imagedArticles;
-  const lead = sourcePool[0] ?? null;
+  const overrideLead = sourcePool.find((item) => hasTag(item, FRONT_LEAD_OVERRIDE_TAG)) ?? null;
+  const lead = overrideLead ?? sourcePool[0] ?? null;
   const rest = lead ? sourcePool.filter((item) => item.id !== lead.id) : sourcePool;
   const internationalLead = internationalDesk[0] ?? null;
   const internationalWireTop = internationalLead

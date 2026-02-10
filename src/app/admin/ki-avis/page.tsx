@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { Bodoni_Moda, Manrope, Source_Serif_4 } from "next/font/google";
 import { revalidatePath } from "next/cache";
+import { isLikelyInternationalDeskArticle } from "@/lib/news/international";
 import { requireAdmin } from "@/lib/supabase/server";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import { listNewsForAdmin, normalizeNewsUpsert } from "@/lib/news/articles";
@@ -36,6 +37,7 @@ const PRIMARY_BUTTON_CLASS =
   "border border-black bg-black px-4 py-2 text-xs font-semibold uppercase tracking-[0.15em] text-white hover:bg-black/90";
 const SECONDARY_BUTTON_CLASS =
   "border border-black/30 bg-[#f8f4eb] px-4 py-2 text-xs font-semibold uppercase tracking-[0.15em] text-black hover:bg-[#f1ede4]";
+const FRONT_LEAD_OVERRIDE_TAG = "front_lead_override";
 
 export const dynamic = "force-dynamic";
 
@@ -56,6 +58,14 @@ function parseDateInput(raw: string): string | null {
   const d = new Date(raw);
   if (Number.isNaN(d.getTime())) return null;
   return d.toISOString();
+}
+
+function hasTag(tags: string[] | null | undefined, tag: string): boolean {
+  return (tags ?? []).some((item) => String(item ?? "").toLowerCase() === tag);
+}
+
+function hasImage(url: string | null): boolean {
+  return /^https?:\/\//i.test(String(url ?? "").trim());
 }
 
 async function saveArticle(formData: FormData) {
@@ -147,9 +157,65 @@ async function deleteArticle(formData: FormData) {
   revalidatePath("/sitemap.xml");
 }
 
+async function setLeadOverride(formData: FormData) {
+  "use server";
+  await requireAdmin("/admin/ki-avis");
+
+  const targetId = String(formData.get("lead_article_id") ?? "").trim();
+  const db = supabaseAdmin();
+
+  const { data: currentTagged, error: taggedErr } = await db
+    .from("news_articles")
+    .select("id, topic_tags")
+    .contains("topic_tags", [FRONT_LEAD_OVERRIDE_TAG]);
+  if (taggedErr) throw new Error(taggedErr.message);
+
+  for (const row of currentTagged ?? []) {
+    const tags = Array.isArray(row.topic_tags) ? row.topic_tags : [];
+    const nextTags = tags.filter(
+      (item) => String(item ?? "").toLowerCase() !== FRONT_LEAD_OVERRIDE_TAG
+    );
+    const { error } = await db
+      .from("news_articles")
+      .update({ topic_tags: nextTags })
+      .eq("id", row.id);
+    if (error) throw new Error(error.message);
+  }
+
+  if (targetId) {
+    const { data: target, error: targetErr } = await db
+      .from("news_articles")
+      .select("id, topic_tags")
+      .eq("id", targetId)
+      .maybeSingle();
+    if (targetErr) throw new Error(targetErr.message);
+    if (!target) throw new Error("Fant ikke valgt sak");
+
+    const tags = Array.isArray(target.topic_tags) ? target.topic_tags : [];
+    const merged = Array.from(new Set([...tags, FRONT_LEAD_OVERRIDE_TAG]));
+    const { error } = await db
+      .from("news_articles")
+      .update({ topic_tags: merged })
+      .eq("id", targetId);
+    if (error) throw new Error(error.message);
+  }
+
+  revalidatePath("/ki-avis");
+  revalidatePath("/admin/ki-avis");
+}
+
 export default async function KIAvisAdminPage() {
   await requireAdmin("/admin/ki-avis");
   const rows = await listNewsForAdmin(240);
+  const leadCandidates = rows.filter(
+    (row) =>
+      row.status === "published" &&
+      hasImage(row.hero_image_url) &&
+      !isLikelyInternationalDeskArticle(row)
+  );
+  const activeLeadAny = rows.find((row) => hasTag(row.topic_tags, FRONT_LEAD_OVERRIDE_TAG)) ?? null;
+  const activeLeadVisible =
+    leadCandidates.find((row) => row.id === activeLeadAny?.id) ?? null;
   const issueStamp = new Date().toLocaleString("nb-NO", {
     dateStyle: "medium",
     timeStyle: "short",
@@ -203,6 +269,48 @@ export default async function KIAvisAdminPage() {
             </div>
           </div>
         </header>
+
+        <section className="mt-4 border border-black/20 bg-[#f8f4eb] p-4">
+          <h2 className={`${headline.className} text-[30px] leading-[1.02] md:text-[36px]`}>
+            Hovedsak Override
+          </h2>
+          <p className="mt-1 text-sm text-black/70">
+            Aktiv nå:{" "}
+            {activeLeadAny ? (
+              <span className="font-semibold">
+                {activeLeadAny.title}
+                {activeLeadVisible ? "" : " (ikke visbar på forsiden med nåværende filter)"}
+              </span>
+            ) : (
+              <span className="font-semibold">Automatisk valg (ingen override)</span>
+            )}
+          </p>
+
+          <form action={setLeadOverride} className="mt-3 grid gap-3 md:grid-cols-[1fr_auto]">
+            <label className={LABEL_CLASS}>
+              <span className={LABEL_TEXT_CLASS}>Velg hovedsak</span>
+              <select
+                name="lead_article_id"
+                defaultValue={activeLeadVisible?.id ?? ""}
+                className={FIELD_CLASS}
+              >
+                <option value="">Automatisk (nyeste relevante sak)</option>
+                {leadCandidates.map((row) => (
+                  <option key={`lead-${row.id}`} value={row.id}>
+                    {row.title} ({row.source_name})
+                  </option>
+                ))}
+              </select>
+            </label>
+            <div className="md:self-end">
+              <button className={PRIMARY_BUTTON_CLASS}>Oppdater hovedsak</button>
+            </div>
+          </form>
+
+          <p className="mt-2 text-xs text-black/58">
+            Dropdown viser publiserte saker med gyldig bilde som ikke er internasjonale.
+          </p>
+        </section>
 
         <section className="mt-4 border border-black/20 bg-[#f8f4eb] p-4">
           <h1 className={`${headline.className} text-[36px] leading-[1.02] md:text-[44px]`}>Ny sak</h1>
