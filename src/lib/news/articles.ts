@@ -1,5 +1,6 @@
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import type { NewsArticle, NewsArticleUpsert } from "@/lib/news/types";
+import { isLikelyNonArticleNewsPage } from "@/lib/news/nonArticle";
 import {
   canonicalizeNewsUrl,
   coerceNewsPerspective,
@@ -81,7 +82,17 @@ export async function listPublishedNews(limit = 48): Promise<NewsArticle[]> {
     return [];
   }
 
-  return (data ?? []).map((row) => mapNewsArticle(row as NewsSelect));
+  return (data ?? [])
+    .map((row) => mapNewsArticle(row as NewsSelect))
+    .filter(
+      (article) =>
+        !isLikelyNonArticleNewsPage({
+          sourceUrl: article.source_url,
+          title: article.title,
+          snippet: article.excerpt ?? article.summary,
+          plainText: article.body,
+        })
+    );
 }
 
 export async function listNewsForAdmin(limit = 250): Promise<NewsArticle[]> {
@@ -109,7 +120,18 @@ export async function getPublishedNewsBySlug(slug: string): Promise<NewsArticle 
     .maybeSingle();
 
   if (error || !data) return null;
-  return mapNewsArticle(data as NewsSelect);
+  const article = mapNewsArticle(data as NewsSelect);
+  if (
+    isLikelyNonArticleNewsPage({
+      sourceUrl: article.source_url,
+      title: article.title,
+      snippet: article.excerpt ?? article.summary,
+      plainText: article.body,
+    })
+  ) {
+    return null;
+  }
+  return article;
 }
 
 export function normalizeNewsUpsert(input: NewsArticleUpsert): NewsArticleUpsert {

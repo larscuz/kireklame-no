@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { fetchText } from "@/lib/crawl/fetcher";
+import { fetchTextBestEffort } from "@/lib/crawl/fetcher";
 import {
   googleSearchOrganicResults,
   type SerperOrganic,
@@ -17,6 +17,7 @@ import {
   extractArticleSignals,
   looksRelevantToAIMarketing,
 } from "@/lib/news/extract";
+import { isLikelyNonArticleNewsPage } from "@/lib/news/nonArticle";
 import { cleanText, domainFromUrl, stableNewsSlug } from "@/lib/news/utils";
 import { normalizeNewsUpsert } from "@/lib/news/articles";
 
@@ -106,6 +107,7 @@ function candidateFromSerper(query: string, hit: SerperOrganic): Candidate | nul
 
   const title = cleanText(hit.title ?? "", 220) ?? "Uten tittel";
   const snippet = cleanText(hit.snippet ?? "", 420) ?? "";
+  if (isLikelyNonArticleNewsPage({ sourceUrl, title, snippet })) return null;
 
   const relevanceText = `${title} ${snippet}`;
   if (!looksRelevantToAIMarketing(relevanceText)) return null;
@@ -199,6 +201,7 @@ export async function POST(req: Request) {
 
   const upsertRows: ReturnType<typeof normalizeNewsUpsert>[] = [];
   let skippedNoImage = 0;
+  let skippedNonArticle = 0;
   const preview: Array<{
     title: string;
     source_url: string;
@@ -214,7 +217,10 @@ export async function POST(req: Request) {
     try {
       let html = "";
       try {
-        const fetched = await fetchText(item.sourceUrl, { timeoutMs: 10_000 });
+        const fetched = await fetchTextBestEffort(item.sourceUrl, {
+          timeoutMs: 10_000,
+          minPlainLength: 900,
+        });
         if (fetched.ok) html = fetched.text;
       } catch {
         // best effort
@@ -238,6 +244,18 @@ export async function POST(req: Request) {
             perspective: classifyPerspective(`${item.title} ${item.snippet}`),
             plainText: `${item.title} ${item.snippet}`,
           };
+
+      if (
+        isLikelyNonArticleNewsPage({
+          sourceUrl: item.sourceUrl,
+          title: extracted.title ?? item.title,
+          snippet: extracted.excerpt ?? item.snippet,
+          plainText: extracted.plainText,
+        })
+      ) {
+        skippedNonArticle += 1;
+        continue;
+      }
 
       const likelyNorwegian =
         extracted.language === "no" ||
@@ -342,6 +360,7 @@ export async function POST(req: Request) {
       prepared: upsertRows.length,
       upserted: upsertedCount,
       skippedNoImage,
+      skippedNonArticle,
     },
     preview: preview.slice(0, 40),
     errors,

@@ -2,7 +2,8 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { Bodoni_Moda, Manrope, Source_Serif_4 } from "next/font/google";
 import { revalidatePath } from "next/cache";
-import { fetchText } from "@/lib/crawl/fetcher";
+import { redirect } from "next/navigation";
+import { fetchTextBestEffort } from "@/lib/crawl/fetcher";
 import { extractArticleSignals } from "@/lib/news/extract";
 import {
   guessDocumentLanguage,
@@ -46,6 +47,25 @@ const SECONDARY_BUTTON_CLASS =
   "border border-black/30 bg-[#f8f4eb] px-4 py-2 text-xs font-semibold uppercase tracking-[0.15em] text-black hover:bg-[#f1ede4]";
 const FRONT_LEAD_OVERRIDE_TAG = "front_lead_override";
 
+type AdminNoticeKey =
+  | "saved"
+  | "created"
+  | "deleted"
+  | "lead_updated"
+  | "generated"
+  | "generated_no_change"
+  | "removed_generated";
+
+const ADMIN_NOTICE_TEXT: Record<AdminNoticeKey, string> = {
+  saved: "Endringer lagret.",
+  created: "Ny sak opprettet.",
+  deleted: "Sak slettet.",
+  lead_updated: "Hovedsak oppdatert.",
+  generated: "Ny tekst ble hentet og lagret fra kilden.",
+  generated_no_change: "Ingen ny tekst funnet i kilden. Eksisterende innhold ble beholdt.",
+  removed_generated: "Generert ekstratekst ble fjernet.",
+};
+
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
@@ -65,6 +85,34 @@ function parseDateInput(raw: string): string | null {
   const d = new Date(raw);
   if (Number.isNaN(d.getTime())) return null;
   return d.toISOString();
+}
+
+function firstSearchParam(
+  value: string | string[] | undefined
+): string | null {
+  if (Array.isArray(value)) return value[0] ?? null;
+  return value ?? null;
+}
+
+function resolveAdminNotice(
+  value: string | string[] | undefined
+): { key: AdminNoticeKey; text: string } | null {
+  const key = firstSearchParam(value);
+  if (!key) return null;
+  if (!(key in ADMIN_NOTICE_TEXT)) return null;
+  const typed = key as AdminNoticeKey;
+  return { key: typed, text: ADMIN_NOTICE_TEXT[typed] };
+}
+
+function adminNoticeUrl(
+  notice: AdminNoticeKey,
+  articleId?: string | null
+): string {
+  const params = new URLSearchParams({ notice });
+  const id = String(articleId ?? "").trim();
+  if (id) params.set("item", id);
+  const hash = id ? `#article-${id}` : "";
+  return `/admin/ki-avis?${params.toString()}${hash}`;
 }
 
 const SENTENCE_NOISE_PATTERNS = [
@@ -381,6 +429,7 @@ async function saveArticle(formData: FormData) {
   if (row.slug) revalidatePath(`/ki-avis/${row.slug}`);
   revalidatePath("/admin/ki-avis");
   revalidatePath("/sitemap.xml");
+  redirect(adminNoticeUrl(id ? "saved" : "created", id));
 }
 
 async function deleteArticle(formData: FormData) {
@@ -396,6 +445,7 @@ async function deleteArticle(formData: FormData) {
   revalidatePath("/ki-avis");
   revalidatePath("/admin/ki-avis");
   revalidatePath("/sitemap.xml");
+  redirect(adminNoticeUrl("deleted"));
 }
 
 async function setLeadOverride(formData: FormData) {
@@ -443,6 +493,7 @@ async function setLeadOverride(formData: FormData) {
 
   revalidatePath("/ki-avis");
   revalidatePath("/admin/ki-avis");
+  redirect(adminNoticeUrl("lead_updated", targetId || null));
 }
 
 async function generateMoreTextFromSource(formData: FormData) {
@@ -464,7 +515,11 @@ async function generateMoreTextFromSource(formData: FormData) {
 
   let html = "";
   try {
-    const fetched = await fetchText(String(row.source_url ?? ""), { timeoutMs: 14_000 });
+    const fetched = await fetchTextBestEffort(String(row.source_url ?? ""), {
+      timeoutMs: 14_000,
+      minPlainLength: 1000,
+      alwaysTryReadableFallback: true,
+    });
     if (fetched.ok) html = fetched.text;
   } catch {
     // fallback to existing fields below
@@ -535,6 +590,15 @@ async function generateMoreTextFromSource(formData: FormData) {
     bodyToSave = null;
   }
 
+  const hasChanges =
+    String(summaryToSave ?? "").trim() !== String(row.summary ?? "").trim() ||
+    String(bodyToSave ?? "").trim() !== String(row.body ?? "").trim();
+
+  if (!hasChanges) {
+    revalidatePath("/admin/ki-avis");
+    redirect(adminNoticeUrl("generated_no_change", id));
+  }
+
   const { error: updateError } = await db
     .from("news_articles")
     .update({
@@ -548,6 +612,7 @@ async function generateMoreTextFromSource(formData: FormData) {
   revalidatePath("/admin/ki-avis");
   revalidatePath("/ki-avis");
   if (row.slug) revalidatePath(`/ki-avis/${row.slug}`);
+  redirect(adminNoticeUrl("generated", id));
 }
 
 async function removeGeneratedExtraText(formData: FormData) {
@@ -584,10 +649,18 @@ async function removeGeneratedExtraText(formData: FormData) {
   revalidatePath("/admin/ki-avis");
   revalidatePath("/ki-avis");
   if (row.slug) revalidatePath(`/ki-avis/${row.slug}`);
+  redirect(adminNoticeUrl("removed_generated", id));
 }
 
-export default async function KIAvisAdminPage() {
+export default async function KIAvisAdminPage({
+  searchParams,
+}: {
+  searchParams?: Promise<{ notice?: string | string[]; item?: string | string[] }>;
+}) {
   await requireAdmin("/admin/ki-avis");
+  const sp = (await searchParams) ?? {};
+  const notice = resolveAdminNotice(sp.notice);
+  const noticeItemId = firstSearchParam(sp.item);
   const rows = await listNewsForAdmin(240);
   const leadCandidates = rows.filter(
     (row) =>
@@ -651,6 +724,20 @@ export default async function KIAvisAdminPage() {
             </div>
           </div>
         </header>
+
+        {notice ? (
+          <section className="mt-4 border border-emerald-800/30 bg-emerald-100/60 px-4 py-3 text-sm text-emerald-900">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <p className="font-semibold">{notice.text}</p>
+              <Link
+                href={noticeItemId ? `/admin/ki-avis#article-${noticeItemId}` : "/admin/ki-avis"}
+                className="text-[11px] font-semibold uppercase tracking-[0.14em] underline underline-offset-4 hover:opacity-80"
+              >
+                Lukk melding
+              </Link>
+            </div>
+          </section>
+        ) : null}
 
         <section className="mt-4 border border-black/20 bg-[#f8f4eb] p-4">
           <h2 className={`${headline.className} text-[30px] leading-[1.02] md:text-[36px]`}>
@@ -817,7 +904,11 @@ export default async function KIAvisAdminPage() {
               <article
                 key={row.id}
                 id={`article-${row.id}`}
-                className="border-b border-black/15 px-3 py-4 last:border-b-0 md:px-4"
+                className={`border-b px-3 py-4 last:border-b-0 md:px-4 ${
+                  noticeItemId === row.id
+                    ? "border-emerald-700/35 bg-emerald-50/40"
+                    : "border-black/15"
+                }`}
               >
                 <div className="mb-3 flex flex-wrap items-start justify-between gap-2 border-b border-black/10 pb-2">
                   <div>
@@ -827,6 +918,11 @@ export default async function KIAvisAdminPage() {
                     <p className="mt-1 text-[11px] uppercase tracking-[0.14em] text-black/58">
                       {row.source_name} · {row.status} · {row.perspective}
                     </p>
+                    {noticeItemId === row.id && notice ? (
+                      <p className="mt-2 text-[11px] font-semibold uppercase tracking-[0.14em] text-emerald-900">
+                        {notice.text}
+                      </p>
+                    ) : null}
                   </div>
                   <Link
                     href={`/ki-avis/${row.slug}`}

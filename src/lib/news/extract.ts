@@ -2,14 +2,16 @@ import { cleanText, stripHtml } from "@/lib/news/utils";
 import type { NewsPerspective } from "@/lib/news/types";
 
 const PAYWALL_SIGNALS = [
-  "abonner",
-  "abonnement",
   "kun for abonnenter",
   "betalingsmur",
   "for abonnenter",
   "subscriber-only",
   "logg inn for å lese",
   "du har nådd",
+  "du har lest",
+  "for å lese videre",
+  "for å lese mer",
+  "premium",
   "piano-id",
   "metered",
 ];
@@ -305,7 +307,17 @@ function publishedAtFromHtml(html: string, lookup: MetaLookup): string | null {
 
 function isLikelyPaywalled(html: string): boolean {
   const lc = html.toLowerCase();
-  return PAYWALL_SIGNALS.some((signal) => lc.includes(signal));
+  let hits = 0;
+  for (const signal of PAYWALL_SIGNALS) {
+    if (lc.includes(signal)) hits += 1;
+  }
+  if (hits >= 2) return true;
+  return (
+    lc.includes("kun for abonnenter") ||
+    lc.includes("for abonnenter") ||
+    lc.includes("subscriber-only") ||
+    lc.includes("logg inn for å lese")
+  );
 }
 
 export function detectLikelyNorwegian(text: string): boolean {

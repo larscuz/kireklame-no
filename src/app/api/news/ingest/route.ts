@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import { normalizeNewsUpsert } from "@/lib/news/articles";
+import { isLikelyNonArticleNewsPage } from "@/lib/news/nonArticle";
 import {
   coerceNewsPerspective,
   coerceNewsStatus,
@@ -64,6 +65,21 @@ export async function POST(req: Request) {
     if (!title || !sourceUrl) {
       skipped.push({
         reason: "missing_title_or_source_url",
+        source_url: sourceUrl || null,
+        title: title || null,
+      });
+      continue;
+    }
+    if (
+      isLikelyNonArticleNewsPage({
+        sourceUrl,
+        title,
+        snippet: item.excerpt ?? item.summary ?? null,
+        plainText: item.body ?? null,
+      })
+    ) {
+      skipped.push({
+        reason: "non_article_page",
         source_url: sourceUrl || null,
         title: title || null,
       });

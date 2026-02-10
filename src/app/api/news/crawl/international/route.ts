@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { fetchText } from "@/lib/crawl/fetcher";
+import { fetchTextBestEffort } from "@/lib/crawl/fetcher";
 import {
   googleSearchOrganicResults,
   type SerperOrganic,
@@ -26,6 +26,7 @@ import {
   shouldTranslateToNorwegian,
   translateToNorwegianBokmal,
 } from "@/lib/news/translate";
+import { isLikelyNonArticleNewsPage } from "@/lib/news/nonArticle";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -113,6 +114,7 @@ function candidateFromSerper(query: string, hit: SerperOrganic): Candidate | nul
 
   const title = cleanText(hit.title ?? "", 220) ?? "Untitled";
   const snippet = cleanText(hit.snippet ?? "", 420) ?? "";
+  if (isLikelyNonArticleNewsPage({ sourceUrl, title, snippet })) return null;
   const relevanceText = `${title} ${snippet}`;
   if (!looksRelevantToInternationalAIAgency(relevanceText)) return null;
 
@@ -220,6 +222,7 @@ export async function POST(req: Request) {
 
   const upsertRows: ReturnType<typeof normalizeNewsUpsert>[] = [];
   let skippedNoImage = 0;
+  let skippedNonArticle = 0;
   const preview: Array<{
     title: string;
     source_url: string;
@@ -237,7 +240,10 @@ export async function POST(req: Request) {
     try {
       let html = "";
       try {
-        const fetched = await fetchText(item.sourceUrl, { timeoutMs: 12_000 });
+        const fetched = await fetchTextBestEffort(item.sourceUrl, {
+          timeoutMs: 12_000,
+          minPlainLength: 900,
+        });
         if (fetched.ok) html = fetched.text;
       } catch {
         // best effort
@@ -261,6 +267,18 @@ export async function POST(req: Request) {
             perspective: classifyPerspective(`${item.title} ${item.snippet}`),
             plainText: `${item.title} ${item.snippet}`,
           };
+
+      if (
+        isLikelyNonArticleNewsPage({
+          sourceUrl: item.sourceUrl,
+          title: extracted.title ?? item.title,
+          snippet: extracted.excerpt ?? item.snippet,
+          plainText: extracted.plainText,
+        })
+      ) {
+        skippedNonArticle += 1;
+        continue;
+      }
 
       const combinedText =
         `${extracted.title ?? ""} ${extracted.excerpt ?? ""} ${extracted.plainText ?? ""}`.trim();
@@ -419,6 +437,7 @@ export async function POST(req: Request) {
       prepared: upsertRows.length,
       upserted: upsertedCount,
       skippedNoImage,
+      skippedNonArticle,
     },
     preview: preview.slice(0, 60),
     errors,
