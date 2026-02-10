@@ -2,11 +2,18 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { Bodoni_Moda, Manrope, Source_Serif_4 } from "next/font/google";
 import { revalidatePath } from "next/cache";
-import { isLikelyInternationalDeskArticle } from "@/lib/news/international";
+import { fetchText } from "@/lib/crawl/fetcher";
+import { extractArticleSignals } from "@/lib/news/extract";
+import {
+  guessDocumentLanguage,
+  isLikelyInternationalDeskArticle,
+} from "@/lib/news/international";
+import { shouldTranslateToNorwegian, translateToNorwegianBokmal } from "@/lib/news/translate";
 import { requireAdmin } from "@/lib/supabase/server";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import { listNewsForAdmin, normalizeNewsUpsert } from "@/lib/news/articles";
 import {
+  cleanText,
   coerceNewsPerspective,
   coerceNewsStatus,
   parseTopicTagsCsv,
@@ -58,6 +65,231 @@ function parseDateInput(raw: string): string | null {
   const d = new Date(raw);
   if (Number.isNaN(d.getTime())) return null;
   return d.toISOString();
+}
+
+const SENTENCE_NOISE_PATTERNS = [
+  /cookie/i,
+  /personvern/i,
+  /privacy/i,
+  /terms/i,
+  /annonser(e|ing)?/i,
+  /abonn(er|ement)/i,
+  /logg inn/i,
+  /jump to/i,
+  /subscribe/i,
+  /newsletter/i,
+  /del på/i,
+  /follow us/i,
+  /copyright/i,
+];
+
+const AI_MARKETING_TERMS = [
+  "ai",
+  "ki",
+  "kunstig intelligens",
+  "markedsføring",
+  "reklame",
+  "byrå",
+  "media",
+  "kampanje",
+  "merkevare",
+  "automatisering",
+  "effektivisering",
+  "kostnad",
+  "inntekter",
+  "vekst",
+];
+
+const TITLE_STOPWORDS = new Set([
+  "and",
+  "the",
+  "for",
+  "with",
+  "this",
+  "that",
+  "from",
+  "som",
+  "for",
+  "med",
+  "til",
+  "det",
+  "der",
+  "eller",
+  "av",
+  "på",
+  "om",
+  "fra",
+  "ikke",
+]);
+
+function normalizeInputText(raw: string | null | undefined): string {
+  return String(raw ?? "")
+    .replace(/\r\n/g, "\n")
+    .replace(/[ \t]+/g, " ")
+    .replace(/\n{3,}/g, "\n\n")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function splitSentences(text: string): string[] {
+  if (!text) return [];
+  const parts = text
+    .split(/(?<=[.!?])\s+(?=[A-ZÆØÅ0-9"'(])/g)
+    .map((line) => line.trim())
+    .filter(Boolean);
+
+  const out: string[] = [];
+  for (const part of parts) {
+    if (part.length > 340) {
+      const chunks = part
+        .split(/[,;:]\s+/g)
+        .map((chunk) => chunk.trim())
+        .filter(Boolean);
+      out.push(...chunks);
+    } else {
+      out.push(part);
+    }
+  }
+  return out;
+}
+
+function sentenceLooksUseful(sentence: string): boolean {
+  const trimmed = sentence.trim();
+  if (trimmed.length < 45 || trimmed.length > 340) return false;
+  if (/https?:\/\//i.test(trimmed)) return false;
+  if (SENTENCE_NOISE_PATTERNS.some((pattern) => pattern.test(trimmed))) return false;
+  return true;
+}
+
+function titleKeywords(title: string): string[] {
+  return String(title ?? "")
+    .toLowerCase()
+    .replace(/[^a-z0-9æøå\s-]/gi, " ")
+    .split(/\s+/g)
+    .map((word) => word.trim())
+    .filter((word) => word.length >= 4 && !TITLE_STOPWORDS.has(word))
+    .slice(0, 12);
+}
+
+function sentenceScore(sentence: string, idx: number, titleTerms: string[]): number {
+  const lc = sentence.toLowerCase();
+  let score = 0;
+  for (const term of titleTerms) {
+    if (lc.includes(term)) score += 2.2;
+  }
+  for (const term of AI_MARKETING_TERMS) {
+    if (lc.includes(term)) score += 1.1;
+  }
+  if (/\d/.test(lc)) score += 0.7;
+  if (idx <= 8) score += 0.8;
+  if (idx >= 40) score += 0.3;
+  return score;
+}
+
+function uniqueSentencePush(out: string[], candidate: string): void {
+  const needle = candidate.toLowerCase().replace(/\s+/g, " ").trim();
+  if (!needle) return;
+  const exists = out.some((item) => {
+    const lc = item.toLowerCase().replace(/\s+/g, " ").trim();
+    return lc === needle || lc.includes(needle.slice(0, 40));
+  });
+  if (!exists) out.push(candidate);
+}
+
+function limitText(text: string, max: number): string {
+  const clean = normalizeInputText(text);
+  if (clean.length <= max) return clean;
+  return `${clean.slice(0, Math.max(0, max - 1)).trimEnd()}…`;
+}
+
+function composeHeuristicDraft(args: {
+  title: string;
+  excerpt: string | null;
+  plainText: string;
+  isPaywalled: boolean;
+}): { summary: string | null; body: string | null } {
+  const normalized = normalizeInputText(args.plainText);
+  const fallbackExcerpt = cleanText(args.excerpt ?? "", 420);
+  if (!normalized) {
+    return { summary: fallbackExcerpt, body: null };
+  }
+
+  const rawSentences = splitSentences(normalized).filter(sentenceLooksUseful);
+  if (!rawSentences.length) {
+    return { summary: fallbackExcerpt, body: null };
+  }
+
+  const keys = titleKeywords(args.title);
+  const scored = rawSentences
+    .map((sentence, idx) => ({
+      sentence,
+      idx,
+      score: sentenceScore(sentence, idx, keys),
+    }))
+    .sort((a, b) => b.score - a.score || a.idx - b.idx);
+
+  const selected: Array<{ sentence: string; idx: number }> = [];
+  for (const candidate of scored) {
+    if (selected.length >= 10) break;
+    const exists = selected.some(
+      (item) =>
+        item.sentence.toLowerCase() === candidate.sentence.toLowerCase() ||
+        item.sentence.toLowerCase().includes(candidate.sentence.toLowerCase().slice(0, 40))
+    );
+    if (!exists) selected.push({ sentence: candidate.sentence, idx: candidate.idx });
+  }
+  selected.sort((a, b) => a.idx - b.idx);
+
+  const summaryParts: string[] = [];
+  for (const item of selected) {
+    if (summaryParts.length >= 3) break;
+    uniqueSentencePush(summaryParts, item.sentence);
+    const candidate = normalizeInputText(summaryParts.join(" "));
+    if (candidate.length >= 260) break;
+  }
+  const summary = summaryParts.length ? limitText(summaryParts.join(" "), 560) : fallbackExcerpt;
+
+  const summarySet = new Set(summaryParts.map((item) => item.toLowerCase()));
+  const bodyCandidates: string[] = [];
+  for (const item of selected) {
+    if (summarySet.has(item.sentence.toLowerCase())) continue;
+    uniqueSentencePush(bodyCandidates, item.sentence);
+    if (bodyCandidates.length >= 8) break;
+  }
+  if (bodyCandidates.length < 5) {
+    for (const sentence of rawSentences) {
+      if (summarySet.has(sentence.toLowerCase())) continue;
+      uniqueSentencePush(bodyCandidates, sentence);
+      if (bodyCandidates.length >= 8) break;
+    }
+  }
+
+  let body: string | null = null;
+  if (!args.isPaywalled && bodyCandidates.length >= 2) {
+    const paragraphs: string[] = [];
+    for (let i = 0; i < bodyCandidates.length; i += 2) {
+      const paragraph = bodyCandidates.slice(i, i + 2).join(" ").trim();
+      if (paragraph) paragraphs.push(paragraph);
+      if (paragraphs.length >= 4) break;
+    }
+    body = paragraphs.length ? limitText(paragraphs.join("\n\n"), 1800) : null;
+  }
+
+  return {
+    summary: summary ? limitText(summary, 560) : fallbackExcerpt,
+    body,
+  };
+}
+
+function isPlaceholderLike(value: string | null | undefined): boolean {
+  const text = String(value ?? "").trim();
+  if (!text) return true;
+  return (
+    /^__NEW_/i.test(text) ||
+    /^\[[^\]]+\]$/.test(text) ||
+    /^Kort sammenfatning basert på kilden/i.test(text) ||
+    /^Ny redaksjonell utdyping fra kilden/i.test(text)
+  );
 }
 
 function hasTag(tags: string[] | null | undefined, tag: string): boolean {
@@ -202,6 +434,102 @@ async function setLeadOverride(formData: FormData) {
 
   revalidatePath("/ki-avis");
   revalidatePath("/admin/ki-avis");
+}
+
+async function generateMoreTextFromSource(formData: FormData) {
+  "use server";
+
+  await requireAdmin("/admin/ki-avis");
+  const id = String(formData.get("id") ?? "").trim();
+  if (!id) throw new Error("Mangler artikkel-id");
+
+  const db = supabaseAdmin();
+  const { data: row, error: rowError } = await db
+    .from("news_articles")
+    .select("id,slug,title,source_url,source_name,language,is_paywalled,excerpt,summary,body")
+    .eq("id", id)
+    .maybeSingle();
+  if (rowError || !row) {
+    throw new Error(rowError?.message ?? "Fant ikke sak");
+  }
+
+  let html = "";
+  try {
+    const fetched = await fetchText(String(row.source_url ?? ""), { timeoutMs: 14_000 });
+    if (fetched.ok) html = fetched.text;
+  } catch {
+    // fallback to existing fields below
+  }
+
+  const extracted = html
+    ? extractArticleSignals({
+        html,
+        sourceUrl: row.source_url,
+        fallbackTitle: row.title,
+        fallbackSnippet: row.excerpt,
+      })
+    : {
+        title: row.title,
+        excerpt: cleanText(row.excerpt ?? "", 420),
+        heroImageUrl: null,
+        publishedAt: null,
+        isPaywalled: Boolean(row.is_paywalled),
+        paywallNote: null,
+        language: "unknown" as const,
+        perspective: "neutral" as const,
+        plainText: normalizeInputText(row.body ?? row.summary ?? row.excerpt ?? ""),
+      };
+
+  const plainText = normalizeInputText(extracted.plainText);
+  const generated = composeHeuristicDraft({
+    title: String(extracted.title ?? row.title ?? ""),
+    excerpt: extracted.excerpt ?? row.excerpt,
+    plainText,
+    isPaywalled: Boolean(row.is_paywalled) || Boolean(extracted.isPaywalled),
+  });
+
+  const language = guessDocumentLanguage({
+    html,
+    text: `${extracted.title ?? ""} ${extracted.excerpt ?? ""} ${plainText}`.trim(),
+  });
+  const needsTranslation = shouldTranslateToNorwegian(language);
+
+  let nextSummary = generated.summary;
+  let nextBody = generated.body;
+  if (needsTranslation) {
+    if (nextSummary) nextSummary = (await translateToNorwegianBokmal(nextSummary)) ?? nextSummary;
+    if (nextBody) nextBody = (await translateToNorwegianBokmal(nextBody)) ?? nextBody;
+  }
+
+  const summaryToSave =
+    isPlaceholderLike(row.summary) || String(row.summary ?? "").trim().length < 120
+      ? nextSummary ?? row.summary
+      : row.summary ?? nextSummary;
+
+  let bodyToSave = row.body;
+  if (nextBody) {
+    if (isPlaceholderLike(row.body)) {
+      bodyToSave = nextBody;
+    } else if (!String(row.body ?? "").includes(nextBody.slice(0, 110))) {
+      bodyToSave = `${String(row.body ?? "").trim()}\n\n${nextBody}`.trim();
+    }
+  } else if (isPlaceholderLike(row.body)) {
+    bodyToSave = null;
+  }
+
+  const { error: updateError } = await db
+    .from("news_articles")
+    .update({
+      summary: summaryToSave ?? null,
+      body: bodyToSave ?? null,
+    })
+    .eq("id", id);
+
+  if (updateError) throw new Error(updateError.message);
+
+  revalidatePath("/admin/ki-avis");
+  revalidatePath("/ki-avis");
+  if (row.slug) revalidatePath(`/ki-avis/${row.slug}`);
 }
 
 export default async function KIAvisAdminPage() {
@@ -601,6 +929,11 @@ export default async function KIAvisAdminPage() {
                   </div>
                 </form>
 
+                <form action={generateMoreTextFromSource} className="mt-2">
+                  <input type="hidden" name="id" value={row.id} />
+                  <button className={SECONDARY_BUTTON_CLASS}>Generer mer tekst fra kilde</button>
+                </form>
+
                 <form action={deleteArticle} className="mt-3">
                   <input type="hidden" name="id" value={row.id} />
                   <button className={SECONDARY_BUTTON_CLASS}>Slett sak</button>
@@ -611,8 +944,8 @@ export default async function KIAvisAdminPage() {
                     SQL patch-mal for mer tekst
                   </summary>
                   <p className="mt-2 text-sm text-black/70">
-                    Bruk denne malen når du har sjekket originalkilden og vil oppdatere oppsummering
-                    og redaksjonell tekst (uten full artikkeltekst).
+                    Manuell patch-mal: fyll inn egen tekst i feltene under når du vil oppdatere
+                    oppsummering og redaksjonell tekst (uten full artikkeltekst).
                   </p>
                   <pre className="mt-2 overflow-x-auto border border-black/15 bg-[#fcf8ef] p-3 text-xs leading-relaxed text-black/80">
 {`-- Bytt ut __NEW_SUMMARY__ og __NEW_BODY__ før du kjører.
