@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { Bodoni_Moda, Manrope, Source_Serif_4 } from "next/font/google";
 import AdSlot from "@/app/_components/AdSlot";
 import NewsImage from "@/app/_components/NewsImage";
+import SocialShareButton from "@/app/_components/SocialShareButton";
 import { getAdForPlacement, type SponsorAd } from "@/lib/ads";
 import { getLocale } from "@/lib/i18n.server";
 import { getPublishedNewsBySlug } from "@/lib/news/articles";
@@ -54,6 +55,20 @@ function hasImage(url: string | null): boolean {
   return /^https?:\/\//i.test(String(url ?? "").trim());
 }
 
+function toAbsoluteImageUrl(site: string, value: string | null | undefined): string {
+  const raw = String(value ?? "").trim();
+  if (!raw) return `${site}/og-linkedin.jpg`;
+  if (/^https?:\/\//i.test(raw)) return raw;
+  return `${site}${raw.startsWith("/") ? "" : "/"}${raw}`;
+}
+
+function shortShareDescription(value: string | null | undefined, maxLen = 180): string {
+  const text = String(value ?? "").replace(/\s+/g, " ").trim();
+  if (!text) return "";
+  if (text.length <= maxLen) return text;
+  return `${text.slice(0, maxLen - 1).trim()}…`;
+}
+
 function normalizeTagValue(value: string): string {
   return String(value ?? "")
     .trim()
@@ -87,6 +102,27 @@ function isInternalAivisArticle(args: {
   if (/op-?ed|leder/i.test(title)) return true;
   if (/redaksjonen|lars\s*cuzner|ki?r?\s*aivisa/i.test(sourceName)) return true;
   if (/editor in chief bot redaksjonen|lars\s*cuzner|skrevet av ki?r?\s*aivisa/i.test(editorNote)) return true;
+  return false;
+}
+
+function isSocialShareEligibleArticle(args: {
+  title: string | null | undefined;
+  sourceName: string | null | undefined;
+  topicTags: string[] | null | undefined;
+  editorNote: string | null | undefined;
+}): boolean {
+  const title = String(args.title ?? "");
+  const sourceName = String(args.sourceName ?? "");
+  const editorNote = String(args.editorNote ?? "");
+  const hasEligibleTag =
+    hasTag(args.topicTags, "op_ed") ||
+    hasTag(args.topicTags, "redaksjonen") ||
+    hasTag(args.topicTags, "lars_cuzner");
+
+  if (hasEligibleTag) return true;
+  if (/op[\s-]?ed/i.test(title)) return true;
+  if (/redaksjonen|lars\s*cuzner/i.test(sourceName)) return true;
+  if (/redaksjonen|lars\s*cuzner|skrevet av op[\s-]?ed/i.test(editorNote)) return true;
   return false;
 }
 
@@ -153,14 +189,44 @@ export async function generateMetadata({
     });
   }
 
-  return siteMeta({
-    title: `${article.title} | KiR Nyheter`,
-    description:
-      article.summary ??
+  const site = (process.env.NEXT_PUBLIC_SITE_URL || "https://kireklame.no").replace(/\/+$/, "");
+  const canonicalPath = `/ki-avis/${article.slug}`;
+  const description = shortShareDescription(
+    article.summary ??
       article.excerpt ??
-      "Redaksjonell dekning av KI/AI i reklame og markedsføring.",
-    path: `/ki-avis/${article.slug}`,
+      "Redaksjonell dekning av KI/AI i reklame og markedsføring."
+  );
+  const ogImage = toAbsoluteImageUrl(site, article.hero_image_url);
+  const pageTitle = `${article.title} | KiR Nyheter`;
+  const shareTitle = article.title;
+  const base = siteMeta({
+    title: pageTitle,
+    description,
+    path: canonicalPath,
   });
+  const publishedIso = toIsoOrNull(article.published_at ?? article.created_at);
+  const modifiedIso = toIsoOrNull(article.updated_at ?? article.published_at ?? article.created_at);
+
+  return {
+    ...base,
+    openGraph: {
+      ...(base.openGraph ?? {}),
+      type: "article",
+      title: shareTitle,
+      description,
+      url: `${site}${canonicalPath}`,
+      images: [{ url: ogImage, width: 1200, height: 630, alt: article.title }],
+      publishedTime: publishedIso ?? undefined,
+      modifiedTime: modifiedIso ?? undefined,
+    },
+    twitter: {
+      ...(base.twitter ?? {}),
+      card: "summary_large_image",
+      title: shareTitle,
+      description,
+      images: [ogImage],
+    },
+  };
 }
 
 export default async function KIRNyheterArticlePage({
@@ -252,6 +318,12 @@ export default async function KIRNyheterArticlePage({
     splitBodyIntoNewsParagraphs(chunk)
   );
   const isEditorOpEd = isInternalAivisArticle({
+    title: article.title,
+    sourceName: article.source_name,
+    topicTags: article.topic_tags,
+    editorNote: article.editor_note,
+  });
+  const canShowSocialShareButton = isSocialShareEligibleArticle({
     title: article.title,
     sourceName: article.source_name,
     topicTags: article.topic_tags,
@@ -423,10 +495,18 @@ export default async function KIRNyheterArticlePage({
                 Les originalkilden
               </a>
             ) : null}
+            {canShowSocialShareButton ? (
+              <SocialShareButton
+                url={canonicalUrl}
+                title={displayTitle}
+                text={displaySummary}
+                className={`${showOriginalSourceLink ? "ml-4 " : ""}mt-3 inline-block align-top`}
+              />
+            ) : null}
             {canOpenCmsEditor ? (
               <Link
                 href={`/admin/ki-avis#article-${article.id}`}
-                className={`${showOriginalSourceLink ? "ml-4 " : ""}mt-3 inline-block border border-black/25 px-2 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] hover:bg-black/5`}
+                className={`${showOriginalSourceLink || canShowSocialShareButton ? "ml-4 " : ""}mt-3 inline-block border border-black/25 px-2 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] hover:bg-black/5`}
               >
                 Utvid tekst i CMS
               </Link>
