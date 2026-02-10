@@ -292,6 +292,15 @@ function isPlaceholderLike(value: string | null | undefined): boolean {
   );
 }
 
+function stripAutoEnrichmentEditorNote(value: string | null | undefined): string | null {
+  const lines = String(value ?? "")
+    .split("\n")
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .filter((line) => !/Oppdatert med ekstra kildesammenfatning\./i.test(line));
+  return lines.length ? lines.join("\n") : null;
+}
+
 function hasTag(tags: string[] | null | undefined, tag: string): boolean {
   return (tags ?? []).some((item) => String(item ?? "").toLowerCase() === tag);
 }
@@ -481,11 +490,13 @@ async function generateMoreTextFromSource(formData: FormData) {
       };
 
   const plainText = normalizeInputText(extracted.plainText);
+  const isPaywalled = Boolean(row.is_paywalled) || Boolean(extracted.isPaywalled);
+
   const generated = composeHeuristicDraft({
     title: String(extracted.title ?? row.title ?? ""),
     excerpt: extracted.excerpt ?? row.excerpt,
     plainText,
-    isPaywalled: Boolean(row.is_paywalled) || Boolean(extracted.isPaywalled),
+    isPaywalled,
   });
 
   const language = guessDocumentLanguage({
@@ -501,8 +512,15 @@ async function generateMoreTextFromSource(formData: FormData) {
     if (nextBody) nextBody = (await translateToNorwegianBokmal(nextBody)) ?? nextBody;
   }
 
-  const summaryToSave =
-    isPlaceholderLike(row.summary) || String(row.summary ?? "").trim().length < 120
+  if (isPaywalled) {
+    nextBody = null;
+    const excerptOnly = cleanText(extracted.excerpt ?? row.excerpt ?? "", 420);
+    if (excerptOnly) nextSummary = excerptOnly;
+  }
+
+  const summaryToSave = isPaywalled
+    ? nextSummary ?? row.summary
+    : isPlaceholderLike(row.summary) || String(row.summary ?? "").trim().length < 120
       ? nextSummary ?? row.summary
       : row.summary ?? nextSummary;
 
@@ -525,6 +543,42 @@ async function generateMoreTextFromSource(formData: FormData) {
     })
     .eq("id", id);
 
+  if (updateError) throw new Error(updateError.message);
+
+  revalidatePath("/admin/ki-avis");
+  revalidatePath("/ki-avis");
+  if (row.slug) revalidatePath(`/ki-avis/${row.slug}`);
+}
+
+async function removeGeneratedExtraText(formData: FormData) {
+  "use server";
+
+  await requireAdmin("/admin/ki-avis");
+  const id = String(formData.get("id") ?? "").trim();
+  if (!id) throw new Error("Mangler artikkel-id");
+
+  const db = supabaseAdmin();
+  const { data: row, error: rowError } = await db
+    .from("news_articles")
+    .select("id,slug,excerpt,summary,editor_note")
+    .eq("id", id)
+    .maybeSingle();
+  if (rowError || !row) {
+    throw new Error(rowError?.message ?? "Fant ikke sak");
+  }
+
+  const excerptSummary = cleanText(row.excerpt ?? "", 420);
+  const summaryToSave = excerptSummary || (isPlaceholderLike(row.summary) ? null : row.summary);
+  const editorNoteToSave = stripAutoEnrichmentEditorNote(row.editor_note);
+
+  const { error: updateError } = await db
+    .from("news_articles")
+    .update({
+      summary: summaryToSave,
+      body: null,
+      editor_note: editorNoteToSave,
+    })
+    .eq("id", id);
   if (updateError) throw new Error(updateError.message);
 
   revalidatePath("/admin/ki-avis");
@@ -932,6 +986,11 @@ export default async function KIAvisAdminPage() {
                 <form action={generateMoreTextFromSource} className="mt-2">
                   <input type="hidden" name="id" value={row.id} />
                   <button className={SECONDARY_BUTTON_CLASS}>Generer mer tekst fra kilde</button>
+                </form>
+
+                <form action={removeGeneratedExtraText} className="mt-2">
+                  <input type="hidden" name="id" value={row.id} />
+                  <button className={SECONDARY_BUTTON_CLASS}>Fjern generert ekstratekst</button>
                 </form>
 
                 <form action={deleteArticle} className="mt-3">
