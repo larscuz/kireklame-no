@@ -47,8 +47,17 @@ function hasImage(url: string | null): boolean {
   return /^https?:\/\//i.test(String(url ?? "").trim());
 }
 
+function normalizeTagValue(value: string): string {
+  return String(value ?? "")
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, "")
+    .replace(/-/g, "_");
+}
+
 function hasTag(tags: string[] | null | undefined, tag: string): boolean {
-  return (tags ?? []).some((item) => String(item ?? "").toLowerCase() === tag);
+  const needle = normalizeTagValue(tag);
+  return (tags ?? []).some((item) => normalizeTagValue(String(item ?? "")) === needle);
 }
 
 function splitBodyIntoNewsParagraphs(text: string): string[] {
@@ -212,6 +221,13 @@ export default async function KIRNyheterArticlePage({
   const displayBodyParagraphs = displayBodyChunks.flatMap((chunk) =>
     splitBodyIntoNewsParagraphs(chunk)
   );
+  const isEditorOpEd =
+    hasTag(article.topic_tags, "op_ed") ||
+    hasTag(article.topic_tags, "leder") ||
+    /op-?ed|leder/i.test(String(article.title ?? "")) ||
+    /redaksjonen/i.test(String(article.source_name ?? "")) ||
+    /editor in chief bot redaksjonen/i.test(String(article.editor_note ?? ""));
+  const editorBylineText = "Skrevet av Editor in Chief Bot Redaksjonen.";
 
   const translationNotice =
     isInternational && (hasTag(article.topic_tags, "maskinoversatt") || shouldAutoTranslate)
@@ -219,7 +235,9 @@ export default async function KIRNyheterArticlePage({
       : null;
   const cleanedEditorNote = String(article.editor_note ?? "").trim() || null;
   const showEditorialNote =
-    Boolean(cleanedEditorNote) && cleanedEditorNote !== String(translationNotice ?? "").trim();
+    Boolean(cleanedEditorNote) &&
+    cleanedEditorNote !== String(translationNotice ?? "").trim() &&
+    !isEditorOpEd;
 
   return (
     <main className={`${uiSans.className} overflow-x-clip bg-[#f1ede4] text-[#191919] pb-12`}>
@@ -354,9 +372,11 @@ export default async function KIRNyheterArticlePage({
 
             {displayBodyParagraphs.length > 0 ? (
               <section className="mt-5 border-t border-black/20 pt-4">
-                <h2 className={`${masthead.className} text-[30px] sm:text-[34px]`}>
-                  AI-generert tekst fra kilden
-                </h2>
+                {!isEditorOpEd ? (
+                  <h2 className={`${masthead.className} text-[30px] sm:text-[34px]`}>
+                    AI-generert tekst fra kilden
+                  </h2>
+                ) : null}
                 <div className="mt-3 md:columns-2 md:gap-8">
                   {displayBodyParagraphs.map((chunk, idx) => (
                     <p
@@ -367,6 +387,11 @@ export default async function KIRNyheterArticlePage({
                     </p>
                   ))}
                 </div>
+                {isEditorOpEd ? (
+                  <p className="mt-2 text-[11px] uppercase tracking-[0.13em] text-black/55">
+                    {editorBylineText}
+                  </p>
+                ) : null}
               </section>
             ) : null}
 
