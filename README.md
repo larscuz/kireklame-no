@@ -118,6 +118,19 @@ Payload:
   "resultsPerQuery": 8
 }
 ```
+4b. Internasjonal crawler (AI-first/AI-only byra):
+   - `POST /api/news/crawl/international`
+   - Header: `x-ingest-key: <INGEST_API_KEY>`
+   - Valgfri body:
+```json
+{
+  "dryRun": true,
+  "autoPublish": true,
+  "maxQueries": 36,
+  "maxArticles": 180,
+  "resultsPerQuery": 10
+}
+```
 5. Worker-ingest (Cloudflare-klargjort):
    - `POST /api/news/ingest`
    - Header: `x-ingest-key: <INGEST_API_KEY>`

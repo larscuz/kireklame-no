@@ -4,6 +4,7 @@ import AdSlot from "@/app/_components/AdSlot";
 import { getAdForPlacement, type SponsorAd } from "@/lib/ads";
 import { getLocale } from "@/lib/i18n.server";
 import { listPublishedNews } from "@/lib/news/articles";
+import { isLikelyInternationalDeskArticle } from "@/lib/news/international";
 import type { NewsArticle } from "@/lib/news/types";
 import { siteMeta } from "@/lib/seo";
 
@@ -55,6 +56,10 @@ function perspectiveLabel(perspective: NewsArticle["perspective"]) {
   if (perspective === "critical") return "Kritikk";
   if (perspective === "adoption") return "Satsing";
   return "Analyse";
+}
+
+function hasTag(article: NewsArticle, tag: string) {
+  return (article.topic_tags ?? []).some((item) => String(item ?? "").toLowerCase() === tag);
 }
 
 function StoryVisual({ article, className }: { article: NewsArticle; className: string }) {
@@ -148,8 +153,16 @@ export default async function KIRNyheterPage() {
     getAdForPlacement("catalog_grid_banner_3"),
   ]);
 
-  const lead = articles[0] ?? null;
-  const rest = lead ? articles.filter((item) => item.id !== lead.id) : articles;
+  const internationalDesk = articles.filter((item) => isLikelyInternationalDeskArticle(item)).slice(0, 8);
+  const internationalIds = new Set(internationalDesk.map((item) => item.id));
+  const leadPool = articles.filter((item) => !internationalIds.has(item.id));
+  const sourcePool = leadPool.length > 0 ? leadPool : articles;
+  const lead = sourcePool[0] ?? null;
+  const rest = lead ? sourcePool.filter((item) => item.id !== lead.id) : sourcePool;
+  const internationalLead = internationalDesk[0] ?? null;
+  const internationalWire = internationalLead
+    ? internationalDesk.filter((item) => item.id !== internationalLead.id).slice(0, 7)
+    : [];
 
   const frontRow = rest.slice(0, 4);
   const latest = rest.slice(4, 11);
@@ -343,6 +356,63 @@ export default async function KIRNyheterPage() {
             </div>
 
             <aside className="space-y-3 lg:pl-1">
+              {internationalLead ? (
+                <section className="border-b border-black/15 pb-3">
+                  <h2 className={`${masthead.className} text-[28px] leading-none`}>Internasjonalt</h2>
+                  <article className="mt-2 grid grid-cols-[84px_1fr] gap-2 border-b border-black/10 pb-2">
+                    <StoryVisual
+                      article={internationalLead}
+                      className="aspect-square w-full border border-black/20 object-cover"
+                    />
+                    <div>
+                      <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-black/58">
+                        {hasTag(internationalLead, "ai_only") ? "AI-only" : "AI-first"}
+                        {internationalLead.language
+                          ? ` · ${internationalLead.language.toUpperCase()}`
+                          : ""}
+                      </p>
+                      <h3 className={`${headline.className} mt-1 text-[28px] leading-[1.01]`}>
+                        <Link href={`/ki-avis/${internationalLead.slug}`} className="hover:opacity-75">
+                          {internationalLead.title}
+                        </Link>
+                      </h3>
+                      <p className="mt-1 text-[11px] text-black/55">
+                        {internationalLead.source_name} ·{" "}
+                        {fmtDate(internationalLead.published_at ?? internationalLead.created_at)}
+                      </p>
+                    </div>
+                  </article>
+
+                  <div className="mt-2 space-y-2">
+                    {internationalWire.slice(0, 4).map((article) => (
+                      <article
+                        key={article.id}
+                        className="grid grid-cols-[84px_1fr] gap-2 border-b border-black/10 pb-2 last:border-b-0 last:pb-0"
+                      >
+                        <StoryVisual
+                          article={article}
+                          className="aspect-square w-full border border-black/20 object-cover"
+                        />
+                        <div>
+                          <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-black/58">
+                            {hasTag(article, "ai_only") ? "AI-only" : "AI-first"}
+                            {article.language ? ` · ${article.language.toUpperCase()}` : ""}
+                          </p>
+                          <h3 className={`${headline.className} mt-1 text-[24px] leading-[1.01]`}>
+                            <Link href={`/ki-avis/${article.slug}`} className="hover:opacity-75">
+                              {article.title}
+                            </Link>
+                          </h3>
+                          <p className="mt-1 text-[11px] text-black/55">
+                            {article.source_name} · {fmtDate(article.published_at ?? article.created_at)}
+                          </p>
+                        </div>
+                      </article>
+                    ))}
+                  </div>
+                </section>
+              ) : null}
+
               <section className="border-b border-black/15 pb-3">
                 <h2 className={`${masthead.className} text-[28px] leading-none`}>Siste saker</h2>
                 <div className="mt-2 space-y-3">
