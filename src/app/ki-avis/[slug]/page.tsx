@@ -3,10 +3,18 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Bodoni_Moda, Manrope, Source_Serif_4 } from "next/font/google";
 import AdSlot from "@/app/_components/AdSlot";
+import NewsImage from "@/app/_components/NewsImage";
 import { getAdForPlacement, type SponsorAd } from "@/lib/ads";
 import { getLocale } from "@/lib/i18n.server";
 import { getPublishedNewsBySlug } from "@/lib/news/articles";
+import { isLikelyInternationalDeskArticle } from "@/lib/news/international";
+import {
+  machineTranslationNote,
+  shouldTranslateToNorwegian,
+  translateToNorwegianBokmal,
+} from "@/lib/news/translate";
 import { siteMeta } from "@/lib/seo";
+import { getUserOrNull } from "@/lib/supabase/server";
 
 const masthead = Bodoni_Moda({
   subsets: ["latin"],
@@ -37,6 +45,10 @@ function fmtDate(iso: string | null) {
 
 function hasImage(url: string | null): boolean {
   return /^https?:\/\//i.test(String(url ?? "").trim());
+}
+
+function hasTag(tags: string[] | null | undefined, tag: string): boolean {
+  return (tags ?? []).some((item) => String(item ?? "").toLowerCase() === tag);
 }
 
 function adSignature(ad: SponsorAd | null): string {
@@ -75,9 +87,10 @@ export default async function KIRNyheterArticlePage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const locale = await getLocale();
+  const [locale, viewer] = await Promise.all([getLocale(), getUserOrNull()]);
   const sponsorLabel = locale === "en" ? "Sponsored" : "Sponset";
   const openLinkFallback = locale === "en" ? "Open link" : "Åpne lenke";
+  const canOpenCmsEditor = Boolean(viewer);
 
   const [
     article,
@@ -125,8 +138,44 @@ export default async function KIRNyheterArticlePage({
     .map((part) => part.trim())
     .filter(Boolean);
 
+  const isInternational = isLikelyInternationalDeskArticle(article);
+  const shouldAutoTranslate =
+    isInternational && shouldTranslateToNorwegian(article.language) && !hasTag(article.topic_tags, "maskinoversatt");
+
+  let displayTitle = article.title;
+  let displaySummary =
+    article.summary ??
+    article.excerpt ??
+    (article.is_paywalled
+      ? "Denne saken ligger bak betalingsmur. Legg inn manuell oppsummering i CMS."
+      : "Oppsummering mangler foreløpig.");
+  let displayBodyChunks = bodyChunks;
+
+  if (shouldAutoTranslate) {
+    const translatedTitle = await translateToNorwegianBokmal(article.title);
+    const translatedSummary = await translateToNorwegianBokmal(displaySummary);
+
+    if (translatedTitle) displayTitle = translatedTitle;
+    if (translatedSummary) displaySummary = translatedSummary;
+
+    if (bodyChunks.length > 0) {
+      const translatedBody = await Promise.all(
+        bodyChunks.map(async (chunk) => (await translateToNorwegianBokmal(chunk)) ?? chunk)
+      );
+      displayBodyChunks = translatedBody;
+    }
+  }
+
+  const translationNotice =
+    isInternational && (hasTag(article.topic_tags, "maskinoversatt") || shouldAutoTranslate)
+      ? article.editor_note ?? machineTranslationNote(article.language)
+      : null;
+  const cleanedEditorNote = String(article.editor_note ?? "").trim() || null;
+  const showEditorialNote =
+    Boolean(cleanedEditorNote) && cleanedEditorNote !== String(translationNotice ?? "").trim();
+
   return (
-    <main className={`${uiSans.className} bg-[#f1ede4] text-[#191919] pb-12`}>
+    <main className={`${uiSans.className} overflow-x-clip bg-[#f1ede4] text-[#191919] pb-12`}>
       <header className="border-y border-black/20 bg-[#f6f2e9]">
         <div className="mx-auto max-w-[1260px] border-b border-black/15 px-3 py-2 text-[10px] uppercase tracking-[0.21em] text-black/65 md:px-4">
           <div className="flex flex-wrap items-center justify-between gap-2">
@@ -167,8 +216,8 @@ export default async function KIRNyheterArticlePage({
             <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-black/55">
               Hovedsak · KiR Nyheter
             </p>
-            <h1 className={`${headline.className} mt-2 text-[42px] leading-[0.96] md:text-[67px]`}>
-              {article.title}
+            <h1 className={`${headline.className} mt-2 text-[clamp(2.1rem,10.5vw,3.9rem)] leading-[0.96] [overflow-wrap:anywhere] hyphens-auto md:text-[67px]`}>
+              {displayTitle}
             </h1>
 
             <div className="mt-3 flex flex-wrap items-center gap-2 text-[11px] uppercase tracking-[0.13em] text-black/55">
@@ -186,10 +235,18 @@ export default async function KIRNyheterArticlePage({
             >
               Les originalkilden
             </a>
+            {canOpenCmsEditor ? (
+              <Link
+                href={`/admin/ki-avis#article-${article.id}`}
+                className="ml-4 mt-3 inline-block border border-black/25 px-2 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] hover:bg-black/5"
+              >
+                Utvid tekst i CMS
+              </Link>
+            ) : null}
 
             <section className="mt-4 border border-black/20 bg-[#f8f4eb]">
               {hasImage(article.hero_image_url) ? (
-                <img
+                <NewsImage
                   src={article.hero_image_url ?? ""}
                   alt={article.title}
                   className="aspect-[16/8.6] w-full object-cover"
@@ -209,14 +266,23 @@ export default async function KIRNyheterArticlePage({
             </section>
 
             <section className="mt-4 border-t border-black/20 pt-4">
-              <h2 className={`${masthead.className} text-[34px]`}>Ingress</h2>
-              <p className={`${headline.className} mt-2 text-[29px] leading-[1.16] text-black/82`}>
-                {article.summary ??
-                  article.excerpt ??
-                  (article.is_paywalled
-                    ? "Denne saken ligger bak betalingsmur. Legg inn manuell oppsummering i CMS."
-                    : "Oppsummering mangler foreløpig.")}
+              <h2 className={`${masthead.className} text-[30px] sm:text-[34px]`}>Ingress</h2>
+              {translationNotice ? (
+                <p className="mt-2 border border-black/20 bg-[#f8f4eb] px-3 py-2 text-[12px] uppercase tracking-[0.14em] text-black/60">
+                  {translationNotice}
+                </p>
+              ) : null}
+              <p className={`${headline.className} mt-2 text-[24px] leading-[1.16] text-black/82 [overflow-wrap:anywhere] hyphens-auto sm:text-[29px]`}>
+                {displaySummary}
               </p>
+              <a
+                href={article.source_url}
+                target="_blank"
+                rel="noreferrer"
+                className="mt-3 inline-block text-[13px] font-semibold uppercase tracking-[0.13em] underline underline-offset-4 hover:opacity-80"
+              >
+                Les originalkilden
+              </a>
             </section>
 
             {inlineAd ? (
@@ -231,14 +297,14 @@ export default async function KIRNyheterArticlePage({
               </section>
             ) : null}
 
-            {bodyChunks.length > 0 ? (
+            {displayBodyChunks.length > 0 ? (
               <section className="mt-5 border-t border-black/20 pt-4">
-                <h2 className={`${masthead.className} text-[34px]`}>Redaksjonell tekst</h2>
+                <h2 className={`${masthead.className} text-[30px] sm:text-[34px]`}>Redaksjonell tekst</h2>
                 <div className="mt-3 md:columns-2 md:gap-8">
-                  {bodyChunks.map((chunk, idx) => (
+                  {displayBodyChunks.map((chunk, idx) => (
                     <p
                       key={`${idx}-${chunk.slice(0, 24)}`}
-                      className={`${headline.className} mb-4 break-inside-avoid text-[22px] leading-[1.34] text-black/85`}
+                      className={`${headline.className} mb-4 break-inside-avoid text-[20px] leading-[1.34] text-black/85 [overflow-wrap:anywhere] hyphens-auto sm:text-[22px]`}
                     >
                       {chunk}
                     </p>
@@ -247,10 +313,10 @@ export default async function KIRNyheterArticlePage({
               </section>
             ) : null}
 
-            {article.editor_note ? (
+            {showEditorialNote ? (
               <section className="mt-5 border border-black/20 bg-[#f8f4eb] p-4">
-                <h2 className={`${masthead.className} text-[30px]`}>Redaksjonell note</h2>
-                <p className="mt-2 text-[14px] leading-relaxed text-black/72">{article.editor_note}</p>
+                <h2 className={`${masthead.className} text-[28px] sm:text-[30px]`}>Redaksjonell note</h2>
+                <p className="mt-2 text-[14px] leading-relaxed text-black/72">{cleanedEditorNote}</p>
               </section>
             ) : null}
 

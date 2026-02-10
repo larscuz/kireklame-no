@@ -1,5 +1,10 @@
 // src/lib/crawl/searchSerper.ts
-export type SerperOrganic = { link?: string; title?: string; snippet?: string };
+export type SerperOrganic = {
+  link?: string;
+  title?: string;
+  snippet?: string;
+  imageUrl?: string | null;
+};
 
 type GoogleSearchOpts = {
   gl?: string;

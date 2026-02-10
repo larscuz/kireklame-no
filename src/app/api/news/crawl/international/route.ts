@@ -21,6 +21,11 @@ import {
 } from "@/lib/news/international";
 import { cleanText, domainFromUrl, stableNewsSlug } from "@/lib/news/utils";
 import { normalizeNewsUpsert } from "@/lib/news/articles";
+import {
+  machineTranslationNote,
+  shouldTranslateToNorwegian,
+  translateToNorwegianBokmal,
+} from "@/lib/news/translate";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -42,6 +47,7 @@ type Candidate = {
   snippet: string;
   domain: string;
   seed: boolean;
+  imageUrl: string | null;
 };
 
 function clampInt(value: unknown, min: number, max: number, fallback: number) {
@@ -117,6 +123,7 @@ function candidateFromSerper(query: string, hit: SerperOrganic): Candidate | nul
     snippet,
     domain,
     seed: false,
+    imageUrl: cleanText(hit.imageUrl ?? "", 1800),
   };
 }
 
@@ -140,6 +147,10 @@ function normalizePerspectiveForAIFirst(
     return "adoption";
   }
   return basePerspective;
+}
+
+function hasValidImageUrl(url: string | null | undefined): boolean {
+  return /^https?:\/\//i.test(String(url ?? "").trim());
 }
 
 export async function POST(req: Request) {
@@ -176,6 +187,7 @@ export async function POST(req: Request) {
       snippet: "Curated international AI-first agency source.",
       domain,
       seed: true,
+      imageUrl: null,
     });
     if (candidates.length >= maxArticles) break;
   }
@@ -207,6 +219,7 @@ export async function POST(req: Request) {
   }
 
   const upsertRows: ReturnType<typeof normalizeNewsUpsert>[] = [];
+  let skippedNoImage = 0;
   const preview: Array<{
     title: string;
     source_url: string;
@@ -258,8 +271,10 @@ export async function POST(req: Request) {
         snippet: extracted.excerpt ?? item.snippet,
         text: extracted.plainText,
       });
-
-      if (!["ai_only", "ai_first"].includes(classification.label)) continue;
+      const basePerspective = classifyPerspective(combinedText);
+      const keepAsInternational =
+        ["ai_only", "ai_first"].includes(classification.label) || basePerspective === "critical";
+      if (!keepAsInternational) continue;
 
       const language = guessDocumentLanguage({
         html,
@@ -268,15 +283,47 @@ export async function POST(req: Request) {
       const title = extracted.title ?? item.title;
       const sourceName = item.domain;
       const slug = stableNewsSlug(title, item.sourceUrl);
-      const basePerspective = classifyPerspective(combinedText);
+      const heroImageUrl = hasValidImageUrl(extracted.heroImageUrl)
+        ? extracted.heroImageUrl
+        : hasValidImageUrl(item.imageUrl)
+          ? item.imageUrl
+          : null;
+      if (!heroImageUrl) {
+        skippedNoImage += 1;
+        continue;
+      }
+
+      let translatedTitle = title;
+      let translatedExcerpt = extracted.excerpt;
+      let translatedSummary = autoSummary({
+        isPaywalled: extracted.isPaywalled,
+        excerpt: extracted.excerpt,
+        plainText: extracted.plainText,
+        snippet: item.snippet,
+      });
+      const needsTranslation = shouldTranslateToNorwegian(language);
+
+      if (needsTranslation) {
+        const tTitle = await translateToNorwegianBokmal(translatedTitle);
+        const tExcerpt = translatedExcerpt
+          ? await translateToNorwegianBokmal(translatedExcerpt)
+          : null;
+        const tSummary = translatedSummary
+          ? await translateToNorwegianBokmal(translatedSummary)
+          : null;
+
+        translatedTitle = tTitle ?? translatedTitle;
+        translatedExcerpt = tExcerpt ?? translatedExcerpt;
+        translatedSummary = tSummary ?? translatedSummary;
+      }
 
       const row = normalizeNewsUpsert({
         slug,
-        title,
+        title: translatedTitle,
         source_name: sourceName,
         source_url: item.sourceUrl,
         source_domain: item.domain,
-        language: language === "unknown" ? "en" : language,
+        language: needsTranslation ? "no" : language === "unknown" ? "en" : language,
         published_at: extracted.publishedAt,
         status: autoPublish ? "published" : "draft",
         perspective: normalizePerspectiveForAIFirst(classification, basePerspective),
@@ -284,29 +331,41 @@ export async function POST(req: Request) {
           "internasjonalt",
           INTERNATIONAL_NEWS_TOPIC,
           "ai_agency",
-          classification.label === "ai_only" ? "ai_only" : "ai_first",
+          classification.label === "ai_only"
+            ? "ai_only"
+            : classification.label === "ai_first"
+              ? "ai_first"
+              : "ai_discourse",
+          basePerspective === "critical" ? "kritikk" : "satsing",
+          needsTranslation ? "maskinoversatt" : "originalsprak",
           extracted.isPaywalled ? "betalingsmur" : "apen",
         ],
         is_paywalled: extracted.isPaywalled,
         paywall_note: extracted.paywallNote,
-        excerpt: extracted.excerpt,
-        summary: autoSummary({
-          isPaywalled: extracted.isPaywalled,
-          excerpt: extracted.excerpt,
-          plainText: extracted.plainText,
-          snippet: item.snippet,
-        }),
+        excerpt: translatedExcerpt,
+        summary: translatedSummary,
         body: null,
-        hero_image_url: extracted.heroImageUrl,
+        hero_image_url: heroImageUrl,
         crawl_run_id: crawlRunId,
         crawl_query: item.query,
         cloudflare_worker_hint: "ready_for_worker_enrichment_international",
+        editor_note: needsTranslation ? machineTranslationNote(language) : null,
         evidence: {
           crawler: "serper_news_international_v1",
           query: item.query,
           domain: item.domain,
           seed: item.seed,
           classification,
+          translation: needsTranslation
+            ? {
+                provider: "google_translate_web",
+                source_language: language,
+                target_language: "no",
+                translated_at: new Date().toISOString(),
+              }
+            : null,
+          original_title: title,
+          original_excerpt: extracted.excerpt,
           serper_title: item.title,
           serper_snippet: item.snippet,
           has_html_fetch: Boolean(html),
@@ -359,6 +418,7 @@ export async function POST(req: Request) {
       candidates: candidates.length,
       prepared: upsertRows.length,
       upserted: upsertedCount,
+      skippedNoImage,
     },
     preview: preview.slice(0, 60),
     errors,

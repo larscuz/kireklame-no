@@ -39,6 +39,7 @@ type Candidate = {
   title: string;
   snippet: string;
   domain: string;
+  imageUrl: string | null;
 };
 
 function clampInt(value: unknown, min: number, max: number, fallback: number) {
@@ -115,6 +116,7 @@ function candidateFromSerper(query: string, hit: SerperOrganic): Candidate | nul
     title,
     snippet,
     domain,
+    imageUrl: cleanText(hit.imageUrl ?? "", 1800),
   };
 }
 
@@ -127,6 +129,10 @@ function autoSummary(args: {
   if (args.isPaywalled) return null;
   const summarySeed = args.excerpt || cleanText(args.snippet, 280) || cleanText(args.plainText, 280);
   return summarySeed ? summarySeed.slice(0, 400) : null;
+}
+
+function hasValidImageUrl(url: string | null | undefined): boolean {
+  return /^https?:\/\//i.test(String(url ?? "").trim());
 }
 
 export async function POST(req: Request) {
@@ -163,6 +169,7 @@ export async function POST(req: Request) {
       title: titleFromUrlFallback(sourceUrl),
       snippet: "Kuratert kilde fra redaksjonen.",
       domain,
+      imageUrl: null,
     });
     if (candidates.length >= maxArticles) break;
   }
@@ -191,6 +198,7 @@ export async function POST(req: Request) {
   }
 
   const upsertRows: ReturnType<typeof normalizeNewsUpsert>[] = [];
+  let skippedNoImage = 0;
   const preview: Array<{
     title: string;
     source_url: string;
@@ -240,6 +248,15 @@ export async function POST(req: Request) {
       const title = extracted.title ?? item.title;
       const sourceName = item.domain;
       const slug = stableNewsSlug(title, item.sourceUrl);
+      const heroImageUrl = hasValidImageUrl(extracted.heroImageUrl)
+        ? extracted.heroImageUrl
+        : hasValidImageUrl(item.imageUrl)
+          ? item.imageUrl
+          : null;
+      if (!heroImageUrl) {
+        skippedNoImage += 1;
+        continue;
+      }
 
       const row = normalizeNewsUpsert({
         slug,
@@ -267,7 +284,7 @@ export async function POST(req: Request) {
           snippet: item.snippet,
         }),
         body: null,
-        hero_image_url: extracted.heroImageUrl,
+        hero_image_url: heroImageUrl,
         crawl_run_id: crawlRunId,
         crawl_query: item.query,
         cloudflare_worker_hint: "ready_for_worker_enrichment",
@@ -324,6 +341,7 @@ export async function POST(req: Request) {
       candidates: candidates.length,
       prepared: upsertRows.length,
       upserted: upsertedCount,
+      skippedNoImage,
     },
     preview: preview.slice(0, 40),
     errors,

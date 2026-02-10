@@ -38,6 +38,10 @@ type IngestPayload = {
   articles?: WorkerArticle[];
 };
 
+function hasValidImageUrl(url: string | null | undefined): boolean {
+  return /^https?:\/\//i.test(String(url ?? "").trim());
+}
+
 export async function POST(req: Request) {
   const key = req.headers.get("x-ingest-key") || "";
   if (!process.env.INGEST_API_KEY || key !== process.env.INGEST_API_KEY) {
@@ -60,6 +64,14 @@ export async function POST(req: Request) {
     if (!title || !sourceUrl) {
       skipped.push({
         reason: "missing_title_or_source_url",
+        source_url: sourceUrl || null,
+        title: title || null,
+      });
+      continue;
+    }
+    if (!hasValidImageUrl(item.hero_image_url ?? null)) {
+      skipped.push({
+        reason: "missing_or_invalid_hero_image_url",
         source_url: sourceUrl || null,
         title: title || null,
       });

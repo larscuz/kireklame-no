@@ -324,7 +324,11 @@ export default async function KIAvisAdminPage() {
 
           <div className="mt-3 border-y border-black/15 bg-[#f8f4eb]">
             {rows.map((row) => (
-              <article key={row.id} className="border-b border-black/15 px-3 py-4 last:border-b-0 md:px-4">
+              <article
+                key={row.id}
+                id={`article-${row.id}`}
+                className="border-b border-black/15 px-3 py-4 last:border-b-0 md:px-4"
+              >
                 <div className="mb-3 flex flex-wrap items-start justify-between gap-2 border-b border-black/10 pb-2">
                   <div>
                     <p className={`${headline.className} text-[30px] leading-[1.03] md:text-[35px]`}>
@@ -493,6 +497,24 @@ export default async function KIAvisAdminPage() {
                   <input type="hidden" name="id" value={row.id} />
                   <button className={SECONDARY_BUTTON_CLASS}>Slett sak</button>
                 </form>
+
+                <details className="mt-3 border border-black/15 bg-[#f6f2e9] p-3">
+                  <summary className="cursor-pointer text-[11px] font-semibold uppercase tracking-[0.14em] text-black/70">
+                    SQL patch-mal for mer tekst
+                  </summary>
+                  <p className="mt-2 text-sm text-black/70">
+                    Bruk denne malen når du har sjekket originalkilden og vil oppdatere oppsummering
+                    og redaksjonell tekst (uten full artikkeltekst).
+                  </p>
+                  <pre className="mt-2 overflow-x-auto border border-black/15 bg-[#fcf8ef] p-3 text-xs leading-relaxed text-black/80">
+{`update news_articles
+set
+  summary = '[Kort sammenfatning basert på kilden, 2-5 setninger]',
+  body = coalesce(body, '') || E'\\n\\n[Ny redaksjonell utdyping fra kilden, ikke fulltekst]',
+  editor_note = coalesce(editor_note, '') || E'\\nOppdatert med ekstra kildesammenfatning.'
+where id = '${row.id}';`}
+                  </pre>
+                </details>
               </article>
             ))}
           </div>
