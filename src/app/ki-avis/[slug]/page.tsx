@@ -51,6 +51,49 @@ function hasTag(tags: string[] | null | undefined, tag: string): boolean {
   return (tags ?? []).some((item) => String(item ?? "").toLowerCase() === tag);
 }
 
+function splitBodyIntoNewsParagraphs(text: string): string[] {
+  const raw = String(text ?? "").replace(/\r\n/g, "\n").trim();
+  if (!raw) return [];
+
+  const seedParts = raw
+    .split(/\n{2,}/g)
+    .map((part) => part.replace(/[ \t]+/g, " ").trim())
+    .filter(Boolean);
+
+  const out: string[] = [];
+  for (const part of seedParts.length ? seedParts : [raw]) {
+    if (part.length <= 420) {
+      out.push(part);
+      continue;
+    }
+
+    const sentences = part
+      .split(/(?<=[.!?])\s+(?=[A-ZÆØÅ0-9"'(])/g)
+      .map((line) => line.trim())
+      .filter(Boolean);
+
+    if (sentences.length < 2) {
+      const coarse = part.match(/.{1,320}(?:\s+|$)/g)?.map((line) => line.trim()).filter(Boolean) ?? [];
+      out.push(...(coarse.length ? coarse : [part]));
+      continue;
+    }
+
+    let current = "";
+    for (const sentence of sentences) {
+      const candidate = current ? `${current} ${sentence}` : sentence;
+      if (candidate.length > 360 && current) {
+        out.push(current);
+        current = sentence;
+      } else {
+        current = candidate;
+      }
+    }
+    if (current.trim()) out.push(current.trim());
+  }
+
+  return out.map((part) => part.trim()).filter(Boolean);
+}
+
 function adSignature(ad: SponsorAd | null): string {
   if (!ad) return "";
   return `${ad.id}:${ad.href}:${ad.image_url}:${ad.mobile_image_url ?? ""}`;
@@ -165,6 +208,10 @@ export default async function KIRNyheterArticlePage({
       displayBodyChunks = translatedBody;
     }
   }
+
+  const displayBodyParagraphs = displayBodyChunks.flatMap((chunk) =>
+    splitBodyIntoNewsParagraphs(chunk)
+  );
 
   const translationNotice =
     isInternational && (hasTag(article.topic_tags, "maskinoversatt") || shouldAutoTranslate)
@@ -297,11 +344,13 @@ export default async function KIRNyheterArticlePage({
               </section>
             ) : null}
 
-            {displayBodyChunks.length > 0 ? (
+            {displayBodyParagraphs.length > 0 ? (
               <section className="mt-5 border-t border-black/20 pt-4">
-                <h2 className={`${masthead.className} text-[30px] sm:text-[34px]`}>Redaksjonell tekst</h2>
+                <h2 className={`${masthead.className} text-[30px] sm:text-[34px]`}>
+                  AI-generert tekst fra kilden
+                </h2>
                 <div className="mt-3 md:columns-2 md:gap-8">
-                  {displayBodyChunks.map((chunk, idx) => (
+                  {displayBodyParagraphs.map((chunk, idx) => (
                     <p
                       key={`${idx}-${chunk.slice(0, 24)}`}
                       className={`${headline.className} mb-4 break-inside-avoid text-[20px] leading-[1.34] text-black/85 [overflow-wrap:anywhere] hyphens-auto sm:text-[22px]`}

@@ -285,7 +285,11 @@ export default async function KIRNyheterPage() {
 
             <div className="min-w-0 text-center">
               <div className="mx-auto mb-2 flex items-center justify-center gap-3">
-                <img src="/KIREKLAMElogo.gif" alt="KiR Nyheter logo" className="h-12 w-12" />
+                <img
+                  src="/KiR_logo_Black.png"
+                  alt="KiR Nyheter logo"
+                  className="h-16 w-16 object-contain md:h-20 md:w-20"
+                />
                 <span className={`${masthead.className} text-[clamp(2.5rem,11.8vw,3.5rem)] leading-[0.92] sm:text-6xl md:text-7xl`}>
                   KiR Nyheter
                 </span>
