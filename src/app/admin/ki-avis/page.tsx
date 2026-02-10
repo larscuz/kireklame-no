@@ -507,12 +507,32 @@ export default async function KIAvisAdminPage() {
                     og redaksjonell tekst (uten full artikkeltekst).
                   </p>
                   <pre className="mt-2 overflow-x-auto border border-black/15 bg-[#fcf8ef] p-3 text-xs leading-relaxed text-black/80">
-{`update news_articles
+{`-- Bytt ut __NEW_SUMMARY__ og __NEW_BODY__ før du kjører.
+with patch as (
+  select
+    '__NEW_SUMMARY__'::text as new_summary,
+    '__NEW_BODY__'::text as new_body
+)
+update news_articles n
 set
-  summary = '[Kort sammenfatning basert på kilden, 2-5 setninger]',
-  body = coalesce(body, '') || E'\\n\\n[Ny redaksjonell utdyping fra kilden, ikke fulltekst]',
-  editor_note = coalesce(editor_note, '') || E'\\nOppdatert med ekstra kildesammenfatning.'
-where id = '${row.id}';`}
+  summary = case
+    when p.new_summary ~ '^__NEW_' then n.summary
+    when nullif(trim(p.new_summary), '') is null then n.summary
+    else p.new_summary
+  end,
+  body = case
+    when p.new_body ~ '^__NEW_' then n.body
+    when nullif(trim(p.new_body), '') is null then n.body
+    when coalesce(n.body, '') = '' then p.new_body
+    else n.body || E'\\n\\n' || p.new_body
+  end,
+  editor_note = case
+    when p.new_body ~ '^__NEW_' then n.editor_note
+    when coalesce(n.editor_note, '') ilike '%Oppdatert med ekstra kildesammenfatning.%' then n.editor_note
+    else trim(coalesce(n.editor_note, '') || E'\\nOppdatert med ekstra kildesammenfatning.')
+  end
+from patch p
+where n.id = '${row.id}';`}
                   </pre>
                 </details>
               </article>
