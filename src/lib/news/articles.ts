@@ -37,6 +37,8 @@ type NewsSelect = {
   updated_at: string;
 };
 
+const FRONT_LEAD_OVERRIDE_TAG = "front_lead_override";
+
 function mapNewsArticle(row: NewsSelect): NewsArticle {
   return {
     id: row.id,
@@ -93,6 +95,32 @@ export async function listPublishedNews(limit = 48): Promise<NewsArticle[]> {
           plainText: article.body,
         })
     );
+}
+
+export async function getPublishedFrontLeadOverride(): Promise<NewsArticle | null> {
+  const db = supabaseAdmin();
+  const { data, error } = await db
+    .from("news_articles")
+    .select("*")
+    .eq("status", "published")
+    .contains("topic_tags", [FRONT_LEAD_OVERRIDE_TAG])
+    .order("updated_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  if (error || !data) return null;
+  const article = mapNewsArticle(data as NewsSelect);
+  if (
+    isLikelyNonArticleNewsPage({
+      sourceUrl: article.source_url,
+      title: article.title,
+      snippet: article.excerpt ?? article.summary,
+      plainText: article.body,
+    })
+  ) {
+    return null;
+  }
+  return article;
 }
 
 export async function listNewsForAdmin(limit = 250): Promise<NewsArticle[]> {

@@ -4,7 +4,7 @@ import AdSlot from "@/app/_components/AdSlot";
 import NewsImage from "@/app/_components/NewsImage";
 import { getAdForPlacement, type SponsorAd } from "@/lib/ads";
 import { getLocale } from "@/lib/i18n.server";
-import { listPublishedNews } from "@/lib/news/articles";
+import { getPublishedFrontLeadOverride, listPublishedNews } from "@/lib/news/articles";
 import { isLikelyInternationalDeskArticle } from "@/lib/news/international";
 import type { NewsArticle } from "@/lib/news/types";
 import { siteMeta } from "@/lib/seo";
@@ -165,6 +165,7 @@ export default async function KIRNyheterPage() {
 
   const [
     articles,
+    leadOverrideArticle,
     catalogTopBanner,
     otherTopBanner,
     otherMidBanner,
@@ -180,6 +181,7 @@ export default async function KIRNyheterPage() {
     gridBanner3,
   ] = await Promise.all([
     listPublishedNews(120),
+    getPublishedFrontLeadOverride(),
     getAdForPlacement("catalog_top_banner"),
     getAdForPlacement("other_top_banner"),
     getAdForPlacement("other_mid_banner"),
@@ -195,7 +197,12 @@ export default async function KIRNyheterPage() {
     getAdForPlacement("catalog_grid_banner_3"),
   ]);
 
-  const imagedArticles = articles.filter((item) => hasImage(item.hero_image_url));
+  const allArticles =
+    leadOverrideArticle && !articles.some((item) => item.id === leadOverrideArticle.id)
+      ? [leadOverrideArticle, ...articles]
+      : articles;
+
+  const imagedArticles = allArticles.filter((item) => hasImage(item.hero_image_url));
   const internationalCandidates = imagedArticles.filter((item) => isLikelyInternationalDeskArticle(item));
   const internationalWithImage = internationalCandidates.filter((item) => hasImage(item.hero_image_url));
   const internationalDesk = internationalWithImage.slice(0, 20);
