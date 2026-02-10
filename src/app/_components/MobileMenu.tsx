@@ -20,6 +20,8 @@ export default function MobileMenu({ isAuthed, isAdmin, locale }: Props) {
   // Enkel listestil på solid panel (ikke separate kort-knapper)
   const itemClass =
     "block w-full px-4 py-3.5 text-base font-medium text-[rgb(var(--fg))] hover:bg-[rgb(var(--bg))]/60 transition text-left";
+  const newsItemClass =
+    "block w-full px-4 py-3.5 text-base font-semibold text-black bg-white hover:bg-neutral-100 transition text-left";
 
   return (
     <>
@@ -73,10 +75,6 @@ export default function MobileMenu({ isAuthed, isAdmin, locale }: Props) {
                 {locale === "en" ? "Advertise" : "Annonsere"}
               </Link>
 
-              <Link href={localizePath(locale, "/ki-avis")} onClick={close} className={itemClass}>
-                {locale === "en" ? "KiR News" : "KiR Nyheter"}
-              </Link>
-
               <Link
                 href={localizePath(locale, "/ki-reklamebyra")}
                 onClick={close}
@@ -102,11 +100,11 @@ export default function MobileMenu({ isAuthed, isAdmin, locale }: Props) {
                   </Link>
 
                   <Link
-                    href={localizePath(locale, "/andre-ki-tjenester")}
+                    href={localizePath(locale, "/ki-avis")}
                     onClick={close}
-                    className={itemClass}
+                    className={newsItemClass}
                   >
-                    {locale === "en" ? "Other AI services" : "Andre KI-tjenester"}
+                    {locale === "en" ? "KiR News" : "KiR Nyheter"}
                   </Link>
 
                   {/* SignOutButton støtter ikke onClick -> vi lukker via wrapper */}
@@ -119,11 +117,11 @@ export default function MobileMenu({ isAuthed, isAdmin, locale }: Props) {
               ) : (
                 <>
                   <Link
-                    href={localizePath(locale, "/andre-ki-tjenester")}
+                    href={localizePath(locale, "/ki-avis")}
                     onClick={close}
-                    className={itemClass}
+                    className={newsItemClass}
                   >
-                    {locale === "en" ? "Other AI services" : "Andre KI-tjenester"}
+                    {locale === "en" ? "KiR News" : "KiR Nyheter"}
                   </Link>
 
                   <Link href={localizePath(locale, "/auth")} onClick={close} className={itemClass}>

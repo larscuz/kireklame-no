@@ -48,10 +48,6 @@ export default async function Topbar() {
             {locale === "en" ? "Advertise" : "Annonsere"}
           </Link>
 
-          <Link href={localizePath(locale, "/ki-avis")} className="hover:opacity-80 transition">
-            {locale === "en" ? "KiR News" : "KiR Nyheter"}
-          </Link>
-
           <Link href={localizePath(locale, "/ki-reklamebyra")} className="hover:opacity-80 transition">
             {locale === "en" ? "About" : "Om"}
           </Link>
@@ -77,8 +73,11 @@ export default async function Topbar() {
             </Link>
           ) : null}
 
-          <Link href={localizePath(locale, "/andre-ki-tjenester")} className="hover:opacity-80 transition">
-            {locale === "en" ? "Other AI services" : "Andre KI-tjenester"}
+          <Link
+            href={localizePath(locale, "/ki-avis")}
+            className="inline-flex items-center rounded-xl border border-black/15 bg-white px-3 py-2 text-sm font-semibold text-black shadow-soft hover:bg-neutral-100 transition-colors"
+          >
+            {locale === "en" ? "KiR News" : "KiR Nyheter"}
           </Link>
 </nav>
 
