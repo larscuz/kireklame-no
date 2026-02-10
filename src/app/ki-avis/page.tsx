@@ -98,6 +98,24 @@ function hasTag(article: NewsArticle, tag: string) {
   return (article.topic_tags ?? []).some((item) => String(item ?? "").toLowerCase() === tag);
 }
 
+function isInternalAivisArticle(article: NewsArticle): boolean {
+  const title = String(article.title ?? "");
+  const sourceName = String(article.source_name ?? "");
+  const editorNote = String(article.editor_note ?? "");
+  const hasInternalTag =
+    hasTag(article, "op_ed") ||
+    hasTag(article, "leder") ||
+    hasTag(article, "redaksjonen") ||
+    hasTag(article, "lars_cuzner") ||
+    hasTag(article, "kir_aivisa");
+
+  if (hasInternalTag) return true;
+  if (/op-?ed|leder/i.test(title)) return true;
+  if (/redaksjonen|lars\s*cuzner|ki?r?\s*aivisa/i.test(sourceName)) return true;
+  if (/editor in chief bot redaksjonen|lars\s*cuzner|skrevet av ki?r?\s*aivisa/i.test(editorNote)) return true;
+  return false;
+}
+
 function internationalHeadlineLabel(article: NewsArticle): string {
   if (article.perspective === "critical") return "Kritikk";
   if (hasTag(article, "ai_only")) return "AI-only";
@@ -216,18 +234,11 @@ export default async function KIRNyheterPage() {
   const internationalWireTop = internationalLead
     ? internationalDesk.filter((item) => item.id !== internationalLead.id).slice(0, 4)
     : [];
-  const internationalTopIds = new Set([
-    ...(internationalLead ? [internationalLead.id] : []),
-    ...internationalWireTop.map((item) => item.id),
-  ]);
-  const internationalAfterAd = internationalDesk
-    .filter((item) => !internationalTopIds.has(item.id))
-    .slice(0, 12);
 
   const primaryUsed = new Set<string>();
-  const frontRow = takeFromPool(rest, primaryUsed, 4);
-  const latest = takeFromPool(rest, primaryUsed, 7);
+  const frontRow = takeFromPool(rest, primaryUsed, 2);
   const frontGrid = takeFromPool(rest, primaryUsed, 4);
+  const latest = takeFromPool(rest, primaryUsed, 7);
   const frontFill = takeFromPool(rest, primaryUsed, 9);
 
   const remaining = rest.filter((item) => !primaryUsed.has(item.id));
@@ -380,14 +391,16 @@ export default async function KIRNyheterPage() {
                   {lead.summary ?? lead.excerpt ?? "Omtale kommer."}
                 </p>
 
-                <a
-                  href={lead.source_url}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="mt-3 inline-block text-[13px] font-semibold uppercase tracking-[0.13em] underline underline-offset-4 hover:opacity-75"
-                >
-                  Les originalkilden
-                </a>
+                {!isInternalAivisArticle(lead) ? (
+                  <a
+                    href={lead.source_url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="mt-3 inline-block text-[13px] font-semibold uppercase tracking-[0.13em] underline underline-offset-4 hover:opacity-75"
+                  >
+                    Les originalkilden
+                  </a>
+                ) : null}
               </article>
 
               {frontRow.length ? (
@@ -410,6 +423,32 @@ export default async function KIRNyheterPage() {
                     </article>
                   ))}
                 </div>
+              ) : null}
+
+              {frontGrid.length ? (
+                <section className="mt-4 border-t border-black/15 pt-3">
+                  <h2 className={`${masthead.className} text-[28px] leading-none sm:text-[32px]`}>Forside nå</h2>
+                  <div className="mt-2 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+                    {frontGrid.map((article) => (
+                      <article key={article.id} className="border border-black/20 bg-[#f8f4eb] p-2">
+                        <StoryVisual
+                          article={article}
+                          className="aspect-[16/10] w-full border border-black/20 object-cover"
+                        />
+                        <p
+                          className={`mt-2 text-[10px] font-semibold uppercase tracking-[0.18em] ${perspectiveTone(article.perspective)}`}
+                        >
+                          {perspectiveLabel(article.perspective)}
+                        </p>
+                        <h3 className={`${headline.className} mt-1 text-[24px] leading-[1.03] [overflow-wrap:anywhere] hyphens-auto sm:text-[31px]`}>
+                          <Link href={`/ki-avis/${article.slug}`} className="hover:opacity-75">
+                            {article.title}
+                          </Link>
+                        </h3>
+                      </article>
+                    ))}
+                  </div>
+                </section>
               ) : null}
 
               {latest.length ? (
@@ -527,6 +566,14 @@ export default async function KIRNyheterPage() {
                       </article>
                     ))}
                   </div>
+                  <div className="mt-3">
+                    <Link
+                      href="/ki-avis/internasjonalt"
+                      className="text-[12px] font-semibold uppercase tracking-[0.14em] underline underline-offset-4 hover:opacity-75"
+                    >
+                      Se alle internasjonale saker
+                    </Link>
+                  </div>
                 </section>
               ) : null}
 
@@ -552,51 +599,6 @@ export default async function KIRNyheterPage() {
                   </div>
                 </section>
               ) : null}
-
-              {internationalAfterAd.length ? (
-                <section className="space-y-2 border-t border-black/15 pt-2">
-                  <h3 className={`${masthead.className} text-[24px] leading-none sm:text-[26px]`}>Flere internasjonale</h3>
-                  {internationalAfterAd.map((article) => (
-                    <article key={article.id} className="grid grid-cols-[72px_1fr] gap-2 border-b border-black/10 pb-2 last:border-b-0 sm:grid-cols-[84px_1fr]">
-                      <StoryVisual
-                        article={article}
-                        className="aspect-square w-full border border-black/20 object-cover"
-                      />
-                      <div className="min-w-0">
-                        <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-black/58">
-                          {internationalHeadlineLabel(article)}
-                          {article.language ? ` · ${article.language.toUpperCase()}` : ""}
-                        </p>
-                        <h3 className={`${headline.className} mt-1 text-[20px] leading-[1.02] [overflow-wrap:anywhere] hyphens-auto sm:text-[24px]`}>
-                          <Link href={`/ki-avis/${article.slug}`} className="hover:opacity-75">
-                            {article.title}
-                          </Link>
-                        </h3>
-                        <p className="mt-1 text-[11px] text-black/55">
-                          {article.source_name} · {fmtDate(article.published_at ?? article.created_at)}
-                        </p>
-                      </div>
-                    </article>
-                  ))}
-                </section>
-              ) : null}
-
-              {!internationalAfterAd.length && frontRow.length > 2 ? (
-                <div className="space-y-2 border-t border-black/15 pt-2">
-                  {frontRow.slice(2, 4).map((article) => (
-                    <article key={article.id} className="border-b border-black/10 pb-2 last:border-b-0">
-                      <h3 className={`${headline.className} text-[22px] leading-[1.02] [overflow-wrap:anywhere] hyphens-auto sm:text-[28px]`}>
-                        <Link href={`/ki-avis/${article.slug}`} className="hover:opacity-75">
-                          {article.title}
-                        </Link>
-                      </h3>
-                      <p className="mt-1 text-[11px] text-black/55">
-                        {article.source_name} · {fmtDate(article.published_at ?? article.created_at)}
-                      </p>
-                    </article>
-                  ))}
-                </div>
-              ) : null}
             </aside>
           </section>
         ) : (
@@ -618,29 +620,6 @@ export default async function KIRNyheterPage() {
               variant="card"
               locale={locale}
             />
-          </section>
-        ) : null}
-
-        {frontGrid.length ? (
-          <section className="mt-5 border-t border-black/20 pt-4">
-            <h2 className={`${masthead.className} text-[30px] sm:text-[34px]`}>Forside nå</h2>
-            <div className="mt-3 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-              {frontGrid.map((article) => (
-                <article key={article.id} className="border border-black/20 bg-[#f8f4eb] p-2">
-                  <StoryVisual article={article} className="aspect-[16/10] w-full border border-black/20 object-cover" />
-                  <p
-                    className={`mt-2 text-[10px] font-semibold uppercase tracking-[0.18em] ${perspectiveTone(article.perspective)}`}
-                  >
-                    {perspectiveLabel(article.perspective)}
-                  </p>
-                  <h3 className={`${headline.className} mt-1 text-[24px] leading-[1.03] [overflow-wrap:anywhere] hyphens-auto sm:text-[31px]`}>
-                    <Link href={`/ki-avis/${article.slug}`} className="hover:opacity-75">
-                      {article.title}
-                    </Link>
-                  </h3>
-                </article>
-              ))}
-            </div>
           </section>
         ) : null}
 

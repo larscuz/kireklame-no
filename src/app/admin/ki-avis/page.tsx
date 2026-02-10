@@ -115,6 +115,15 @@ function adminNoticeUrl(
   return `/admin/ki-avis?${params.toString()}${hash}`;
 }
 
+function revalidateNewsSurfaces(slug?: string | null) {
+  revalidatePath("/ki-avis");
+  if (slug) revalidatePath(`/ki-avis/${slug}`);
+  revalidatePath("/admin/ki-avis");
+  revalidatePath("/sitemap.xml");
+  revalidatePath("/news-sitemap.xml");
+  revalidatePath("/ki-avis/rss.xml");
+}
+
 const SENTENCE_NOISE_PATTERNS = [
   /cookie/i,
   /personvern/i,
@@ -425,10 +434,7 @@ async function saveArticle(formData: FormData) {
     if (error) throw new Error(error.message);
   }
 
-  revalidatePath("/ki-avis");
-  if (row.slug) revalidatePath(`/ki-avis/${row.slug}`);
-  revalidatePath("/admin/ki-avis");
-  revalidatePath("/sitemap.xml");
+  revalidateNewsSurfaces(row.slug);
   redirect(adminNoticeUrl(id ? "saved" : "created", id));
 }
 
@@ -442,9 +448,7 @@ async function deleteArticle(formData: FormData) {
   const { error } = await db.from("news_articles").delete().eq("id", id);
   if (error) throw new Error(error.message);
 
-  revalidatePath("/ki-avis");
-  revalidatePath("/admin/ki-avis");
-  revalidatePath("/sitemap.xml");
+  revalidateNewsSurfaces();
   redirect(adminNoticeUrl("deleted"));
 }
 
@@ -491,8 +495,7 @@ async function setLeadOverride(formData: FormData) {
     if (error) throw new Error(error.message);
   }
 
-  revalidatePath("/ki-avis");
-  revalidatePath("/admin/ki-avis");
+  revalidateNewsSurfaces();
   redirect(adminNoticeUrl("lead_updated", targetId || null));
 }
 
@@ -595,7 +598,7 @@ async function generateMoreTextFromSource(formData: FormData) {
     String(bodyToSave ?? "").trim() !== String(row.body ?? "").trim();
 
   if (!hasChanges) {
-    revalidatePath("/admin/ki-avis");
+    revalidateNewsSurfaces(row.slug);
     redirect(adminNoticeUrl("generated_no_change", id));
   }
 
@@ -609,9 +612,7 @@ async function generateMoreTextFromSource(formData: FormData) {
 
   if (updateError) throw new Error(updateError.message);
 
-  revalidatePath("/admin/ki-avis");
-  revalidatePath("/ki-avis");
-  if (row.slug) revalidatePath(`/ki-avis/${row.slug}`);
+  revalidateNewsSurfaces(row.slug);
   redirect(adminNoticeUrl("generated", id));
 }
 
@@ -646,9 +647,7 @@ async function removeGeneratedExtraText(formData: FormData) {
     .eq("id", id);
   if (updateError) throw new Error(updateError.message);
 
-  revalidatePath("/admin/ki-avis");
-  revalidatePath("/ki-avis");
-  if (row.slug) revalidatePath(`/ki-avis/${row.slug}`);
+  revalidateNewsSurfaces(row.slug);
   redirect(adminNoticeUrl("removed_generated", id));
 }
 

@@ -43,6 +43,13 @@ function fmtDate(iso: string | null) {
   }
 }
 
+function toIsoOrNull(value: string | null | undefined): string | null {
+  if (!value) return null;
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return null;
+  return date.toISOString();
+}
+
 function hasImage(url: string | null): boolean {
   return /^https?:\/\//i.test(String(url ?? "").trim());
 }
@@ -58,6 +65,29 @@ function normalizeTagValue(value: string): string {
 function hasTag(tags: string[] | null | undefined, tag: string): boolean {
   const needle = normalizeTagValue(tag);
   return (tags ?? []).some((item) => normalizeTagValue(String(item ?? "")) === needle);
+}
+
+function isInternalAivisArticle(args: {
+  title: string | null | undefined;
+  sourceName: string | null | undefined;
+  topicTags: string[] | null | undefined;
+  editorNote: string | null | undefined;
+}): boolean {
+  const title = String(args.title ?? "");
+  const sourceName = String(args.sourceName ?? "");
+  const editorNote = String(args.editorNote ?? "");
+  const hasInternalTag =
+    hasTag(args.topicTags, "op_ed") ||
+    hasTag(args.topicTags, "leder") ||
+    hasTag(args.topicTags, "redaksjonen") ||
+    hasTag(args.topicTags, "lars_cuzner") ||
+    hasTag(args.topicTags, "kir_aivisa");
+
+  if (hasInternalTag) return true;
+  if (/op-?ed|leder/i.test(title)) return true;
+  if (/redaksjonen|lars\s*cuzner|ki?r?\s*aivisa/i.test(sourceName)) return true;
+  if (/editor in chief bot redaksjonen|lars\s*cuzner|skrevet av ki?r?\s*aivisa/i.test(editorNote)) return true;
+  return false;
 }
 
 function splitBodyIntoNewsParagraphs(text: string): string[] {
@@ -221,12 +251,13 @@ export default async function KIRNyheterArticlePage({
   const displayBodyParagraphs = displayBodyChunks.flatMap((chunk) =>
     splitBodyIntoNewsParagraphs(chunk)
   );
-  const isEditorOpEd =
-    hasTag(article.topic_tags, "op_ed") ||
-    hasTag(article.topic_tags, "leder") ||
-    /op-?ed|leder/i.test(String(article.title ?? "")) ||
-    /redaksjonen/i.test(String(article.source_name ?? "")) ||
-    /editor in chief bot redaksjonen/i.test(String(article.editor_note ?? ""));
+  const isEditorOpEd = isInternalAivisArticle({
+    title: article.title,
+    sourceName: article.source_name,
+    topicTags: article.topic_tags,
+    editorNote: article.editor_note,
+  });
+  const showOriginalSourceLink = !isEditorOpEd;
   const editorBylineText = "Skrevet av Editor in Chief Bot Redaksjonen.";
 
   const translationNotice =
@@ -239,8 +270,90 @@ export default async function KIRNyheterArticlePage({
     cleanedEditorNote !== String(translationNotice ?? "").trim() &&
     !isEditorOpEd;
 
+  const site = (process.env.NEXT_PUBLIC_SITE_URL || "https://kireklame.no").replace(/\/+$/, "");
+  const canonicalUrl = `${site}/ki-avis/${article.slug}`;
+  const publishedIso = toIsoOrNull(article.published_at ?? article.created_at);
+  const modifiedIso = toIsoOrNull(article.updated_at ?? article.published_at ?? article.created_at);
+  const articleImage = hasImage(article.hero_image_url)
+    ? String(article.hero_image_url)
+    : `${site}/og-linkedin.jpg`;
+  const language =
+    shouldAutoTranslate || article.language.toLowerCase().startsWith("no")
+      ? "nb-NO"
+      : article.language.toLowerCase().startsWith("en")
+        ? "en"
+        : "nb-NO";
+  const publisherId = `${site}/#publisher`;
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Organization",
+        "@id": publisherId,
+        name: "Cuz Media AS",
+        url: site,
+        logo: {
+          "@type": "ImageObject",
+          url: `${site}/KIREKLAMElogo-black.gif`,
+        },
+      },
+      {
+        "@type": "NewsArticle",
+        "@id": `${canonicalUrl}#article`,
+        url: canonicalUrl,
+        mainEntityOfPage: {
+          "@type": "WebPage",
+          "@id": canonicalUrl,
+        },
+        headline: displayTitle,
+        description: displaySummary,
+        inLanguage: language,
+        image: [articleImage],
+        isAccessibleForFree: !article.is_paywalled,
+        datePublished: publishedIso,
+        dateModified: modifiedIso,
+        publisher: {
+          "@id": publisherId,
+        },
+        author: {
+          "@type": "Organization",
+          name: "KiR Nyheter redaksjonen",
+        },
+      },
+      {
+        "@type": "BreadcrumbList",
+        "@id": `${canonicalUrl}#breadcrumb`,
+        itemListElement: [
+          {
+            "@type": "ListItem",
+            position: 1,
+            name: "Forside",
+            item: `${site}/`,
+          },
+          {
+            "@type": "ListItem",
+            position: 2,
+            name: "KiR Nyheter",
+            item: `${site}/ki-avis`,
+          },
+          {
+            "@type": "ListItem",
+            position: 3,
+            name: displayTitle,
+            item: canonicalUrl,
+          },
+        ],
+      },
+    ],
+  };
+
   return (
     <main className={`${uiSans.className} overflow-x-clip bg-[#f1ede4] text-[#191919] pb-12`}>
+      <script
+        type="application/ld+json"
+        // eslint-disable-next-line react/no-danger
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+      />
       <header className="border-y border-black/20 bg-[#f6f2e9]">
         <div className="mx-auto max-w-[1260px] border-b border-black/15 px-3 py-2 text-[10px] uppercase tracking-[0.21em] text-black/65 md:px-4">
           <div className="flex flex-wrap items-center justify-between gap-2">
@@ -300,18 +413,20 @@ export default async function KIRNyheterArticlePage({
               {article.is_paywalled ? <span className="text-amber-800">Betalingsmur</span> : null}
             </div>
 
-            <a
-              href={article.source_url}
-              target="_blank"
-              rel="noreferrer"
-              className="mt-3 inline-block text-[13px] font-semibold uppercase tracking-[0.13em] underline underline-offset-4 hover:opacity-80"
-            >
-              Les originalkilden
-            </a>
+            {showOriginalSourceLink ? (
+              <a
+                href={article.source_url}
+                target="_blank"
+                rel="noreferrer"
+                className="mt-3 inline-block text-[13px] font-semibold uppercase tracking-[0.13em] underline underline-offset-4 hover:opacity-80"
+              >
+                Les originalkilden
+              </a>
+            ) : null}
             {canOpenCmsEditor ? (
               <Link
                 href={`/admin/ki-avis#article-${article.id}`}
-                className="ml-4 mt-3 inline-block border border-black/25 px-2 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] hover:bg-black/5"
+                className={`${showOriginalSourceLink ? "ml-4 " : ""}mt-3 inline-block border border-black/25 px-2 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] hover:bg-black/5`}
               >
                 Utvid tekst i CMS
               </Link>
@@ -348,14 +463,16 @@ export default async function KIRNyheterArticlePage({
               <p className={`${headline.className} mt-2 text-[24px] leading-[1.16] text-black/82 [overflow-wrap:anywhere] hyphens-auto sm:text-[29px]`}>
                 {displaySummary}
               </p>
-              <a
-                href={article.source_url}
-                target="_blank"
-                rel="noreferrer"
-                className="mt-3 inline-block text-[13px] font-semibold uppercase tracking-[0.13em] underline underline-offset-4 hover:opacity-80"
-              >
-                Les originalkilden
-              </a>
+              {showOriginalSourceLink ? (
+                <a
+                  href={article.source_url}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="mt-3 inline-block text-[13px] font-semibold uppercase tracking-[0.13em] underline underline-offset-4 hover:opacity-80"
+                >
+                  Les originalkilden
+                </a>
+              ) : null}
             </section>
 
             {inlineAd ? (

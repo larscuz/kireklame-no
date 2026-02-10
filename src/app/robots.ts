@@ -4,6 +4,6 @@ export default function robots(): MetadataRoute.Robots {
   const site = process.env.NEXT_PUBLIC_SITE_URL || "https://kireklame.no";
   return {
     rules: [{ userAgent: "*", allow: "/" }],
-    sitemap: `${site}/sitemap.xml`
+    sitemap: [`${site}/sitemap.xml`, `${site}/news-sitemap.xml`],
   };
 }

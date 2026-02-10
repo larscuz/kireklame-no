@@ -133,7 +133,7 @@ export default async function KIRInternationalPage() {
             </article>
 
             <aside className="min-w-0 space-y-2">
-              {rest.slice(0, 10).map((article) => (
+              {rest.map((article) => (
                 <article
                   key={article.id}
                   className="grid grid-cols-[72px_1fr] gap-2 border-b border-black/10 pb-2 last:border-b-0 sm:grid-cols-[84px_1fr]"
