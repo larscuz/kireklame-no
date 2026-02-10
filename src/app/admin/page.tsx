@@ -52,6 +52,11 @@ export default async function AdminDashboardPage() {
           desc="Rediger og publiser saker til KiR Nyheter."
         />
         <Card
+          href="/admin/ki-avis/layout"
+          title="KiR Forside-layout"
+          desc="Plasser hovedsak og Forside nå-slots visuelt uten lang scrolling."
+        />
+        <Card
           href="/admin/settings"
           title="Innstillinger"
           desc="Featured selskap + hero video på forsiden."

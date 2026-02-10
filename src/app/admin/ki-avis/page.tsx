@@ -12,7 +12,18 @@ import {
 import { shouldTranslateToNorwegian, translateToNorwegianBokmal } from "@/lib/news/translate";
 import { requireAdmin } from "@/lib/supabase/server";
 import { supabaseAdmin } from "@/lib/supabase/admin";
-import { listNewsForAdmin, normalizeNewsUpsert } from "@/lib/news/articles";
+import {
+  FRONT_LEAD_OVERRIDE_TAG,
+  FRONT_NOW_OVERRIDE_TAGS,
+  listNewsForAdmin,
+  normalizeNewsUpsert,
+} from "@/lib/news/articles";
+import {
+  FRONT_LAYOUT_TAGS,
+  type FrontLayoutTag,
+  applyFrontLayoutAssignments,
+  readFrontLayoutAssignmentsFromRows,
+} from "@/lib/news/frontLayout";
 import {
   cleanText,
   coerceNewsPerspective,
@@ -45,13 +56,14 @@ const PRIMARY_BUTTON_CLASS =
   "border border-black bg-black px-4 py-2 text-xs font-semibold uppercase tracking-[0.15em] text-white hover:bg-black/90";
 const SECONDARY_BUTTON_CLASS =
   "border border-black/30 bg-[#f8f4eb] px-4 py-2 text-xs font-semibold uppercase tracking-[0.15em] text-black hover:bg-[#f1ede4]";
-const FRONT_LEAD_OVERRIDE_TAG = "front_lead_override";
 
 type AdminNoticeKey =
   | "saved"
   | "created"
   | "deleted"
   | "lead_updated"
+  | "layout_updated"
+  | "layout_slot_updated"
   | "generated"
   | "generated_no_change"
   | "removed_generated";
@@ -61,6 +73,8 @@ const ADMIN_NOTICE_TEXT: Record<AdminNoticeKey, string> = {
   created: "Ny sak opprettet.",
   deleted: "Sak slettet.",
   lead_updated: "Hovedsak oppdatert.",
+  layout_updated: "Forside-layout oppdatert.",
+  layout_slot_updated: "Forsideslot oppdatert.",
   generated: "Ny tekst ble hentet og lagret fra kilden.",
   generated_no_change: "Ingen ny tekst funnet i kilden. Eksisterende innhold ble beholdt.",
   removed_generated: "Generert ekstratekst ble fjernet.",
@@ -452,51 +466,84 @@ async function deleteArticle(formData: FormData) {
   redirect(adminNoticeUrl("deleted"));
 }
 
-async function setLeadOverride(formData: FormData) {
+async function setFrontLayoutOverrides(formData: FormData) {
   "use server";
   await requireAdmin("/admin/ki-avis");
 
-  const targetId = String(formData.get("lead_article_id") ?? "").trim();
-  const db = supabaseAdmin();
-
-  const { data: currentTagged, error: taggedErr } = await db
-    .from("news_articles")
-    .select("id, topic_tags")
-    .contains("topic_tags", [FRONT_LEAD_OVERRIDE_TAG]);
-  if (taggedErr) throw new Error(taggedErr.message);
-
-  for (const row of currentTagged ?? []) {
-    const tags = Array.isArray(row.topic_tags) ? row.topic_tags : [];
-    const nextTags = tags.filter(
-      (item) => String(item ?? "").toLowerCase() !== FRONT_LEAD_OVERRIDE_TAG
-    );
-    const { error } = await db
-      .from("news_articles")
-      .update({ topic_tags: nextTags })
-      .eq("id", row.id);
-    if (error) throw new Error(error.message);
-  }
-
-  if (targetId) {
-    const { data: target, error: targetErr } = await db
-      .from("news_articles")
-      .select("id, topic_tags")
-      .eq("id", targetId)
-      .maybeSingle();
-    if (targetErr) throw new Error(targetErr.message);
-    if (!target) throw new Error("Fant ikke valgt sak");
-
-    const tags = Array.isArray(target.topic_tags) ? target.topic_tags : [];
-    const merged = Array.from(new Set([...tags, FRONT_LEAD_OVERRIDE_TAG]));
-    const { error } = await db
-      .from("news_articles")
-      .update({ topic_tags: merged })
-      .eq("id", targetId);
-    if (error) throw new Error(error.message);
-  }
+  const leadId = String(formData.get("lead_article_id") ?? "").trim() || null;
+  const frontNowIds = FRONT_NOW_OVERRIDE_TAGS.map(
+    (_tag, idx) => String(formData.get(`front_now_${idx + 1}_id`) ?? "").trim() || null
+  );
+  const rawAssignments: Record<string, string | null> = {
+    [FRONT_LEAD_OVERRIDE_TAG]: leadId,
+    [FRONT_NOW_OVERRIDE_TAGS[0]]: frontNowIds[0],
+    [FRONT_NOW_OVERRIDE_TAGS[1]]: frontNowIds[1],
+    [FRONT_NOW_OVERRIDE_TAGS[2]]: frontNowIds[2],
+  };
+  await applyFrontLayoutAssignments(rawAssignments);
 
   revalidateNewsSurfaces();
-  redirect(adminNoticeUrl("lead_updated", targetId || null));
+  redirect(adminNoticeUrl("layout_updated", leadId));
+}
+
+async function setFrontLayoutSlotFromRow(formData: FormData) {
+  "use server";
+  await requireAdmin("/admin/ki-avis");
+
+  const articleId = String(formData.get("id") ?? "").trim();
+  const slotTag = String(formData.get("slot_tag") ?? "").trim();
+  if (!articleId) throw new Error("Mangler artikkel-id");
+  if (!FRONT_LAYOUT_TAGS.includes(slotTag as FrontLayoutTag)) {
+    throw new Error("Ugyldig slot");
+  }
+  const slot = slotTag as FrontLayoutTag;
+
+  const db = supabaseAdmin();
+  const { data: rows, error } = await db
+    .from("news_articles")
+    .select("id, topic_tags")
+    .eq("status", "published")
+    .limit(1000);
+  if (error) throw new Error(error.message);
+
+  const current = readFrontLayoutAssignmentsFromRows((rows ?? []) as Array<{ id: string; topic_tags: string[] | null }>);
+  current[slot] = articleId;
+  for (const tag of FRONT_LAYOUT_TAGS) {
+    if (tag !== slot && current[tag] === articleId) {
+      current[tag] = null;
+    }
+  }
+  await applyFrontLayoutAssignments(current);
+
+  revalidateNewsSurfaces();
+  redirect(adminNoticeUrl("layout_slot_updated", articleId));
+}
+
+async function clearFrontLayoutSlotsFromRow(formData: FormData) {
+  "use server";
+  await requireAdmin("/admin/ki-avis");
+
+  const articleId = String(formData.get("id") ?? "").trim();
+  if (!articleId) throw new Error("Mangler artikkel-id");
+
+  const db = supabaseAdmin();
+  const { data: rows, error } = await db
+    .from("news_articles")
+    .select("id, topic_tags")
+    .eq("status", "published")
+    .limit(1000);
+  if (error) throw new Error(error.message);
+
+  const current = readFrontLayoutAssignmentsFromRows((rows ?? []) as Array<{ id: string; topic_tags: string[] | null }>);
+  for (const tag of FRONT_LAYOUT_TAGS) {
+    if (current[tag] === articleId) {
+      current[tag] = null;
+    }
+  }
+  await applyFrontLayoutAssignments(current);
+
+  revalidateNewsSurfaces();
+  redirect(adminNoticeUrl("layout_slot_updated", articleId));
 }
 
 async function generateMoreTextFromSource(formData: FormData) {
@@ -661,15 +708,21 @@ export default async function KIAvisAdminPage({
   const notice = resolveAdminNotice(sp.notice);
   const noticeItemId = firstSearchParam(sp.item);
   const rows = await listNewsForAdmin(240);
-  const leadCandidates = rows.filter(
+  const layoutCandidates = rows.filter(
     (row) =>
       row.status === "published" &&
       hasImage(row.hero_image_url) &&
       !isLikelyInternationalDeskArticle(row)
   );
   const activeLeadAny = rows.find((row) => hasTag(row.topic_tags, FRONT_LEAD_OVERRIDE_TAG)) ?? null;
-  const activeLeadVisible =
-    leadCandidates.find((row) => row.id === activeLeadAny?.id) ?? null;
+  const activeLeadVisible = layoutCandidates.find((row) => row.id === activeLeadAny?.id) ?? null;
+  const activeFrontNowAny = FRONT_NOW_OVERRIDE_TAGS.map(
+    (tag) => rows.find((row) => hasTag(row.topic_tags, tag)) ?? null
+  );
+  const activeFrontNowVisible = FRONT_NOW_OVERRIDE_TAGS.map((tag, idx) => {
+    const anyRow = activeFrontNowAny[idx];
+    return layoutCandidates.find((row) => row.id === anyRow?.id) ?? null;
+  });
   const issueStamp = new Date().toLocaleString("nb-NO", {
     dateStyle: "medium",
     timeStyle: "short",
@@ -715,6 +768,10 @@ export default async function KIAvisAdminPage({
                 Åpne aivis
               </Link>
               <span className="text-black/35">|</span>
+              <Link href="/admin/ki-avis/layout" className="hover:text-black">
+                Forside-layout
+              </Link>
+              <span className="text-black/35">|</span>
               <Link href="/admin" className="hover:text-black">
                 Til admin
               </Link>
@@ -740,43 +797,104 @@ export default async function KIAvisAdminPage({
 
         <section className="mt-4 border border-black/20 bg-[#f8f4eb] p-4">
           <h2 className={`${headline.className} text-[30px] leading-[1.02] md:text-[36px]`}>
-            Hovedsak Override
+            Forside-layout
           </h2>
           <p className="mt-1 text-sm text-black/70">
-            Aktiv nå:{" "}
-            {activeLeadAny ? (
-              <span className="font-semibold">
-                {activeLeadAny.title}
-                {activeLeadVisible ? "" : " (ikke visbar på forsiden med nåværende filter)"}
-              </span>
-            ) : (
-              <span className="font-semibold">Automatisk valg (ingen override)</span>
-            )}
+            Velg hvilke saker som skal ligge i faste forsideslots. Tom verdi betyr automatisk valg.
+          </p>
+          <p className="mt-2 text-xs text-black/62">
+            For rask visuell plassering uten lang scrolling:
+            {" "}
+            <Link
+              href="/admin/ki-avis/layout"
+              className="font-semibold uppercase tracking-[0.12em] underline underline-offset-4 hover:opacity-80"
+            >
+              Åpne layout-kontroll
+            </Link>
           </p>
 
-          <form action={setLeadOverride} className="mt-3 grid gap-3 md:grid-cols-[1fr_auto]">
+          <div className="mt-3 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+            <div className="border border-black/15 bg-[#fcf8ef] p-3">
+              <p className="text-[10px] font-semibold uppercase tracking-[0.17em] text-black/58">Hovedsak</p>
+              {hasImage(activeLeadAny?.hero_image_url ?? null) ? (
+                <img
+                  src={activeLeadAny?.hero_image_url ?? ""}
+                  alt={activeLeadAny?.title ?? "Hovedsak"}
+                  className="mt-2 h-20 w-full border border-black/15 object-cover"
+                />
+              ) : null}
+              <p className="mt-2 text-sm font-semibold leading-snug text-black/85">
+                {activeLeadAny?.title ?? "Automatisk"}
+              </p>
+              {!activeLeadVisible && activeLeadAny ? (
+                <p className="mt-1 text-xs text-amber-700">
+                  Valgt sak er ikke visbar med nåværende filter.
+                </p>
+              ) : null}
+            </div>
+
+            {FRONT_NOW_OVERRIDE_TAGS.map((tag, idx) => (
+              <div key={tag} className="border border-black/15 bg-[#fcf8ef] p-3">
+                <p className="text-[10px] font-semibold uppercase tracking-[0.17em] text-black/58">
+                  Forside nå #{idx + 1}
+                </p>
+                {hasImage(activeFrontNowAny[idx]?.hero_image_url ?? null) ? (
+                  <img
+                    src={activeFrontNowAny[idx]?.hero_image_url ?? ""}
+                    alt={activeFrontNowAny[idx]?.title ?? `Forside nå ${idx + 1}`}
+                    className="mt-2 h-20 w-full border border-black/15 object-cover"
+                  />
+                ) : null}
+                <p className="mt-2 text-sm font-semibold leading-snug text-black/85">
+                  {activeFrontNowAny[idx]?.title ?? "Automatisk"}
+                </p>
+                {!activeFrontNowVisible[idx] && activeFrontNowAny[idx] ? (
+                  <p className="mt-1 text-xs text-amber-700">
+                    Valgt sak er ikke visbar med nåværende filter.
+                  </p>
+                ) : null}
+              </div>
+            ))}
+          </div>
+
+          <form action={setFrontLayoutOverrides} className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
             <label className={LABEL_CLASS}>
-              <span className={LABEL_TEXT_CLASS}>Velg hovedsak</span>
-              <select
-                name="lead_article_id"
-                defaultValue={activeLeadVisible?.id ?? ""}
-                className={FIELD_CLASS}
-              >
-                <option value="">Automatisk (nyeste relevante sak)</option>
-                {leadCandidates.map((row) => (
+              <span className={LABEL_TEXT_CLASS}>Hovedsak</span>
+              <select name="lead_article_id" defaultValue={activeLeadVisible?.id ?? ""} className={FIELD_CLASS}>
+                <option value="">Automatisk</option>
+                {layoutCandidates.map((row) => (
                   <option key={`lead-${row.id}`} value={row.id}>
                     {row.title} ({row.source_name})
                   </option>
                 ))}
               </select>
             </label>
-            <div className="md:self-end">
-              <button className={PRIMARY_BUTTON_CLASS}>Oppdater hovedsak</button>
+
+            {FRONT_NOW_OVERRIDE_TAGS.map((tag, idx) => (
+              <label key={tag} className={LABEL_CLASS}>
+                <span className={LABEL_TEXT_CLASS}>Forside nå #{idx + 1}</span>
+                <select
+                  name={`front_now_${idx + 1}_id`}
+                  defaultValue={activeFrontNowVisible[idx]?.id ?? ""}
+                  className={FIELD_CLASS}
+                >
+                  <option value="">Automatisk</option>
+                  {layoutCandidates.map((row) => (
+                    <option key={`${tag}-${row.id}`} value={row.id}>
+                      {row.title} ({row.source_name})
+                    </option>
+                  ))}
+                </select>
+              </label>
+            ))}
+
+            <div className="xl:col-span-4">
+              <button className={PRIMARY_BUTTON_CLASS}>Lagre forside-layout</button>
             </div>
           </form>
 
           <p className="mt-2 text-xs text-black/58">
-            Dropdown viser publiserte saker med gyldig bilde som ikke er internasjonale.
+            Kandidater: publiserte saker med gyldig bilde som ikke er internasjonale.
           </p>
         </section>
 
@@ -1077,6 +1195,25 @@ export default async function KIAvisAdminPage({
                     <button className={PRIMARY_BUTTON_CLASS}>Lagre endringer</button>
                   </div>
                 </form>
+
+                <div className="mt-2 flex flex-wrap items-center gap-2">
+                  <form action={setFrontLayoutSlotFromRow}>
+                    <input type="hidden" name="id" value={row.id} />
+                    <input type="hidden" name="slot_tag" value={FRONT_LEAD_OVERRIDE_TAG} />
+                    <button className={SECONDARY_BUTTON_CLASS}>Sett som hovedsak</button>
+                  </form>
+                  {FRONT_NOW_OVERRIDE_TAGS.map((tag, idx) => (
+                    <form key={`${row.id}-${tag}`} action={setFrontLayoutSlotFromRow}>
+                      <input type="hidden" name="id" value={row.id} />
+                      <input type="hidden" name="slot_tag" value={tag} />
+                      <button className={SECONDARY_BUTTON_CLASS}>Forside nå #{idx + 1}</button>
+                    </form>
+                  ))}
+                  <form action={clearFrontLayoutSlotsFromRow}>
+                    <input type="hidden" name="id" value={row.id} />
+                    <button className={SECONDARY_BUTTON_CLASS}>Fjern fra forside-slotter</button>
+                  </form>
+                </div>
 
                 <form action={generateMoreTextFromSource} className="mt-2">
                   <input type="hidden" name="id" value={row.id} />

@@ -37,7 +37,38 @@ type NewsSelect = {
   updated_at: string;
 };
 
-const FRONT_LEAD_OVERRIDE_TAG = "front_lead_override";
+export const FRONT_LEAD_OVERRIDE_TAG = "front_lead_override";
+export const FRONT_NOW_OVERRIDE_TAGS = [
+  "front_forside_now_1",
+  "front_forside_now_2",
+  "front_forside_now_3",
+] as const;
+
+async function getLatestPublishedByTag(tag: string): Promise<NewsArticle | null> {
+  const db = supabaseAdmin();
+  const { data, error } = await db
+    .from("news_articles")
+    .select("*")
+    .eq("status", "published")
+    .contains("topic_tags", [tag])
+    .order("updated_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  if (error || !data) return null;
+  const article = mapNewsArticle(data as NewsSelect);
+  if (
+    isLikelyNonArticleNewsPage({
+      sourceUrl: article.source_url,
+      title: article.title,
+      snippet: article.excerpt ?? article.summary,
+      plainText: article.body,
+    })
+  ) {
+    return null;
+  }
+  return article;
+}
 
 function mapNewsArticle(row: NewsSelect): NewsArticle {
   return {
@@ -98,29 +129,14 @@ export async function listPublishedNews(limit = 48): Promise<NewsArticle[]> {
 }
 
 export async function getPublishedFrontLeadOverride(): Promise<NewsArticle | null> {
-  const db = supabaseAdmin();
-  const { data, error } = await db
-    .from("news_articles")
-    .select("*")
-    .eq("status", "published")
-    .contains("topic_tags", [FRONT_LEAD_OVERRIDE_TAG])
-    .order("updated_at", { ascending: false })
-    .limit(1)
-    .maybeSingle();
+  return getLatestPublishedByTag(FRONT_LEAD_OVERRIDE_TAG);
+}
 
-  if (error || !data) return null;
-  const article = mapNewsArticle(data as NewsSelect);
-  if (
-    isLikelyNonArticleNewsPage({
-      sourceUrl: article.source_url,
-      title: article.title,
-      snippet: article.excerpt ?? article.summary,
-      plainText: article.body,
-    })
-  ) {
-    return null;
-  }
-  return article;
+export async function getPublishedFrontNowOverrides(): Promise<NewsArticle[]> {
+  const slots = await Promise.all(
+    FRONT_NOW_OVERRIDE_TAGS.map((tag) => getLatestPublishedByTag(tag))
+  );
+  return slots.filter((item): item is NewsArticle => Boolean(item));
 }
 
 export async function listNewsForAdmin(limit = 250): Promise<NewsArticle[]> {
