@@ -73,7 +73,7 @@ export default async function KIRInternationalPage() {
           <div className="flex flex-wrap items-center justify-between gap-2">
             <span>Internasjonal desk</span>
             <span>KiR Nyheter</span>
-            <span>Avisa drives av Cuz Media AS</span>
+            <span>AIVISA DRIVES AV CUZ MEDIA AS</span>
           </div>
         </div>
 
@@ -88,12 +88,20 @@ export default async function KIRInternationalPage() {
                 AI-first / AI-only byråer
               </p>
             </div>
-            <Link
-              href="/ki-avis"
-              className="text-[12px] font-semibold uppercase tracking-[0.14em] underline underline-offset-4"
-            >
-              Tilbake til forsiden
-            </Link>
+            <div className="flex flex-wrap items-center gap-3">
+              <Link
+                href="/ki-avis/om"
+                className="text-[12px] font-semibold uppercase tracking-[0.14em] underline underline-offset-4"
+              >
+                Om Aivisen
+              </Link>
+              <Link
+                href="/ki-avis"
+                className="text-[12px] font-semibold uppercase tracking-[0.14em] underline underline-offset-4"
+              >
+                Tilbake til forsiden
+              </Link>
+            </div>
           </div>
         </div>
       </header>

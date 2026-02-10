@@ -226,22 +226,30 @@ export default async function KIRNyheterArticlePage({
       <header className="border-y border-black/20 bg-[#f6f2e9]">
         <div className="mx-auto max-w-[1260px] border-b border-black/15 px-3 py-2 text-[10px] uppercase tracking-[0.21em] text-black/65 md:px-4">
           <div className="flex flex-wrap items-center justify-between gap-2">
-            <span>KiR Nyheter · Nettutgave</span>
+            <span>KiR Nyheter · Aivisutgave</span>
             <span>Oppdatert {fmtDate(new Date().toISOString())}</span>
-            <span>Avisa drives av Cuz Media AS</span>
+            <span>AIVISA DRIVES AV CUZ MEDIA AS</span>
           </div>
         </div>
 
         <div className="mx-auto max-w-[1260px] px-3 py-4 md:px-4">
-          <Link href="/ki-avis" className="inline-flex items-end gap-3 hover:opacity-80">
-            <img src="/KIREKLAMElogo.gif" alt="KiR Nyheter logo" className="h-12 w-12" />
-            <div>
-              <p className={`${masthead.className} text-4xl leading-none md:text-5xl`}>KiR Nyheter</p>
-              <p className="mt-1 text-[10px] uppercase tracking-[0.2em] text-black/60">
-                Nasjonal dekning av KI i reklame og media
-              </p>
-            </div>
-          </Link>
+          <div className="flex flex-wrap items-end justify-between gap-3">
+            <Link href="/ki-avis" className="inline-flex items-end gap-3 hover:opacity-80">
+              <img src="/KIREKLAMElogo.gif" alt="KiR Nyheter logo" className="h-12 w-12" />
+              <div>
+                <p className={`${masthead.className} text-4xl leading-none md:text-5xl`}>KiR Nyheter</p>
+                <p className="mt-1 text-[10px] uppercase tracking-[0.2em] text-black/60">
+                  Nasjonal dekning av KI i reklame og media
+                </p>
+              </div>
+            </Link>
+            <Link
+              href="/ki-avis/om"
+              className="text-[12px] font-semibold uppercase tracking-[0.14em] underline underline-offset-4 hover:opacity-80"
+            >
+              Om Aivisen
+            </Link>
+          </div>
         </div>
       </header>
 
@@ -435,7 +443,7 @@ export default async function KIRNyheterArticlePage({
         ) : null}
 
         <section className="mt-5 border-t border-black/20 pt-3 text-[11px] uppercase tracking-[0.17em] text-black/55">
-          Avisa drives av Cuz Media AS
+          AIVISA DRIVES AV CUZ MEDIA AS
         </section>
       </div>
     </main>

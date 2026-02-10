@@ -684,7 +684,7 @@ export default async function KIAvisAdminPage({
             <div className="flex flex-wrap items-center justify-between gap-2">
               <span>Admin-utgave · KiR Nyheter</span>
               <span>Oppdatert {issueStamp}</span>
-              <span>Avisa drives av Cuz Media AS</span>
+              <span>AIVISA DRIVES AV CUZ MEDIA AS</span>
             </div>
           </div>
 
@@ -713,7 +713,7 @@ export default async function KIAvisAdminPage({
 
             <div className="mt-3 flex flex-wrap items-center justify-center gap-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-black/72 md:gap-4">
               <Link href="/ki-avis" className="hover:text-black">
-                Åpne nettavis
+                Åpne aivis
               </Link>
               <span className="text-black/35">|</span>
               <Link href="/admin" className="hover:text-black">
@@ -785,7 +785,7 @@ export default async function KIAvisAdminPage({
           <h1 className={`${headline.className} text-[36px] leading-[1.02] md:text-[44px]`}>Ny sak</h1>
           <p className="mt-1 text-sm text-black/68">
             Opprett ny artikkel for <code className="bg-black/5 px-1">/ki-avis</code>. Publiserte saker
-            går rett ut i avisen.
+            går rett ut i aivisen.
           </p>
 
           <form action={saveArticle} className="mt-4 grid gap-3 md:grid-cols-2">

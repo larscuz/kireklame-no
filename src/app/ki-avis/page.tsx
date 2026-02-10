@@ -26,9 +26,9 @@ const uiSans = Manrope({
 const FRONT_LEAD_OVERRIDE_TAG = "front_lead_override";
 
 export const metadata = siteMeta({
-  title: "KiR Nyheter – ledende nettavis om KI i reklame og markedsføring",
+  title: "KiR Nyheter – ledende aivis om KI i reklame og markedsføring",
   description:
-    "KiR Nyheter er en redaksjonell nettavis om KI/AI i reklame, media, byrå og markedsføring. Kritikk, satsinger, analyse og bransjetrender.",
+    "KiR Nyheter er en redaksjonell aivis om KI/AI i reklame, media, byrå og markedsføring. Kritikk, satsinger, analyse og bransjetrender.",
   path: "/ki-avis",
 });
 
@@ -273,7 +273,7 @@ export default async function KIRNyheterPage() {
           <div className="flex flex-wrap items-center justify-between gap-2">
             <span>Mandag · Oslo-redaksjonen</span>
             <span>Oppdatert {fmtDate(new Date().toISOString())}</span>
-            <span>Avisa drives av Cuz Media AS</span>
+            <span>AIVISA DRIVES AV CUZ MEDIA AS</span>
           </div>
         </div>
 
@@ -295,7 +295,7 @@ export default async function KIRNyheterPage() {
                 </span>
               </div>
               <p className="text-[10px] uppercase tracking-[0.28em] text-black/60 md:text-[11px]">
-                Norges avis for KI, reklame og media
+                Norges aivis for KI, reklame og media
               </p>
             </div>
 
@@ -324,6 +324,10 @@ export default async function KIRNyheterPage() {
             <a href="#analyse" className="hover:text-black">
               Analyse
             </a>
+            <span className="text-black/35">|</span>
+            <Link href="/ki-avis/om" className="hover:text-black">
+              Om Aivisen
+            </Link>
           </nav>
         </div>
       </header>
@@ -693,7 +697,7 @@ export default async function KIRNyheterPage() {
         ) : null}
 
         <section className="mt-5 border-t border-black/20 pt-3 text-[11px] uppercase tracking-[0.17em] text-black/55">
-          Avisa drives av Cuz Media AS
+          AIVISA DRIVES AV CUZ MEDIA AS
         </section>
       </main>
     </div>

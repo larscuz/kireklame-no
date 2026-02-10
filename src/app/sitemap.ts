@@ -23,6 +23,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${site}/ai-video`, changeFrequency: "weekly", priority: 0.8 },
     { url: `${site}/ki-markedsforing`, changeFrequency: "weekly", priority: 0.8 },
     { url: `${site}/ki-avis`, changeFrequency: "daily", priority: 0.9 },
+    { url: `${site}/ki-avis/om`, changeFrequency: "weekly", priority: 0.7 },
   ];
 
   const companyUrls: MetadataRoute.Sitemap = (companies ?? [])
