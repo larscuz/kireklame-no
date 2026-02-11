@@ -99,6 +99,16 @@ const MARKETING_CONTEXT_HINTS = [
   "annonsering",
 ];
 
+const EXCERPT_NOISE_PATTERNS = [
+  /\babonner(er|er du allerede)?\b/i,
+  /\blogg inn\b/i,
+  /\bfor å lese denne saken\b/i,
+  /\bbli abonnent\b/i,
+  /\bcookie\b/i,
+  /\bpersonvern\b/i,
+  /\bvilkår\b/i,
+];
+
 function htmlDecode(input: string): string {
   const namedDecoded = input
     .replace(/&amp;/g, "&")
@@ -177,6 +187,92 @@ function firstMetaContent(lookup: MetaLookup, keys: string[], limit = 500): stri
     if (value) return value;
   }
   return null;
+}
+
+function cleanFragmentText(fragment: string | null | undefined, limit = 520): string | null {
+  const raw = String(fragment ?? "").trim();
+  if (!raw) return null;
+  return cleanText(stripHtml(htmlDecode(raw)), limit);
+}
+
+function excerptScore(candidate: string): number {
+  const lc = candidate.toLowerCase();
+  let score = 0;
+
+  if (candidate.length >= 80 && candidate.length <= 320) score += 3;
+  else if (candidate.length >= 50 && candidate.length <= 420) score += 1.5;
+  else score -= 1;
+
+  if (hasAISignal(candidate)) score += 2.2;
+
+  const marketingHits = MARKETING_CONTEXT_HINTS.reduce(
+    (acc, word) => (lc.includes(word) ? acc + 1 : acc),
+    0
+  );
+  score += Math.min(marketingHits, 3) * 0.9;
+
+  if (EXCERPT_NOISE_PATTERNS.some((pattern) => pattern.test(candidate))) score -= 8;
+  if (/^publisert\b/i.test(candidate)) score -= 2;
+  if (/^foto:/i.test(candidate)) score -= 2;
+
+  return score;
+}
+
+function excerptFromHtml(
+  html: string,
+  lookup: MetaLookup,
+  fallbackSnippet?: string | null
+): string | null {
+  const candidates: string[] = [];
+  const seen = new Set<string>();
+
+  const push = (raw: string | null | undefined) => {
+    const cleaned = cleanFragmentText(raw, 520);
+    if (!cleaned || cleaned.length < 45) return;
+    const key = cleaned.toLowerCase();
+    if (seen.has(key)) return;
+    seen.add(key);
+    candidates.push(cleaned);
+  };
+
+  const descKeys = ["description", "og:description", "twitter:description"];
+  for (const rawKey of descKeys) {
+    const values = lookup.get(rawKey) ?? [];
+    for (const value of values) push(value);
+  }
+
+  const leadRe =
+    /<p[^>]+class=["'][^"']*(?:ingress|lead|dek|intro|standfirst|excerpt|summary)[^"']*["'][^>]*>([\s\S]*?)<\/p>/gi;
+  let leadMatch: RegExpExecArray | null;
+  let leadCount = 0;
+  while ((leadMatch = leadRe.exec(html)) && leadCount < 8) {
+    push(leadMatch[1]);
+    leadCount += 1;
+  }
+
+  const h2Re = /<h2[^>]*>([\s\S]*?)<\/h2>/gi;
+  let h2Match: RegExpExecArray | null;
+  let h2Count = 0;
+  while ((h2Match = h2Re.exec(html)) && h2Count < 8) {
+    push(h2Match[1]);
+    h2Count += 1;
+  }
+
+  const pRe = /<p[^>]*>([\s\S]*?)<\/p>/gi;
+  let pMatch: RegExpExecArray | null;
+  let pCount = 0;
+  while ((pMatch = pRe.exec(html)) && pCount < 24) {
+    push(pMatch[1]);
+    pCount += 1;
+  }
+
+  push(fallbackSnippet);
+
+  if (!candidates.length) return cleanText(fallbackSnippet ?? "", 420);
+
+  candidates.sort((a, b) => excerptScore(b) - excerptScore(a));
+  const best = candidates[0] ?? "";
+  return cleanText(best, 420);
 }
 
 function toAbsoluteUrl(input: string | null | undefined, sourceUrl?: string | null): string | null {
@@ -481,9 +577,7 @@ export function extractArticleSignals(args: {
   const combinedText = `${args.fallbackTitle ?? ""} ${args.fallbackSnippet ?? ""} ${plainText}`.trim();
 
   const title = titleFromHtml(html, lookup) ?? cleanText(args.fallbackTitle ?? "", 220);
-  const excerpt =
-    firstMetaContent(lookup, ["description", "og:description", "twitter:description"]) ??
-    cleanText(args.fallbackSnippet ?? "", 420);
+  const excerpt = excerptFromHtml(html, lookup, args.fallbackSnippet);
   const heroImageUrl = heroImageFromHtml(html, lookup, args.sourceUrl);
   const publishedAt = publishedAtFromHtml(html, lookup);
   const isPaywalled = isLikelyPaywalled(html);

@@ -130,7 +130,10 @@ function autoSummary(args: {
   plainText: string;
   snippet: string;
 }): string | null {
-  if (args.isPaywalled) return null;
+  if (args.isPaywalled) {
+    const paywallSeed = args.excerpt || cleanText(args.snippet, 320);
+    return paywallSeed ? paywallSeed.slice(0, 400) : null;
+  }
   const summarySeed = args.excerpt || cleanText(args.snippet, 280) || cleanText(args.plainText, 280);
   return summarySeed ? summarySeed.slice(0, 400) : null;
 }
