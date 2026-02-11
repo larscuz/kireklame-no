@@ -162,6 +162,65 @@ function splitBodyIntoNewsParagraphs(text: string): string[] {
   return out.map((part) => part.trim()).filter(Boolean);
 }
 
+type ScrollyBlock =
+  | { kind: "heading"; text: string }
+  | { kind: "text"; text: string }
+  | { kind: "image"; src: string; alt: string; caption: string | null };
+
+function parseScrollyBodyBlocks(text: string): ScrollyBlock[] {
+  const raw = String(text ?? "").replace(/\r\n/g, "\n").trim();
+  if (!raw) return [];
+
+  const chunks = raw
+    .split(/\n{2,}/g)
+    .map((part) => part.trim())
+    .filter(Boolean);
+  const blocks: ScrollyBlock[] = [];
+
+  for (const chunk of chunks) {
+    const lines = chunk
+      .split("\n")
+      .map((line) => line.trim())
+      .filter(Boolean);
+    if (!lines.length) continue;
+
+    const firstLine = lines[0];
+    const headingMatch = firstLine.match(/^#{2,3}\s+(.+)$/);
+    if (headingMatch && lines.length === 1) {
+      blocks.push({ kind: "heading", text: headingMatch[1].trim() });
+      continue;
+    }
+
+    const imageMatch = firstLine.match(/^!\[([^\]]*)\]\((https?:\/\/[^\s)]+)\)$/i);
+    if (imageMatch) {
+      const alt = imageMatch[1].trim() || "Illustrasjon";
+      const src = imageMatch[2].trim();
+      const captionText = lines
+        .slice(1)
+        .join(" ")
+        .replace(/^fig\.?:?\s*/i, "")
+        .replace(/^bildetekst:?\s*/i, "")
+        .replace(/^caption:?\s*/i, "")
+        .trim();
+      blocks.push({
+        kind: "image",
+        src,
+        alt,
+        caption: captionText || null,
+      });
+      continue;
+    }
+
+    const textParts = splitBodyIntoNewsParagraphs(chunk);
+    if (textParts.length === 0) continue;
+    for (const textPart of textParts) {
+      blocks.push({ kind: "text", text: textPart });
+    }
+  }
+
+  return blocks;
+}
+
 function adSignature(ad: SponsorAd | null): string {
   if (!ad) return "";
   return `${ad.id}:${ad.href}:${ad.image_url}:${ad.mobile_image_url ?? ""}`;
@@ -312,6 +371,11 @@ export default async function KIRNyheterArticlePage({
   const displayBodyParagraphs = displayBodyChunks.flatMap((chunk) =>
     splitBodyIntoNewsParagraphs(chunk)
   );
+  const isScrollytelling = hasTag(article.topic_tags, "scrollytelling");
+  const scrollyBlocks = isScrollytelling
+    ? parseScrollyBodyBlocks(displayBodyChunks.join("\n\n"))
+    : [];
+  const hasScrollyBlocks = scrollyBlocks.length > 0;
   const isEditorOpEd = isInternalAivisArticle({
     title: article.title,
     sourceName: article.source_name,
@@ -562,7 +626,61 @@ export default async function KIRNyheterArticlePage({
               </section>
             ) : null}
 
-            {displayBodyParagraphs.length > 0 ? (
+            {hasScrollyBlocks ? (
+              <section className="mt-5 border-t border-black/20 pt-4">
+                {!isEditorOpEd ? (
+                  <h2 className={`${masthead.className} text-[30px] sm:text-[34px]`}>
+                    AI-generert tekst fra kilden
+                  </h2>
+                ) : null}
+                <div className="mt-3 space-y-6">
+                  {scrollyBlocks.map((block, idx) => {
+                    if (block.kind === "heading") {
+                      return (
+                        <h3
+                          key={`heading-${idx}-${block.text.slice(0, 24)}`}
+                          className={`${masthead.className} border-t border-black/15 pt-3 text-[31px] leading-[1.03] text-black/88 sm:text-[36px]`}
+                        >
+                          {block.text}
+                        </h3>
+                      );
+                    }
+                    if (block.kind === "image") {
+                      return (
+                        <figure
+                          key={`image-${idx}-${block.src}`}
+                          className="border border-black/20 bg-[#f8f4eb]"
+                        >
+                          <NewsImage
+                            src={block.src}
+                            alt={block.alt}
+                            className="aspect-[16/9] w-full object-cover"
+                          />
+                          {block.caption ? (
+                            <figcaption className="px-3 py-2 text-[12px] uppercase tracking-[0.12em] text-black/65">
+                              {block.caption}
+                            </figcaption>
+                          ) : null}
+                        </figure>
+                      );
+                    }
+                    return (
+                      <p
+                        key={`text-${idx}-${block.text.slice(0, 24)}`}
+                        className={`${headline.className} text-[23px] leading-[1.3] text-black/85 [overflow-wrap:anywhere] hyphens-auto sm:text-[26px]`}
+                      >
+                        {block.text}
+                      </p>
+                    );
+                  })}
+                </div>
+                {isEditorOpEd ? (
+                  <p className="mt-2 text-[11px] uppercase tracking-[0.13em] text-black/55">
+                    {editorBylineText}
+                  </p>
+                ) : null}
+              </section>
+            ) : displayBodyParagraphs.length > 0 ? (
               <section className="mt-5 border-t border-black/20 pt-4">
                 {!isEditorOpEd ? (
                   <h2 className={`${masthead.className} text-[30px] sm:text-[34px]`}>
