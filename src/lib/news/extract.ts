@@ -70,12 +70,33 @@ const INDUSTRY_BRAND_HINTS = [
 ];
 
 function htmlDecode(input: string): string {
-  return input
+  const namedDecoded = input
     .replace(/&amp;/g, "&")
     .replace(/&quot;/g, '"')
     .replace(/&#39;/g, "'")
     .replace(/&lt;/g, "<")
     .replace(/&gt;/g, ">");
+
+  // Decode numeric entities like &#248; and &#xF8; so Norwegian letters render correctly.
+  return namedDecoded
+    .replace(/&#(\d+);/g, (_m, dec: string) => {
+      const code = Number.parseInt(dec, 10);
+      if (!Number.isFinite(code) || code <= 0) return _m;
+      try {
+        return String.fromCodePoint(code);
+      } catch {
+        return _m;
+      }
+    })
+    .replace(/&#x([0-9a-fA-F]+);/g, (_m, hex: string) => {
+      const code = Number.parseInt(hex, 16);
+      if (!Number.isFinite(code) || code <= 0) return _m;
+      try {
+        return String.fromCodePoint(code);
+      } catch {
+        return _m;
+      }
+    });
 }
 
 type MetaLookup = Map<string, string[]>;
