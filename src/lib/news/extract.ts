@@ -195,15 +195,32 @@ function cleanFragmentText(fragment: string | null | undefined, limit = 520): st
   return cleanText(stripHtml(htmlDecode(raw)), limit);
 }
 
-function excerptScore(candidate: string): number {
-  const lc = candidate.toLowerCase();
+type ExcerptSource = "meta" | "lead" | "h2" | "p" | "fallback";
+type ExcerptCandidate = {
+  text: string;
+  source: ExcerptSource;
+  order: number;
+};
+
+function excerptScore(candidate: ExcerptCandidate): number {
+  const text = candidate.text;
+  const lc = text.toLowerCase();
   let score = 0;
 
-  if (candidate.length >= 80 && candidate.length <= 320) score += 3;
-  else if (candidate.length >= 50 && candidate.length <= 420) score += 1.5;
+  if (text.length >= 80 && text.length <= 320) score += 3;
+  else if (text.length >= 50 && text.length <= 420) score += 1.5;
   else score -= 1;
 
-  if (hasAISignal(candidate)) score += 2.2;
+  if (candidate.source === "lead") score += 4.0;
+  else if (candidate.source === "h2") score += 3.2;
+  else if (candidate.source === "p") score += 1.8;
+  else if (candidate.source === "meta") score += 1.0;
+  else score += 0.4;
+
+  // Slight preference for earlier visible candidates in the document.
+  score += Math.max(0, 1.6 - candidate.order * 0.08);
+
+  if (hasAISignal(text)) score += 2.2;
 
   const marketingHits = MARKETING_CONTEXT_HINTS.reduce(
     (acc, word) => (lc.includes(word) ? acc + 1 : acc),
@@ -211,9 +228,10 @@ function excerptScore(candidate: string): number {
   );
   score += Math.min(marketingHits, 3) * 0.9;
 
-  if (EXCERPT_NOISE_PATTERNS.some((pattern) => pattern.test(candidate))) score -= 8;
-  if (/^publisert\b/i.test(candidate)) score -= 2;
-  if (/^foto:/i.test(candidate)) score -= 2;
+  if (EXCERPT_NOISE_PATTERNS.some((pattern) => pattern.test(text))) score -= 8;
+  if (/^publisert\b/i.test(text)) score -= 2;
+  if (/^foto:/i.test(text)) score -= 2;
+  if (/^([A-ZÆØÅ][\w.-]+,\s*){2,}/.test(text) && /\bbeskriver\b/i.test(text)) score -= 1.5;
 
   return score;
 }
@@ -223,22 +241,24 @@ function excerptFromHtml(
   lookup: MetaLookup,
   fallbackSnippet?: string | null
 ): string | null {
-  const candidates: string[] = [];
+  const candidates: ExcerptCandidate[] = [];
   const seen = new Set<string>();
+  let order = 0;
 
-  const push = (raw: string | null | undefined) => {
+  const push = (raw: string | null | undefined, source: ExcerptSource) => {
     const cleaned = cleanFragmentText(raw, 520);
     if (!cleaned || cleaned.length < 45) return;
     const key = cleaned.toLowerCase();
     if (seen.has(key)) return;
     seen.add(key);
-    candidates.push(cleaned);
+    candidates.push({ text: cleaned, source, order });
+    order += 1;
   };
 
   const descKeys = ["description", "og:description", "twitter:description"];
   for (const rawKey of descKeys) {
     const values = lookup.get(rawKey) ?? [];
-    for (const value of values) push(value);
+    for (const value of values) push(value, "meta");
   }
 
   const leadRe =
@@ -246,7 +266,7 @@ function excerptFromHtml(
   let leadMatch: RegExpExecArray | null;
   let leadCount = 0;
   while ((leadMatch = leadRe.exec(html)) && leadCount < 8) {
-    push(leadMatch[1]);
+    push(leadMatch[1], "lead");
     leadCount += 1;
   }
 
@@ -254,7 +274,7 @@ function excerptFromHtml(
   let h2Match: RegExpExecArray | null;
   let h2Count = 0;
   while ((h2Match = h2Re.exec(html)) && h2Count < 8) {
-    push(h2Match[1]);
+    push(h2Match[1], "h2");
     h2Count += 1;
   }
 
@@ -262,17 +282,25 @@ function excerptFromHtml(
   let pMatch: RegExpExecArray | null;
   let pCount = 0;
   while ((pMatch = pRe.exec(html)) && pCount < 24) {
-    push(pMatch[1]);
+    push(pMatch[1], "p");
     pCount += 1;
   }
 
-  push(fallbackSnippet);
+  push(fallbackSnippet, "fallback");
 
   if (!candidates.length) return cleanText(fallbackSnippet ?? "", 420);
 
-  candidates.sort((a, b) => excerptScore(b) - excerptScore(a));
-  const best = candidates[0] ?? "";
-  return cleanText(best, 420);
+  const scored = candidates
+    .map((candidate) => ({ candidate, score: excerptScore(candidate) }))
+    .sort((a, b) => b.score - a.score);
+
+  const best = scored[0];
+  const bestNonMeta = scored.find((item) => item.candidate.source !== "meta");
+  const chosen =
+    bestNonMeta && best && bestNonMeta.score >= best.score - 1.2
+      ? bestNonMeta.candidate
+      : best?.candidate;
+  return cleanText(chosen?.text ?? "", 420);
 }
 
 function toAbsoluteUrl(input: string | null | undefined, sourceUrl?: string | null): string | null {
@@ -472,11 +500,17 @@ function isLikelyPaywalled(html: string): boolean {
   for (const signal of PAYWALL_SIGNALS) {
     if (lc.includes(signal)) hits += 1;
   }
+  if (lc.includes("abonnerer du allerede")) hits += 1;
+  if (lc.includes("for å lese denne saken må du være")) hits += 1;
+  if (lc.includes("for a lese denne saken ma du vaere")) hits += 1;
+
   if (hits >= 2) return true;
   return (
     lc.includes("kun for abonnenter") ||
     lc.includes("for abonnenter") ||
     lc.includes("subscriber-only") ||
+    lc.includes("abonnerer du allerede") ||
+    lc.includes("for å lese denne saken må du være") ||
     lc.includes("logg inn for å lese")
   );
 }

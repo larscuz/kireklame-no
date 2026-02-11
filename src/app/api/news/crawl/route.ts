@@ -142,6 +142,21 @@ function hasValidImageUrl(url: string | null | undefined): boolean {
   return /^https?:\/\//i.test(String(url ?? "").trim());
 }
 
+function inferPaywallFromLead(args: {
+  title: string;
+  excerpt: string | null;
+  snippet: string;
+}): boolean {
+  const title = String(args.title ?? "").trim();
+  const joined = `${title} ${args.excerpt ?? ""} ${args.snippet ?? ""}`.toLowerCase();
+  if (/^\(\+\)/.test(title)) return true;
+  if (joined.includes("for abonnenter")) return true;
+  if (joined.includes("abonnerer du allerede")) return true;
+  if (joined.includes("for å lese denne saken må du være")) return true;
+  if (joined.includes("for a lese denne saken ma du vaere")) return true;
+  return false;
+}
+
 function isOlderThanDays(isoDate: string | null | undefined, maxAgeDays: number): boolean {
   if (!isoDate) return false;
   const publishedMs = Date.parse(String(isoDate));
@@ -300,6 +315,13 @@ export async function POST(req: Request) {
       const title = extracted.title ?? item.title;
       const sourceName = item.domain;
       const slug = stableNewsSlug(title, item.sourceUrl);
+      const effectivePaywalled =
+        extracted.isPaywalled ||
+        inferPaywallFromLead({
+          title,
+          excerpt: extracted.excerpt,
+          snippet: item.snippet,
+        });
       const heroImageUrl = hasValidImageUrl(extracted.heroImageUrl)
         ? extracted.heroImageUrl
         : hasValidImageUrl(item.imageUrl)
@@ -329,13 +351,15 @@ export async function POST(req: Request) {
           "ai_markedsforing",
           extracted.perspective === "critical" ? "kritikk" : "satsing",
           missingImage ? "mangler_bilde" : "har_bilde",
-          extracted.isPaywalled ? "betalingsmur" : "apen",
+          effectivePaywalled ? "betalingsmur" : "apen",
         ],
-        is_paywalled: extracted.isPaywalled,
-        paywall_note: extracted.paywallNote,
+        is_paywalled: effectivePaywalled,
+        paywall_note:
+          extracted.paywallNote ??
+          (effectivePaywalled ? "Artikkelen ser ut til å ligge bak betalingsmur." : null),
         excerpt: extracted.excerpt,
         summary: autoSummary({
-          isPaywalled: extracted.isPaywalled,
+          isPaywalled: effectivePaywalled,
           excerpt: extracted.excerpt,
           plainText: extracted.plainText,
           snippet: item.snippet,
