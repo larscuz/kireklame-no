@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase/admin";
-import { normalizeNewsUpsert } from "@/lib/news/articles";
+import { FRONT_LEAD_OVERRIDE_TAG, normalizeNewsUpsert } from "@/lib/news/articles";
+import { applyFrontLayoutAssignments } from "@/lib/news/frontLayout";
 import { isLikelyNonArticleNewsPage } from "@/lib/news/nonArticle";
 import {
   coerceNewsPerspective,
@@ -39,8 +40,80 @@ type IngestPayload = {
   articles?: WorkerArticle[];
 };
 
+type IngestUpsertRow = {
+  id: string;
+  slug: string;
+  title: string;
+  source_url: string;
+  status: string;
+};
+
 function hasValidImageUrl(url: string | null | undefined): boolean {
   return /^https?:\/\//i.test(String(url ?? "").trim());
+}
+
+function hasTag(tags: string[] | null | undefined, tag: string): boolean {
+  const needle = String(tag ?? "").trim().toLowerCase();
+  if (!needle) return false;
+  return (tags ?? []).some((item) => String(item ?? "").trim().toLowerCase() === needle);
+}
+
+function toTimestamp(value: string | null | undefined): number {
+  if (!value) return 0;
+  const ts = new Date(value).getTime();
+  return Number.isFinite(ts) ? ts : 0;
+}
+
+function isKIRedaksjonenCandidate(
+  row: ReturnType<typeof normalizeNewsUpsert>
+): boolean {
+  const tags = row.topic_tags ?? [];
+  const sourceName = String(row.source_name ?? "");
+  const title = String(row.title ?? "");
+  const editorNote = String(row.editor_note ?? "");
+  const language = String(row.language ?? "").toLowerCase().trim();
+  const hasInternalTag =
+    hasTag(tags, "op_ed") ||
+    hasTag(tags, "leder") ||
+    hasTag(tags, "redaksjonen") ||
+    hasTag(tags, "kir_aivisa") ||
+    hasTag(tags, "lars_cuzner");
+  const hasInternalSignature =
+    /redaksjonen|ki?r?\s*aivisa|lars\s*cuzner/i.test(sourceName) ||
+    /op-?ed|leder/i.test(title) ||
+    /editor in chief bot redaksjonen|skrevet av ki?r?\s*aivisa/i.test(editorNote);
+  const looksInternal = hasInternalTag || hasInternalSignature;
+  if (!looksInternal) return false;
+  if (hasTag(tags, "internasjonalt") || hasTag(tags, "international_ai_agency")) return false;
+  if (language && !["no", "nb", "nn", "unknown"].includes(language)) return false;
+  return true;
+}
+
+function pickAutoFrontLeadId(
+  savedRows: IngestUpsertRow[],
+  normalizedRows: Array<ReturnType<typeof normalizeNewsUpsert>>
+): IngestUpsertRow | null {
+  const bySourceUrl = new Map<
+    string,
+    { input: ReturnType<typeof normalizeNewsUpsert>; inputIndex: number }
+  >();
+  normalizedRows.forEach((row, index) => {
+    bySourceUrl.set(row.source_url, { input: row, inputIndex: index });
+  });
+
+  const candidates = savedRows
+    .map((saved) => {
+      const match = bySourceUrl.get(saved.source_url);
+      if (!match) return null;
+      if (saved.status !== "published") return null;
+      if (!hasValidImageUrl(match.input.hero_image_url)) return null;
+      if (!isKIRedaksjonenCandidate(match.input)) return null;
+      return { saved, inputIndex: match.inputIndex, publishedAt: toTimestamp(match.input.published_at) };
+    })
+    .filter((item): item is { saved: IngestUpsertRow; inputIndex: number; publishedAt: number } => Boolean(item))
+    .sort((a, b) => b.publishedAt - a.publishedAt || b.inputIndex - a.inputIndex);
+
+  return candidates[0]?.saved ?? null;
 }
 
 export async function POST(req: Request) {
@@ -154,10 +227,34 @@ export async function POST(req: Request) {
     );
   }
 
+  const savedRows = (data ?? []) as IngestUpsertRow[];
+  const autoLead = pickAutoFrontLeadId(savedRows, normalized);
+  let autoLeadApplied = false;
+  let autoLeadError: string | null = null;
+  if (autoLead) {
+    try {
+      await applyFrontLayoutAssignments({
+        [FRONT_LEAD_OVERRIDE_TAG]: autoLead.id,
+      });
+      autoLeadApplied = true;
+    } catch (err) {
+      autoLeadError = err instanceof Error ? err.message : "unknown_error";
+    }
+  }
+
   return NextResponse.json({
     ok: true,
-    insertedOrUpdated: (data ?? []).length,
-    rows: data ?? [],
+    insertedOrUpdated: savedRows.length,
+    rows: savedRows,
+    frontLeadOverride: autoLead
+      ? {
+          id: autoLead.id,
+          slug: autoLead.slug,
+          title: autoLead.title,
+          applied: autoLeadApplied,
+          error: autoLeadError,
+        }
+      : null,
     skipped,
   });
 }

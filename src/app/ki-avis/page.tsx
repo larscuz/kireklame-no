@@ -262,6 +262,7 @@ export default async function KIRNyheterPage() {
   );
   const editorialDesk = [...imagedArticles]
     .filter((item) => !internationalIds.has(item.id))
+    .filter((item) => item.id !== lead?.id)
     .filter((item) => isInternalAivisArticle(item))
     .sort((a, b) => sortTimestamp(b) - sortTimestamp(a));
 
