@@ -237,17 +237,24 @@ export default async function KIRNyheterPage() {
     ).values()
   );
 
-  const imagedArticles = allArticles.filter((item) => hasImage(item.hero_image_url));
-  const internationalCandidates = imagedArticles.filter((item) => isLikelyInternationalDeskArticle(item));
-  const internationalWithImage = internationalCandidates.filter((item) => hasImage(item.hero_image_url));
-  const internationalDesk = internationalWithImage.slice(0, 20);
+  const internationalCandidates = allArticles.filter((item) =>
+    isLikelyInternationalDeskArticle(item)
+  );
+  const internationalWithImage = internationalCandidates.filter((item) =>
+    hasImage(item.hero_image_url)
+  );
+  const internationalDesk =
+    (internationalWithImage.length > 0 ? internationalWithImage : internationalCandidates).slice(
+      0,
+      20
+    );
   const internationalIds = new Set(internationalDesk.map((item) => item.id));
-  const leadPool = imagedArticles.filter((item) => !internationalIds.has(item.id));
-  const sourcePool = leadPool.length > 0 ? leadPool : imagedArticles;
+  const sourcePool = allArticles.filter((item) => !internationalIds.has(item.id));
+  const sourcePoolWithImage = sourcePool.filter((item) => hasImage(item.hero_image_url));
   const overrideLead = leadOverrideArticle
     ? sourcePool.find((item) => item.id === leadOverrideArticle.id) ?? null
     : sourcePool.find((item) => hasTag(item, FRONT_LEAD_OVERRIDE_TAG)) ?? null;
-  const lead = overrideLead ?? sourcePool[0] ?? null;
+  const lead = overrideLead ?? sourcePoolWithImage[0] ?? sourcePool[0] ?? null;
   const rest = lead ? sourcePool.filter((item) => item.id !== lead.id) : sourcePool;
   const internationalLead = internationalDesk[0] ?? null;
   const internationalWireTop = internationalLead
