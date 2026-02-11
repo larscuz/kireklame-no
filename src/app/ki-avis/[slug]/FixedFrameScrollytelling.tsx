@@ -38,7 +38,7 @@ const SCENE_LAYOUTS: SceneLayout[] = [
   {
     stickyTopClass: "top-[10vh]",
     shellClass: "mr-auto max-w-[min(92vw,58rem)]",
-    cardClass: "bg-[#f7f1e7]/95",
+    cardClass: "bg-[#10141b]/78",
     headingClass: "text-[31px] sm:text-[40px]",
     bodyClass: "text-[21px] leading-[1.28] sm:text-[24px]",
     inactiveClass: "translate-y-5 opacity-60",
@@ -46,7 +46,7 @@ const SCENE_LAYOUTS: SceneLayout[] = [
   {
     stickyTopClass: "top-[15vh]",
     shellClass: "ml-auto max-w-[min(92vw,52rem)]",
-    cardClass: "bg-[#f4ede1]/95",
+    cardClass: "bg-[#141018]/78",
     headingClass: "text-[35px] sm:text-[47px]",
     bodyClass: "text-[19px] leading-[1.32] sm:text-[22px]",
     inactiveClass: "translate-y-4 -translate-x-2 opacity-60",
@@ -54,7 +54,7 @@ const SCENE_LAYOUTS: SceneLayout[] = [
   {
     stickyTopClass: "top-[20vh]",
     shellClass: "mx-auto max-w-[min(92vw,50rem)]",
-    cardClass: "bg-[#f8f3ea]/93",
+    cardClass: "bg-[#121716]/76",
     headingClass: "text-[33px] sm:text-[44px]",
     bodyClass: "text-[22px] leading-[1.27] sm:text-[26px]",
     inactiveClass: "translate-y-6 opacity-55",
@@ -62,7 +62,7 @@ const SCENE_LAYOUTS: SceneLayout[] = [
   {
     stickyTopClass: "top-[25vh]",
     shellClass: "mr-auto max-w-[min(92vw,46rem)]",
-    cardClass: "bg-[#f6f0e5]/93",
+    cardClass: "bg-[#17130f]/76",
     headingClass: "text-[29px] sm:text-[37px]",
     bodyClass: "text-[18px] leading-[1.35] sm:text-[21px]",
     inactiveClass: "translate-y-4 translate-x-3 opacity-60",
@@ -307,12 +307,12 @@ export default function FixedFrameScrollytelling({
 
           <div className={`absolute inset-0 bg-gradient-to-b ${activeOverlay}`} />
 
-          <div className="absolute left-3 top-3 border border-white/25 bg-black/35 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-white/90 md:left-6 md:top-6">
+          <div className="absolute left-3 top-3 rounded-full border border-white/20 bg-black/45 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.2em] text-white/90 backdrop-blur-sm md:left-6 md:top-6">
             Scene {boundedActiveIndex + 1} / {scenes.length}
           </div>
 
           {activeScene?.imageCaption ? (
-            <div className="absolute bottom-3 left-3 max-w-[min(92vw,760px)] border border-white/20 bg-black/40 px-3 py-2 text-[11px] uppercase tracking-[0.13em] text-white/85 md:bottom-6 md:left-6">
+            <div className="absolute bottom-3 left-3 max-w-[min(92vw,760px)] rounded-xl border border-white/15 bg-black/45 px-3 py-2 text-[11px] uppercase tracking-[0.13em] text-white/85 backdrop-blur-sm md:bottom-6 md:left-6">
               Bildetekst: {activeScene.imageCaption}
             </div>
           ) : null}
@@ -334,15 +334,15 @@ export default function FixedFrameScrollytelling({
               >
                 <div className={`sticky ${layout.stickyTopClass} ${layout.shellClass}`}>
                   <article
-                    className={`border border-black/20 ${layout.cardClass} p-4 shadow-[0_24px_64px_rgba(0,0,0,0.28)] backdrop-blur-sm transition-[opacity,transform] duration-700 sm:p-6 ${
+                    className={`rounded-3xl border border-white/12 ${layout.cardClass} p-4 shadow-[0_22px_62px_rgba(0,0,0,0.42)] ring-1 ring-white/6 backdrop-blur-md transition-[opacity,transform] duration-700 sm:p-6 ${
                       isActive ? "translate-y-0 translate-x-0 opacity-100" : layout.inactiveClass
                     }`}
                   >
-                    <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-black/55">
+                    <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-white/58">
                       Scrollytelling • Scene {idx + 1}
                     </p>
                     <h3
-                      className={`${mastheadClassName} mt-2 leading-[1.02] text-black/90 [overflow-wrap:anywhere] hyphens-auto ${layout.headingClass}`}
+                      className={`${mastheadClassName} mt-2 leading-[1.02] text-white/94 [overflow-wrap:anywhere] hyphens-auto ${layout.headingClass}`}
                     >
                       {scene.heading}
                     </h3>
@@ -350,7 +350,7 @@ export default function FixedFrameScrollytelling({
                       {scene.paragraphs.map((paragraph, pIdx) => (
                         <p
                           key={`${idx}-${pIdx}-${paragraph.slice(0, 20)}`}
-                          className={`${headlineClassName} text-black/86 [overflow-wrap:anywhere] hyphens-auto ${layout.bodyClass}`}
+                          className={`${headlineClassName} text-white/84 [overflow-wrap:anywhere] hyphens-auto ${layout.bodyClass}`}
                         >
                           {paragraph}
                         </p>
