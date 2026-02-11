@@ -768,6 +768,12 @@ export default async function KIAvisAdminPage({
   const notice = resolveAdminNotice(sp.notice);
   const noticeItemId = firstSearchParam(sp.item);
   const rows = await listNewsForAdmin(240);
+  const reviewRows = rows.filter((row) => row.status === "draft");
+  const nonPublishedRows = rows.filter(
+    (row) => row.status !== "draft" && row.status !== "published"
+  );
+  const publishedRows = rows.filter((row) => row.status === "published");
+  const orderedRows = [...reviewRows, ...nonPublishedRows, ...publishedRows];
   const layoutCandidates = rows.filter(
     (row) =>
       row.status === "published" &&
@@ -1073,11 +1079,120 @@ export default async function KIAvisAdminPage({
 
         <section className="mt-5 border-t border-black/20 pt-4">
           <h2 className={`${masthead.className} text-[36px] leading-none md:text-[44px]`}>
-            Eksisterende saker ({rows.length})
+            Eksisterende saker ({orderedRows.length})
           </h2>
+          <p className="mt-1 text-sm text-black/68">
+            Sidepanelet skiller tydelig mellom <b>til vurdering</b>, <b>ikke publisert</b> og{" "}
+            <b>publisert</b>. Til vurdering vises alltid øverst.
+          </p>
 
-          <div className="mt-3 border-y border-black/15 bg-[#f8f4eb]">
-            {rows.map((row) => (
+          <div className="mt-3 grid gap-3 xl:grid-cols-[300px_minmax(0,1fr)]">
+            <aside className="border border-black/20 bg-[#f8f4eb] p-3 xl:sticky xl:top-4 xl:max-h-[calc(100vh-2rem)] xl:overflow-auto">
+              <h3 className={`${headline.className} text-[27px] leading-[1.05]`}>Sakskø</h3>
+              <p className="mt-1 text-xs text-black/62">
+                Klikk på en sak for å hoppe direkte til redigering.
+              </p>
+
+              <div className="mt-3 border border-amber-700/30 bg-amber-50/40">
+                <div className="border-b border-amber-700/20 px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.15em] text-amber-900">
+                  Til vurdering ({reviewRows.length})
+                </div>
+                <div className="max-h-[240px] space-y-2 overflow-auto p-2">
+                  {reviewRows.length ? (
+                    reviewRows.slice(0, 20).map((row) => (
+                      <Link
+                        key={`panel-review-${row.id}`}
+                        href={`#article-${row.id}`}
+                        className={`block border px-2 py-2 text-sm leading-snug hover:bg-amber-100/70 ${
+                          noticeItemId === row.id
+                            ? "border-emerald-700/35 bg-emerald-50/50"
+                            : "border-amber-900/20 bg-[#fcf8ef]"
+                        }`}
+                      >
+                        <p className="text-[10px] uppercase tracking-[0.14em] text-black/58">{row.source_name}</p>
+                        <p className="mt-1 text-[13px] font-semibold text-black/88">{row.title}</p>
+                      </Link>
+                    ))
+                  ) : (
+                    <p className="text-xs text-black/60">Ingen saker til vurdering akkurat nå.</p>
+                  )}
+                  {reviewRows.length > 20 ? (
+                    <p className="text-[10px] uppercase tracking-[0.14em] text-black/58">
+                      Viser 20 av {reviewRows.length}
+                    </p>
+                  ) : null}
+                </div>
+              </div>
+
+              <div className="mt-3 border border-black/20 bg-[#f6f2e9]">
+                <div className="border-b border-black/15 px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.15em] text-black/72">
+                  Ikke publisert ({nonPublishedRows.length})
+                </div>
+                <div className="max-h-[220px] space-y-2 overflow-auto p-2">
+                  {nonPublishedRows.length ? (
+                    nonPublishedRows.slice(0, 16).map((row) => (
+                      <Link
+                        key={`panel-unpublished-${row.id}`}
+                        href={`#article-${row.id}`}
+                        className={`block border px-2 py-2 text-sm leading-snug hover:bg-black/5 ${
+                          noticeItemId === row.id
+                            ? "border-emerald-700/35 bg-emerald-50/50"
+                            : "border-black/15 bg-[#fcf8ef]"
+                        }`}
+                      >
+                        <p className="text-[10px] uppercase tracking-[0.14em] text-black/58">
+                          {row.source_name} · {row.status}
+                        </p>
+                        <p className="mt-1 text-[13px] font-semibold text-black/88">{row.title}</p>
+                      </Link>
+                    ))
+                  ) : (
+                    <p className="text-xs text-black/60">Ingen ikke-publiserte saker utenfor vurderingskø.</p>
+                  )}
+                  {nonPublishedRows.length > 16 ? (
+                    <p className="text-[10px] uppercase tracking-[0.14em] text-black/58">
+                      Viser 16 av {nonPublishedRows.length}
+                    </p>
+                  ) : null}
+                </div>
+              </div>
+
+              <div className="mt-3 border border-black/20 bg-[#f6f2e9]">
+                <div className="border-b border-black/15 px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.15em] text-black/72">
+                  Publisert ({publishedRows.length})
+                </div>
+                <div className="max-h-[220px] space-y-2 overflow-auto p-2">
+                  {publishedRows.length ? (
+                    publishedRows.slice(0, 16).map((row) => (
+                      <Link
+                        key={`panel-published-${row.id}`}
+                        href={`#article-${row.id}`}
+                        className={`block border px-2 py-2 text-sm leading-snug hover:bg-black/5 ${
+                          noticeItemId === row.id
+                            ? "border-emerald-700/35 bg-emerald-50/50"
+                            : "border-black/15 bg-[#fcf8ef]"
+                        }`}
+                      >
+                        <p className="text-[10px] uppercase tracking-[0.14em] text-black/58">
+                          {row.source_name} · published
+                        </p>
+                        <p className="mt-1 text-[13px] font-semibold text-black/88">{row.title}</p>
+                      </Link>
+                    ))
+                  ) : (
+                    <p className="text-xs text-black/60">Ingen publiserte saker ennå.</p>
+                  )}
+                  {publishedRows.length > 16 ? (
+                    <p className="text-[10px] uppercase tracking-[0.14em] text-black/58">
+                      Viser 16 av {publishedRows.length}
+                    </p>
+                  ) : null}
+                </div>
+              </div>
+            </aside>
+
+            <div className="border-y border-black/15 bg-[#f8f4eb]">
+              {orderedRows.map((row) => (
               <article
                 key={row.id}
                 id={`article-${row.id}`}
@@ -1328,7 +1443,8 @@ where n.id = '${row.id}';`}
                   </pre>
                 </details>
               </article>
-            ))}
+              ))}
+            </div>
           </div>
         </section>
       </div>
