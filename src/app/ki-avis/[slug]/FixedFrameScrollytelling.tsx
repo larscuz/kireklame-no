@@ -23,7 +23,7 @@ function clamp(value: number, min: number, max: number): number {
   return Math.max(min, Math.min(max, value));
 }
 
-type SceneTransition = "zoom" | "slideLeft" | "slideUp" | "rotate" | "drift" | "wipeDiagonal" | "focusPull";
+type SceneTransition = "zoom" | "focusPull";
 
 type SceneLayout = {
   stickyTopClass: string;
@@ -85,11 +85,8 @@ const SCENE_OVERLAYS = [
 
 const SCENE_TRANSITIONS: SceneTransition[] = [
   "zoom",
-  "slideLeft",
-  "slideUp",
-  "rotate",
-  "drift",
-  "wipeDiagonal",
+  "focusPull",
+  "zoom",
   "focusPull",
 ];
 
@@ -105,16 +102,6 @@ function getLayerEasing(transition: SceneTransition): string {
   switch (transition) {
     case "zoom":
       return "cubic-bezier(0.22, 0.61, 0.36, 1)";
-    case "slideLeft":
-      return "cubic-bezier(0.18, 0.72, 0.24, 1)";
-    case "slideUp":
-      return "cubic-bezier(0.2, 0.7, 0.2, 1)";
-    case "rotate":
-      return "cubic-bezier(0.17, 0.67, 0.3, 1)";
-    case "drift":
-      return "cubic-bezier(0.24, 0.74, 0.2, 1)";
-    case "wipeDiagonal":
-      return "cubic-bezier(0.16, 0.72, 0.22, 1)";
     case "focusPull":
       return "cubic-bezier(0.2, 0.75, 0.18, 1)";
     default:
@@ -130,26 +117,6 @@ function getLayerTransform(transition: SceneTransition, isActive: boolean, progr
       return isActive
         ? `translate3d(0, ${-12 * enter}px, 0) scale(${1.03 + enter * 0.06})`
         : "translate3d(0, 18px, 0) scale(1.11)";
-    case "slideLeft":
-      return isActive
-        ? `translate3d(${14 * leave}px, ${-4 * enter}px, 0) scale(${1.03 + enter * 0.04})`
-        : "translate3d(-20px, 0, 0) scale(1.08)";
-    case "slideUp":
-      return isActive
-        ? `translate3d(0, ${18 * leave}px, 0) scale(${1.02 + enter * 0.04})`
-        : "translate3d(0, -20px, 0) scale(1.08)";
-    case "rotate":
-      return isActive
-        ? `translate3d(0, ${-8 * enter}px, 0) rotate(${(leave * -1.2).toFixed(2)}deg) scale(${1.04 + enter * 0.03})`
-        : "translate3d(0, 10px, 0) rotate(1.1deg) scale(1.09)";
-    case "drift":
-      return isActive
-        ? `translate3d(${-10 * leave}px, ${8 * leave}px, 0) scale(${1.04 + enter * 0.04})`
-        : "translate3d(14px, -12px, 0) scale(1.09)";
-    case "wipeDiagonal":
-      return isActive
-        ? `translate3d(${6 * leave}px, ${-6 * leave}px, 0) scale(${1.03 + enter * 0.04})`
-        : "translate3d(-8px, 8px, 0) scale(1.08)";
     case "focusPull":
       return isActive
         ? `translate3d(0, ${-5 * enter}px, 0) scale(${1.01 + enter * 0.08})`
@@ -161,20 +128,8 @@ function getLayerTransform(transition: SceneTransition, isActive: boolean, progr
 
 function getLayerClipPath(transition: SceneTransition, isActive: boolean, progress: number): string {
   const enter = clamp(progress, 0, 1);
-  const leave = 1 - enter;
 
   switch (transition) {
-    case "slideLeft":
-      return isActive ? `inset(0 0 0 ${(leave * 62).toFixed(2)}%)` : "inset(0 0 0 100%)";
-    case "slideUp":
-      return isActive ? `inset(${(leave * 62).toFixed(2)}% 0 0 0)` : "inset(100% 0 0 0)";
-    case "wipeDiagonal": {
-      const top = (leave * 78).toFixed(2);
-      const right = (leave * 30).toFixed(2);
-      return isActive
-        ? `polygon(0 ${top}%, 100% 0, 100% 100%, ${right}% 100%)`
-        : "polygon(0 100%, 0 100%, 0 100%, 0 100%)";
-    }
     case "focusPull":
       return isActive ? `circle(${(18 + enter * 98).toFixed(2)}% at 50% 50%)` : "circle(0% at 50% 50%)";
     default:
