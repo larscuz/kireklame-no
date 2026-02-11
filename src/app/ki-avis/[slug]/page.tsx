@@ -179,53 +179,80 @@ type ScrollyScene = {
 function parseScrollyBodyBlocks(text: string): ScrollyBlock[] {
   const raw = String(text ?? "").replace(/\r\n/g, "\n").trim();
   if (!raw) return [];
-
-  const chunks = raw
-    .split(/\n{2,}/g)
-    .map((part) => part.trim())
-    .filter(Boolean);
   const blocks: ScrollyBlock[] = [];
+  const lines = raw.split("\n");
+  let textBuffer: string[] = [];
 
-  for (const chunk of chunks) {
-    const lines = chunk
-      .split("\n")
-      .map((line) => line.trim())
-      .filter(Boolean);
-    if (!lines.length) continue;
+  const flushText = () => {
+    const text = textBuffer.join("\n").trim();
+    textBuffer = [];
+    if (!text) return;
+    const textParts = splitBodyIntoNewsParagraphs(text);
+    for (const textPart of textParts) {
+      blocks.push({ kind: "text", text: textPart });
+    }
+  };
 
-    const firstLine = lines[0];
-    const headingMatch = firstLine.match(/^#{2,3}\s+(.+)$/);
-    if (headingMatch && lines.length === 1) {
+  for (let idx = 0; idx < lines.length; idx += 1) {
+    const line = lines[idx].trim();
+
+    if (!line) {
+      textBuffer.push("");
+      continue;
+    }
+
+    if (/^---+$/.test(line)) {
+      flushText();
+      continue;
+    }
+
+    const headingMatch = line.match(/^#{2,3}\s+(.+)$/);
+    if (headingMatch) {
+      flushText();
       blocks.push({ kind: "heading", text: headingMatch[1].trim() });
       continue;
     }
 
-    const imageMatch = firstLine.match(/^!\[([^\]]*)\]\((https?:\/\/[^\s)]+)\)$/i);
+    const imageMatch = line.match(/^!\[([^\]]*)\]\((https?:\/\/[^)\s]+)(?:\s+"[^"]*")?\)\s*$/i);
     if (imageMatch) {
+      flushText();
       const alt = imageMatch[1].trim() || "Illustrasjon";
       const src = imageMatch[2].trim();
-      const captionText = lines
-        .slice(1)
-        .join(" ")
-        .replace(/^fig\.?:?\s*/i, "")
-        .replace(/^bildetekst:?\s*/i, "")
-        .replace(/^caption:?\s*/i, "")
-        .trim();
+
+      let caption: string | null = null;
+      const nextRaw = lines[idx + 1]?.trim() ?? "";
+      if (nextRaw) {
+        const nextHeading = /^#{2,3}\s+/.test(nextRaw);
+        const nextImage = /^!\[([^\]]*)\]\((https?:\/\/[^)\s]+)(?:\s+"[^"]*")?\)\s*$/i.test(nextRaw);
+        const nextRule = /^---+$/.test(nextRaw);
+        const looksLikeCaption =
+          /^(fig\.?|bildetekst|caption)\s*:?/i.test(nextRaw) ||
+          (/^\*.*\*$/.test(nextRaw) && !nextHeading && !nextImage && !nextRule);
+        if (looksLikeCaption) {
+          caption = nextRaw
+            .replace(/^fig\.?:?\s*/i, "")
+            .replace(/^bildetekst:?\s*/i, "")
+            .replace(/^caption:?\s*/i, "")
+            .replace(/^\*/, "")
+            .replace(/\*$/, "")
+            .trim();
+          idx += 1;
+        }
+      }
+
       blocks.push({
         kind: "image",
         src,
         alt,
-        caption: captionText || null,
+        caption: caption || null,
       });
       continue;
     }
 
-    const textParts = splitBodyIntoNewsParagraphs(chunk);
-    if (textParts.length === 0) continue;
-    for (const textPart of textParts) {
-      blocks.push({ kind: "text", text: textPart });
-    }
+    textBuffer.push(line);
   }
+
+  flushText();
 
   return blocks;
 }
