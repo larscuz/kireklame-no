@@ -38,7 +38,7 @@ const SCENE_LAYOUTS: SceneLayout[] = [
   {
     stickyTopClass: "top-[10vh]",
     shellClass: "mr-auto max-w-[min(92vw,58rem)]",
-    cardClass: "bg-[#f7f1e7]/90",
+    cardClass: "bg-[#f7f1e7]",
     headingClass: "text-[31px] sm:text-[42px]",
     bodyClass: "text-[21px] leading-[1.28] sm:text-[24px]",
     inactiveClass: "translate-y-5 opacity-60",
@@ -46,7 +46,7 @@ const SCENE_LAYOUTS: SceneLayout[] = [
   {
     stickyTopClass: "top-[15vh]",
     shellClass: "ml-auto max-w-[min(92vw,52rem)]",
-    cardClass: "bg-[#f5ede2]/90",
+    cardClass: "bg-[#f5ede2]",
     headingClass: "text-[34px] sm:text-[50px]",
     bodyClass: "text-[19px] leading-[1.32] sm:text-[22px]",
     inactiveClass: "translate-y-4 -translate-x-2 opacity-60",
@@ -54,7 +54,7 @@ const SCENE_LAYOUTS: SceneLayout[] = [
   {
     stickyTopClass: "top-[20vh]",
     shellClass: "mx-auto max-w-[min(92vw,50rem)]",
-    cardClass: "bg-[#f8f3ea]/88",
+    cardClass: "bg-[#f8f3ea]",
     headingClass: "text-[37px] sm:text-[58px]",
     bodyClass: "text-[23px] leading-[1.24] sm:text-[30px]",
     inactiveClass: "translate-y-6 opacity-55",
@@ -62,7 +62,7 @@ const SCENE_LAYOUTS: SceneLayout[] = [
   {
     stickyTopClass: "top-[25vh]",
     shellClass: "mr-auto max-w-[min(92vw,46rem)]",
-    cardClass: "bg-[#f6efe2]/90",
+    cardClass: "bg-[#f6efe2]",
     headingClass: "text-[29px] sm:text-[38px]",
     bodyClass: "text-[18px] leading-[1.35] sm:text-[21px]",
     inactiveClass: "translate-y-4 translate-x-3 opacity-60",
@@ -323,7 +323,7 @@ export default function FixedFrameScrollytelling({
               >
                 <div className={`sticky ${layout.stickyTopClass} ${layout.shellClass}`}>
                   <article
-                    className={`rounded-[28px] border border-black/14 ${layout.cardClass} p-4 shadow-[0_20px_48px_rgba(0,0,0,0.25)] ring-1 ring-black/6 backdrop-blur-sm transition-[opacity,transform] duration-700 sm:p-6 ${
+                    className={`rounded-[28px] border border-black/14 ${layout.cardClass} p-4 shadow-[0_20px_48px_rgba(0,0,0,0.25)] ring-1 ring-black/6 transition-[opacity,transform] duration-700 sm:p-6 ${
                       isActive ? "translate-y-0 translate-x-0 opacity-100" : layout.inactiveClass
                     }`}
                   >
