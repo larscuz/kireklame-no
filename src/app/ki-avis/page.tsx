@@ -49,6 +49,13 @@ function fmtDate(iso: string | null) {
   }
 }
 
+function sortTimestamp(article: NewsArticle): number {
+  const raw = article.published_at ?? article.created_at ?? null;
+  if (!raw) return 0;
+  const ts = new Date(raw).getTime();
+  return Number.isFinite(ts) ? ts : 0;
+}
+
 function hasImage(url: string | null): boolean {
   return /^https?:\/\//i.test(String(url ?? "").trim());
 }
@@ -253,6 +260,10 @@ export default async function KIRNyheterPage() {
   const internationalAfterAdPool = internationalDesk.filter(
     (item) => !internationalTopIds.has(item.id)
   );
+  const editorialDesk = [...imagedArticles]
+    .filter((item) => !internationalIds.has(item.id))
+    .filter((item) => isInternalAivisArticle(item))
+    .sort((a, b) => sortTimestamp(b) - sortTimestamp(a));
 
   const primaryUsed = new Set<string>();
   const frontRow = takeFromPool(rest, primaryUsed, 2);
@@ -547,6 +558,42 @@ export default async function KIRNyheterPage() {
             </div>
 
             <aside className="min-w-0 space-y-3 lg:pl-1">
+              {editorialDesk.length ? (
+                <section className="border-b border-black/15 pb-3">
+                  <h2 className={`${masthead.className} text-[26px] leading-none sm:text-[28px]`}>
+                    KiRedaksjonen
+                  </h2>
+                  <div className="mt-2 space-y-2">
+                    {editorialDesk.map((article) => (
+                      <article
+                        key={article.id}
+                        className="grid grid-cols-[72px_1fr] gap-2 border-b border-black/10 pb-2 last:border-b-0 last:pb-0 sm:grid-cols-[84px_1fr]"
+                      >
+                        <StoryVisual
+                          article={article}
+                          className="aspect-square w-full border border-black/20 object-cover"
+                        />
+                        <div className="min-w-0">
+                          <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-black/58">
+                            Redaksjonen · NO
+                          </p>
+                          <h3
+                            className={`${headline.className} mt-1 text-[20px] leading-[1.01] [overflow-wrap:anywhere] hyphens-auto sm:text-[24px]`}
+                          >
+                            <Link href={`/ki-avis/${article.slug}`} className="hover:opacity-75">
+                              {article.title}
+                            </Link>
+                          </h3>
+                          <p className="mt-1 text-[11px] text-black/55">
+                            {article.source_name} · {fmtDate(article.published_at ?? article.created_at)}
+                          </p>
+                        </div>
+                      </article>
+                    ))}
+                  </div>
+                </section>
+              ) : null}
+
               {internationalLead ? (
                 <section className="border-b border-black/15 pb-3">
                   <h2 className={`${masthead.className} text-[26px] leading-none sm:text-[28px]`}>Internasjonalt</h2>
