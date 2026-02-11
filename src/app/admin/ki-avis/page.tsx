@@ -473,7 +473,7 @@ async function saveArticle(formData: FormData) {
     topic_tags: row.topic_tags,
     language: row.language,
   });
-  if (row.status === "published" && !row.published_at && looksLikeKIRedaksjonen) {
+  if (row.status === "published" && !row.published_at) {
     row.published_at = new Date().toISOString();
   }
 
