@@ -28,6 +28,7 @@ export const dynamic = "force-dynamic";
 type CrawlPayload = {
   dryRun?: boolean;
   autoPublish?: boolean;
+  seedOnly?: boolean;
   maxQueries?: number;
   maxArticles?: number;
   resultsPerQuery?: number;
@@ -178,12 +179,13 @@ export async function POST(req: Request) {
   const payload = (await req.json().catch(() => ({}))) as CrawlPayload;
   const dryRun = payload.dryRun !== false;
   const autoPublish = payload.autoPublish !== false;
+  const seedOnly = payload.seedOnly === true;
   const maxQueries = clampInt(payload.maxQueries, 1, 60, 24);
   const maxArticles = clampInt(payload.maxArticles, 1, 240, 120);
   const resultsPerQuery = clampInt(payload.resultsPerQuery, 1, 10, 10);
   const maxArticleAgeDays = clampInt(payload.maxArticleAgeDays, 30, 3650, 730);
   const crawlRunId = makeRunId();
-  const queries = normalizeQueryList(payload, maxQueries);
+  const queries = seedOnly ? [] : normalizeQueryList(payload, maxQueries);
   const seedUrls = normalizeSeedUrlList(payload, 20);
 
   const seenByUrl = new Set<string>();
