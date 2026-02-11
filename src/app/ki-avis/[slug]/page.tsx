@@ -176,6 +176,73 @@ type ScrollyScene = {
   imageCaption: string | null;
 };
 
+type ImageRef = {
+  src: string;
+  alt: string;
+};
+
+function isLikelyImageUrl(value: string): boolean {
+  return /^https?:\/\/\S+\.(?:jpg|jpeg|png|webp|gif|avif)(?:\?[^\s]*)?$/i.test(String(value).trim());
+}
+
+function uniqueImageRefs(refs: ImageRef[]): ImageRef[] {
+  const seen = new Set<string>();
+  const out: ImageRef[] = [];
+  for (const ref of refs) {
+    const src = String(ref.src ?? "").trim();
+    if (!src) continue;
+    if (seen.has(src)) continue;
+    seen.add(src);
+    out.push({
+      src,
+      alt: String(ref.alt ?? "").trim() || "Illustrasjon",
+    });
+  }
+  return out;
+}
+
+function extractImageRefsFromRaw(text: string): ImageRef[] {
+  const raw = String(text ?? "").replace(/\r\n/g, "\n");
+  if (!raw.trim()) return [];
+  const refs: ImageRef[] = [];
+
+  const markdownImagePattern = /!\[([^\]]*)\]\((https?:\/\/[^)\s]+)(?:\s+"[^"]*")?\)/gi;
+  for (const match of raw.matchAll(markdownImagePattern)) {
+    refs.push({
+      src: String(match[2] ?? "").trim(),
+      alt: String(match[1] ?? "").trim() || "Illustrasjon",
+    });
+  }
+
+  const htmlImgPattern = /<img\b[^>]*src=["'](https?:\/\/[^"']+)["'][^>]*>/gi;
+  for (const match of raw.matchAll(htmlImgPattern)) {
+    const tag = String(match[0] ?? "");
+    const altMatch = tag.match(/\balt=["']([^"']+)["']/i);
+    refs.push({
+      src: String(match[1] ?? "").trim(),
+      alt: String(altMatch?.[1] ?? "").trim() || "Illustrasjon",
+    });
+  }
+
+  const markdownLinkImagePattern = /\[[^\]]*]\((https?:\/\/[^)\s]+\.(?:jpg|jpeg|png|webp|gif|avif)(?:\?[^)\s]*)?)\)/gi;
+  for (const match of raw.matchAll(markdownLinkImagePattern)) {
+    refs.push({
+      src: String(match[1] ?? "").trim(),
+      alt: "Illustrasjon",
+    });
+  }
+
+  const urlImagePattern = /https?:\/\/[^\s<>"')\]]+\.(?:jpg|jpeg|png|webp|gif|avif)(?:\?[^\s<>"')\]]*)?/gi;
+  for (const match of raw.matchAll(urlImagePattern)) {
+    refs.push({
+      src: String(match[0] ?? "").trim(),
+      alt: "Illustrasjon",
+    });
+  }
+
+  return uniqueImageRefs(refs);
+}
+
 function parseScrollyBodyBlocks(text: string): ScrollyBlock[] {
   const raw = String(text ?? "").replace(/\r\n/g, "\n").trim();
   if (!raw) return [];
@@ -249,6 +316,43 @@ function parseScrollyBodyBlocks(text: string): ScrollyBlock[] {
       continue;
     }
 
+    const htmlImgMatch = line.match(/<img\b[^>]*src=["'](https?:\/\/[^"']+)["'][^>]*>/i);
+    if (htmlImgMatch) {
+      flushText();
+      const src = htmlImgMatch[1].trim();
+      const altMatch = line.match(/\balt=["']([^"']+)["']/i);
+      blocks.push({
+        kind: "image",
+        src,
+        alt: String(altMatch?.[1] ?? "").trim() || "Illustrasjon",
+        caption: null,
+      });
+      continue;
+    }
+
+    const markdownLinkImage = line.match(/^\[[^\]]*]\((https?:\/\/[^)\s]+\.(?:jpg|jpeg|png|webp|gif|avif)(?:\?[^)\s]*)?)\)\s*$/i);
+    if (markdownLinkImage) {
+      flushText();
+      blocks.push({
+        kind: "image",
+        src: markdownLinkImage[1].trim(),
+        alt: "Illustrasjon",
+        caption: null,
+      });
+      continue;
+    }
+
+    if (isLikelyImageUrl(line)) {
+      flushText();
+      blocks.push({
+        kind: "image",
+        src: line,
+        alt: "Illustrasjon",
+        caption: null,
+      });
+      continue;
+    }
+
     textBuffer.push(line);
   }
 
@@ -259,10 +363,11 @@ function parseScrollyBodyBlocks(text: string): ScrollyBlock[] {
 
 function buildScrollyScenes(args: {
   blocks: ScrollyBlock[];
+  rawText: string;
   fallbackTitle: string;
   fallbackImageUrl: string | null;
 }): ScrollyScene[] {
-  const { blocks, fallbackTitle, fallbackImageUrl } = args;
+  const { blocks, rawText, fallbackTitle, fallbackImageUrl } = args;
   const scenes: ScrollyScene[] = [];
   let pendingHeading: string | null = null;
   let pendingParagraphs: string[] = [];
@@ -310,6 +415,33 @@ function buildScrollyScenes(args: {
       imageAlt: fallbackTitle,
       imageCaption: null,
     });
+  }
+
+  const imageRefs = extractImageRefsFromRaw(rawText);
+  if (imageRefs.length >= 2 && scenes.length <= 1) {
+    const headings = blocks
+      .filter((block): block is Extract<ScrollyBlock, { kind: "heading" }> => block.kind === "heading")
+      .map((block) => block.text)
+      .filter(Boolean);
+    const textParagraphs = blocks
+      .filter((block): block is Extract<ScrollyBlock, { kind: "text" }> => block.kind === "text")
+      .map((block) => block.text)
+      .filter(Boolean);
+
+    const rebuiltScenes: ScrollyScene[] = imageRefs.map((imageRef, index) => ({
+      heading: headings[index] || (index === 0 ? fallbackTitle : `Del ${index + 1}`),
+      paragraphs:
+        index === 0
+          ? textParagraphs.slice(0, 2)
+          : textParagraphs[index + 1]
+            ? [textParagraphs[index + 1]]
+            : [],
+      imageSrc: imageRef.src,
+      imageAlt: imageRef.alt,
+      imageCaption: null,
+    }));
+
+    return rebuiltScenes;
   }
 
   return scenes;
@@ -472,6 +604,7 @@ export default async function KIRNyheterArticlePage({
   const scrollyScenes = isScrollytelling
     ? buildScrollyScenes({
         blocks: scrollyBlocks,
+        rawText: displayBodyChunks.join("\n\n"),
         fallbackTitle: displayTitle,
         fallbackImageUrl: article.hero_image_url,
       })
