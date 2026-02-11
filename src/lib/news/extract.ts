@@ -114,6 +114,7 @@ function htmlDecode(input: string): string {
     .replace(/&amp;/g, "&")
     .replace(/&quot;/g, '"')
     .replace(/&#39;/g, "'")
+    .replace(/&nbsp;/gi, " ")
     .replace(/&lt;/g, "<")
     .replace(/&gt;/g, ">");
 
@@ -244,7 +245,7 @@ function excerptScore(candidate: ExcerptCandidate): number {
 function excerptFromPlainText(raw: string, fallbackSnippet?: string | null): string | null {
   const lines = String(raw ?? "")
     .split(/\n+/g)
-    .map((line) => cleanText(line, 520))
+    .map((line) => cleanText(htmlDecode(line), 520))
     .filter((line): line is string => Boolean(line))
     .filter((line) => line.length >= 45 && line.length <= 420);
 
@@ -255,7 +256,7 @@ function excerptFromPlainText(raw: string, fallbackSnippet?: string | null): str
     .slice(0, 30)
     .map((text, idx) => ({ text, source: "p" as const, order: idx }));
 
-  const fallback = cleanText(fallbackSnippet ?? "", 420);
+  const fallback = cleanText(htmlDecode(fallbackSnippet ?? ""), 420);
   if (fallback) {
     candidates.push({ text: fallback, source: "fallback", order: candidates.length + 1 });
   }
