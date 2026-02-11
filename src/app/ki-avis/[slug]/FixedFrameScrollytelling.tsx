@@ -30,7 +30,7 @@ export default function FixedFrameScrollytelling({
   showByline,
   bylineText,
 }: Props) {
-  const containerRef = useRef<HTMLElement | null>(null);
+  const stepRefs = useRef<Array<HTMLElement | null>>([]);
   const [activeIndex, setActiveIndex] = useState(0);
   const [activeProgress, setActiveProgress] = useState(0);
   const [reducedMotion, setReducedMotion] = useState(false);
@@ -44,23 +44,62 @@ export default function FixedFrameScrollytelling({
   }, []);
 
   useEffect(() => {
+    const elements = stepRefs.current.filter((step): step is HTMLElement => Boolean(step));
+    if (!elements.length) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
+        if (!visible.length) return;
+        const top = visible[0].target as HTMLElement;
+        const rawIndex = Number(top.dataset.sceneIndex ?? "0");
+        if (Number.isFinite(rawIndex)) {
+          const bounded = clamp(rawIndex, 0, scenes.length - 1);
+          setActiveIndex((prev) => (prev === bounded ? prev : bounded));
+        }
+      },
+      {
+        root: null,
+        rootMargin: "-15% 0px -35% 0px",
+        threshold: [0.25, 0.4, 0.6, 0.8],
+      }
+    );
+
+    for (const element of elements) observer.observe(element);
+    return () => observer.disconnect();
+  }, [scenes.length]);
+
+  useEffect(() => {
     let raf = 0;
 
     const update = () => {
       raf = 0;
-      const container = containerRef.current;
-      if (!container || scenes.length <= 1) return;
+      const steps = stepRefs.current.filter((step): step is HTMLElement => Boolean(step));
+      if (!steps.length) return;
 
-      const rect = container.getBoundingClientRect();
-      const totalTravel = Math.max(1, rect.height - window.innerHeight);
-      const consumed = clamp(-rect.top, 0, totalTravel);
-      const overallProgress = clamp(consumed / totalTravel, 0, 1);
-      const sceneFloat = overallProgress * (scenes.length - 1);
-      const nextActive = clamp(Math.floor(sceneFloat), 0, scenes.length - 1);
-      const nextProgress = clamp(sceneFloat - nextActive, 0, 1);
+      const viewportMid = window.innerHeight * 0.5;
+      let nextActive = 0;
+      let nearestDistance = Number.POSITIVE_INFINITY;
+
+      for (let i = 0; i < steps.length; i += 1) {
+        const rect = steps[i].getBoundingClientRect();
+        const center = rect.top + rect.height * 0.5;
+        const distance = Math.abs(center - viewportMid);
+        if (distance < nearestDistance) {
+          nearestDistance = distance;
+          nextActive = i;
+        }
+      }
 
       setActiveIndex((prev) => (prev === nextActive ? prev : nextActive));
-      setActiveProgress(nextProgress);
+
+      const activeStep = steps[nextActive];
+      const rect = activeStep.getBoundingClientRect();
+      const travel = rect.height + window.innerHeight;
+      const progress = clamp((window.innerHeight - rect.top) / Math.max(1, travel), 0, 1);
+      setActiveProgress(progress);
     };
 
     const onScroll = () => {
@@ -84,7 +123,7 @@ export default function FixedFrameScrollytelling({
   const backgroundTranslate = reducedMotion ? 0 : activeProgress * -14;
 
   return (
-    <section ref={containerRef} className="mt-6">
+    <section className="mt-6">
       <div className="relative left-1/2 right-1/2 w-screen -translate-x-1/2">
         <div className="sticky top-0 h-screen overflow-hidden border-y border-black/20 bg-black">
           <div
@@ -121,6 +160,10 @@ export default function FixedFrameScrollytelling({
             return (
               <section
                 key={`${idx}-${scene.heading.slice(0, 24)}`}
+                ref={(element) => {
+                  stepRefs.current[idx] = element;
+                }}
+                data-scene-index={idx}
                 className="relative min-h-[118vh] py-14 sm:min-h-[125vh]"
               >
                 <div className="sticky top-[12vh] mx-auto w-full max-w-3xl">
