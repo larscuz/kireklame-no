@@ -19,7 +19,12 @@ import {
   looksRelevantToInternationalAIAgency,
   type InternationalClassification,
 } from "@/lib/news/international";
-import { cleanText, domainFromUrl, stableNewsSlug } from "@/lib/news/utils";
+import {
+  cleanText,
+  domainFromUrl,
+  fallbackNewsTitleFromUrl,
+  stableNewsSlug,
+} from "@/lib/news/utils";
 import { normalizeNewsUpsert } from "@/lib/news/articles";
 import {
   machineTranslationNote,
@@ -88,20 +93,6 @@ function normalizeSeedUrlList(payload: CrawlPayload, maxSeeds: number): string[]
     .map((url) => String(url ?? "").trim())
     .filter((url) => url.startsWith("http://") || url.startsWith("https://"))
     .slice(0, maxSeeds);
-}
-
-function titleFromUrlFallback(sourceUrl: string): string {
-  try {
-    const url = new URL(sourceUrl);
-    const tail = url.pathname.split("/").filter(Boolean).pop() ?? url.hostname;
-    const normalized = decodeURIComponent(tail)
-      .replace(/[-_]+/g, " ")
-      .replace(/\s+/g, " ")
-      .trim();
-    return cleanText(normalized, 220) ?? "International AI agency article";
-  } catch {
-    return "International AI agency article";
-  }
 }
 
 function candidateFromSerper(query: string, hit: SerperOrganic): Candidate | null {
@@ -185,7 +176,7 @@ export async function POST(req: Request) {
     candidates.push({
       query: `seed:${index + 1}`,
       sourceUrl,
-      title: titleFromUrlFallback(sourceUrl),
+      title: fallbackNewsTitleFromUrl(sourceUrl, "generic", "International AI agency article"),
       snippet: "Curated international AI-first agency source.",
       domain,
       seed: true,

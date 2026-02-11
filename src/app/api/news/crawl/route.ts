@@ -19,7 +19,7 @@ import {
   looksRelevantToAIMarketingArticle,
 } from "@/lib/news/extract";
 import { isLikelyNonArticleNewsPage } from "@/lib/news/nonArticle";
-import { cleanText, domainFromUrl, stableNewsSlug } from "@/lib/news/utils";
+import { cleanText, domainFromUrl, fallbackNewsTitleFromUrl, stableNewsSlug } from "@/lib/news/utils";
 import { normalizeNewsUpsert } from "@/lib/news/articles";
 
 export const runtime = "nodejs";
@@ -83,25 +83,6 @@ function normalizeSeedUrlList(payload: CrawlPayload, maxSeeds: number): string[]
     .map((url) => String(url ?? "").trim())
     .filter((url) => url.startsWith("http://") || url.startsWith("https://"))
     .slice(0, maxSeeds);
-}
-
-function titleFromUrlFallback(sourceUrl: string): string {
-  try {
-    const url = new URL(sourceUrl);
-    const segments = url.pathname.split("/").filter(Boolean);
-    let tail = segments[segments.length - 1] ?? url.hostname;
-    if (/^\d{5,}$/.test(tail) && segments.length >= 2) {
-      // Prefer the slug segment when URL ends with a numeric article id.
-      tail = segments[segments.length - 2] ?? tail;
-    }
-    const normalized = decodeURIComponent(tail)
-      .replace(/[-_]+/g, " ")
-      .replace(/\s+/g, " ")
-      .trim();
-    return cleanText(normalized, 220) ?? "Kuratert kilde";
-  } catch {
-    return "Kuratert kilde";
-  }
 }
 
 function candidateFromSerper(query: string, hit: SerperOrganic): Candidate | null {
@@ -208,7 +189,7 @@ export async function POST(req: Request) {
     candidates.push({
       query: `seed:${index + 1}`,
       sourceUrl,
-      title: titleFromUrlFallback(sourceUrl),
+      title: fallbackNewsTitleFromUrl(sourceUrl, "no", "Kuratert kilde"),
       snippet: "Kuratert kilde fra redaksjonen.",
       domain,
       imageUrl: null,
