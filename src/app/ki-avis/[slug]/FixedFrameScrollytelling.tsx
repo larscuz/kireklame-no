@@ -126,17 +126,6 @@ function getLayerTransform(transition: SceneTransition, isActive: boolean, progr
   }
 }
 
-function getLayerClipPath(transition: SceneTransition, isActive: boolean, progress: number): string {
-  const enter = clamp(progress, 0, 1);
-
-  switch (transition) {
-    case "focusPull":
-      return isActive ? `circle(${(18 + enter * 98).toFixed(2)}% at 50% 50%)` : "circle(0% at 50% 50%)";
-    default:
-      return "inset(0 0 0 0)";
-  }
-}
-
 function buildLayerStyle(args: {
   transition: SceneTransition;
   isActive: boolean;
@@ -149,7 +138,6 @@ function buildLayerStyle(args: {
       opacity: isActive ? 1 : 0,
       transform: "translate3d(0,0,0) scale(1)",
       filter: isActive ? "brightness(0.9) saturate(1)" : "brightness(0.6) saturate(0.95)",
-      clipPath: "inset(0 0 0 0)",
       zIndex: isActive ? 2 : 1,
       transitionDuration: "130ms",
       transitionTimingFunction: "linear",
@@ -159,7 +147,6 @@ function buildLayerStyle(args: {
   return {
     opacity: isActive ? 1 : 0,
     transform: getLayerTransform(transition, isActive, progress),
-    clipPath: getLayerClipPath(transition, isActive, progress),
     filter: isActive
       ? `brightness(${(0.84 + progress * 0.07).toFixed(2)}) saturate(${(1.02 + progress * 0.08).toFixed(2)})`
       : "brightness(0.66) saturate(0.94) blur(1.2px)",
