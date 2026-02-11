@@ -61,9 +61,11 @@ type AdminNoticeKey =
   | "saved"
   | "created"
   | "deleted"
+  | "approved"
   | "lead_updated"
   | "layout_updated"
   | "layout_slot_updated"
+  | "layout_slot_requires_published"
   | "generated"
   | "generated_no_change"
   | "removed_generated";
@@ -72,9 +74,11 @@ const ADMIN_NOTICE_TEXT: Record<AdminNoticeKey, string> = {
   saved: "Endringer lagret.",
   created: "Ny sak opprettet.",
   deleted: "Sak slettet.",
+  approved: "Sak godkjent og publisert.",
   lead_updated: "Hovedsak oppdatert.",
   layout_updated: "Forside-layout oppdatert.",
   layout_slot_updated: "Forsideslot oppdatert.",
+  layout_slot_requires_published: "Publiser saken først før den kan settes i forside-slot.",
   generated: "Ny tekst ble hentet og lagret fra kilden.",
   generated_no_change: "Ingen ny tekst funnet i kilden. Eksisterende innhold ble beholdt.",
   removed_generated: "Generert ekstratekst ble fjernet.",
@@ -526,6 +530,35 @@ async function deleteArticle(formData: FormData) {
   redirect(adminNoticeUrl("deleted"));
 }
 
+async function approveArticle(formData: FormData) {
+  "use server";
+  await requireAdmin("/admin/ki-avis");
+
+  const id = String(formData.get("id") ?? "").trim();
+  if (!id) throw new Error("Mangler id");
+
+  const db = supabaseAdmin();
+  const { data: row, error: rowError } = await db
+    .from("news_articles")
+    .select("id, slug, status, published_at")
+    .eq("id", id)
+    .maybeSingle();
+  if (rowError || !row) throw new Error(rowError?.message ?? "Fant ikke sak");
+
+  const publishedAt = row.published_at ?? new Date().toISOString();
+  const { error: updateError } = await db
+    .from("news_articles")
+    .update({
+      status: "published",
+      published_at: publishedAt,
+    })
+    .eq("id", id);
+  if (updateError) throw new Error(updateError.message);
+
+  revalidateNewsSurfaces(String(row.slug ?? "").trim() || null);
+  redirect(adminNoticeUrl("approved", id));
+}
+
 async function setFrontLayoutOverrides(formData: FormData) {
   "use server";
   await requireAdmin("/admin/ki-avis");
@@ -565,6 +598,9 @@ async function setFrontLayoutSlotFromRow(formData: FormData) {
     .eq("status", "published")
     .limit(1000);
   if (error) throw new Error(error.message);
+  if (!(rows ?? []).some((row) => String(row.id) === articleId)) {
+    redirect(adminNoticeUrl("layout_slot_requires_published", articleId));
+  }
 
   const current = readFrontLayoutAssignmentsFromRows((rows ?? []) as Array<{ id: string; topic_tags: string[] | null }>);
   current[slot] = articleId;
@@ -1416,16 +1452,32 @@ export default async function KIAvisAdminPage({
                 </form>
 
                 <div className="mt-2 flex flex-wrap items-center gap-2">
+                  {row.status !== "published" ? (
+                    <form action={approveArticle}>
+                      <input type="hidden" name="id" value={row.id} />
+                      <button className={PRIMARY_BUTTON_CLASS}>Godkjenn (publiser)</button>
+                    </form>
+                  ) : null}
                   <form action={setFrontLayoutSlotFromRow}>
                     <input type="hidden" name="id" value={row.id} />
                     <input type="hidden" name="slot_tag" value={FRONT_LEAD_OVERRIDE_TAG} />
-                    <button className={SECONDARY_BUTTON_CLASS}>Sett som hovedsak</button>
+                    <button
+                      className={`${SECONDARY_BUTTON_CLASS} disabled:cursor-not-allowed disabled:opacity-40`}
+                      disabled={row.status !== "published"}
+                    >
+                      Sett som hovedsak
+                    </button>
                   </form>
                   {FRONT_NOW_OVERRIDE_TAGS.map((tag, idx) => (
                     <form key={`${row.id}-${tag}`} action={setFrontLayoutSlotFromRow}>
                       <input type="hidden" name="id" value={row.id} />
                       <input type="hidden" name="slot_tag" value={tag} />
-                      <button className={SECONDARY_BUTTON_CLASS}>Forside nå #{idx + 1}</button>
+                      <button
+                        className={`${SECONDARY_BUTTON_CLASS} disabled:cursor-not-allowed disabled:opacity-40`}
+                        disabled={row.status !== "published"}
+                      >
+                        Forside nå #{idx + 1}
+                      </button>
                     </form>
                   ))}
                   <form action={clearFrontLayoutSlotsFromRow}>
@@ -1433,6 +1485,11 @@ export default async function KIAvisAdminPage({
                     <button className={SECONDARY_BUTTON_CLASS}>Fjern fra forside-slotter</button>
                   </form>
                 </div>
+                {row.status !== "published" ? (
+                  <p className="mt-1 text-xs text-amber-800">
+                    Publiser saken først før den kan settes som hovedsak/forside-slot.
+                  </p>
+                ) : null}
 
                 <form action={generateMoreTextFromSource} className="mt-2">
                   <input type="hidden" name="id" value={row.id} />
