@@ -144,12 +144,15 @@ function hasValidImageUrl(url: string | null | undefined): boolean {
 
 function inferPaywallFromLead(args: {
   title: string;
+  searchTitle?: string | null;
   excerpt: string | null;
   snippet: string;
 }): boolean {
   const title = String(args.title ?? "").trim();
-  const joined = `${title} ${args.excerpt ?? ""} ${args.snippet ?? ""}`.toLowerCase();
+  const searchTitle = String(args.searchTitle ?? "").trim();
+  const joined = `${title} ${searchTitle} ${args.excerpt ?? ""} ${args.snippet ?? ""}`.toLowerCase();
   if (/^\(\+\)/.test(title)) return true;
+  if (/^\(\+\)/.test(searchTitle)) return true;
   if (joined.includes("for abonnenter")) return true;
   if (joined.includes("abonnerer du allerede")) return true;
   if (joined.includes("for å lese denne saken må du være")) return true;
@@ -319,6 +322,7 @@ export async function POST(req: Request) {
         extracted.isPaywalled ||
         inferPaywallFromLead({
           title,
+          searchTitle: item.title,
           excerpt: extracted.excerpt,
           snippet: item.snippet,
         });

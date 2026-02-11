@@ -232,8 +232,39 @@ function excerptScore(candidate: ExcerptCandidate): number {
   if (/^publisert\b/i.test(text)) score -= 2;
   if (/^foto:/i.test(text)) score -= 2;
   if (/^([A-ZÆØÅ][\w.-]+,\s*){2,}/.test(text) && /\bbeskriver\b/i.test(text)) score -= 1.5;
+  if (/\bmens\b/i.test(text)) score += 2.4;
+  if (/\bmen\b/i.test(text)) score += 0.9;
+  if (/\btry\b/i.test(text)) score += 0.8;
+  if (/\bkonkurrent/i.test(text)) score += 0.8;
+  if (/\bmuligheter\b/i.test(text)) score += 0.6;
 
   return score;
+}
+
+function excerptFromPlainText(raw: string, fallbackSnippet?: string | null): string | null {
+  const lines = String(raw ?? "")
+    .split(/\n+/g)
+    .map((line) => cleanText(line, 520))
+    .filter((line): line is string => Boolean(line))
+    .filter((line) => line.length >= 45 && line.length <= 420);
+
+  const bylineNoise = /^(foto:|publisert|oppdatert|abonnerer du allerede|logg inn|redaktør)\b/i;
+  const candidates: ExcerptCandidate[] = lines
+    .filter((line) => !bylineNoise.test(line))
+    .filter((line) => !EXCERPT_NOISE_PATTERNS.some((pattern) => pattern.test(line)))
+    .slice(0, 30)
+    .map((text, idx) => ({ text, source: "p" as const, order: idx }));
+
+  const fallback = cleanText(fallbackSnippet ?? "", 420);
+  if (fallback) {
+    candidates.push({ text: fallback, source: "fallback", order: candidates.length + 1 });
+  }
+  if (!candidates.length) return fallback;
+
+  const scored = candidates
+    .map((candidate) => ({ candidate, score: excerptScore(candidate) }))
+    .sort((a, b) => b.score - a.score);
+  return cleanText(scored[0]?.candidate.text ?? "", 420);
 }
 
 function excerptFromHtml(
@@ -241,6 +272,11 @@ function excerptFromHtml(
   lookup: MetaLookup,
   fallbackSnippet?: string | null
 ): string | null {
+  const hasHtmlTags = /<[^>]+>/.test(html);
+  if (!hasHtmlTags) {
+    return excerptFromPlainText(html, fallbackSnippet);
+  }
+
   const candidates: ExcerptCandidate[] = [];
   const seen = new Set<string>();
   let order = 0;
