@@ -33,20 +33,35 @@ const NON_ARTICLE_TITLE_PATTERNS = [
 const NON_ARTICLE_TEXT_HINTS = [
   /\bvis flere resultater\b/i,
   /\bsøk i (vårt|arkiv)\b/i,
-  /\bjump to main content\b/i,
-  /\bgå til forside\b/i,
   /\bstudiepoeng\b/i,
   /\bhøyskolekurs\b/i,
   /\bmeld deg på\b/i,
   /\bsøknadsfrist\b/i,
   /\bopptakskrav\b/i,
-  /\bjobb\b.*\bkontakt\b.*\bannonsere\b/i,
 ];
 
 function normalizeSpace(input: string | null | undefined): string {
   return String(input ?? "")
     .replace(/\s+/g, " ")
     .trim();
+}
+
+function looksLikeArticleUrl(sourceUrl: string): boolean {
+  if (!sourceUrl) return false;
+  try {
+    const { pathname } = new URL(sourceUrl);
+    const segments = pathname.split("/").filter(Boolean);
+    if (!segments.length) return false;
+    const tail = segments[segments.length - 1] ?? "";
+
+    if (/^\d{5,}$/.test(tail)) return true;
+    if (segments.some((segment) => /\d{4}[-_/]\d{2}[-_/]\d{2}/.test(segment))) return true;
+    if (tail.split("-").filter(Boolean).length >= 6) return true;
+    if (tail.length >= 36 && tail.includes("-")) return true;
+  } catch {
+    return false;
+  }
+  return false;
 }
 
 export function isLikelyNonArticleNewsPage(input: NonArticleInput): boolean {
@@ -64,6 +79,6 @@ export function isLikelyNonArticleNewsPage(input: NonArticleInput): boolean {
 
   if (byUrl) return true;
   if (byTitle) return true;
-  if (byText || /\b(emne|tag|topic|søk|search|arkiv|archive)\b/i.test(combined)) return true;
+  if (byText && !looksLikeArticleUrl(sourceUrl)) return true;
   return false;
 }
