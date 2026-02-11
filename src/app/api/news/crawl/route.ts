@@ -88,7 +88,12 @@ function normalizeSeedUrlList(payload: CrawlPayload, maxSeeds: number): string[]
 function titleFromUrlFallback(sourceUrl: string): string {
   try {
     const url = new URL(sourceUrl);
-    const tail = url.pathname.split("/").filter(Boolean).pop() ?? url.hostname;
+    const segments = url.pathname.split("/").filter(Boolean);
+    let tail = segments[segments.length - 1] ?? url.hostname;
+    if (/^\d{5,}$/.test(tail) && segments.length >= 2) {
+      // Prefer the slug segment when URL ends with a numeric article id.
+      tail = segments[segments.length - 2] ?? tail;
+    }
     const normalized = decodeURIComponent(tail)
       .replace(/[-_]+/g, " ")
       .replace(/\s+/g, " ")
@@ -301,17 +306,17 @@ export async function POST(req: Request) {
         isNorwegianDomain(item.domain);
       if (!likelyNorwegian) continue;
 
+      const seeded = item.query.startsWith("seed:");
       const contentLooksRelevant = looksRelevantToAIMarketingArticle({
         title: extracted.title ?? item.title,
         excerpt: extracted.excerpt ?? item.snippet,
         plainText: extracted.plainText,
       });
-      if (!contentLooksRelevant) {
+      if (!seeded && !contentLooksRelevant) {
         skippedIrrelevant += 1;
         continue;
       }
 
-      const seeded = item.query.startsWith("seed:");
       if (!seeded && isOlderThanDays(extracted.publishedAt, maxArticleAgeDays)) {
         skippedTooOld += 1;
         continue;
