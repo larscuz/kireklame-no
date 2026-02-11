@@ -16,6 +16,7 @@ import {
   detectLikelyNorwegian,
   extractArticleSignals,
   looksRelevantToAIMarketing,
+  looksRelevantToAIMarketingArticle,
 } from "@/lib/news/extract";
 import { isLikelyNonArticleNewsPage } from "@/lib/news/nonArticle";
 import { cleanText, domainFromUrl, stableNewsSlug } from "@/lib/news/utils";
@@ -30,6 +31,7 @@ type CrawlPayload = {
   maxQueries?: number;
   maxArticles?: number;
   resultsPerQuery?: number;
+  maxArticleAgeDays?: number;
   queries?: string[];
   seedUrls?: string[];
 };
@@ -137,6 +139,15 @@ function hasValidImageUrl(url: string | null | undefined): boolean {
   return /^https?:\/\//i.test(String(url ?? "").trim());
 }
 
+function isOlderThanDays(isoDate: string | null | undefined, maxAgeDays: number): boolean {
+  if (!isoDate) return false;
+  const publishedMs = Date.parse(String(isoDate));
+  if (!Number.isFinite(publishedMs)) return false;
+  const ageMs = Date.now() - publishedMs;
+  const maxAgeMs = maxAgeDays * 24 * 60 * 60 * 1000;
+  return ageMs > maxAgeMs;
+}
+
 export async function POST(req: Request) {
   const key = req.headers.get("x-ingest-key") || "";
   if (!process.env.INGEST_API_KEY || key !== process.env.INGEST_API_KEY) {
@@ -149,6 +160,7 @@ export async function POST(req: Request) {
   const maxQueries = clampInt(payload.maxQueries, 1, 60, 24);
   const maxArticles = clampInt(payload.maxArticles, 1, 240, 120);
   const resultsPerQuery = clampInt(payload.resultsPerQuery, 1, 10, 10);
+  const maxArticleAgeDays = clampInt(payload.maxArticleAgeDays, 30, 3650, 730);
   const crawlRunId = makeRunId();
   const queries = normalizeQueryList(payload, maxQueries);
   const seedUrls = normalizeSeedUrlList(payload, 20);
@@ -203,6 +215,8 @@ export async function POST(req: Request) {
   let skippedNoImage = 0;
   let keptWithoutImage = 0;
   let skippedNonArticle = 0;
+  let skippedIrrelevant = 0;
+  let skippedTooOld = 0;
   const preview: Array<{
     title: string;
     source_url: string;
@@ -263,6 +277,22 @@ export async function POST(req: Request) {
         detectLikelyNorwegian(`${item.title} ${item.snippet}`) ||
         isNorwegianDomain(item.domain);
       if (!likelyNorwegian) continue;
+
+      const contentLooksRelevant = looksRelevantToAIMarketingArticle({
+        title: extracted.title ?? item.title,
+        excerpt: extracted.excerpt ?? item.snippet,
+        plainText: extracted.plainText,
+      });
+      if (!contentLooksRelevant) {
+        skippedIrrelevant += 1;
+        continue;
+      }
+
+      const seeded = item.query.startsWith("seed:");
+      if (!seeded && isOlderThanDays(extracted.publishedAt, maxArticleAgeDays)) {
+        skippedTooOld += 1;
+        continue;
+      }
 
       const title = extracted.title ?? item.title;
       const sourceName = item.domain;
@@ -368,6 +398,8 @@ export async function POST(req: Request) {
       skippedNoImage,
       keptWithoutImage,
       skippedNonArticle,
+      skippedIrrelevant,
+      skippedTooOld,
     },
     preview: preview.slice(0, 40),
     errors,

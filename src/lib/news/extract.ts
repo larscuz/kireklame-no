@@ -69,6 +69,36 @@ const INDUSTRY_BRAND_HINTS = [
   "egmont",
 ];
 
+const AI_PHRASE_HINTS = [
+  "kunstig intelligens",
+  "artificial intelligence",
+  "generativ",
+  "genai",
+  "chatgpt",
+  "openai",
+  "llm",
+  "maskinlæring",
+  "copilot",
+  "claude",
+  "gemini",
+  "midjourney",
+  "runway",
+];
+
+const MARKETING_CONTEXT_HINTS = [
+  "reklame",
+  "markedsføring",
+  "annonse",
+  "byrå",
+  "mediebyrå",
+  "reklamebyrå",
+  "medie",
+  "kommunikasjon",
+  "kampanje",
+  "merkevare",
+  "annonsering",
+];
+
 function htmlDecode(input: string): string {
   const namedDecoded = input
     .replace(/&amp;/g, "&")
@@ -381,23 +411,50 @@ export function looksRelevantToAIMarketing(text: string): boolean {
     (/\bki\b/.test(lc) ? 1 : 0) +
     (/\bai\b/.test(lc) ? 1 : 0) +
     (lc.includes("kunstig intelligens") ? 1 : 0);
-  const marketingHits =
-    (lc.includes("reklame") ? 1 : 0) +
-    (lc.includes("markedsføring") ? 1 : 0) +
-    (lc.includes("annonse") ? 1 : 0) +
-    (lc.includes("byrå") ? 1 : 0) +
-    (lc.includes("mediebyrå") ? 1 : 0) +
-    (lc.includes("reklamebyrå") ? 1 : 0) +
-    (lc.includes("medie") ? 1 : 0) +
-    (lc.includes("kommunikasjon") ? 1 : 0) +
-    (lc.includes("kampanje") ? 1 : 0) +
-    (lc.includes("merkevare") ? 1 : 0) +
-    (lc.includes("annonsering") ? 1 : 0);
+  const marketingHits = MARKETING_CONTEXT_HINTS.reduce(
+    (acc, word) => (lc.includes(word) ? acc + 1 : acc),
+    0
+  );
   const industryHits = INDUSTRY_BRAND_HINTS.reduce(
     (acc, brand) => (lc.includes(brand) ? acc + 1 : acc),
     0
   );
   return aiHits >= 1 && (marketingHits >= 1 || industryHits >= 1);
+}
+
+export function looksRelevantToAIMarketingArticle(args: {
+  title?: string | null;
+  excerpt?: string | null;
+  plainText?: string | null;
+}): boolean {
+  const title = cleanText(args.title ?? "", 260) ?? "";
+  const excerpt = cleanText(args.excerpt ?? "", 420) ?? "";
+  const leadText = `${title} ${excerpt}`.trim();
+  if (!leadText) return false;
+
+  // Require explicit AI/KI signal in the visible lead text to avoid
+  // false positives where navigation/body noise contains random AI terms.
+  if (!hasAISignal(leadText)) return false;
+
+  const bodySample = cleanText(args.plainText ?? "", 6_000) ?? "";
+  const relevanceText = `${leadText} ${bodySample}`.trim();
+  return looksRelevantToAIMarketing(relevanceText);
+}
+
+export function hasAISignal(text: string): boolean {
+  const lc = String(text ?? "").toLowerCase();
+  if (!lc.trim()) return false;
+  if (/\bki\b/u.test(lc) || /\bai\b/u.test(lc)) return true;
+  return AI_PHRASE_HINTS.some((phrase) => lc.includes(phrase));
+}
+
+export function hasStrongAISignal(text: string): boolean {
+  const lc = String(text ?? "").toLowerCase();
+  if (!lc.trim()) return false;
+  if (AI_PHRASE_HINTS.some((phrase) => lc.includes(phrase))) return true;
+  return /\b(ai|ki)[- ]?(modell|verkt(ø|o)y|teknologi|l(ø|o)sning|agent|drevet|generert|satsing|bruk)\b/u.test(
+    lc
+  );
 }
 
 export type ExtractedArticle = {

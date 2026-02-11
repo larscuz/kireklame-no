@@ -39,7 +39,6 @@ const CORE_NEWS_QUERIES: string[] = [
   '"dentsu" KI Norge',
   '"kritikk av KI" reklamebransjen',
   '"AI-first" markedsføring Norge',
-  "Freia markedsføringskostnader ai",
   '"Språkrådet" KI kommunikasjon',
   '"Kladden" KI kommunikasjon',
   '"TRY" KI satsing',
@@ -61,7 +60,6 @@ const SOURCE_FOCUSED_QUERIES: string[] = [
   "site:digi.no KI reklame",
   "site:digitalnorway.com KI markedsføring",
   "site:dn.no KI markedsføring",
-  "site:bi.no KI markedsføring",
   "site:dn.no KI reklame",
   "site:dn.no kunstig intelligens kommunikasjon",
 ];
