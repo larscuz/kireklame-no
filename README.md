@@ -34,6 +34,7 @@ Legg inn i `.env.local`:
 NEXT_PUBLIC_SUPABASE_URL="https://YOUR_PROJECT.supabase.co"
 NEXT_PUBLIC_SUPABASE_ANON_KEY="YOUR_ANON_KEY"
 SUPABASE_SERVICE_ROLE_KEY="YOUR_SERVICE_ROLE_KEY"
+CRON_SECRET="long-random-secret-for-vercel-cron"
 
 INGEST_API_KEY="change-me-long-random"
 REVALIDATE_API_KEY="change-me-too"
@@ -89,6 +90,7 @@ Payload:
    - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
    - `SUPABASE_SERVICE_ROLE_KEY`
    - `INGEST_API_KEY`
+   - `CRON_SECRET`
    - `SERPER_API_KEY`
    - `REVALIDATE_API_KEY`
    - `NEXT_PUBLIC_SITE_URL` (f.eks. `https://kireklame.no`)
@@ -150,6 +152,42 @@ Payload:
   ]
 }
 ```
+6. Daglig norsk crawl til redaksjonell vurdering (ikke auto-publisering):
+   - Endpoint: `GET /api/news/crawl/daily`
+   - Auth:
+     - Vercel Cron: `Authorization: Bearer <CRON_SECRET>` (settes automatisk av Vercel når `CRON_SECRET` er satt)
+     - Manuelt kall: `x-ingest-key: <INGEST_API_KEY>`
+   - Standardkjøring bruker:
+```json
+{
+  "dryRun": false,
+  "autoPublish": false,
+  "maxQueries": 12,
+  "maxArticles": 60,
+  "resultsPerQuery": 8
+}
+```
+   - Resultat: nye saker havner i `draft` og kan vurderes/godkjennes i `/admin/ki-avis` før publisering.
+   - Tidsplan ligger i `vercel.json` og kjører daglig (`15 6 * * *`, UTC).
+
+7. Daglig internasjonal crawl til redaksjonell vurdering (ikke auto-publisering):
+   - Endpoint: `GET /api/news/crawl/daily/international`
+   - Auth:
+     - Vercel Cron: `Authorization: Bearer <CRON_SECRET>`
+     - Manuelt kall: `x-ingest-key: <INGEST_API_KEY>`
+   - Standardkjøring bruker:
+```json
+{
+  "dryRun": false,
+  "autoPublish": false,
+  "maxQueries": 16,
+  "maxArticles": 80,
+  "resultsPerQuery": 8
+}
+```
+   - Tidsplan ligger i `vercel.json` og kjører daglig (`45 6 * * *`, UTC).
+
+Cloudflare Worker er derfor ikke nødvendig for daglig crawl så lenge appen kjører på Vercel med cron aktivert.
 
 ## 8) Seed-data
 
