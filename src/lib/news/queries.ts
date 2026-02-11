@@ -79,7 +79,6 @@ export const DEFAULT_NEWS_QUERIES: string[] = [
 export const DEFAULT_NEWS_SOURCE_URLS: string[] = [
   "https://digitalnorway.com/aktuelt/ki-og-markedsforing-disse-lovene-bor-du-vaere-obs-pa",
   "https://www.dn.no/innlegg/ki/arbeid/teknologi/du-bruker-ki-feil/2-1-1932533",
-  "https://www.bi.no/studier-og-kurs/kurs/hoyskolekurs/ki-i-markedsforing/",
 ];
 
 export const NEWS_BLOCKED_DOMAINS = new Set<string>([

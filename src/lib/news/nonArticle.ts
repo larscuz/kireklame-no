@@ -10,6 +10,12 @@ const NON_ARTICLE_URL_PATTERNS = [
   /\/tags?(?:\/|$|\?)/i,
   /\/topics?(?:\/|$|\?)/i,
   /\/tema(?:\/|$|\?)/i,
+  /\/studier-og-kurs(?:\/|$|\?)/i,
+  /\/hoyskolekurs(?:\/|$|\?)/i,
+  /\/utdanning(?:\/|$|\?)/i,
+  /\/kurs(?:\/|$|\?)/i,
+  /\/events?(?:\/|$|\?)/i,
+  /\/webinar(?:\/|$|\?)/i,
   /\/search(?:\/|$|\?)/i,
   /[?&](q|query|search|s|tag|topic)=/i,
 ];
@@ -29,6 +35,11 @@ const NON_ARTICLE_TEXT_HINTS = [
   /\bsøk i (vårt|arkiv)\b/i,
   /\bjump to main content\b/i,
   /\bgå til forside\b/i,
+  /\bstudiepoeng\b/i,
+  /\bhøyskolekurs\b/i,
+  /\bmeld deg på\b/i,
+  /\bsøknadsfrist\b/i,
+  /\bopptakskrav\b/i,
   /\bjobb\b.*\bkontakt\b.*\bannonsere\b/i,
 ];
 

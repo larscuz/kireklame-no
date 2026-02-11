@@ -201,6 +201,7 @@ export async function POST(req: Request) {
 
   const upsertRows: ReturnType<typeof normalizeNewsUpsert>[] = [];
   let skippedNoImage = 0;
+  let keptWithoutImage = 0;
   let skippedNonArticle = 0;
   const preview: Array<{
     title: string;
@@ -271,9 +272,13 @@ export async function POST(req: Request) {
         : hasValidImageUrl(item.imageUrl)
           ? item.imageUrl
           : null;
-      if (!heroImageUrl) {
+      const missingImage = !heroImageUrl;
+      if (missingImage && autoPublish) {
         skippedNoImage += 1;
         continue;
+      }
+      if (missingImage) {
+        keptWithoutImage += 1;
       }
 
       const row = normalizeNewsUpsert({
@@ -290,6 +295,7 @@ export async function POST(req: Request) {
           "ki_reklame",
           "ai_markedsforing",
           extracted.perspective === "critical" ? "kritikk" : "satsing",
+          missingImage ? "mangler_bilde" : "har_bilde",
           extracted.isPaywalled ? "betalingsmur" : "apen",
         ],
         is_paywalled: extracted.isPaywalled,
@@ -360,6 +366,7 @@ export async function POST(req: Request) {
       prepared: upsertRows.length,
       upserted: upsertedCount,
       skippedNoImage,
+      keptWithoutImage,
       skippedNonArticle,
     },
     preview: preview.slice(0, 40),

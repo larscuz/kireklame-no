@@ -55,6 +55,20 @@ const ADOPTION_HINTS = [
   "vekst",
 ];
 
+const INDUSTRY_BRAND_HINTS = [
+  "dentsu",
+  "wpp",
+  "groupm",
+  "publicis",
+  "omnicom",
+  "ipg",
+  "apriil",
+  "try",
+  "schibsted",
+  "aller",
+  "egmont",
+];
+
 function htmlDecode(input: string): string {
   return input
     .replace(/&amp;/g, "&")
@@ -351,12 +365,18 @@ export function looksRelevantToAIMarketing(text: string): boolean {
     (lc.includes("markedsføring") ? 1 : 0) +
     (lc.includes("annonse") ? 1 : 0) +
     (lc.includes("byrå") ? 1 : 0) +
+    (lc.includes("mediebyrå") ? 1 : 0) +
+    (lc.includes("reklamebyrå") ? 1 : 0) +
     (lc.includes("medie") ? 1 : 0) +
     (lc.includes("kommunikasjon") ? 1 : 0) +
     (lc.includes("kampanje") ? 1 : 0) +
     (lc.includes("merkevare") ? 1 : 0) +
     (lc.includes("annonsering") ? 1 : 0);
-  return aiHits >= 1 && marketingHits >= 1;
+  const industryHits = INDUSTRY_BRAND_HINTS.reduce(
+    (acc, brand) => (lc.includes(brand) ? acc + 1 : acc),
+    0
+  );
+  return aiHits >= 1 && (marketingHits >= 1 || industryHits >= 1);
 }
 
 export type ExtractedArticle = {
