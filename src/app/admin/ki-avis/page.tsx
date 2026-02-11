@@ -380,6 +380,35 @@ function hasImage(url: string | null): boolean {
   return /^https?:\/\//i.test(String(url ?? "").trim());
 }
 
+function isKIRedaksjonenCandidate(args: {
+  source_name: string | null | undefined;
+  title: string | null | undefined;
+  editor_note: string | null | undefined;
+  topic_tags: string[] | null | undefined;
+  language: string | null | undefined;
+}) {
+  const sourceName = String(args.source_name ?? "");
+  const title = String(args.title ?? "");
+  const editorNote = String(args.editor_note ?? "");
+  const tags = args.topic_tags ?? [];
+  const language = String(args.language ?? "").toLowerCase().trim();
+  const hasInternalTag =
+    hasTag(tags, "op_ed") ||
+    hasTag(tags, "leder") ||
+    hasTag(tags, "redaksjonen") ||
+    hasTag(tags, "kir_aivisa") ||
+    hasTag(tags, "lars_cuzner");
+  const hasInternalSignature =
+    /redaksjonen|ki?r?\s*aivisa|lars\s*cuzner/i.test(sourceName) ||
+    /op-?ed|leder/i.test(title) ||
+    /editor in chief bot redaksjonen|skrevet av ki?r?\s*aivisa/i.test(editorNote);
+  const looksInternal = hasInternalTag || hasInternalSignature;
+  if (!looksInternal) return false;
+  if (hasTag(tags, "internasjonalt") || hasTag(tags, "international_ai_agency")) return false;
+  if (language && !["no", "nb", "nn", "unknown"].includes(language)) return false;
+  return true;
+}
+
 async function saveArticle(formData: FormData) {
   "use server";
 
@@ -433,23 +462,54 @@ async function saveArticle(formData: FormData) {
     hero_image_url,
     cloudflare_worker_hint,
   });
+  const looksLikeKIRedaksjonen = isKIRedaksjonenCandidate({
+    source_name: row.source_name,
+    title: row.title,
+    editor_note: row.editor_note,
+    topic_tags: row.topic_tags,
+    language: row.language,
+  });
+  if (row.status === "published" && !row.published_at && looksLikeKIRedaksjonen) {
+    row.published_at = new Date().toISOString();
+  }
 
   const db = supabaseAdmin();
   const payload = { ...row };
   delete (payload as { id?: string | null }).id;
+  let savedId = id;
 
   if (id) {
-    const { error } = await db.from("news_articles").update(payload).eq("id", id);
-    if (error) throw new Error(error.message);
-  } else {
-    const { error } = await db
+    const { data: updatedRow, error } = await db
       .from("news_articles")
-      .upsert(payload, { onConflict: "source_url", ignoreDuplicates: false });
+      .update(payload)
+      .eq("id", id)
+      .select("id")
+      .maybeSingle();
     if (error) throw new Error(error.message);
+    savedId = String(updatedRow?.id ?? id);
+  } else {
+    const { data: upsertedRow, error } = await db
+      .from("news_articles")
+      .upsert(payload, { onConflict: "source_url", ignoreDuplicates: false })
+      .select("id")
+      .maybeSingle();
+    if (error) throw new Error(error.message);
+    savedId = String(upsertedRow?.id ?? "").trim() || null;
+  }
+
+  const shouldAutoLead =
+    row.status === "published" &&
+    looksLikeKIRedaksjonen &&
+    hasImage(row.hero_image_url ?? null) &&
+    Boolean(savedId);
+  if (shouldAutoLead) {
+    await applyFrontLayoutAssignments({
+      [FRONT_LEAD_OVERRIDE_TAG]: savedId,
+    });
   }
 
   revalidateNewsSurfaces(row.slug);
-  redirect(adminNoticeUrl(id ? "saved" : "created", id));
+  redirect(adminNoticeUrl(id ? "saved" : "created", savedId ?? id));
 }
 
 async function deleteArticle(formData: FormData) {

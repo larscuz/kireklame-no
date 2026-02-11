@@ -174,34 +174,41 @@ export async function POST(req: Request) {
           ? item.topic_tags.map((x) => String(x)).filter(Boolean).slice(0, 16)
           : [];
 
-    normalized.push(
-      normalizeNewsUpsert({
-        id: item.id ?? null,
-        slug: item.slug ?? null,
-        title,
-        source_name: String(item.source_name ?? "").trim() || "Ukjent kilde",
-        source_url: sourceUrl,
-        language: item.language ?? "no",
-        published_at: item.published_at ?? null,
-        status: coerceNewsStatus(
-          item.status ?? (autoPublish ? "published" : "draft"),
-          autoPublish ? "published" : "draft"
-        ),
-        perspective: coerceNewsPerspective(item.perspective ?? "neutral", "neutral"),
-        topic_tags: topicTags,
-        is_paywalled: Boolean(item.is_paywalled),
-        paywall_note: item.paywall_note ?? null,
-        excerpt: item.excerpt ?? null,
-        summary: item.summary ?? null,
-        body: item.body ?? null,
-        hero_image_url: item.hero_image_url ?? null,
-        crawl_run_id: item.crawl_run_id ?? null,
-        crawl_query: item.crawl_query ?? null,
-        cloudflare_worker_hint: item.cloudflare_worker_hint ?? "cloudflare_worker",
-        evidence: item.evidence ?? null,
-        editor_note: item.editor_note ?? null,
-      })
-    );
+    const normalizedRow = normalizeNewsUpsert({
+      id: item.id ?? null,
+      slug: item.slug ?? null,
+      title,
+      source_name: String(item.source_name ?? "").trim() || "Ukjent kilde",
+      source_url: sourceUrl,
+      language: item.language ?? "no",
+      published_at: item.published_at ?? null,
+      status: coerceNewsStatus(
+        item.status ?? (autoPublish ? "published" : "draft"),
+        autoPublish ? "published" : "draft"
+      ),
+      perspective: coerceNewsPerspective(item.perspective ?? "neutral", "neutral"),
+      topic_tags: topicTags,
+      is_paywalled: Boolean(item.is_paywalled),
+      paywall_note: item.paywall_note ?? null,
+      excerpt: item.excerpt ?? null,
+      summary: item.summary ?? null,
+      body: item.body ?? null,
+      hero_image_url: item.hero_image_url ?? null,
+      crawl_run_id: item.crawl_run_id ?? null,
+      crawl_query: item.crawl_query ?? null,
+      cloudflare_worker_hint: item.cloudflare_worker_hint ?? "cloudflare_worker",
+      evidence: item.evidence ?? null,
+      editor_note: item.editor_note ?? null,
+    });
+    if (
+      normalizedRow.status === "published" &&
+      !normalizedRow.published_at &&
+      isKIRedaksjonenCandidate(normalizedRow)
+    ) {
+      normalizedRow.published_at = new Date().toISOString();
+    }
+
+    normalized.push(normalizedRow);
   }
 
   if (!normalized.length) {

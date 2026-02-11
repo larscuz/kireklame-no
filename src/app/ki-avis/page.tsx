@@ -260,11 +260,17 @@ export default async function KIRNyheterPage() {
   const internationalAfterAdPool = internationalDesk.filter(
     (item) => !internationalTopIds.has(item.id)
   );
-  const editorialDesk = [...imagedArticles]
+  const editorialDeskCandidates = [...imagedArticles]
     .filter((item) => !internationalIds.has(item.id))
-    .filter((item) => item.id !== lead?.id)
     .filter((item) => isInternalAivisArticle(item))
     .sort((a, b) => sortTimestamp(b) - sortTimestamp(a));
+  const editorialDeskWithoutLead = editorialDeskCandidates.filter(
+    (item) => item.id !== lead?.id
+  );
+  const editorialDesk =
+    editorialDeskWithoutLead.length > 0
+      ? editorialDeskWithoutLead
+      : editorialDeskCandidates;
 
   const primaryUsed = new Set<string>();
   const frontRow = takeFromPool(rest, primaryUsed, 2);
