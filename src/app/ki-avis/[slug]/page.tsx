@@ -181,8 +181,25 @@ type ImageRef = {
   alt: string;
 };
 
+function normalizeScrollyText(value: string): string {
+  return String(value ?? "")
+    .replace(/\r\n/g, "\n")
+    .replace(/\\\//g, "/")
+    .replace(/&amp;/gi, "&")
+    .trim();
+}
+
+function looksLikeImageUrl(value: string): boolean {
+  const text = String(value ?? "").trim();
+  if (!/^https?:\/\//i.test(text)) return false;
+  if (/\.(?:jpg|jpeg|png|webp|gif|avif|svg)(?:$|[?#])/i.test(text)) return true;
+  if (/\/static\/|\/images?\/|\/media\/|\/uploads?\//i.test(text)) return true;
+  if (/[?&](?:format|fm|img|image)=/i.test(text)) return true;
+  return false;
+}
+
 function isLikelyImageUrl(value: string): boolean {
-  return /^https?:\/\/\S+\.(?:jpg|jpeg|png|webp|gif|avif)(?:\?[^\s]*)?$/i.test(String(value).trim());
+  return looksLikeImageUrl(String(value ?? "").trim());
 }
 
 function uniqueImageRefs(refs: ImageRef[]): ImageRef[] {
@@ -202,11 +219,11 @@ function uniqueImageRefs(refs: ImageRef[]): ImageRef[] {
 }
 
 function extractImageRefsFromRaw(text: string): ImageRef[] {
-  const raw = String(text ?? "").replace(/\r\n/g, "\n");
+  const raw = normalizeScrollyText(text);
   if (!raw.trim()) return [];
   const refs: ImageRef[] = [];
 
-  const markdownImagePattern = /!\[([^\]]*)\]\((https?:\/\/[^)\s]+)(?:\s+"[^"]*")?\)/gi;
+  const markdownImagePattern = /!\[([^\]]*)\]\s*\(\s*(https?:\/\/[^)\s]+)\s*(?:"[^"]*"|'[^']*')?\s*\)/gi;
   for (const match of raw.matchAll(markdownImagePattern)) {
     refs.push({
       src: String(match[2] ?? "").trim(),
@@ -214,7 +231,7 @@ function extractImageRefsFromRaw(text: string): ImageRef[] {
     });
   }
 
-  const htmlImgPattern = /<img\b[^>]*src=["'](https?:\/\/[^"']+)["'][^>]*>/gi;
+  const htmlImgPattern = /<img\b[^>]*(?:src|data-src)=["'](https?:\/\/[^"']+)["'][^>]*>/gi;
   for (const match of raw.matchAll(htmlImgPattern)) {
     const tag = String(match[0] ?? "");
     const altMatch = tag.match(/\balt=["']([^"']+)["']/i);
@@ -224,18 +241,22 @@ function extractImageRefsFromRaw(text: string): ImageRef[] {
     });
   }
 
-  const markdownLinkImagePattern = /\[[^\]]*]\((https?:\/\/[^)\s]+\.(?:jpg|jpeg|png|webp|gif|avif)(?:\?[^)\s]*)?)\)/gi;
+  const markdownLinkImagePattern = /\[[^\]]*]\s*\(\s*(https?:\/\/[^)\s]+)\s*\)/gi;
   for (const match of raw.matchAll(markdownLinkImagePattern)) {
+    const candidate = String(match[1] ?? "").trim();
+    if (!looksLikeImageUrl(candidate)) continue;
     refs.push({
-      src: String(match[1] ?? "").trim(),
+      src: candidate,
       alt: "Illustrasjon",
     });
   }
 
-  const urlImagePattern = /https?:\/\/[^\s<>"')\]]+\.(?:jpg|jpeg|png|webp|gif|avif)(?:\?[^\s<>"')\]]*)?/gi;
+  const urlImagePattern = /https?:\/\/[^\s<>"')\]]+/gi;
   for (const match of raw.matchAll(urlImagePattern)) {
+    const candidate = String(match[0] ?? "").trim();
+    if (!looksLikeImageUrl(candidate)) continue;
     refs.push({
-      src: String(match[0] ?? "").trim(),
+      src: candidate,
       alt: "Illustrasjon",
     });
   }
@@ -244,7 +265,7 @@ function extractImageRefsFromRaw(text: string): ImageRef[] {
 }
 
 function parseScrollyBodyBlocks(text: string): ScrollyBlock[] {
-  const raw = String(text ?? "").replace(/\r\n/g, "\n").trim();
+  const raw = normalizeScrollyText(text);
   if (!raw) return [];
   const blocks: ScrollyBlock[] = [];
   const lines = raw.split("\n");
@@ -280,7 +301,7 @@ function parseScrollyBodyBlocks(text: string): ScrollyBlock[] {
       continue;
     }
 
-    const imageMatch = line.match(/^!\[([^\]]*)\]\((https?:\/\/[^)\s]+)(?:\s+"[^"]*")?\)\s*$/i);
+    const imageMatch = line.match(/^!\[([^\]]*)\]\s*\(\s*(https?:\/\/[^)\s]+)\s*(?:"[^"]*"|'[^']*')?\s*\)\s*$/i);
     if (imageMatch) {
       flushText();
       const alt = imageMatch[1].trim() || "Illustrasjon";
@@ -316,7 +337,7 @@ function parseScrollyBodyBlocks(text: string): ScrollyBlock[] {
       continue;
     }
 
-    const htmlImgMatch = line.match(/<img\b[^>]*src=["'](https?:\/\/[^"']+)["'][^>]*>/i);
+    const htmlImgMatch = line.match(/<img\b[^>]*(?:src|data-src)=["'](https?:\/\/[^"']+)["'][^>]*>/i);
     if (htmlImgMatch) {
       flushText();
       const src = htmlImgMatch[1].trim();
@@ -330,8 +351,12 @@ function parseScrollyBodyBlocks(text: string): ScrollyBlock[] {
       continue;
     }
 
-    const markdownLinkImage = line.match(/^\[[^\]]*]\((https?:\/\/[^)\s]+\.(?:jpg|jpeg|png|webp|gif|avif)(?:\?[^)\s]*)?)\)\s*$/i);
+    const markdownLinkImage = line.match(/^\[[^\]]*]\s*\(\s*(https?:\/\/[^)\s]+)\s*\)\s*$/i);
     if (markdownLinkImage) {
+      if (!looksLikeImageUrl(markdownLinkImage[1])) {
+        textBuffer.push(line);
+        continue;
+      }
       flushText();
       blocks.push({
         kind: "image",
