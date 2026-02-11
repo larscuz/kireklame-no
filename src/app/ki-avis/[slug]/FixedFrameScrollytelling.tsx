@@ -23,7 +23,7 @@ function clamp(value: number, min: number, max: number): number {
   return Math.max(min, Math.min(max, value));
 }
 
-type SceneTransition = "zoom" | "slideLeft" | "slideUp" | "rotate" | "drift";
+type SceneTransition = "zoom" | "slideLeft" | "slideUp" | "rotate" | "drift" | "wipeDiagonal" | "focusPull";
 
 type SceneLayout = {
   stickyTopClass: string;
@@ -38,32 +38,32 @@ const SCENE_LAYOUTS: SceneLayout[] = [
   {
     stickyTopClass: "top-[10vh]",
     shellClass: "mr-auto max-w-[min(92vw,58rem)]",
-    cardClass: "bg-[#10141b]/78",
-    headingClass: "text-[31px] sm:text-[40px]",
+    cardClass: "bg-[#f7f1e7]/90",
+    headingClass: "text-[31px] sm:text-[42px]",
     bodyClass: "text-[21px] leading-[1.28] sm:text-[24px]",
     inactiveClass: "translate-y-5 opacity-60",
   },
   {
     stickyTopClass: "top-[15vh]",
     shellClass: "ml-auto max-w-[min(92vw,52rem)]",
-    cardClass: "bg-[#141018]/78",
-    headingClass: "text-[35px] sm:text-[47px]",
+    cardClass: "bg-[#f5ede2]/90",
+    headingClass: "text-[34px] sm:text-[50px]",
     bodyClass: "text-[19px] leading-[1.32] sm:text-[22px]",
     inactiveClass: "translate-y-4 -translate-x-2 opacity-60",
   },
   {
     stickyTopClass: "top-[20vh]",
     shellClass: "mx-auto max-w-[min(92vw,50rem)]",
-    cardClass: "bg-[#121716]/76",
-    headingClass: "text-[33px] sm:text-[44px]",
-    bodyClass: "text-[22px] leading-[1.27] sm:text-[26px]",
+    cardClass: "bg-[#f8f3ea]/88",
+    headingClass: "text-[37px] sm:text-[58px]",
+    bodyClass: "text-[23px] leading-[1.24] sm:text-[30px]",
     inactiveClass: "translate-y-6 opacity-55",
   },
   {
     stickyTopClass: "top-[25vh]",
     shellClass: "mr-auto max-w-[min(92vw,46rem)]",
-    cardClass: "bg-[#17130f]/76",
-    headingClass: "text-[29px] sm:text-[37px]",
+    cardClass: "bg-[#f6efe2]/90",
+    headingClass: "text-[29px] sm:text-[38px]",
     bodyClass: "text-[18px] leading-[1.35] sm:text-[21px]",
     inactiveClass: "translate-y-4 translate-x-3 opacity-60",
   },
@@ -89,6 +89,8 @@ const SCENE_TRANSITIONS: SceneTransition[] = [
   "slideUp",
   "rotate",
   "drift",
+  "wipeDiagonal",
+  "focusPull",
 ];
 
 function getSceneTransition(index: number): SceneTransition {
@@ -111,6 +113,10 @@ function getLayerEasing(transition: SceneTransition): string {
       return "cubic-bezier(0.17, 0.67, 0.3, 1)";
     case "drift":
       return "cubic-bezier(0.24, 0.74, 0.2, 1)";
+    case "wipeDiagonal":
+      return "cubic-bezier(0.16, 0.72, 0.22, 1)";
+    case "focusPull":
+      return "cubic-bezier(0.2, 0.75, 0.18, 1)";
     default:
       return "ease-out";
   }
@@ -140,8 +146,39 @@ function getLayerTransform(transition: SceneTransition, isActive: boolean, progr
       return isActive
         ? `translate3d(${-10 * leave}px, ${8 * leave}px, 0) scale(${1.04 + enter * 0.04})`
         : "translate3d(14px, -12px, 0) scale(1.09)";
+    case "wipeDiagonal":
+      return isActive
+        ? `translate3d(${6 * leave}px, ${-6 * leave}px, 0) scale(${1.03 + enter * 0.04})`
+        : "translate3d(-8px, 8px, 0) scale(1.08)";
+    case "focusPull":
+      return isActive
+        ? `translate3d(0, ${-5 * enter}px, 0) scale(${1.01 + enter * 0.08})`
+        : "translate3d(0, 0, 0) scale(1.12)";
     default:
       return isActive ? "translate3d(0,0,0) scale(1.04)" : "translate3d(0,0,0) scale(1.08)";
+  }
+}
+
+function getLayerClipPath(transition: SceneTransition, isActive: boolean, progress: number): string {
+  const enter = clamp(progress, 0, 1);
+  const leave = 1 - enter;
+
+  switch (transition) {
+    case "slideLeft":
+      return isActive ? `inset(0 0 0 ${(leave * 62).toFixed(2)}%)` : "inset(0 0 0 100%)";
+    case "slideUp":
+      return isActive ? `inset(${(leave * 62).toFixed(2)}% 0 0 0)` : "inset(100% 0 0 0)";
+    case "wipeDiagonal": {
+      const top = (leave * 78).toFixed(2);
+      const right = (leave * 30).toFixed(2);
+      return isActive
+        ? `polygon(0 ${top}%, 100% 0, 100% 100%, ${right}% 100%)`
+        : "polygon(0 100%, 0 100%, 0 100%, 0 100%)";
+    }
+    case "focusPull":
+      return isActive ? `circle(${(18 + enter * 98).toFixed(2)}% at 50% 50%)` : "circle(0% at 50% 50%)";
+    default:
+      return "inset(0 0 0 0)";
   }
 }
 
@@ -157,6 +194,7 @@ function buildLayerStyle(args: {
       opacity: isActive ? 1 : 0,
       transform: "translate3d(0,0,0) scale(1)",
       filter: isActive ? "brightness(0.9) saturate(1)" : "brightness(0.6) saturate(0.95)",
+      clipPath: "inset(0 0 0 0)",
       zIndex: isActive ? 2 : 1,
       transitionDuration: "130ms",
       transitionTimingFunction: "linear",
@@ -166,6 +204,7 @@ function buildLayerStyle(args: {
   return {
     opacity: isActive ? 1 : 0,
     transform: getLayerTransform(transition, isActive, progress),
+    clipPath: getLayerClipPath(transition, isActive, progress),
     filter: isActive
       ? `brightness(${(0.84 + progress * 0.07).toFixed(2)}) saturate(${(1.02 + progress * 0.08).toFixed(2)})`
       : "brightness(0.66) saturate(0.94) blur(1.2px)",
@@ -323,6 +362,14 @@ export default function FixedFrameScrollytelling({
             const isActive = idx === boundedActiveIndex;
             const layout = getSceneLayout(idx);
             const heightClass = SCENE_HEIGHTS[idx % SCENE_HEIGHTS.length];
+            const emphasis = idx % 5 === 2;
+            const mega = idx % 7 === 3;
+            const headingBoost = mega
+              ? "sm:text-[66px] sm:leading-[0.9]"
+              : emphasis
+                ? "sm:text-[58px] sm:leading-[0.94]"
+                : "";
+            const bodyBoost = mega ? "sm:text-[31px]" : emphasis ? "sm:text-[27px]" : "";
             return (
               <section
                 key={`${idx}-${scene.heading.slice(0, 24)}`}
@@ -334,15 +381,15 @@ export default function FixedFrameScrollytelling({
               >
                 <div className={`sticky ${layout.stickyTopClass} ${layout.shellClass}`}>
                   <article
-                    className={`rounded-3xl border border-white/12 ${layout.cardClass} p-4 shadow-[0_22px_62px_rgba(0,0,0,0.42)] ring-1 ring-white/6 backdrop-blur-md transition-[opacity,transform] duration-700 sm:p-6 ${
+                    className={`rounded-[28px] border border-black/14 ${layout.cardClass} p-4 shadow-[0_20px_48px_rgba(0,0,0,0.25)] ring-1 ring-black/6 backdrop-blur-sm transition-[opacity,transform] duration-700 sm:p-6 ${
                       isActive ? "translate-y-0 translate-x-0 opacity-100" : layout.inactiveClass
                     }`}
                   >
-                    <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-white/58">
+                    <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-black/52">
                       Scrollytelling • Scene {idx + 1}
                     </p>
                     <h3
-                      className={`${mastheadClassName} mt-2 leading-[1.02] text-white/94 [overflow-wrap:anywhere] hyphens-auto ${layout.headingClass}`}
+                      className={`${mastheadClassName} mt-2 leading-[1.02] text-black/92 [overflow-wrap:anywhere] hyphens-auto ${layout.headingClass} ${headingBoost}`}
                     >
                       {scene.heading}
                     </h3>
@@ -350,7 +397,7 @@ export default function FixedFrameScrollytelling({
                       {scene.paragraphs.map((paragraph, pIdx) => (
                         <p
                           key={`${idx}-${pIdx}-${paragraph.slice(0, 20)}`}
-                          className={`${headlineClassName} text-white/84 [overflow-wrap:anywhere] hyphens-auto ${layout.bodyClass}`}
+                          className={`${headlineClassName} text-black/84 [overflow-wrap:anywhere] hyphens-auto ${layout.bodyClass} ${bodyBoost}`}
                         >
                           {paragraph}
                         </p>
