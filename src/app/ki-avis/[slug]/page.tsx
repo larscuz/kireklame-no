@@ -16,6 +16,7 @@ import {
 } from "@/lib/news/translate";
 import { siteMeta } from "@/lib/seo";
 import { getUserOrNull } from "@/lib/supabase/server";
+import FixedFrameScrollytelling from "./FixedFrameScrollytelling";
 
 const masthead = Bodoni_Moda({
   subsets: ["latin"],
@@ -167,6 +168,14 @@ type ScrollyBlock =
   | { kind: "text"; text: string }
   | { kind: "image"; src: string; alt: string; caption: string | null };
 
+type ScrollyScene = {
+  heading: string;
+  paragraphs: string[];
+  imageSrc: string;
+  imageAlt: string;
+  imageCaption: string | null;
+};
+
 function parseScrollyBodyBlocks(text: string): ScrollyBlock[] {
   const raw = String(text ?? "").replace(/\r\n/g, "\n").trim();
   if (!raw) return [];
@@ -219,6 +228,64 @@ function parseScrollyBodyBlocks(text: string): ScrollyBlock[] {
   }
 
   return blocks;
+}
+
+function buildScrollyScenes(args: {
+  blocks: ScrollyBlock[];
+  fallbackTitle: string;
+  fallbackImageUrl: string | null;
+}): ScrollyScene[] {
+  const { blocks, fallbackTitle, fallbackImageUrl } = args;
+  const scenes: ScrollyScene[] = [];
+  let pendingHeading: string | null = null;
+  let pendingParagraphs: string[] = [];
+
+  for (const block of blocks) {
+    if (block.kind === "heading") {
+      if (pendingParagraphs.length > 0 && scenes.length > 0) {
+        scenes[scenes.length - 1].paragraphs.push(...pendingParagraphs);
+        pendingParagraphs = [];
+      }
+      pendingHeading = block.text;
+      continue;
+    }
+
+    if (block.kind === "text") {
+      pendingParagraphs.push(block.text);
+      continue;
+    }
+
+    const heading = pendingHeading || (scenes.length === 0 ? fallbackTitle : `Del ${scenes.length + 1}`);
+    scenes.push({
+      heading,
+      paragraphs: pendingParagraphs,
+      imageSrc: block.src,
+      imageAlt: block.alt,
+      imageCaption: block.caption,
+    });
+    pendingHeading = null;
+    pendingParagraphs = [];
+  }
+
+  if (pendingParagraphs.length > 0 && scenes.length > 0) {
+    scenes[scenes.length - 1].paragraphs.push(...pendingParagraphs);
+  }
+
+  if (!scenes.length && hasImage(fallbackImageUrl)) {
+    const fallbackParagraphs = blocks
+      .filter((block): block is Extract<ScrollyBlock, { kind: "text" }> => block.kind === "text")
+      .map((block) => block.text)
+      .filter(Boolean);
+    scenes.push({
+      heading: fallbackTitle,
+      paragraphs: fallbackParagraphs,
+      imageSrc: String(fallbackImageUrl),
+      imageAlt: fallbackTitle,
+      imageCaption: null,
+    });
+  }
+
+  return scenes;
 }
 
 function adSignature(ad: SponsorAd | null): string {
@@ -375,6 +442,14 @@ export default async function KIRNyheterArticlePage({
   const scrollyBlocks = isScrollytelling
     ? parseScrollyBodyBlocks(displayBodyChunks.join("\n\n"))
     : [];
+  const scrollyScenes = isScrollytelling
+    ? buildScrollyScenes({
+        blocks: scrollyBlocks,
+        fallbackTitle: displayTitle,
+        fallbackImageUrl: article.hero_image_url,
+      })
+    : [];
+  const hasScrollyScenes = scrollyScenes.length > 0;
   const hasScrollyBlocks = scrollyBlocks.length > 0;
   const isEditorOpEd = isInternalAivisArticle({
     title: article.title,
@@ -528,8 +603,12 @@ export default async function KIRNyheterArticlePage({
           </section>
         ) : null}
 
-        <div className="grid gap-5 border-y border-black/20 py-4 lg:grid-cols-[minmax(0,1fr)_318px]">
-          <article className="min-w-0 lg:pr-2">
+        <div
+          className={`grid gap-5 border-y border-black/20 py-4 ${
+            hasScrollyScenes ? "lg:grid-cols-1" : "lg:grid-cols-[minmax(0,1fr)_318px]"
+          }`}
+        >
+          <article className={`min-w-0 ${hasScrollyScenes ? "" : "lg:pr-2"}`}>
             <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-black/55">
               Hovedsak · KiR Nyheter
             </p>
@@ -626,7 +705,22 @@ export default async function KIRNyheterArticlePage({
               </section>
             ) : null}
 
-            {hasScrollyBlocks ? (
+            {hasScrollyScenes ? (
+              <section className="mt-5 border-t border-black/20 pt-4">
+                {!isEditorOpEd ? (
+                  <h2 className={`${masthead.className} text-[30px] sm:text-[34px]`}>
+                    AI-generert tekst fra kilden
+                  </h2>
+                ) : null}
+                <FixedFrameScrollytelling
+                  scenes={scrollyScenes}
+                  mastheadClassName={masthead.className}
+                  headlineClassName={headline.className}
+                  showByline={isEditorOpEd}
+                  bylineText={editorBylineText}
+                />
+              </section>
+            ) : hasScrollyBlocks ? (
               <section className="mt-5 border-t border-black/20 pt-4">
                 {!isEditorOpEd ? (
                   <h2 className={`${masthead.className} text-[30px] sm:text-[34px]`}>
@@ -719,50 +813,52 @@ export default async function KIRNyheterArticlePage({
             </div>
           </article>
 
-          <aside className="space-y-4 border-t border-black/15 pt-4 lg:border-t-0 lg:border-l lg:pl-4">
-            {sidebarAd ? (
-              <section className="border border-black/20 bg-[#f8f4eb]">
-                <AdSlot
-                  ad={sidebarAd}
-                  sponsorLabel={sponsorLabel}
-                  openLinkFallback={openLinkFallback}
-                  variant="sidebar"
-                  locale={locale}
-                />
+          {!hasScrollyScenes ? (
+            <aside className="space-y-4 border-t border-black/15 pt-4 lg:border-t-0 lg:border-l lg:pl-4">
+              {sidebarAd ? (
+                <section className="border border-black/20 bg-[#f8f4eb]">
+                  <AdSlot
+                    ad={sidebarAd}
+                    sponsorLabel={sponsorLabel}
+                    openLinkFallback={openLinkFallback}
+                    variant="sidebar"
+                    locale={locale}
+                  />
+                </section>
+              ) : null}
+
+              <section className="border border-black/20 bg-[#f8f4eb] p-4">
+                <h2 className="text-[11px] font-semibold uppercase tracking-[0.2em] text-black/55">Saksfakta</h2>
+                <dl className="mt-3 space-y-2 text-[13px]">
+                  <div className="border-b border-black/10 pb-2">
+                    <dt className="text-black/52">Kilde</dt>
+                    <dd className="mt-1 font-semibold">{article.source_name}</dd>
+                  </div>
+                  <div className="border-b border-black/10 pb-2">
+                    <dt className="text-black/52">Publisert</dt>
+                    <dd className="mt-1 font-semibold">{fmtDate(article.published_at ?? article.created_at)}</dd>
+                  </div>
+                  <div>
+                    <dt className="text-black/52">Vinkel</dt>
+                    <dd className="mt-1 font-semibold">
+                      {article.perspective === "critical"
+                        ? "Kritikk"
+                        : article.perspective === "adoption"
+                          ? "Satsing"
+                          : "Analyse"}
+                    </dd>
+                  </div>
+                </dl>
               </section>
-            ) : null}
 
-            <section className="border border-black/20 bg-[#f8f4eb] p-4">
-              <h2 className="text-[11px] font-semibold uppercase tracking-[0.2em] text-black/55">Saksfakta</h2>
-              <dl className="mt-3 space-y-2 text-[13px]">
-                <div className="border-b border-black/10 pb-2">
-                  <dt className="text-black/52">Kilde</dt>
-                  <dd className="mt-1 font-semibold">{article.source_name}</dd>
-                </div>
-                <div className="border-b border-black/10 pb-2">
-                  <dt className="text-black/52">Publisert</dt>
-                  <dd className="mt-1 font-semibold">{fmtDate(article.published_at ?? article.created_at)}</dd>
-                </div>
-                <div>
-                  <dt className="text-black/52">Vinkel</dt>
-                  <dd className="mt-1 font-semibold">
-                    {article.perspective === "critical"
-                      ? "Kritikk"
-                      : article.perspective === "adoption"
-                        ? "Satsing"
-                        : "Analyse"}
-                  </dd>
-                </div>
-              </dl>
-            </section>
-
-            <section className="border border-black/20 bg-[#f8f4eb] p-4">
-              <h2 className={`${masthead.className} text-[29px]`}>KiR Nyheter</h2>
-              <p className="mt-2 text-[13px] leading-relaxed text-black/70">
-                Uavhengig dekning av hvordan KI endrer reklame, byråmarked og medieinvesteringer.
-              </p>
-            </section>
-          </aside>
+              <section className="border border-black/20 bg-[#f8f4eb] p-4">
+                <h2 className={`${masthead.className} text-[29px]`}>KiR Nyheter</h2>
+                <p className="mt-2 text-[13px] leading-relaxed text-black/70">
+                  Uavhengig dekning av hvordan KI endrer reklame, byråmarked og medieinvesteringer.
+                </p>
+              </section>
+            </aside>
+          ) : null}
         </div>
 
         {midBannerAd ? (
