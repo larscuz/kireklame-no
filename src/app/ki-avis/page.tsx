@@ -211,7 +211,7 @@ export default async function KIRNyheterPage() {
     gridBanner2,
     gridBanner3,
   ] = await Promise.all([
-    listPublishedNews(120),
+    listPublishedNews(240),
     getPublishedFrontLeadOverride(),
     getPublishedFrontNowOverrides(),
     getAdForPlacement("catalog_top_banner"),
@@ -260,8 +260,8 @@ export default async function KIRNyheterPage() {
   const internationalAfterAdPool = internationalDesk.filter(
     (item) => !internationalTopIds.has(item.id)
   );
-  const editorialDeskCandidates = [...imagedArticles]
-    .filter((item) => !internationalIds.has(item.id))
+  const editorialDeskCandidates = [...allArticles]
+    .filter((item) => !isLikelyInternationalDeskArticle(item))
     .filter((item) => isInternalAivisArticle(item))
     .sort((a, b) => sortTimestamp(b) - sortTimestamp(a));
   const editorialDeskWithoutLead = editorialDeskCandidates.filter(
