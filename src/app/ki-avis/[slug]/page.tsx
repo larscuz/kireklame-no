@@ -443,7 +443,12 @@ function buildScrollyScenes(args: {
   }
 
   const imageRefs = extractImageRefsFromRaw(rawText);
-  if (imageRefs.length >= 2 && scenes.length <= 1) {
+  const uniqueSceneImageCount = new Set(
+    scenes
+      .map((scene) => String(scene.imageSrc ?? "").trim())
+      .filter(Boolean)
+  ).size;
+  if (imageRefs.length >= 2 && (scenes.length <= 1 || uniqueSceneImageCount <= 1)) {
     const headings = blocks
       .filter((block): block is Extract<ScrollyBlock, { kind: "heading" }> => block.kind === "heading")
       .map((block) => block.text)

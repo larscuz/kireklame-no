@@ -44,6 +44,34 @@ export default function FixedFrameScrollytelling({
   }, []);
 
   useEffect(() => {
+    const elements = stepRefs.current.filter((step): step is HTMLElement => Boolean(step));
+    if (!elements.length) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((entry) => entry.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
+        if (!visible.length) return;
+        const top = visible[0].target as HTMLElement;
+        const rawIndex = Number(top.dataset.sceneIndex ?? "0");
+        if (Number.isFinite(rawIndex)) {
+          const bounded = clamp(rawIndex, 0, scenes.length - 1);
+          setActiveIndex((prev) => (prev === bounded ? prev : bounded));
+        }
+      },
+      {
+        root: null,
+        rootMargin: "-15% 0px -35% 0px",
+        threshold: [0.25, 0.4, 0.6, 0.8],
+      }
+    );
+
+    for (const element of elements) observer.observe(element);
+    return () => observer.disconnect();
+  }, [scenes.length]);
+
+  useEffect(() => {
     let raf = 0;
 
     const update = () => {
@@ -90,43 +118,28 @@ export default function FixedFrameScrollytelling({
     };
   }, [scenes.length]);
 
+  const activeScene = scenes[clamp(activeIndex, 0, scenes.length - 1)];
+  const backgroundScale = reducedMotion ? 1 : 1 + activeProgress * 0.06;
+  const backgroundTranslate = reducedMotion ? 0 : activeProgress * -14;
+
   return (
     <section className="mt-6">
       <div className="relative left-1/2 right-1/2 w-screen -translate-x-1/2">
         <div className="sticky top-0 h-screen overflow-hidden border-y border-black/20 bg-black">
-          {scenes.map((scene, idx) => {
-            const isActive = idx === activeIndex;
-            const shift = idx - activeIndex;
-            const scale = reducedMotion
-              ? 1
-              : isActive
-                ? 1 + activeProgress * 0.06
-                : 1.03 + Math.min(0.03, Math.abs(shift) * 0.012);
-            const translateY = reducedMotion
-              ? 0
-              : isActive
-                ? activeProgress * -14
-                : shift > 0
-                  ? 18
-                  : -18;
-
-            return (
-              <div
-                key={`${idx}-${scene.imageSrc}`}
-                className="absolute inset-0 transition-[opacity,transform] duration-700 ease-out"
-                style={{
-                  opacity: isActive ? 1 : 0,
-                  transform: `translate3d(0, ${translateY}px, 0) scale(${scale})`,
-                }}
-              >
-                <NewsImage
-                  src={scene.imageSrc}
-                  alt={scene.imageAlt}
-                  className="h-full w-full object-cover"
-                />
-              </div>
-            );
-          })}
+          <div
+            key={`${activeIndex}-${activeScene?.imageSrc ?? "scene"}`}
+            className="absolute inset-0 transition-[opacity,transform] duration-700 ease-out"
+            style={{
+              opacity: 1,
+              transform: `translate3d(0, ${backgroundTranslate}px, 0) scale(${backgroundScale})`,
+            }}
+          >
+            <NewsImage
+              src={activeScene?.imageSrc ?? scenes[0]?.imageSrc ?? null}
+              alt={activeScene?.imageAlt ?? scenes[0]?.imageAlt ?? "Illustrasjon"}
+              className="h-full w-full object-cover"
+            />
+          </div>
 
           <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/25 to-black/75" />
 
@@ -134,9 +147,9 @@ export default function FixedFrameScrollytelling({
             Scene {activeIndex + 1} / {scenes.length}
           </div>
 
-          {scenes[activeIndex]?.imageCaption ? (
+          {activeScene?.imageCaption ? (
             <div className="absolute bottom-3 left-3 max-w-[min(92vw,760px)] border border-white/20 bg-black/40 px-3 py-2 text-[11px] uppercase tracking-[0.13em] text-white/85 md:bottom-6 md:left-6">
-              Bildetekst: {scenes[activeIndex].imageCaption}
+              Bildetekst: {activeScene.imageCaption}
             </div>
           ) : null}
         </div>
@@ -150,6 +163,7 @@ export default function FixedFrameScrollytelling({
                 ref={(element) => {
                   stepRefs.current[idx] = element;
                 }}
+                data-scene-index={idx}
                 className="relative min-h-[118vh] py-14 sm:min-h-[125vh]"
               >
                 <div className="sticky top-[12vh] mx-auto w-full max-w-3xl">
