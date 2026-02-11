@@ -11,6 +11,14 @@ export const NEWS_SEARCH_TOPICS = [
   "ai-byrå",
 ] as const;
 
+const PRIORITY_NEWS_QUERIES: string[] = [
+  "site:kom24.no KI byrå",
+  "site:kom24.no KI effektivitet",
+  "site:kom24.no dentsu KI",
+  "site:kampanje.com KI byrå",
+  "site:medier24.no KI reklame",
+];
+
 const CORE_NEWS_QUERIES: string[] = [
   '"ki-reklame" kritikk Norge',
   '"ai-reklame" kritikk Norge',
@@ -27,6 +35,8 @@ const CORE_NEWS_QUERIES: string[] = [
   '"merking av KI-reklame" Norge',
   '"KI-generert reklame" merking',
   '"agentisk KI" markedsføring',
+  '"kunstig intelligens" mediebyrå effektivitet Norge',
+  '"dentsu" KI Norge',
   '"kritikk av KI" reklamebransjen',
   '"AI-first" markedsføring Norge',
   "Freia markedsføringskostnader ai",
@@ -57,8 +67,13 @@ const SOURCE_FOCUSED_QUERIES: string[] = [
 ];
 
 export const DEFAULT_NEWS_QUERIES: string[] = [
-  ...CORE_NEWS_QUERIES,
-  ...SOURCE_FOCUSED_QUERIES,
+  ...Array.from(
+    new Set<string>([
+      ...PRIORITY_NEWS_QUERIES,
+      ...CORE_NEWS_QUERIES,
+      ...SOURCE_FOCUSED_QUERIES,
+    ])
+  ),
 ];
 
 export const DEFAULT_NEWS_SOURCE_URLS: string[] = [

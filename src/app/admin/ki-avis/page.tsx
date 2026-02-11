@@ -769,11 +769,22 @@ export default async function KIAvisAdminPage({
   const noticeItemId = firstSearchParam(sp.item);
   const rows = await listNewsForAdmin(240);
   const reviewRows = rows.filter((row) => row.status === "draft");
+  const reviewNorwegianRows = reviewRows.filter(
+    (row) => !isLikelyInternationalDeskArticle(row)
+  );
+  const reviewInternationalRows = reviewRows.filter((row) =>
+    isLikelyInternationalDeskArticle(row)
+  );
   const nonPublishedRows = rows.filter(
     (row) => row.status !== "draft" && row.status !== "published"
   );
   const publishedRows = rows.filter((row) => row.status === "published");
-  const orderedRows = [...reviewRows, ...nonPublishedRows, ...publishedRows];
+  const orderedRows = [
+    ...reviewNorwegianRows,
+    ...reviewInternationalRows,
+    ...nonPublishedRows,
+    ...publishedRows,
+  ];
   const layoutCandidates = rows.filter(
     (row) =>
       row.status === "published" &&
@@ -1097,11 +1108,15 @@ export default async function KIAvisAdminPage({
                 <div className="border-b border-amber-700/20 px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.15em] text-amber-900">
                   Til vurdering ({reviewRows.length})
                 </div>
-                <div className="max-h-[240px] space-y-2 overflow-auto p-2">
-                  {reviewRows.length ? (
-                    reviewRows.slice(0, 20).map((row) => (
+
+                <div className="border-b border-amber-700/15 px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-black/72">
+                  Norsk ({reviewNorwegianRows.length})
+                </div>
+                <div className="max-h-[180px] space-y-2 overflow-auto p-2">
+                  {reviewNorwegianRows.length ? (
+                    reviewNorwegianRows.slice(0, 16).map((row) => (
                       <Link
-                        key={`panel-review-${row.id}`}
+                        key={`panel-review-no-${row.id}`}
                         href={`#article-${row.id}`}
                         className={`block border px-2 py-2 text-sm leading-snug hover:bg-amber-100/70 ${
                           noticeItemId === row.id
@@ -1114,11 +1129,40 @@ export default async function KIAvisAdminPage({
                       </Link>
                     ))
                   ) : (
-                    <p className="text-xs text-black/60">Ingen saker til vurdering akkurat nå.</p>
+                    <p className="text-xs text-black/60">Ingen norske saker til vurdering akkurat nå.</p>
                   )}
-                  {reviewRows.length > 20 ? (
+                  {reviewNorwegianRows.length > 16 ? (
                     <p className="text-[10px] uppercase tracking-[0.14em] text-black/58">
-                      Viser 20 av {reviewRows.length}
+                      Viser 16 av {reviewNorwegianRows.length}
+                    </p>
+                  ) : null}
+                </div>
+
+                <div className="border-b border-t border-amber-700/15 px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-black/72">
+                  Internasjonal ({reviewInternationalRows.length})
+                </div>
+                <div className="max-h-[180px] space-y-2 overflow-auto p-2">
+                  {reviewInternationalRows.length ? (
+                    reviewInternationalRows.slice(0, 16).map((row) => (
+                      <Link
+                        key={`panel-review-intl-${row.id}`}
+                        href={`#article-${row.id}`}
+                        className={`block border px-2 py-2 text-sm leading-snug hover:bg-amber-100/70 ${
+                          noticeItemId === row.id
+                            ? "border-emerald-700/35 bg-emerald-50/50"
+                            : "border-amber-900/20 bg-[#fcf8ef]"
+                        }`}
+                      >
+                        <p className="text-[10px] uppercase tracking-[0.14em] text-black/58">{row.source_name}</p>
+                        <p className="mt-1 text-[13px] font-semibold text-black/88">{row.title}</p>
+                      </Link>
+                    ))
+                  ) : (
+                    <p className="text-xs text-black/60">Ingen internasjonale saker til vurdering akkurat nå.</p>
+                  )}
+                  {reviewInternationalRows.length > 16 ? (
+                    <p className="text-[10px] uppercase tracking-[0.14em] text-black/58">
+                      Viser 16 av {reviewInternationalRows.length}
                     </p>
                   ) : null}
                 </div>
