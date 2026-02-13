@@ -105,6 +105,17 @@ function parseDateInput(raw: string): string | null {
   return d.toISOString();
 }
 
+function toTimestamp(value: string | null | undefined): number {
+  const ts = Date.parse(String(value ?? ""));
+  return Number.isFinite(ts) ? ts : 0;
+}
+
+function formatPublishedDateForQueue(value: string | null | undefined): string {
+  const ts = toTimestamp(value);
+  if (!ts) return "Publisert dato: ukjent";
+  return `Publisert: ${new Date(ts).toLocaleDateString("nb-NO")}`;
+}
+
 function firstSearchParam(
   value: string | string[] | undefined
 ): string | null {
@@ -804,13 +815,16 @@ export default async function KIAvisAdminPage({
   const notice = resolveAdminNotice(sp.notice);
   const noticeItemId = firstSearchParam(sp.item);
   const rows = await listNewsForAdmin(240);
+  const byFreshestFirst = (a: (typeof rows)[number], b: (typeof rows)[number]) =>
+    toTimestamp(b.published_at) - toTimestamp(a.published_at) ||
+    toTimestamp(b.created_at) - toTimestamp(a.created_at);
   const reviewRows = rows.filter((row) => row.status === "draft");
   const reviewNorwegianRows = reviewRows.filter(
     (row) => !isLikelyInternationalDeskArticle(row)
-  );
+  ).sort(byFreshestFirst);
   const reviewInternationalRows = reviewRows.filter((row) =>
     isLikelyInternationalDeskArticle(row)
-  );
+  ).sort(byFreshestFirst);
   const nonPublishedRows = rows.filter(
     (row) => row.status !== "draft" && row.status !== "published"
   );
@@ -1161,6 +1175,9 @@ export default async function KIAvisAdminPage({
                         }`}
                       >
                         <p className="text-[10px] uppercase tracking-[0.14em] text-black/58">{row.source_name}</p>
+                        <p className="mt-1 text-[10px] tracking-[0.04em] text-black/60">
+                          {formatPublishedDateForQueue(row.published_at)}
+                        </p>
                         <p className="mt-1 text-[13px] font-semibold text-black/88">{row.title}</p>
                       </Link>
                     ))
@@ -1190,6 +1207,9 @@ export default async function KIAvisAdminPage({
                         }`}
                       >
                         <p className="text-[10px] uppercase tracking-[0.14em] text-black/58">{row.source_name}</p>
+                        <p className="mt-1 text-[10px] tracking-[0.04em] text-black/60">
+                          {formatPublishedDateForQueue(row.published_at)}
+                        </p>
                         <p className="mt-1 text-[13px] font-semibold text-black/88">{row.title}</p>
                       </Link>
                     ))

@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { supabaseAdmin } from "@/lib/supabase/admin";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -9,6 +10,8 @@ type DailyCrawlPayload = {
   maxQueries: number;
   maxArticles: number;
   resultsPerQuery: number;
+  minPublishedAt: string | null;
+  requirePublishedAtAfterMin: boolean;
 };
 
 function clampInt(value: string | null, min: number, max: number, fallback: number) {
@@ -58,8 +61,55 @@ function resolveSiteOrigin(req: Request): string {
   return `${incoming.protocol}//${incoming.host}`;
 }
 
-function payloadFromRequest(req: Request): DailyCrawlPayload {
+function crawlRunTimestampFromId(runId: string, prefix: string): number {
+  const value = String(runId ?? "").trim();
+  if (!value.startsWith(prefix)) return 0;
+  const stamp = value.slice(prefix.length).split("_")[0] ?? "";
+  if (!stamp) return 0;
+  const iso = stamp.replace(
+    /^(\d{4}-\d{2}-\d{2}T\d{2})-(\d{2})-(\d{2})-(\d{3})Z$/,
+    "$1:$2:$3.$4Z"
+  );
+  const ts = Date.parse(iso);
+  return Number.isFinite(ts) ? ts : 0;
+}
+
+async function resolveSinceLastNorwegianCrawl(): Promise<string | null> {
+  const db = supabaseAdmin();
+  const { data, error } = await db
+    .from("news_articles")
+    .select("crawl_run_id")
+    .like("crawl_run_id", "news_%")
+    .not("crawl_run_id", "like", "news_international_%")
+    .limit(1200);
+
+  if (error) {
+    console.error("[daily-crawl] failed to resolve last crawl", error.message);
+    return null;
+  }
+
+  let latest = 0;
+  for (const row of data ?? []) {
+    const runId = String(row.crawl_run_id ?? "");
+    const ts = crawlRunTimestampFromId(runId, "news_");
+    if (ts > latest) latest = ts;
+  }
+  return latest > 0 ? new Date(latest).toISOString() : null;
+}
+
+async function payloadFromRequest(req: Request): Promise<DailyCrawlPayload> {
   const params = new URL(req.url).searchParams;
+  const freshOnly = parseBooleanParam(params.get("freshOnly"), true);
+  const strictFresh = parseBooleanParam(params.get("strictFresh"), true);
+  const explicitMinPublishedAt = String(params.get("minPublishedAt") ?? "").trim();
+
+  let minPublishedAt: string | null = null;
+  if (explicitMinPublishedAt) {
+    const ts = Date.parse(explicitMinPublishedAt);
+    if (Number.isFinite(ts)) minPublishedAt = new Date(ts).toISOString();
+  } else if (freshOnly) {
+    minPublishedAt = await resolveSinceLastNorwegianCrawl();
+  }
 
   return {
     // Daily endpoint defaults to "ready for review" (not auto-published).
@@ -68,6 +118,8 @@ function payloadFromRequest(req: Request): DailyCrawlPayload {
     maxQueries: clampInt(params.get("maxQueries"), 1, 60, 12),
     maxArticles: clampInt(params.get("maxArticles"), 1, 240, 60),
     resultsPerQuery: clampInt(params.get("resultsPerQuery"), 1, 10, 8),
+    minPublishedAt,
+    requirePublishedAtAfterMin: minPublishedAt ? strictFresh : false,
   };
 }
 
@@ -129,7 +181,7 @@ export async function GET(req: Request) {
     return NextResponse.json({ ok: false, error: "Unauthorized" }, { status: 401 });
   }
 
-  const payload = payloadFromRequest(req);
+  const payload = await payloadFromRequest(req);
   return triggerDailyCrawl(req, payload);
 }
 
@@ -138,6 +190,6 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: false, error: "Unauthorized" }, { status: 401 });
   }
 
-  const payload = payloadFromRequest(req);
+  const payload = await payloadFromRequest(req);
   return triggerDailyCrawl(req, payload);
 }

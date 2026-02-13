@@ -33,6 +33,8 @@ type CrawlPayload = {
   maxArticles?: number;
   resultsPerQuery?: number;
   maxArticleAgeDays?: number;
+  minPublishedAt?: string | null;
+  requirePublishedAtAfterMin?: boolean;
   queries?: string[];
   seedUrls?: string[];
 };
@@ -156,6 +158,12 @@ function isOlderThanDays(isoDate: string | null | undefined, maxAgeDays: number)
   return ageMs > maxAgeMs;
 }
 
+function parseTimestamp(value: string | null | undefined): number {
+  if (!value) return 0;
+  const ts = Date.parse(String(value));
+  return Number.isFinite(ts) ? ts : 0;
+}
+
 const SOURCE_URL_CHUNK_SIZE = 200;
 
 export async function POST(req: Request) {
@@ -172,6 +180,9 @@ export async function POST(req: Request) {
   const maxArticles = clampInt(payload.maxArticles, 1, 240, 120);
   const resultsPerQuery = clampInt(payload.resultsPerQuery, 1, 10, 10);
   const maxArticleAgeDays = clampInt(payload.maxArticleAgeDays, 30, 3650, 730);
+  const minPublishedAtTs = parseTimestamp(payload.minPublishedAt ?? null);
+  const requirePublishedAtAfterMin =
+    minPublishedAtTs > 0 ? payload.requirePublishedAtAfterMin !== false : false;
   const crawlRunId = makeRunId();
   const queries = seedOnly ? [] : normalizeQueryList(payload, maxQueries);
   const seedUrls = normalizeSeedUrlList(payload, 20);
@@ -228,6 +239,8 @@ export async function POST(req: Request) {
   let skippedNonArticle = 0;
   let skippedIrrelevant = 0;
   let skippedTooOld = 0;
+  let skippedBeforeMinPublishedAt = 0;
+  let skippedMissingPublishedAtForFreshness = 0;
   const preview: Array<{
     title: string;
     source_url: string;
@@ -303,6 +316,19 @@ export async function POST(req: Request) {
       if (!seeded && isOlderThanDays(extracted.publishedAt, maxArticleAgeDays)) {
         skippedTooOld += 1;
         continue;
+      }
+
+      if (!seeded && minPublishedAtTs > 0) {
+        const publishedTs = parseTimestamp(extracted.publishedAt);
+        if (publishedTs > 0) {
+          if (publishedTs <= minPublishedAtTs) {
+            skippedBeforeMinPublishedAt += 1;
+            continue;
+          }
+        } else if (requirePublishedAtAfterMin) {
+          skippedMissingPublishedAtForFreshness += 1;
+          continue;
+        }
       }
 
       const title = extracted.title ?? item.title;
@@ -464,6 +490,8 @@ export async function POST(req: Request) {
       skippedNonArticle,
       skippedIrrelevant,
       skippedTooOld,
+      skippedBeforeMinPublishedAt,
+      skippedMissingPublishedAtForFreshness,
       skippedAlreadyPublished,
     },
     preview: previewRows.slice(0, 40),

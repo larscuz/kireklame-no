@@ -42,6 +42,8 @@ type CrawlPayload = {
   maxQueries?: number;
   maxArticles?: number;
   resultsPerQuery?: number;
+  minPublishedAt?: string | null;
+  requirePublishedAtAfterMin?: boolean;
   queries?: string[];
   seedUrls?: string[];
 };
@@ -146,6 +148,12 @@ function hasValidImageUrl(url: string | null | undefined): boolean {
   return /^https?:\/\//i.test(String(url ?? "").trim());
 }
 
+function parseTimestamp(value: string | null | undefined): number {
+  if (!value) return 0;
+  const ts = Date.parse(String(value));
+  return Number.isFinite(ts) ? ts : 0;
+}
+
 const SOURCE_URL_CHUNK_SIZE = 200;
 
 export async function POST(req: Request) {
@@ -160,6 +168,9 @@ export async function POST(req: Request) {
   const maxQueries = clampInt(payload.maxQueries, 1, 100, 36);
   const maxArticles = clampInt(payload.maxArticles, 1, 320, 180);
   const resultsPerQuery = clampInt(payload.resultsPerQuery, 1, 10, 10);
+  const minPublishedAtTs = parseTimestamp(payload.minPublishedAt ?? null);
+  const requirePublishedAtAfterMin =
+    minPublishedAtTs > 0 ? payload.requirePublishedAtAfterMin !== false : false;
   const queries = normalizeQueryList(payload, maxQueries);
   const seedUrls = normalizeSeedUrlList(payload, 120);
   const crawlRunId = makeRunId();
@@ -216,6 +227,8 @@ export async function POST(req: Request) {
   const upsertRows: ReturnType<typeof normalizeNewsUpsert>[] = [];
   let skippedNoImage = 0;
   let skippedNonArticle = 0;
+  let skippedBeforeMinPublishedAt = 0;
+  let skippedMissingPublishedAtForFreshness = 0;
   const preview: Array<{
     title: string;
     source_url: string;
@@ -286,6 +299,19 @@ export async function POST(req: Request) {
       const keepAsInternational =
         ["ai_only", "ai_first"].includes(classification.label) || basePerspective === "critical";
       if (!keepAsInternational) continue;
+
+      if (minPublishedAtTs > 0) {
+        const publishedTs = parseTimestamp(extracted.publishedAt);
+        if (publishedTs > 0) {
+          if (publishedTs <= minPublishedAtTs) {
+            skippedBeforeMinPublishedAt += 1;
+            continue;
+          }
+        } else if (requirePublishedAtAfterMin) {
+          skippedMissingPublishedAtForFreshness += 1;
+          continue;
+        }
+      }
 
       const language = guessDocumentLanguage({
         html,
@@ -474,6 +500,8 @@ export async function POST(req: Request) {
       upserted: upsertedCount,
       skippedNoImage,
       skippedNonArticle,
+      skippedBeforeMinPublishedAt,
+      skippedMissingPublishedAtForFreshness,
       skippedAlreadyPublished,
     },
     preview: previewRows.slice(0, 60),
