@@ -48,6 +48,8 @@ type IngestUpsertRow = {
   status: string;
 };
 
+const SOURCE_URL_CHUNK_SIZE = 200;
+
 function hasValidImageUrl(url: string | null | undefined): boolean {
   return /^https?:\/\//i.test(String(url ?? "").trim());
 }
@@ -215,13 +217,56 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: false, error: "No valid articles", skipped }, { status: 400 });
   }
 
-  const upsertPayload = normalized.map((row) => {
+  const db = supabaseAdmin();
+
+  const publishedSourceUrls = new Set<string>();
+  for (let i = 0; i < normalized.length; i += SOURCE_URL_CHUNK_SIZE) {
+    const chunk = normalized
+      .slice(i, i + SOURCE_URL_CHUNK_SIZE)
+      .map((row) => row.source_url);
+    const { data, error } = await db
+      .from("news_articles")
+      .select("source_url")
+      .eq("status", "published")
+      .in("source_url", chunk);
+
+    if (error) {
+      return NextResponse.json(
+        { ok: false, error: "published_lookup_failed", message: error.message, skipped },
+        { status: 500 }
+      );
+    }
+
+    for (const row of data ?? []) {
+      const sourceUrl = String(row.source_url ?? "").trim();
+      if (sourceUrl) publishedSourceUrls.add(sourceUrl);
+    }
+  }
+
+  const toUpsert = normalized.filter((row) => {
+    const isPublishedAlready = publishedSourceUrls.has(row.source_url);
+    const shouldKeepPublished = isPublishedAlready && row.status !== "published";
+    if (shouldKeepPublished) {
+      skipped.push({
+        reason: "already_published",
+        source_url: row.source_url,
+        title: row.title,
+      });
+      return false;
+    }
+    return true;
+  });
+
+  if (!toUpsert.length) {
+    return NextResponse.json({ ok: true, insertedOrUpdated: 0, rows: [], frontLeadOverride: null, skipped });
+  }
+
+  const upsertPayload = toUpsert.map((row) => {
     const payload = { ...row };
     delete (payload as { id?: string | null }).id;
     return payload;
   });
 
-  const db = supabaseAdmin();
   const { data, error } = await db
     .from("news_articles")
     .upsert(upsertPayload, { onConflict: "source_url", ignoreDuplicates: false })
@@ -235,7 +280,7 @@ export async function POST(req: Request) {
   }
 
   const savedRows = (data ?? []) as IngestUpsertRow[];
-  const autoLead = pickAutoFrontLeadId(savedRows, normalized);
+  const autoLead = pickAutoFrontLeadId(savedRows, toUpsert);
   let autoLeadApplied = false;
   let autoLeadError: string | null = null;
   if (autoLead) {

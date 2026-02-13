@@ -146,6 +146,8 @@ function hasValidImageUrl(url: string | null | undefined): boolean {
   return /^https?:\/\//i.test(String(url ?? "").trim());
 }
 
+const SOURCE_URL_CHUNK_SIZE = 200;
+
 export async function POST(req: Request) {
   const key = req.headers.get("x-ingest-key") || "";
   if (!process.env.INGEST_API_KEY || key !== process.env.INGEST_API_KEY) {
@@ -402,12 +404,55 @@ export async function POST(req: Request) {
     }
   }
 
+  let rowsToUpsert = upsertRows;
+  let previewRows = preview;
+  let skippedAlreadyPublished = 0;
+
+  if (upsertRows.length > 0) {
+    const db = supabaseAdmin();
+    const publishedSourceUrls = new Set<string>();
+    const protectedSourceUrls = new Set<string>();
+
+    for (let i = 0; i < upsertRows.length; i += SOURCE_URL_CHUNK_SIZE) {
+      const chunk = upsertRows
+        .slice(i, i + SOURCE_URL_CHUNK_SIZE)
+        .map((row) => row.source_url);
+      const { data, error } = await db
+        .from("news_articles")
+        .select("source_url")
+        .eq("status", "published")
+        .in("source_url", chunk);
+
+      if (error) {
+        errors.push({
+          where: "news_articles.lookup_published",
+          message: error.message,
+        });
+        chunk.forEach((sourceUrl) => protectedSourceUrls.add(sourceUrl));
+        continue;
+      }
+
+      for (const row of data ?? []) {
+        const sourceUrl = String(row.source_url ?? "").trim();
+        if (sourceUrl) publishedSourceUrls.add(sourceUrl);
+      }
+    }
+
+    if (publishedSourceUrls.size > 0 || protectedSourceUrls.size > 0) {
+      const shouldSkip = (sourceUrl: string) =>
+        publishedSourceUrls.has(sourceUrl) || protectedSourceUrls.has(sourceUrl);
+      rowsToUpsert = upsertRows.filter((row) => !shouldSkip(row.source_url));
+      previewRows = preview.filter((row) => !shouldSkip(row.source_url));
+      skippedAlreadyPublished = upsertRows.length - rowsToUpsert.length;
+    }
+  }
+
   let upsertedCount = 0;
-  if (!dryRun && upsertRows.length > 0) {
+  if (!dryRun && rowsToUpsert.length > 0) {
     const db = supabaseAdmin();
     const { data, error } = await db
       .from("news_articles")
-      .upsert(upsertRows, { onConflict: "source_url", ignoreDuplicates: false })
+      .upsert(rowsToUpsert, { onConflict: "source_url", ignoreDuplicates: false })
       .select("id");
 
     if (error) {
@@ -425,12 +470,13 @@ export async function POST(req: Request) {
       queryCount: queries.length,
       seedCount: seedUrls.length,
       candidates: candidates.length,
-      prepared: upsertRows.length,
+      prepared: rowsToUpsert.length,
       upserted: upsertedCount,
       skippedNoImage,
       skippedNonArticle,
+      skippedAlreadyPublished,
     },
-    preview: preview.slice(0, 60),
+    preview: previewRows.slice(0, 60),
     errors,
   });
 }

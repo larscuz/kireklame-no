@@ -44,6 +44,47 @@ export const FRONT_NOW_OVERRIDE_TAGS = [
   "front_forside_now_3",
 ] as const;
 
+function toTimestamp(value: string | null | undefined): number {
+  const ts = Date.parse(String(value ?? ""));
+  return Number.isFinite(ts) ? ts : 0;
+}
+
+function adminSourceDedupeKey(raw: string): string {
+  const canonical = canonicalizeNewsUrl(raw);
+  if (!canonical) return "";
+  try {
+    const url = new URL(canonical);
+    const host = url.hostname.replace(/^www\./, "").toLowerCase();
+    const path = url.pathname === "/" ? "/" : url.pathname.replace(/\/+$/, "");
+    return `${host}${path}`;
+  } catch {
+    return canonical.toLowerCase();
+  }
+}
+
+function adminStatusRank(status: NewsArticle["status"]): number {
+  if (status === "published") return 3;
+  if (status === "draft") return 2;
+  if (status === "archived") return 1;
+  return 0;
+}
+
+function pickPreferredAdminRow(a: NewsArticle, b: NewsArticle): NewsArticle {
+  const rankA = adminStatusRank(a.status);
+  const rankB = adminStatusRank(b.status);
+  if (rankA !== rankB) return rankA > rankB ? a : b;
+
+  const updatedA = toTimestamp(a.updated_at);
+  const updatedB = toTimestamp(b.updated_at);
+  if (updatedA !== updatedB) return updatedA > updatedB ? a : b;
+
+  const createdA = toTimestamp(a.created_at);
+  const createdB = toTimestamp(b.created_at);
+  if (createdA !== createdB) return createdA > createdB ? a : b;
+
+  return String(a.id) >= String(b.id) ? a : b;
+}
+
 async function getLatestPublishedByTag(tag: string): Promise<NewsArticle | null> {
   const db = supabaseAdmin();
   const { data, error } = await db
@@ -151,7 +192,20 @@ export async function listNewsForAdmin(limit = 250): Promise<NewsArticle[]> {
     console.error("[listNewsForAdmin]", error.message);
     return [];
   }
-  return (data ?? []).map((row) => mapNewsArticle(row as NewsSelect));
+  const mapped = (data ?? []).map((row) => mapNewsArticle(row as NewsSelect));
+  const deduped = new Map<string, NewsArticle>();
+
+  for (const article of mapped) {
+    const key = adminSourceDedupeKey(article.source_url) || `id:${article.id}`;
+    const existing = deduped.get(key);
+    deduped.set(key, existing ? pickPreferredAdminRow(article, existing) : article);
+  }
+
+  return Array.from(deduped.values()).sort((a, b) => {
+    const createdDiff = toTimestamp(b.created_at) - toTimestamp(a.created_at);
+    if (createdDiff !== 0) return createdDiff;
+    return toTimestamp(b.updated_at) - toTimestamp(a.updated_at);
+  });
 }
 
 export async function getPublishedNewsBySlug(slug: string): Promise<NewsArticle | null> {
