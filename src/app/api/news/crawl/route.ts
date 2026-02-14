@@ -302,23 +302,22 @@ export async function POST(req: Request) {
         isNorwegianDomain(item.domain);
       if (!likelyNorwegian) continue;
 
-      const seeded = item.query.startsWith("seed:");
       const contentLooksRelevant = looksRelevantToAIMarketingArticle({
         title: extracted.title ?? item.title,
         excerpt: extracted.excerpt ?? item.snippet,
         plainText: extracted.plainText,
       });
-      if (!seeded && !contentLooksRelevant) {
+      if (!contentLooksRelevant) {
         skippedIrrelevant += 1;
         continue;
       }
 
-      if (!seeded && isOlderThanDays(extracted.publishedAt, maxArticleAgeDays)) {
+      if (isOlderThanDays(extracted.publishedAt, maxArticleAgeDays)) {
         skippedTooOld += 1;
         continue;
       }
 
-      if (!seeded && minPublishedAtTs > 0) {
+      if (minPublishedAtTs > 0) {
         const publishedTs = parseTimestamp(extracted.publishedAt);
         if (publishedTs > 0) {
           if (publishedTs <= minPublishedAtTs) {
