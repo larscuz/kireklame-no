@@ -44,9 +44,9 @@ export default function StereoscopicViewerWheel({ items }: { items: ShowreelItem
   const sectionRef = useRef<HTMLElement | null>(null);
   const dragRef = useRef<DragState>({ active: false, startX: 0, startRotation: 0 });
   const smoothSpinTimerRef = useRef<number | null>(null);
-  const [scrollRotation, setScrollRotation] = useState(0);
+  const spinLockRef = useRef(false);
+  const wheelDeltaAccumulatorRef = useRef(0);
   const [manualRotation, setManualRotation] = useState(0);
-  const [scrollProgress, setScrollProgress] = useState(0);
   const [reducedMotion, setReducedMotion] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [animateSpin, setAnimateSpin] = useState(false);
@@ -54,16 +54,19 @@ export default function StereoscopicViewerWheel({ items }: { items: ShowreelItem
 
   const count = items.length;
   const step = count > 0 ? 360 / count : 0;
-  const rotation = scrollRotation + manualRotation;
+  const rotation = manualRotation;
   const activeIndex = count > 0 ? mod(Math.round(-rotation / step), count) : 0;
   const activeItem = items[activeIndex] ?? null;
+  const wheelProgress = count > 0 ? (activeIndex + 1) / count : 0;
   const wheelLayerStyle = {
     "--reel-radius": "clamp(340px, 52vh, 640px)",
     "--wheel-center-y": "calc(50% + var(--reel-radius))",
   } as CSSProperties;
 
   function rotateBySteps(steps: number, smooth = true) {
-    if (!step) return;
+    if (!step || !steps) return;
+    if (spinLockRef.current) return;
+    spinLockRef.current = true;
     if (smooth && !reducedMotion) {
       setAnimateSpin(true);
       if (smoothSpinTimerRef.current) {
@@ -71,10 +74,12 @@ export default function StereoscopicViewerWheel({ items }: { items: ShowreelItem
       }
       smoothSpinTimerRef.current = window.setTimeout(() => {
         setAnimateSpin(false);
+        spinLockRef.current = false;
         smoothSpinTimerRef.current = null;
       }, 420);
     } else {
       setAnimateSpin(false);
+      spinLockRef.current = false;
     }
     setManualRotation((prev) => prev - steps * step);
   }
@@ -98,42 +103,6 @@ export default function StereoscopicViewerWheel({ items }: { items: ShowreelItem
   }, []);
 
   useEffect(() => {
-    if (typeof window === "undefined" || count < 2) return;
-    let raf = 0;
-
-    const update = () => {
-      if (!sectionRef.current) return;
-      const rect = sectionRef.current.getBoundingClientRect();
-      const vh = window.innerHeight;
-      const sectionHeight = sectionRef.current.offsetHeight;
-      const start = vh * 0.08;
-      const end = Math.max(1, sectionHeight - vh * 0.84);
-      const traveled = clamp(start - rect.top, 0, end);
-      const progress = clamp(traveled / end, 0, 1);
-      const turns = reducedMotion ? 1 : Math.max(2.2, Math.min(8.2, count * 0.48));
-      setScrollProgress(progress);
-      setScrollRotation(progress * turns * 360);
-    };
-
-    const onScroll = () => {
-      if (raf) return;
-      raf = requestAnimationFrame(() => {
-        raf = 0;
-        update();
-      });
-    };
-
-    update();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll);
-    return () => {
-      if (raf) cancelAnimationFrame(raf);
-      window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onScroll);
-    };
-  }, [count, reducedMotion]);
-
-  useEffect(() => {
     if (count < 2) return;
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.key === "ArrowLeft") {
@@ -153,6 +122,7 @@ export default function StereoscopicViewerWheel({ items }: { items: ShowreelItem
       if (smoothSpinTimerRef.current) {
         window.clearTimeout(smoothSpinTimerRef.current);
       }
+      spinLockRef.current = false;
     },
     []
   );
@@ -206,8 +176,8 @@ export default function StereoscopicViewerWheel({ items }: { items: ShowreelItem
               const angle = idx * step;
               const absoluteAngle = mod(angle + rotation, 360);
               const distanceFromTop = angularDistanceFromTop(absoluteAngle);
-              const showSlot = distanceFromTop <= step * 0.82;
-              const playVideo = distanceFromTop <= step * 0.82;
+              const showSlot = distanceFromTop < step * 0.49;
+              const playVideo = showSlot;
               const z = 2000 - Math.round(distanceFromTop * 10);
               return (
                 <article
@@ -215,7 +185,7 @@ export default function StereoscopicViewerWheel({ items }: { items: ShowreelItem
                   className="absolute left-1/2 top-1/2"
                   style={{
                     transform: `translate(-50%, -50%) rotate(${angle}deg) translateY(calc(var(--reel-radius) * -1))`,
-                    opacity: showSlot ? 1 - distanceFromTop / (step * 0.82) : 0,
+                    opacity: showSlot ? 1 : 0,
                     zIndex: z,
                   }}
                 >
@@ -258,8 +228,13 @@ export default function StereoscopicViewerWheel({ items }: { items: ShowreelItem
           className="absolute left-1/2 top-1/2 z-40 h-[min(84vh,920px)] w-[min(96vw,1540px)] -translate-x-1/2 -translate-y-1/2 cursor-grab touch-pan-y active:cursor-grabbing"
           onWheel={(e) => {
             e.preventDefault();
-            setAnimateSpin(false);
-            setManualRotation((prev) => prev - (e.deltaY + e.deltaX) * 0.11);
+            if (spinLockRef.current) return;
+            wheelDeltaAccumulatorRef.current += e.deltaY + e.deltaX;
+            const threshold = 44;
+            if (Math.abs(wheelDeltaAccumulatorRef.current) < threshold) return;
+            const direction = Math.sign(wheelDeltaAccumulatorRef.current);
+            wheelDeltaAccumulatorRef.current = 0;
+            rotateBySteps(direction, true);
           }}
           onPointerDown={(e) => {
             dragRef.current = {
@@ -278,12 +253,16 @@ export default function StereoscopicViewerWheel({ items }: { items: ShowreelItem
           onPointerUp={(e) => {
             dragRef.current.active = false;
             setIsDragging(false);
+            spinLockRef.current = false;
+            wheelDeltaAccumulatorRef.current = 0;
             setManualRotation((prev) => (step ? Math.round(prev / step) * step : prev));
             e.currentTarget.releasePointerCapture(e.pointerId);
           }}
           onPointerCancel={() => {
             dragRef.current.active = false;
             setIsDragging(false);
+            spinLockRef.current = false;
+            wheelDeltaAccumulatorRef.current = 0;
             setManualRotation((prev) => (step ? Math.round(prev / step) * step : prev));
           }}
         />
@@ -419,7 +398,7 @@ export default function StereoscopicViewerWheel({ items }: { items: ShowreelItem
 
           <div className="mt-1 flex items-center justify-between gap-2 text-[10px] text-white/70 md:text-xs">
             <span>{isDragging ? "DRAGGING" : "SCROLL / DRAG"}</span>
-            <span>{Math.round(scrollProgress * 100)}%</span>
+            <span>{Math.round(wheelProgress * 100)}%</span>
           </div>
         </aside>
       </div>
