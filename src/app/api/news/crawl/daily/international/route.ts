@@ -99,7 +99,7 @@ async function resolveSinceLastInternationalCrawl(): Promise<string | null> {
 async function payloadFromRequest(req: Request): Promise<DailyCrawlPayload> {
   const params = new URL(req.url).searchParams;
   const freshOnly = parseBooleanParam(params.get("freshOnly"), true);
-  const strictFresh = parseBooleanParam(params.get("strictFresh"), true);
+  const strictFresh = parseBooleanParam(params.get("strictFresh"), false);
   const explicitMinPublishedAt = String(params.get("minPublishedAt") ?? "").trim();
 
   let minPublishedAt: string | null = null;

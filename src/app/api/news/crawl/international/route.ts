@@ -296,8 +296,7 @@ export async function POST(req: Request) {
         text: extracted.plainText,
       });
       const basePerspective = classifyPerspective(combinedText);
-      const keepAsInternational =
-        ["ai_only", "ai_first"].includes(classification.label) || basePerspective === "critical";
+      const keepAsInternational = looksRelevantToInternationalAIAgency(combinedText);
       if (!keepAsInternational) continue;
 
       if (minPublishedAtTs > 0) {

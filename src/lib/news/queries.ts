@@ -17,6 +17,9 @@ const PRIORITY_NEWS_QUERIES: string[] = [
   "site:kom24.no dentsu KI",
   "site:kampanje.com KI byrå",
   "site:medier24.no KI reklame",
+  "site:m24.no KI reklame",
+  "site:m24.no KI byrå",
+  "site:kode24.no KI reklamebyrå",
 ];
 
 const CORE_NEWS_QUERIES: string[] = [
@@ -55,7 +58,12 @@ const SOURCE_FOCUSED_QUERIES: string[] = [
   "site:kampanje.com KI byrå",
   "site:kampanje.com KI kritikk",
   "site:medier24.no KI reklame",
+  "site:m24.no KI reklame",
+  "site:m24.no KI medie",
+  "site:m24.no KI stemme",
   "site:kode24.no AI reklame",
+  "site:kode24.no KI kompetanse",
+  "site:kode24.no reklamebyrå KI",
   "site:cw.no KI markedsføring",
   "site:digi.no KI reklame",
   "site:digitalnorway.com KI markedsføring",

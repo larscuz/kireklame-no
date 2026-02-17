@@ -36,6 +36,10 @@ export const INTERNATIONAL_NEWS_QUERIES: string[] = [
   "site:thebrandtechgroup.com gen ai ad agency",
   "site:omneky.com advertising agents",
   "site:ain.ua AI-only agency",
+  "site:martech.org AI ads",
+  "site:martech.org OpenAI Google AI ads",
+  "site:mezha.ua AI ads",
+  "site:kmjournal.net AI ads",
 ];
 
 export const INTERNATIONAL_NEWS_SEED_URLS: string[] = [
@@ -82,6 +86,9 @@ export const INTERNATIONAL_NEWS_SEED_URLS: string[] = [
   "https://www.omneky.com/fr/newsroom/omneky-launches-ai-powered-advertising-agents-to-revolutionize-campaign-management",
   "https://10kr.co/",
   "https://thebrandtechgroup.com/",
+  "https://mezha.ua/en/news/ai-companies-are-spending-more-on-ads-than-ever-308561/",
+  "https://martech.org/openai-and-google-reveal-competing-visions-for-ai-ads/",
+  "https://www.kmjournal.net/news/articleView.html?idxno=8566",
 ];
 
 const AI_ONLY_PATTERNS = [
@@ -123,6 +130,11 @@ const AGENCY_PATTERNS = [
 
 const MARKETING_PATTERNS = [
   /\badvertis/i,
+  /\bads?\b/i,
+  /\badtech\b/i,
+  /\bmartech\b/i,
+  /\bmedia\b/i,
+  /\bbroadcast/i,
   /\bcreative\b/i,
   /\bmarketing\b/i,
   /\bbrand\b/i,
@@ -206,12 +218,12 @@ export function classifyInternationalAIAgency(args: {
     };
   }
 
-  if (aiHits > 0 && agencyHits > 0) {
+  if (aiHits > 0 && (agencyHits > 0 || marketHits > 0)) {
     return {
       label: "unclear",
       ai_intensity_score: 52,
       confidence: 0.45,
-      reasons: ["Mentions AI and agency, but lacks explicit AI-first evidence."],
+      reasons: ["Mentions AI in agency/marketing context, but lacks explicit AI-first evidence."],
     };
   }
 
