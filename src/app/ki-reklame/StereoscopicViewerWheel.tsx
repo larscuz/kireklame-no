@@ -57,7 +57,8 @@ export default function StereoscopicViewerWheel({ items }: { items: ShowreelItem
   const wheelProgress = count > 0 ? (activeIndex + 1) / count : 0;
   const wheelLayerStyle = {
     "--reel-radius": "clamp(340px, 52vh, 640px)",
-    "--wheel-center-y": "calc(50% + var(--reel-radius))",
+    "--viewer-center-y": "45.5%",
+    "--wheel-center-y": "calc(var(--viewer-center-y) + var(--reel-radius))",
   } as CSSProperties;
 
   function rotateBySteps(steps: number, smooth = true) {
@@ -151,43 +152,28 @@ export default function StereoscopicViewerWheel({ items }: { items: ShowreelItem
     []
   );
 
-  const ambientMedia = activeItem?.thumbnailUrl || activeItem?.videoUrl || null;
+  const ambientMedia = activeItem?.thumbnailUrl || null;
 
   return (
     <section className="relative h-[100dvh] overflow-hidden">
-      <div className="sticky top-0 h-[100dvh] overflow-hidden bg-[#020611] text-white">
+      <div className="sticky top-0 h-[100dvh] overflow-hidden bg-[#020611] text-white" style={wheelLayerStyle}>
         {ambientMedia ? (
           <div className="pointer-events-none absolute inset-0 overflow-hidden">
-            {activeItem?.thumbnailUrl ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src={ambientMedia} alt="" className="h-full w-full scale-105 object-cover opacity-32 blur-[4px]" />
-            ) : (
-              <video
-                src={ambientMedia}
-                muted
-                loop
-                autoPlay
-                playsInline
-                preload="metadata"
-                className="h-full w-full scale-105 object-cover opacity-32 blur-[4px]"
-              />
-            )}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={ambientMedia} alt="" className="h-full w-full scale-105 object-cover opacity-28 blur-[4px]" />
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_36%,rgba(35,71,143,.2),transparent_48%),linear-gradient(180deg,rgba(2,6,14,.3),rgba(2,5,12,.86))]" />
           </div>
         ) : null}
 
         <div
           className="pointer-events-none absolute left-1/2 top-[var(--wheel-center-y)] h-[max(210vw,210vh)] w-[max(210vw,210vh)] -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/16 bg-[radial-gradient(circle_at_50%_40%,rgba(13,29,63,.86),rgba(2,6,14,.97)_68%)] shadow-[inset_0_0_0_2px_rgba(255,255,255,.05)]"
-          style={wheelLayerStyle}
         />
         <div
           className="pointer-events-none absolute left-1/2 top-[var(--wheel-center-y)] h-[max(190vw,190vh)] w-[max(190vw,190vh)] -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/10"
-          style={wheelLayerStyle}
         />
 
         <div
-          className="pointer-events-none absolute left-1/2 top-[var(--wheel-center-y)] h-[max(210vw,210vh)] w-[max(210vw,210vh)] -translate-x-1/2 -translate-y-1/2"
-          style={wheelLayerStyle}
+          className="pointer-events-none absolute left-1/2 top-[var(--wheel-center-y)] z-20 h-[max(210vw,210vh)] w-[max(210vw,210vh)] -translate-x-1/2 -translate-y-1/2"
         >
           <div
             className="absolute inset-0"
@@ -208,7 +194,7 @@ export default function StereoscopicViewerWheel({ items }: { items: ShowreelItem
                   : signed > 0 && distanceFromTop <= step * 1.12 && distanceFromTop >= step * 0.5;
               const showSlot = isTop || comingFromSide;
               const playVideo = showSlot;
-              const z = isTop ? 4000 : 2000 - Math.round(distanceFromTop * 10);
+              const z = isTop ? 2 : 1;
               return (
                 <article
                   key={`ring-${item.id}`}
@@ -243,19 +229,19 @@ export default function StereoscopicViewerWheel({ items }: { items: ShowreelItem
           </div>
         </div>
 
-        <div className="pointer-events-none absolute left-1/2 top-1/2 z-30 h-[min(84vh,920px)] w-[min(96vw,1540px)] -translate-x-1/2 -translate-y-1/2 rounded-[clamp(18px,2.8vw,42px)] border border-white/26">
+        <div className="pointer-events-none absolute left-1/2 top-[var(--viewer-center-y)] z-30 h-[min(84vh,920px)] w-[min(96vw,1540px)] -translate-x-1/2 -translate-y-1/2 rounded-[clamp(18px,2.8vw,42px)] border border-white/26">
           <div
             className="absolute inset-0 rounded-[inherit]"
             style={{
               boxShadow:
-                "0 0 0 120vmax rgba(1,4,11,0.82), inset 0 0 0 1px rgba(255,255,255,.16), inset 0 0 120px rgba(0,0,0,.26)",
+                "0 0 0 120vmax rgba(1,4,11,0.97), inset 0 0 0 1px rgba(255,255,255,.16), inset 0 0 120px rgba(0,0,0,.26)",
             }}
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/64 via-transparent to-black/16" />
         </div>
 
         <div
-          className="absolute left-1/2 top-1/2 z-40 h-[min(84vh,920px)] w-[min(96vw,1540px)] -translate-x-1/2 -translate-y-1/2 cursor-grab touch-pan-y active:cursor-grabbing"
+          className="absolute left-1/2 top-[var(--viewer-center-y)] z-40 h-[min(84vh,920px)] w-[min(96vw,1540px)] -translate-x-1/2 -translate-y-1/2 cursor-grab touch-pan-y active:cursor-grabbing"
           onWheel={(e) => {
             e.preventDefault();
             if (spinLockRef.current) return;
