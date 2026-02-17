@@ -24,11 +24,11 @@ export default async function Topbar() {
         <Link href={localizePath(locale, "/")} className="flex items-center gap-2 group">
           <div className="h-9 w-9 rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] grid place-items-center shadow-soft group-hover:shadow-lift transition overflow-hidden">
             <img
-              src="/logo-mark.svg"
+              src="/KiR_logo_White.png"
               alt="KiReklame"
               width={36}
               height={36}
-              className="h-6 w-6"
+              className="h-8 w-8 object-contain"
             />
           </div>
           <div className="leading-tight">

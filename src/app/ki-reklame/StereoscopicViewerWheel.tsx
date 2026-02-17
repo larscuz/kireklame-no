@@ -59,7 +59,7 @@ export default function StereoscopicViewerWheel({ items }: { items: ShowreelItem
   const wheelProgress = count > 0 ? (activeIndex + 1) / count : 0;
   const wheelLayerStyle = {
     "--reel-radius": "clamp(340px, 52vh, 640px)",
-    "--viewer-center-y": "45%",
+    "--viewer-center-y": "46.2%",
     "--wheel-center-y": "calc(var(--viewer-center-y) + var(--reel-radius))",
   } as CSSProperties;
 
