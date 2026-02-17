@@ -19,6 +19,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${site}/annonsere`, changeFrequency: "weekly", priority: 0.8 },
     { url: `${site}/selskaper`, changeFrequency: "daily", priority: 0.9 },
     { url: `${site}/andre-ki-tjenester`, changeFrequency: "weekly", priority: 0.7 },
+    { url: `${site}/ki-reklame`, changeFrequency: "daily", priority: 0.9 },
     { url: `${site}/ki-reklamebyra`, changeFrequency: "weekly", priority: 0.8 },
     { url: `${site}/ai-video`, changeFrequency: "weekly", priority: 0.8 },
     { url: `${site}/ki-markedsforing`, changeFrequency: "weekly", priority: 0.8 },

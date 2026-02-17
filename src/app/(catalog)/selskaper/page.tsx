@@ -172,6 +172,12 @@ export default async function CompaniesPage({
         </div>
         <div className="mt-2 flex flex-wrap gap-2 text-sm">
           <Link
+            href={localizePath(locale, "/ki-reklame")}
+            className="rounded-full border border-[rgb(var(--border))] bg-[rgb(var(--bg))] px-3 py-1.5 text-[rgb(var(--fg))] hover:opacity-80 transition"
+          >
+            {locale === "en" ? "AI advertising showreel" : "KI-reklame showreel"}
+          </Link>
+          <Link
             href={localizePath(locale, "/ki-reklamebyra")}
             className="rounded-full border border-[rgb(var(--border))] bg-[rgb(var(--bg))] px-3 py-1.5 text-[rgb(var(--fg))] hover:opacity-80 transition"
           >
