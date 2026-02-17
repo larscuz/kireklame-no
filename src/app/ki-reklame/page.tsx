@@ -13,6 +13,9 @@ type ReelItem = {
   href: string;
   videoUrl: string;
   description?: string | null;
+  thumbnailUrl?: string | null;
+  eyebrow?: string | null;
+  ctaLabel?: string | null;
 };
 
 function getMp4Url(raw: string | null | undefined): string | null {
@@ -54,6 +57,9 @@ function parseCloudflareShowreels(locale: Locale): ReelItem[] {
     const ref = parts[0] ?? "";
     const explicitName = parts[1] ?? "";
     const explicitHref = parts[2] ?? "";
+    const explicitThumb = parts[3] ?? "";
+    const explicitEyebrow = parts[4] ?? "";
+    const explicitCta = parts[5] ?? "";
     if (!ref) continue;
 
     const resolvedUrl =
@@ -64,6 +70,12 @@ function parseCloudflareShowreels(locale: Locale): ReelItem[] {
           : "";
     const videoUrl = getMp4Url(resolvedUrl);
     if (!videoUrl) continue;
+    const thumbCandidate =
+      /^https?:\/\//i.test(explicitThumb)
+        ? explicitThumb
+        : explicitThumb && baseDir
+          ? `${baseDir}/${explicitThumb.replace(/^\/+/, "")}`
+          : null;
 
     out.push({
       id: `cf-${idx}`,
@@ -71,6 +83,9 @@ function parseCloudflareShowreels(locale: Locale): ReelItem[] {
       href: explicitHref || fallbackHref || localizePath(locale, "/kontakt"),
       videoUrl,
       description: defaultDescription,
+      thumbnailUrl: thumbCandidate,
+      eyebrow: explicitEyebrow || "Cloudflare",
+      ctaLabel: explicitCta || null,
     });
   }
 
@@ -91,6 +106,7 @@ export default async function KiReklamePage() {
     getCompanies({}, { market: "intl" }),
   ]);
   const companies = [...noCompanies, ...intlCompanies];
+  const intlIds = new Set(intlCompanies.map((company) => company.id));
   const cloudflareItems = parseCloudflareShowreels(locale);
 
   const seen = new Set<string>();
@@ -106,12 +122,20 @@ export default async function KiReklamePage() {
     const videoUrl = getMp4Url(company.video_url ?? null);
     if (!videoUrl || seen.has(videoUrl)) continue;
     seen.add(videoUrl);
+    const isIntl = intlIds.has(company.id);
     reelItems.push({
       id: company.id,
       name: company.name,
       href: localizePath(locale, `/selskap/${company.slug}`),
       videoUrl,
       description: company.short_description ?? null,
+      thumbnailUrl: company.cover_image ?? null,
+      eyebrow: isIntl
+        ? locale === "en"
+          ? "International"
+          : "Internasjonalt"
+        : company.location?.name ?? (locale === "en" ? "Norway" : "Norge"),
+      ctaLabel: locale === "en" ? "View case" : "Åpne case",
     });
   }
 
