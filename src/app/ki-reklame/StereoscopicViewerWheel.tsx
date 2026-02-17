@@ -45,7 +45,9 @@ export default function StereoscopicViewerWheel({ items }: { items: ShowreelItem
   const dragRef = useRef<DragState>({ active: false, startX: 0, startRotation: 0 });
   const smoothSpinTimerRef = useRef<number | null>(null);
   const spinLockRef = useRef(false);
-  const wheelDeltaAccumulatorRef = useRef(0);
+  const wheelGestureActiveRef = useRef(false);
+  const wheelGestureReleaseTimerRef = useRef<number | null>(null);
+  const spinDirectionRef = useRef<1 | -1>(1);
   const [manualRotation, setManualRotation] = useState(0);
   const [reducedMotion, setReducedMotion] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
@@ -66,6 +68,7 @@ export default function StereoscopicViewerWheel({ items }: { items: ShowreelItem
   function rotateBySteps(steps: number, smooth = true) {
     if (!step || !steps) return;
     if (spinLockRef.current) return;
+    spinDirectionRef.current = steps >= 0 ? 1 : -1;
     spinLockRef.current = true;
     if (smooth && !reducedMotion) {
       setAnimateSpin(true);
@@ -122,7 +125,11 @@ export default function StereoscopicViewerWheel({ items }: { items: ShowreelItem
       if (smoothSpinTimerRef.current) {
         window.clearTimeout(smoothSpinTimerRef.current);
       }
+      if (wheelGestureReleaseTimerRef.current) {
+        window.clearTimeout(wheelGestureReleaseTimerRef.current);
+      }
       spinLockRef.current = false;
+      wheelGestureActiveRef.current = false;
     },
     []
   );
@@ -175,10 +182,16 @@ export default function StereoscopicViewerWheel({ items }: { items: ShowreelItem
             {items.map((item, idx) => {
               const angle = idx * step;
               const absoluteAngle = mod(angle + rotation, 360);
-              const distanceFromTop = angularDistanceFromTop(absoluteAngle);
-              const showSlot = distanceFromTop < step * 0.49;
+              const signed = mod(absoluteAngle + 180, 360) - 180;
+              const distanceFromTop = Math.abs(signed);
+              const isTop = distanceFromTop < step * 0.5;
+              const comingFromSide =
+                spinDirectionRef.current > 0
+                  ? signed < 0 && distanceFromTop <= step * 1.12 && distanceFromTop >= step * 0.5
+                  : signed > 0 && distanceFromTop <= step * 1.12 && distanceFromTop >= step * 0.5;
+              const showSlot = isTop || comingFromSide;
               const playVideo = showSlot;
-              const z = 2000 - Math.round(distanceFromTop * 10);
+              const z = isTop ? 4000 : 2000 - Math.round(distanceFromTop * 10);
               return (
                 <article
                   key={`ring-${item.id}`}
@@ -229,11 +242,18 @@ export default function StereoscopicViewerWheel({ items }: { items: ShowreelItem
           onWheel={(e) => {
             e.preventDefault();
             if (spinLockRef.current) return;
-            wheelDeltaAccumulatorRef.current += e.deltaY + e.deltaX;
-            const threshold = 44;
-            if (Math.abs(wheelDeltaAccumulatorRef.current) < threshold) return;
-            const direction = Math.sign(wheelDeltaAccumulatorRef.current);
-            wheelDeltaAccumulatorRef.current = 0;
+            const delta = e.deltaY + e.deltaX;
+            if (Math.abs(delta) < 12) return;
+            if (wheelGestureReleaseTimerRef.current) {
+              window.clearTimeout(wheelGestureReleaseTimerRef.current);
+            }
+            wheelGestureReleaseTimerRef.current = window.setTimeout(() => {
+              wheelGestureActiveRef.current = false;
+              wheelGestureReleaseTimerRef.current = null;
+            }, 200);
+            if (wheelGestureActiveRef.current) return;
+            wheelGestureActiveRef.current = true;
+            const direction = delta > 0 ? 1 : -1;
             rotateBySteps(direction, true);
           }}
           onPointerDown={(e) => {
@@ -242,6 +262,11 @@ export default function StereoscopicViewerWheel({ items }: { items: ShowreelItem
               startX: e.clientX,
               startRotation: manualRotation,
             };
+            wheelGestureActiveRef.current = false;
+            if (wheelGestureReleaseTimerRef.current) {
+              window.clearTimeout(wheelGestureReleaseTimerRef.current);
+              wheelGestureReleaseTimerRef.current = null;
+            }
             setIsDragging(true);
             e.currentTarget.setPointerCapture(e.pointerId);
           }}
@@ -254,7 +279,11 @@ export default function StereoscopicViewerWheel({ items }: { items: ShowreelItem
             dragRef.current.active = false;
             setIsDragging(false);
             spinLockRef.current = false;
-            wheelDeltaAccumulatorRef.current = 0;
+            wheelGestureActiveRef.current = false;
+            if (wheelGestureReleaseTimerRef.current) {
+              window.clearTimeout(wheelGestureReleaseTimerRef.current);
+              wheelGestureReleaseTimerRef.current = null;
+            }
             setManualRotation((prev) => (step ? Math.round(prev / step) * step : prev));
             e.currentTarget.releasePointerCapture(e.pointerId);
           }}
@@ -262,7 +291,11 @@ export default function StereoscopicViewerWheel({ items }: { items: ShowreelItem
             dragRef.current.active = false;
             setIsDragging(false);
             spinLockRef.current = false;
-            wheelDeltaAccumulatorRef.current = 0;
+            wheelGestureActiveRef.current = false;
+            if (wheelGestureReleaseTimerRef.current) {
+              window.clearTimeout(wheelGestureReleaseTimerRef.current);
+              wheelGestureReleaseTimerRef.current = null;
+            }
             setManualRotation((prev) => (step ? Math.round(prev / step) * step : prev));
           }}
         />
