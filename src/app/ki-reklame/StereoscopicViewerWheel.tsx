@@ -29,6 +29,11 @@ function clamp(n: number, min: number, max: number): number {
   return Math.max(min, Math.min(max, n));
 }
 
+function angularDistanceFromTop(angle: number): number {
+  const normalized = mod(angle, 360);
+  return Math.min(normalized, 360 - normalized);
+}
+
 function shorten(text: string, max = 12): string {
   const value = String(text ?? "").trim();
   if (value.length <= max) return value;
@@ -173,17 +178,33 @@ export default function StereoscopicViewerWheel({ items }: { items: ShowreelItem
           >
             {items.map((item, idx) => {
               const angle = idx * step;
+              const absoluteAngle = mod(angle + rotation, 360);
+              const distanceFromTop = angularDistanceFromTop(absoluteAngle);
+              const showSlot = distanceFromTop <= step * 1.35;
+              const playVideo = distanceFromTop <= step * 1.05;
+              const z = 2000 - Math.round(distanceFromTop * 10);
               return (
                 <article
                   key={`ring-${item.id}`}
                   className="absolute left-1/2 top-1/2"
                   style={{
                     transform: `translate(-50%, -50%) rotate(${angle}deg) translateY(calc(var(--reel-radius) * -1))`,
-                    opacity: 0.65,
+                    opacity: showSlot ? 1 : 0,
+                    zIndex: z,
                   }}
                 >
-                  <div className="h-[clamp(90px,10vw,170px)] w-[clamp(84px,9vw,150px)] overflow-hidden rounded-[14px] border border-white/22 bg-black/65 shadow-[0_10px_24px_rgba(0,0,0,.35)]">
-                    {item.thumbnailUrl ? (
+                  <div className="h-[min(84vh,920px)] w-[min(96vw,1540px)] overflow-hidden rounded-[clamp(18px,2.8vw,42px)] border border-white/24 bg-black shadow-[0_18px_46px_rgba(0,0,0,.5)]">
+                    {playVideo ? (
+                      <video
+                        src={item.videoUrl}
+                        muted
+                        loop
+                        autoPlay
+                        playsInline
+                        preload="metadata"
+                        className="h-full w-full object-cover"
+                      />
+                    ) : item.thumbnailUrl ? (
                       // eslint-disable-next-line @next/next/no-img-element
                       <img src={item.thumbnailUrl} alt="" loading="lazy" className="h-full w-full object-cover" />
                     ) : (
@@ -196,7 +217,7 @@ export default function StereoscopicViewerWheel({ items }: { items: ShowreelItem
           </div>
         </div>
 
-        <div className="pointer-events-none absolute left-1/2 top-1/2 z-20 h-[min(84vh,920px)] w-[min(96vw,1540px)] -translate-x-1/2 -translate-y-1/2 rounded-[clamp(18px,2.8vw,42px)] border border-white/26">
+        <div className="pointer-events-none absolute left-1/2 top-1/2 z-30 h-[min(84vh,920px)] w-[min(96vw,1540px)] -translate-x-1/2 -translate-y-1/2 rounded-[clamp(18px,2.8vw,42px)] border border-white/26">
           <div
             className="absolute inset-0 rounded-[inherit]"
             style={{
@@ -204,22 +225,7 @@ export default function StereoscopicViewerWheel({ items }: { items: ShowreelItem
                 "0 0 0 120vmax rgba(1,4,11,0.82), inset 0 0 0 1px rgba(255,255,255,.16), inset 0 0 120px rgba(0,0,0,.26)",
             }}
           />
-        </div>
-
-        <div className="absolute left-1/2 top-1/2 z-30 h-[min(84vh,920px)] w-[min(96vw,1540px)] -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-[clamp(18px,2.8vw,42px)] border border-white/28 bg-black">
-          {activeItem ? (
-            <video
-              key={activeItem.id}
-              src={activeItem.videoUrl}
-              muted
-              loop
-              autoPlay
-              playsInline
-              preload="metadata"
-              className="h-full w-full object-cover"
-            />
-          ) : null}
-          <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/64 via-transparent to-black/16" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/64 via-transparent to-black/16" />
         </div>
 
         <div
