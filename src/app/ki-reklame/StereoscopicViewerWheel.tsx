@@ -25,10 +25,6 @@ function mod(n: number, m: number): number {
   return ((n % m) + m) % m;
 }
 
-function clamp(n: number, min: number, max: number): number {
-  return Math.max(min, Math.min(max, n));
-}
-
 function angularDistanceFromTop(angle: number): number {
   const normalized = mod(angle, 360);
   return Math.min(normalized, 360 - normalized);
@@ -41,7 +37,6 @@ function shorten(text: string, max = 12): string {
 }
 
 export default function StereoscopicViewerWheel({ items }: { items: ShowreelItem[] }) {
-  const sectionRef = useRef<HTMLElement | null>(null);
   const dragRef = useRef<DragState>({ active: false, startX: 0, startRotation: 0 });
   const smoothSpinTimerRef = useRef<number | null>(null);
   const spinLockRef = useRef(false);
@@ -106,6 +101,28 @@ export default function StereoscopicViewerWheel({ items }: { items: ShowreelItem
   }, []);
 
   useEffect(() => {
+    if (typeof window === "undefined") return;
+    const html = document.documentElement;
+    const body = document.body;
+    const prevHtmlOverflow = html.style.overflow;
+    const prevBodyOverflow = body.style.overflow;
+    const prevHtmlOverscroll = html.style.overscrollBehavior;
+    const prevBodyOverscroll = body.style.overscrollBehavior;
+
+    html.style.overflow = "hidden";
+    body.style.overflow = "hidden";
+    html.style.overscrollBehavior = "none";
+    body.style.overscrollBehavior = "none";
+
+    return () => {
+      html.style.overflow = prevHtmlOverflow;
+      body.style.overflow = prevBodyOverflow;
+      html.style.overscrollBehavior = prevHtmlOverscroll;
+      body.style.overscrollBehavior = prevBodyOverscroll;
+    };
+  }, []);
+
+  useEffect(() => {
     if (count < 2) return;
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.key === "ArrowLeft") {
@@ -137,7 +154,7 @@ export default function StereoscopicViewerWheel({ items }: { items: ShowreelItem
   const ambientMedia = activeItem?.thumbnailUrl || activeItem?.videoUrl || null;
 
   return (
-    <section ref={sectionRef} className="relative min-h-[320vh]">
+    <section className="relative h-[100dvh] overflow-hidden">
       <div className="sticky top-0 h-[100dvh] overflow-hidden bg-[#020611] text-white">
         {ambientMedia ? (
           <div className="pointer-events-none absolute inset-0 overflow-hidden">
@@ -250,7 +267,7 @@ export default function StereoscopicViewerWheel({ items }: { items: ShowreelItem
             wheelGestureReleaseTimerRef.current = window.setTimeout(() => {
               wheelGestureActiveRef.current = false;
               wheelGestureReleaseTimerRef.current = null;
-            }, 200);
+            }, 480);
             if (wheelGestureActiveRef.current) return;
             wheelGestureActiveRef.current = true;
             const direction = delta > 0 ? 1 : -1;
@@ -298,25 +315,35 @@ export default function StereoscopicViewerWheel({ items }: { items: ShowreelItem
             }
             setManualRotation((prev) => (step ? Math.round(prev / step) * step : prev));
           }}
-        />
-
-        <div className="absolute right-4 top-4 z-50 flex gap-2 md:right-6 md:top-6">
-          <button
-            type="button"
-            onClick={() => rotateBySteps(-1, true)}
-            className="rounded-xl border border-white/25 bg-black/45 px-3 py-2 text-sm font-semibold backdrop-blur hover:bg-black/58"
-            aria-label="Forrige"
-          >
-            ←
-          </button>
-          <button
-            type="button"
-            onClick={() => rotateBySteps(1, true)}
-            className="rounded-xl border border-white/25 bg-black/45 px-3 py-2 text-sm font-semibold backdrop-blur hover:bg-black/58"
-            aria-label="Neste"
-          >
-            →
-          </button>
+        >
+          <div className="absolute right-3 top-3 z-50 flex gap-2 md:right-4 md:top-4">
+            <button
+              type="button"
+              onPointerDown={(e) => e.stopPropagation()}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                rotateBySteps(-1, true);
+              }}
+              className="pointer-events-auto rounded-xl border border-white/25 bg-black/45 px-3 py-2 text-sm font-semibold backdrop-blur hover:bg-black/58"
+              aria-label="Forrige"
+            >
+              ←
+            </button>
+            <button
+              type="button"
+              onPointerDown={(e) => e.stopPropagation()}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                rotateBySteps(1, true);
+              }}
+              className="pointer-events-auto rounded-xl border border-white/25 bg-black/45 px-3 py-2 text-sm font-semibold backdrop-blur hover:bg-black/58"
+              aria-label="Neste"
+            >
+              →
+            </button>
+          </div>
         </div>
 
         {activeItem ? (
