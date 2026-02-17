@@ -24,15 +24,15 @@ export default async function Topbar() {
           <Link href={localizePath(locale, "/")} className="flex items-center gap-2 group">
           <div className="h-9 w-9 rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] grid place-items-center shadow-soft group-hover:shadow-lift transition overflow-hidden">
             <img
-              src="/KIREKLAMElogo.gif"
-              alt="KiReklame"
+              src="/ip-mark.svg"
+              alt="Intelligenspartiet"
               width={36}
               height={36}
               className="h-8 w-8"
             />
           </div>
           <div className="leading-tight">
-            <div className="text-base sm:text-lg font-semibold tracking-tight">KiReklame</div>
+            <div className="text-sm sm:text-lg font-semibold tracking-tight whitespace-nowrap">Intelligenspartiet</div>
           </div>
         </Link>
 
@@ -42,6 +42,10 @@ export default async function Topbar() {
             className="rounded-xl px-3 py-2 text-sm font-medium text-[rgb(var(--fg))] hover:bg-[rgb(var(--muted))]"
           >
             {locale === "en" ? "International" : "Internasjonal"}
+          </Link>
+
+          <Link href={localizePath(locale, "/ki-reklame")} className="hover:opacity-80 transition">
+            Showheel
           </Link>
 
           <Link href={localizePath(locale, "/annonsere")} className="hover:opacity-80 transition">
