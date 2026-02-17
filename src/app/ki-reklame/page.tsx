@@ -86,7 +86,11 @@ export const metadata: Metadata = siteMeta({
 
 export default async function KiReklamePage() {
   const locale = await getLocale();
-  const { companies } = await getCompanies({}, { market: "no" });
+  const [{ companies: noCompanies }, { companies: intlCompanies }] = await Promise.all([
+    getCompanies({}, { market: "no" }),
+    getCompanies({}, { market: "intl" }),
+  ]);
+  const companies = [...noCompanies, ...intlCompanies];
   const cloudflareItems = parseCloudflareShowreels(locale);
 
   const seen = new Set<string>();
@@ -124,7 +128,7 @@ export default async function KiReklamePage() {
           },
           {
             q: "Which videos appear in the wheel?",
-            a: "Companies with a publicly available direct mp4 URL are included and played muted/autoplay where browser rules allow.",
+            a: "Norwegian and international companies with public direct mp4 URLs are included, plus videos you add in the Cloudflare directory.",
           },
         ]
       : [
@@ -138,7 +142,7 @@ export default async function KiReklamePage() {
           },
           {
             q: "Hvilke videoer vises i hjulet?",
-            a: "Vi viser selskaper som har en offentlig direkte mp4-URL. Videoene spilles av med lyd av/autoplay der nettleseren tillater det.",
+            a: "Vi viser norske og internasjonale selskaper med offentlig direkte mp4-URL, pluss videoer du legger i Cloudflare-mappen. Videoene spilles av med lyd av/autoplay der nettleseren tillater det.",
           },
         ];
 
