@@ -37,12 +37,14 @@ function shorten(text: string, max = 12): string {
 }
 
 export default function StereoscopicViewerWheel({ items }: { items: ShowreelItem[] }) {
+  const sectionRef = useRef<HTMLElement | null>(null);
   const dragRef = useRef<DragState>({ active: false, startX: 0, startRotation: 0 });
   const smoothSpinTimerRef = useRef<number | null>(null);
   const spinLockRef = useRef(false);
   const wheelGestureActiveRef = useRef(false);
   const wheelGestureReleaseTimerRef = useRef<number | null>(null);
   const spinDirectionRef = useRef<1 | -1>(1);
+  const [viewportOffsetTop, setViewportOffsetTop] = useState(0);
   const [manualRotation, setManualRotation] = useState(0);
   const [reducedMotion, setReducedMotion] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
@@ -57,7 +59,7 @@ export default function StereoscopicViewerWheel({ items }: { items: ShowreelItem
   const wheelProgress = count > 0 ? (activeIndex + 1) / count : 0;
   const wheelLayerStyle = {
     "--reel-radius": "clamp(340px, 52vh, 640px)",
-    "--viewer-center-y": "45.5%",
+    "--viewer-center-y": "43.5%",
     "--wheel-center-y": "calc(var(--viewer-center-y) + var(--reel-radius))",
   } as CSSProperties;
 
@@ -99,6 +101,18 @@ export default function StereoscopicViewerWheel({ items }: { items: ShowreelItem
     sync();
     media.addEventListener("change", sync);
     return () => media.removeEventListener("change", sync);
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const updateOffset = () => {
+      if (!sectionRef.current) return;
+      const top = sectionRef.current.getBoundingClientRect().top;
+      setViewportOffsetTop(Math.max(0, Math.round(top)));
+    };
+    updateOffset();
+    window.addEventListener("resize", updateOffset);
+    return () => window.removeEventListener("resize", updateOffset);
   }, []);
 
   useEffect(() => {
@@ -152,18 +166,14 @@ export default function StereoscopicViewerWheel({ items }: { items: ShowreelItem
     []
   );
 
-  const ambientMedia = activeItem?.thumbnailUrl || null;
-
   return (
-    <section className="relative h-[100dvh] overflow-hidden">
-      <div className="sticky top-0 h-[100dvh] overflow-hidden bg-[#020611] text-white" style={wheelLayerStyle}>
-        {ambientMedia ? (
-          <div className="pointer-events-none absolute inset-0 overflow-hidden">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={ambientMedia} alt="" className="h-full w-full scale-105 object-cover opacity-28 blur-[4px]" />
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_36%,rgba(35,71,143,.2),transparent_48%),linear-gradient(180deg,rgba(2,6,14,.3),rgba(2,5,12,.86))]" />
-          </div>
-        ) : null}
+    <section
+      ref={sectionRef}
+      className="relative overflow-hidden"
+      style={{ height: `calc(100dvh - ${viewportOffsetTop}px)` }}
+    >
+      <div className="h-full overflow-hidden bg-[#020611] text-white" style={wheelLayerStyle}>
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_36%,rgba(35,71,143,.2),transparent_48%),linear-gradient(180deg,rgba(2,6,14,.32),rgba(2,5,12,.92))]" />
 
         <div
           className="pointer-events-none absolute left-1/2 top-[var(--wheel-center-y)] h-[max(210vw,210vh)] w-[max(210vw,210vh)] -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/16 bg-[radial-gradient(circle_at_50%_40%,rgba(13,29,63,.86),rgba(2,6,14,.97)_68%)] shadow-[inset_0_0_0_2px_rgba(255,255,255,.05)]"
@@ -234,7 +244,7 @@ export default function StereoscopicViewerWheel({ items }: { items: ShowreelItem
             className="absolute inset-0 rounded-[inherit]"
             style={{
               boxShadow:
-                "0 0 0 120vmax rgba(1,4,11,0.97), inset 0 0 0 1px rgba(255,255,255,.16), inset 0 0 120px rgba(0,0,0,.26)",
+                "0 0 0 120vmax rgba(1,4,11,1), inset 0 0 0 1px rgba(255,255,255,.16), inset 0 0 120px rgba(0,0,0,.26)",
             }}
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/64 via-transparent to-black/16" />
@@ -333,7 +343,7 @@ export default function StereoscopicViewerWheel({ items }: { items: ShowreelItem
         </div>
 
         {activeItem ? (
-          <div className="absolute bottom-4 left-4 z-50 max-w-[min(92vw,720px)] rounded-2xl border border-white/16 bg-black/46 p-4 backdrop-blur md:bottom-6 md:left-6 md:p-5">
+          <div className="absolute bottom-6 left-4 z-50 max-w-[min(92vw,720px)] rounded-2xl border border-white/16 bg-black/46 p-4 backdrop-blur md:bottom-8 md:left-6 md:p-5">
             <p className="text-[11px] uppercase tracking-[0.18em] text-white/66">{activeItem.eyebrow || "KiReklame"}</p>
             <h2 className="mt-1 text-[clamp(1.2rem,3.2vw,2.5rem)] font-semibold leading-[1.08]">{activeItem.name}</h2>
             {activeItem.description ? <p className="mt-2 text-sm text-white/82 md:text-base">{activeItem.description}</p> : null}
@@ -348,7 +358,7 @@ export default function StereoscopicViewerWheel({ items }: { items: ShowreelItem
           </div>
         ) : null}
 
-        <aside className="absolute bottom-4 right-4 z-50 w-[min(37vw,260px)] rounded-2xl border border-white/16 bg-black/46 p-2 backdrop-blur md:bottom-6 md:right-6 md:w-[280px] md:p-3">
+        <aside className="absolute bottom-6 right-4 z-50 w-[min(37vw,260px)] rounded-2xl border border-white/16 bg-black/46 p-2 backdrop-blur md:bottom-8 md:right-6 md:w-[280px] md:p-3">
           <svg viewBox="0 0 100 100" className="w-full" role="presentation">
             <defs>
               {items.map((_, idx) => (
