@@ -84,7 +84,7 @@ export default function StereoscopicViewerWheel({ items }: { items: ShowreelItem
       const vh = window.innerHeight;
       const sectionHeight = sectionRef.current.offsetHeight;
       const start = vh * 0.08;
-      const end = Math.max(1, sectionHeight - vh * 0.82);
+      const end = Math.max(1, sectionHeight - vh * 0.84);
       const traveled = clamp(start - rect.top, 0, end);
       const progress = clamp(traveled / end, 0, 1);
       const turns = reducedMotion ? 1 : Math.max(2.2, Math.min(8.2, count * 0.48));
@@ -134,7 +134,7 @@ export default function StereoscopicViewerWheel({ items }: { items: ShowreelItem
           <div className="pointer-events-none absolute inset-0 overflow-hidden">
             {activeItem?.thumbnailUrl ? (
               // eslint-disable-next-line @next/next/no-img-element
-              <img src={ambientMedia} alt="" className="h-full w-full scale-105 object-cover opacity-34 blur-[3px]" />
+              <img src={ambientMedia} alt="" className="h-full w-full scale-105 object-cover opacity-32 blur-[4px]" />
             ) : (
               <video
                 src={ambientMedia}
@@ -143,60 +143,40 @@ export default function StereoscopicViewerWheel({ items }: { items: ShowreelItem
                 autoPlay
                 playsInline
                 preload="metadata"
-                className="h-full w-full scale-105 object-cover opacity-34 blur-[3px]"
+                className="h-full w-full scale-105 object-cover opacity-32 blur-[4px]"
               />
             )}
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_38%,rgba(35,71,143,.22),transparent_48%),linear-gradient(180deg,rgba(2,6,14,.42),rgba(2,5,12,.9))]" />
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_36%,rgba(35,71,143,.2),transparent_48%),linear-gradient(180deg,rgba(2,6,14,.3),rgba(2,5,12,.86))]" />
           </div>
         ) : null}
 
         <div
-          className="pointer-events-none absolute left-1/2 top-[68%] h-[max(190vw,190vh)] w-[max(190vw,190vh)] -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/18 bg-[radial-gradient(circle_at_50%_38%,rgba(11,24,53,.88),rgba(3,7,17,.98)_70%)] shadow-[inset_0_0_0_2px_rgba(255,255,255,.06)]"
-          style={{ "--reel-radius": "clamp(310px, 44vw, 700px)" } as CSSProperties}
+          className="pointer-events-none absolute left-1/2 top-[74%] h-[max(210vw,210vh)] w-[max(210vw,210vh)] -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/16 bg-[radial-gradient(circle_at_50%_40%,rgba(13,29,63,.86),rgba(2,6,14,.97)_68%)] shadow-[inset_0_0_0_2px_rgba(255,255,255,.05)]"
+          style={{ "--reel-radius": "clamp(340px, 52vh, 640px)" } as CSSProperties}
         />
-        <div className="pointer-events-none absolute left-1/2 top-[68%] h-[max(165vw,165vh)] w-[max(165vw,165vh)] -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/10" />
+        <div className="pointer-events-none absolute left-1/2 top-[74%] h-[max(190vw,190vh)] w-[max(190vw,190vh)] -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/10" />
 
         <div
-          className="pointer-events-none absolute left-1/2 top-[68%] h-[max(190vw,190vh)] w-[max(190vw,190vh)] -translate-x-1/2 -translate-y-1/2"
+          className="pointer-events-none absolute left-1/2 top-[74%] h-[max(210vw,210vh)] w-[max(210vw,210vh)] -translate-x-1/2 -translate-y-1/2"
           style={{ transform: `translate(-50%, -50%) rotate(${rotation}deg)` }}
         >
           {items.map((item, idx) => {
             const angle = idx * step;
-            const isActive = idx === activeIndex;
-
             return (
               <article
-                key={item.id}
+                key={`ring-${item.id}`}
                 className="absolute left-1/2 top-1/2"
-                aria-hidden={!isActive}
                 style={{
                   transform: `translate(-50%, -50%) rotate(${angle}deg) translateY(calc(var(--reel-radius) * -1))`,
-                  opacity: isActive ? 1 : 0,
-                  zIndex: isActive ? 40 : 1,
-                  pointerEvents: "none",
+                  opacity: 0.65,
                 }}
               >
-                <div
-                  className="overflow-hidden rounded-[clamp(18px,2.4vw,36px)] border border-white/28 bg-black shadow-[0_24px_80px_rgba(0,0,0,.55)]"
-                  style={{
-                    width: "clamp(340px, 90vw, 1480px)",
-                    height: "clamp(440px, 86vh, 990px)",
-                    transition: isDragging ? "none" : "opacity 260ms ease",
-                  }}
-                >
-                  {isActive || !item.thumbnailUrl ? (
-                    <video
-                      src={item.videoUrl}
-                      muted
-                      loop
-                      autoPlay
-                      playsInline
-                      preload={isActive ? "metadata" : "none"}
-                      className="h-full w-full object-cover"
-                    />
-                  ) : (
+                <div className="h-[clamp(90px,10vw,170px)] w-[clamp(84px,9vw,150px)] overflow-hidden rounded-[14px] border border-white/22 bg-black/65 shadow-[0_10px_24px_rgba(0,0,0,.35)]">
+                  {item.thumbnailUrl ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img src={item.thumbnailUrl} alt="" loading="lazy" className="h-full w-full object-cover" />
+                  ) : (
+                    <div className="h-full w-full bg-[radial-gradient(circle_at_30%_20%,rgba(189,244,96,.35),rgba(11,26,54,.95))]" />
                   )}
                 </div>
               </article>
@@ -204,19 +184,34 @@ export default function StereoscopicViewerWheel({ items }: { items: ShowreelItem
           })}
         </div>
 
-        <div className="pointer-events-none absolute left-1/2 top-1/2 z-20 h-[min(84vh,920px)] w-[min(96vw,1540px)] -translate-x-1/2 -translate-y-1/2 rounded-[clamp(18px,2.8vw,42px)] border border-white/28">
+        <div className="pointer-events-none absolute left-1/2 top-1/2 z-20 h-[min(84vh,920px)] w-[min(96vw,1540px)] -translate-x-1/2 -translate-y-1/2 rounded-[clamp(18px,2.8vw,42px)] border border-white/26">
           <div
             className="absolute inset-0 rounded-[inherit]"
             style={{
               boxShadow:
-                "0 0 0 120vmax rgba(1,4,11,0.8), inset 0 0 0 1px rgba(255,255,255,.14), inset 0 0 100px rgba(0,0,0,.2)",
+                "0 0 0 120vmax rgba(1,4,11,0.82), inset 0 0 0 1px rgba(255,255,255,.16), inset 0 0 120px rgba(0,0,0,.26)",
             }}
           />
-          <div className="absolute inset-x-[7%] bottom-0 h-[14%] rounded-t-[clamp(14px,2vw,24px)] bg-gradient-to-t from-black/55 to-transparent" />
+        </div>
+
+        <div className="absolute left-1/2 top-1/2 z-30 h-[min(84vh,920px)] w-[min(96vw,1540px)] -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-[clamp(18px,2.8vw,42px)] border border-white/28 bg-black">
+          {activeItem ? (
+            <video
+              key={activeItem.id}
+              src={activeItem.videoUrl}
+              muted
+              loop
+              autoPlay
+              playsInline
+              preload="metadata"
+              className="h-full w-full object-cover"
+            />
+          ) : null}
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/64 via-transparent to-black/16" />
         </div>
 
         <div
-          className="absolute left-1/2 top-1/2 z-30 h-[min(84vh,920px)] w-[min(96vw,1540px)] -translate-x-1/2 -translate-y-1/2 cursor-grab touch-pan-y active:cursor-grabbing"
+          className="absolute left-1/2 top-1/2 z-40 h-[min(84vh,920px)] w-[min(96vw,1540px)] -translate-x-1/2 -translate-y-1/2 cursor-grab touch-pan-y active:cursor-grabbing"
           onPointerDown={(e) => {
             dragRef.current = {
               active: true,
@@ -229,24 +224,26 @@ export default function StereoscopicViewerWheel({ items }: { items: ShowreelItem
           onPointerMove={(e) => {
             if (!dragRef.current.active) return;
             const delta = e.clientX - dragRef.current.startX;
-            setManualRotation(dragRef.current.startRotation + delta * 0.2);
+            setManualRotation(dragRef.current.startRotation + delta * 0.24);
           }}
           onPointerUp={(e) => {
             dragRef.current.active = false;
             setIsDragging(false);
+            setManualRotation((prev) => (step ? Math.round(prev / step) * step : prev));
             e.currentTarget.releasePointerCapture(e.pointerId);
           }}
           onPointerCancel={() => {
             dragRef.current.active = false;
             setIsDragging(false);
+            setManualRotation((prev) => (step ? Math.round(prev / step) * step : prev));
           }}
         />
 
-        <div className="absolute right-4 top-4 z-40 flex gap-2 md:right-6 md:top-6">
+        <div className="absolute right-4 top-4 z-50 flex gap-2 md:right-6 md:top-6">
           <button
             type="button"
             onClick={() => rotateBySteps(-1)}
-            className="rounded-xl border border-white/25 bg-black/45 px-3 py-2 text-sm font-semibold backdrop-blur hover:bg-black/55"
+            className="rounded-xl border border-white/25 bg-black/45 px-3 py-2 text-sm font-semibold backdrop-blur hover:bg-black/58"
             aria-label="Forrige"
           >
             ←
@@ -254,7 +251,7 @@ export default function StereoscopicViewerWheel({ items }: { items: ShowreelItem
           <button
             type="button"
             onClick={() => rotateBySteps(1)}
-            className="rounded-xl border border-white/25 bg-black/45 px-3 py-2 text-sm font-semibold backdrop-blur hover:bg-black/55"
+            className="rounded-xl border border-white/25 bg-black/45 px-3 py-2 text-sm font-semibold backdrop-blur hover:bg-black/58"
             aria-label="Neste"
           >
             →
@@ -262,7 +259,7 @@ export default function StereoscopicViewerWheel({ items }: { items: ShowreelItem
         </div>
 
         {activeItem ? (
-          <div className="absolute bottom-4 left-4 z-40 max-w-[min(92vw,720px)] rounded-2xl border border-white/16 bg-black/46 p-4 backdrop-blur md:bottom-6 md:left-6 md:p-5">
+          <div className="absolute bottom-4 left-4 z-50 max-w-[min(92vw,720px)] rounded-2xl border border-white/16 bg-black/46 p-4 backdrop-blur md:bottom-6 md:left-6 md:p-5">
             <p className="text-[11px] uppercase tracking-[0.18em] text-white/66">{activeItem.eyebrow || "KiReklame"}</p>
             <h2 className="mt-1 text-[clamp(1.2rem,3.2vw,2.5rem)] font-semibold leading-[1.08]">{activeItem.name}</h2>
             {activeItem.description ? <p className="mt-2 text-sm text-white/82 md:text-base">{activeItem.description}</p> : null}
@@ -277,7 +274,7 @@ export default function StereoscopicViewerWheel({ items }: { items: ShowreelItem
           </div>
         ) : null}
 
-        <aside className="absolute bottom-4 right-4 z-40 w-[min(37vw,260px)] rounded-2xl border border-white/16 bg-black/46 p-2 backdrop-blur md:bottom-6 md:right-6 md:w-[280px] md:p-3">
+        <aside className="absolute bottom-4 right-4 z-50 w-[min(37vw,260px)] rounded-2xl border border-white/16 bg-black/46 p-2 backdrop-blur md:bottom-6 md:right-6 md:w-[280px] md:p-3">
           <svg viewBox="0 0 100 100" className="w-full" role="presentation">
             <defs>
               {items.map((_, idx) => (
