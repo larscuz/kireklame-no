@@ -83,11 +83,11 @@ export default function StereoscopicViewerWheel({ items }: { items: ShowreelItem
       const rect = sectionRef.current.getBoundingClientRect();
       const vh = window.innerHeight;
       const sectionHeight = sectionRef.current.offsetHeight;
-      const start = vh * 0.12;
-      const end = Math.max(1, sectionHeight - vh * 0.7);
+      const start = vh * 0.08;
+      const end = Math.max(1, sectionHeight - vh * 0.82);
       const traveled = clamp(start - rect.top, 0, end);
       const progress = clamp(traveled / end, 0, 1);
-      const turns = reducedMotion ? 1 : Math.max(2, Math.min(7, count * 0.55));
+      const turns = reducedMotion ? 1 : Math.max(2.2, Math.min(8.2, count * 0.48));
       setScrollProgress(progress);
       setScrollRotation(progress * turns * 360);
     };
@@ -128,309 +128,254 @@ export default function StereoscopicViewerWheel({ items }: { items: ShowreelItem
   const ambientMedia = activeItem?.thumbnailUrl || activeItem?.videoUrl || null;
 
   return (
-    <section ref={sectionRef} className="relative min-h-[260vh]">
-      <div className="sticky top-14">
+    <section ref={sectionRef} className="relative min-h-[320vh]">
+      <div className="sticky top-0 h-[100dvh] overflow-hidden bg-[#020611] text-white">
+        {ambientMedia ? (
+          <div className="pointer-events-none absolute inset-0 overflow-hidden">
+            {activeItem?.thumbnailUrl ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={ambientMedia} alt="" className="h-full w-full scale-105 object-cover opacity-34 blur-[3px]" />
+            ) : (
+              <video
+                src={ambientMedia}
+                muted
+                loop
+                autoPlay
+                playsInline
+                preload="metadata"
+                className="h-full w-full scale-105 object-cover opacity-34 blur-[3px]"
+              />
+            )}
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_38%,rgba(35,71,143,.22),transparent_48%),linear-gradient(180deg,rgba(2,6,14,.42),rgba(2,5,12,.9))]" />
+          </div>
+        ) : null}
+
         <div
-          className="relative overflow-hidden rounded-3xl border border-white/10 bg-[#060c1c] p-4 text-white shadow-[0_24px_80px_rgba(0,0,0,.45)] md:p-6"
-          style={
-            {
-              "--big-wheel-radius": "clamp(170px, 24vw, 330px)",
-              "--accent": "#bdf460",
-            } as CSSProperties
-          }
-          data-spin-direction="prev"
+          className="pointer-events-none absolute left-1/2 top-[68%] h-[max(190vw,190vh)] w-[max(190vw,190vh)] -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/18 bg-[radial-gradient(circle_at_50%_38%,rgba(11,24,53,.88),rgba(3,7,17,.98)_70%)] shadow-[inset_0_0_0_2px_rgba(255,255,255,.06)]"
+          style={{ "--reel-radius": "clamp(310px, 44vw, 700px)" } as CSSProperties}
+        />
+        <div className="pointer-events-none absolute left-1/2 top-[68%] h-[max(165vw,165vh)] w-[max(165vw,165vh)] -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/10" />
+
+        <div
+          className="pointer-events-none absolute left-1/2 top-[68%] h-[max(190vw,190vh)] w-[max(190vw,190vh)] -translate-x-1/2 -translate-y-1/2"
+          style={{ transform: `translate(-50%, -50%) rotate(${rotation}deg)` }}
         >
-          {ambientMedia ? (
-            <div className="pointer-events-none absolute inset-0 overflow-hidden">
-              {activeItem?.thumbnailUrl ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={ambientMedia} alt="" className="h-full w-full scale-110 object-cover opacity-25 blur-[2px]" />
-              ) : (
-                <video
-                  src={ambientMedia}
-                  muted
-                  loop
-                  autoPlay
-                  playsInline
-                  preload="metadata"
-                  className="h-full w-full scale-110 object-cover opacity-25 blur-[2px]"
-                />
-              )}
-              <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_32%,rgba(18,44,89,.36),transparent_45%),linear-gradient(180deg,rgba(5,8,16,.34),rgba(3,6,12,.95))]" />
-            </div>
-          ) : null}
+          {items.map((item, idx) => {
+            const angle = idx * step;
+            const isActive = idx === activeIndex;
 
-          <div className="relative">
-            <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
-              <div>
-                <p className="text-xs uppercase tracking-[0.24em] text-white/60">Showreel wheel</p>
-                <h2 className="text-[clamp(1.35rem,2.4vw,2rem)] font-semibold tracking-tight">View-Master Navigator</h2>
-              </div>
-              <div className="flex gap-2">
-                <button
-                  type="button"
-                  onClick={() => rotateBySteps(-1)}
-                  className="rounded-xl border border-white/20 bg-black/25 px-3 py-2 text-sm font-semibold backdrop-blur hover:bg-black/40"
-                  aria-label="Forrige"
-                >
-                  ←
-                </button>
-                <button
-                  type="button"
-                  onClick={() => rotateBySteps(1)}
-                  className="rounded-xl border border-white/20 bg-black/25 px-3 py-2 text-sm font-semibold backdrop-blur hover:bg-black/40"
-                  aria-label="Neste"
-                >
-                  →
-                </button>
-              </div>
-            </div>
-
-            <div className="grid items-center gap-5 lg:grid-cols-[1fr_280px]">
-              <section
-                className="relative h-[min(84vw,760px)] w-full cursor-grab touch-pan-y overflow-visible active:cursor-grabbing"
-                onWheel={(e) => {
-                  e.preventDefault();
-                  rotateBySteps((e.deltaY + e.deltaX) / 120);
-                }}
-                onPointerDown={(e) => {
-                  dragRef.current = {
-                    active: true,
-                    startX: e.clientX,
-                    startRotation: manualRotation,
-                  };
-                  setIsDragging(true);
-                  e.currentTarget.setPointerCapture(e.pointerId);
-                }}
-                onPointerMove={(e) => {
-                  if (!dragRef.current.active) return;
-                  const delta = e.clientX - dragRef.current.startX;
-                  setManualRotation(dragRef.current.startRotation + delta * 0.2);
-                }}
-                onPointerUp={(e) => {
-                  dragRef.current.active = false;
-                  setIsDragging(false);
-                  e.currentTarget.releasePointerCapture(e.pointerId);
-                }}
-                onPointerCancel={() => {
-                  dragRef.current.active = false;
-                  setIsDragging(false);
+            return (
+              <article
+                key={item.id}
+                className="absolute left-1/2 top-1/2"
+                aria-hidden={!isActive}
+                style={{
+                  transform: `translate(-50%, -50%) rotate(${angle}deg) translateY(calc(var(--reel-radius) * -1))`,
+                  opacity: isActive ? 1 : 0,
+                  zIndex: isActive ? 40 : 1,
+                  pointerEvents: "none",
                 }}
               >
-                <div className="absolute left-1/2 top-1/2 h-[min(84vw,760px)] w-[min(84vw,760px)] -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/10 bg-[radial-gradient(circle_at_50%_42%,rgba(17,35,74,.72),rgba(2,6,12,.94)_66%)] shadow-[inset_0_0_0_2px_rgba(255,255,255,.04)]" />
                 <div
-                  className="absolute left-1/2 top-1/2 h-[min(84vw,760px)] w-[min(84vw,760px)] -translate-x-1/2 -translate-y-1/2"
-                  style={{ transform: `translate(-50%, -50%) rotate(${rotation}deg)` }}
+                  className="overflow-hidden rounded-[clamp(18px,2.4vw,36px)] border border-white/28 bg-black shadow-[0_24px_80px_rgba(0,0,0,.55)]"
+                  style={{
+                    width: "clamp(340px, 90vw, 1480px)",
+                    height: "clamp(440px, 86vh, 990px)",
+                    transition: isDragging ? "none" : "opacity 260ms ease",
+                  }}
                 >
-                  {items.map((item, idx) => {
-                    const rawDist = Math.abs(idx - activeIndex);
-                    const dist = Math.min(rawDist, count - rawDist);
-                    const isActive = dist === 0;
-                    const angle = idx * step;
-                    const scale = isActive ? 1.02 : dist === 1 ? 0.84 : dist === 2 ? 0.68 : 0.56;
-                    const opacity = isActive ? 1 : dist === 1 ? 0.9 : dist === 2 ? 0.72 : 0.5;
-                    const z = 100 - dist;
-
-                    return (
-                      <article
-                        key={item.id}
-                        className="absolute left-1/2 top-1/2"
-                        aria-hidden={!isActive}
-                        style={{
-                          transform: `translate(-50%, -50%) rotate(${angle}deg) translateY(calc(var(--big-wheel-radius) * -1))`,
-                          opacity,
-                          zIndex: z,
-                          pointerEvents: isActive ? "auto" : "none",
-                        }}
-                      >
-                        <div
-                          className="overflow-hidden rounded-3xl border border-white/20 bg-[#05090f] shadow-[0_20px_60px_rgba(0,0,0,.45)]"
-                          style={{
-                            width: isActive ? "clamp(270px, 56vw, 640px)" : "clamp(150px, 27vw, 340px)",
-                            height: isActive ? "clamp(310px, 52vw, 530px)" : "clamp(180px, 30vw, 330px)",
-                            transform: `rotate(${-angle}deg) scale(${scale})`,
-                            transformOrigin: "center center",
-                            transition: isDragging ? "none" : "transform 320ms ease, opacity 320ms ease",
-                          }}
-                        >
-                          <div className="relative h-full w-full">
-                            {isActive ? (
-                              <video
-                                src={item.videoUrl}
-                                muted
-                                loop
-                                autoPlay
-                                playsInline
-                                preload="metadata"
-                                className="h-full w-full object-cover"
-                              />
-                            ) : item.thumbnailUrl ? (
-                              // eslint-disable-next-line @next/next/no-img-element
-                              <img src={item.thumbnailUrl} alt="" loading="lazy" className="h-full w-full object-cover" />
-                            ) : (
-                              <video
-                                src={item.videoUrl}
-                                muted
-                                loop
-                                autoPlay
-                                playsInline
-                                preload="metadata"
-                                className="h-full w-full object-cover opacity-80"
-                              />
-                            )}
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent" />
-
-                            <div className="absolute inset-x-4 bottom-4">
-                              <p className="text-[11px] uppercase tracking-[0.18em] text-white/70">
-                                {item.eyebrow || "KiReklame"}
-                              </p>
-                              <h3 className={`${isActive ? "text-2xl md:text-[2rem]" : "text-sm md:text-base"} mt-1 font-semibold leading-[1.1]`}>
-                                {item.name}
-                              </h3>
-                              {item.description ? (
-                                <p className={`mt-1 text-white/78 ${isActive ? "text-sm md:text-base" : "text-[11px] md:text-xs"}`}>
-                                  {item.description}
-                                </p>
-                              ) : null}
-                              {isActive ? (
-                                <div className="mt-3 flex gap-2">
-                                  <Link
-                                    href={item.href}
-                                    className="inline-flex items-center rounded-xl border border-white/25 bg-black/35 px-3 py-2 text-sm font-semibold backdrop-blur hover:bg-black/50"
-                                  >
-                                    {item.ctaLabel || "Åpne case"} <span className="ml-2">&gt;</span>
-                                  </Link>
-                                </div>
-                              ) : null}
-                            </div>
-                          </div>
-                        </div>
-                      </article>
-                    );
-                  })}
+                  {isActive || !item.thumbnailUrl ? (
+                    <video
+                      src={item.videoUrl}
+                      muted
+                      loop
+                      autoPlay
+                      playsInline
+                      preload={isActive ? "metadata" : "none"}
+                      className="h-full w-full object-cover"
+                    />
+                  ) : (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={item.thumbnailUrl} alt="" loading="lazy" className="h-full w-full object-cover" />
+                  )}
                 </div>
-              </section>
+              </article>
+            );
+          })}
+        </div>
 
-              <aside className="mx-auto w-full max-w-[280px] lg:mx-0" aria-label="Wheel progress">
-                <div className="rounded-3xl border border-white/15 bg-black/25 p-3 backdrop-blur">
-                  <svg viewBox="0 0 100 100" className="w-full" role="presentation">
-                    <defs>
-                      {items.map((_, idx) => (
-                        <clipPath key={`${clipSeed}-clip-${idx}`} id={`${clipSeed}-clip-${idx}`} clipPathUnits="userSpaceOnUse">
-                          <rect x={43.4} y={4.9} width={13.2} height={15.4} rx={2.15} ry={2.15} />
-                        </clipPath>
-                      ))}
-                    </defs>
+        <div className="pointer-events-none absolute left-1/2 top-1/2 z-20 h-[min(84vh,920px)] w-[min(96vw,1540px)] -translate-x-1/2 -translate-y-1/2 rounded-[clamp(18px,2.8vw,42px)] border border-white/28">
+          <div
+            className="absolute inset-0 rounded-[inherit]"
+            style={{
+              boxShadow:
+                "0 0 0 120vmax rgba(1,4,11,0.8), inset 0 0 0 1px rgba(255,255,255,.14), inset 0 0 100px rgba(0,0,0,.2)",
+            }}
+          />
+          <div className="absolute inset-x-[7%] bottom-0 h-[14%] rounded-t-[clamp(14px,2vw,24px)] bg-gradient-to-t from-black/55 to-transparent" />
+        </div>
 
-                    <circle cx={50} cy={50} r={49.2} className="fill-[#101a33] stroke-white/20" strokeWidth={1.2} />
-                    <circle cx={50} cy={50} r={31} className="fill-[#0b1328] stroke-white/15" strokeWidth={1} />
-                    {Array.from({ length: 24 }).map((_, idx) => {
-                      const angle = (idx * 360) / 24;
-                      const rad = (angle * Math.PI) / 180;
-                      const x = 50 + Math.cos(rad) * 46.2;
-                      const y = 50 + Math.sin(rad) * 46.2;
-                      return <circle key={`hole-${idx}`} cx={x} cy={y} r={1.2} className="fill-[#d7e4ff]/25" />;
-                    })}
+        <div
+          className="absolute left-1/2 top-1/2 z-30 h-[min(84vh,920px)] w-[min(96vw,1540px)] -translate-x-1/2 -translate-y-1/2 cursor-grab touch-pan-y active:cursor-grabbing"
+          onPointerDown={(e) => {
+            dragRef.current = {
+              active: true,
+              startX: e.clientX,
+              startRotation: manualRotation,
+            };
+            setIsDragging(true);
+            e.currentTarget.setPointerCapture(e.pointerId);
+          }}
+          onPointerMove={(e) => {
+            if (!dragRef.current.active) return;
+            const delta = e.clientX - dragRef.current.startX;
+            setManualRotation(dragRef.current.startRotation + delta * 0.2);
+          }}
+          onPointerUp={(e) => {
+            dragRef.current.active = false;
+            setIsDragging(false);
+            e.currentTarget.releasePointerCapture(e.pointerId);
+          }}
+          onPointerCancel={() => {
+            dragRef.current.active = false;
+            setIsDragging(false);
+          }}
+        />
 
-                    {items.map((item, idx) => {
-                      const angle = idx * step + rotation;
-                      const isActive = idx === activeIndex;
-                      const thumb = item.thumbnailUrl;
+        <div className="absolute right-4 top-4 z-40 flex gap-2 md:right-6 md:top-6">
+          <button
+            type="button"
+            onClick={() => rotateBySteps(-1)}
+            className="rounded-xl border border-white/25 bg-black/45 px-3 py-2 text-sm font-semibold backdrop-blur hover:bg-black/55"
+            aria-label="Forrige"
+          >
+            ←
+          </button>
+          <button
+            type="button"
+            onClick={() => rotateBySteps(1)}
+            className="rounded-xl border border-white/25 bg-black/45 px-3 py-2 text-sm font-semibold backdrop-blur hover:bg-black/55"
+            aria-label="Neste"
+          >
+            →
+          </button>
+        </div>
 
-                      return (
-                        <g
-                          key={`thumb-${item.id}`}
-                          transform={`rotate(${angle} 50 50)`}
-                          role="button"
-                          tabIndex={0}
-                          aria-label={item.name}
-                          onClick={() => moveToIndex(idx)}
-                          onKeyDown={(e) => {
-                            if (e.key === "Enter" || e.key === " ") {
-                              e.preventDefault();
-                              moveToIndex(idx);
-                            }
-                          }}
-                          style={{ cursor: "pointer" }}
-                        >
-                          <rect x={48.6} y={0.85} width={2.8} height={5.65} rx={0.64} ry={0.64} className="fill-white/40" />
-                          <rect
-                            x={42.9}
-                            y={4.4}
-                            width={14.2}
-                            height={16.4}
-                            rx={2.6}
-                            ry={2.6}
-                            className={isActive ? "fill-[#c6f67d] stroke-[#f7ffe3]" : "fill-[#141f3d] stroke-white/30"}
-                            strokeWidth={0.6}
-                          />
-                          {thumb ? (
-                            <image
-                              href={thumb}
-                              x={43.4}
-                              y={4.9}
-                              width={13.2}
-                              height={15.4}
-                              preserveAspectRatio="xMidYMid slice"
-                              clipPath={`url(#${clipSeed}-clip-${idx})`}
-                            />
-                          ) : (
-                            <rect
-                              x={43.4}
-                              y={4.9}
-                              width={13.2}
-                              height={15.4}
-                              rx={2.15}
-                              ry={2.15}
-                              className={isActive ? "fill-[#bdf460]" : "fill-[#1b2a51]"}
-                            />
-                          )}
-                          <rect x={43.4} y={4.9} width={13.2} height={15.4} rx={2.15} ry={2.15} className="fill-transparent stroke-white/30" strokeWidth={0.5} />
-                          <text x={50} y={29.4} textAnchor="middle" className="fill-white/80 text-[4px] tracking-[0.04em]">
-                            {shorten(item.name, 7)}
-                          </text>
-                        </g>
-                      );
-                    })}
-
-                    <circle cx={50} cy={50} r={16.2} className="fill-[#121f40] stroke-white/15" strokeWidth={0.8} />
-                    <circle cx={50} cy={50} r={2.3} className="fill-white/60" />
-                    <text x={50} y={45.8} textAnchor="middle" className="fill-white/70 text-[3.4px] tracking-[0.08em] uppercase">
-                      KiReklame
-                    </text>
-                    <text x={50} y={51.8} textAnchor="middle" className="fill-white text-[4.2px] font-semibold">
-                      {shorten(activeItem?.name ?? "Showreel", 20)}
-                    </text>
-                    <text x={50} y={57.1} textAnchor="middle" className="fill-white/75 text-[3.8px]">
-                      {String(activeIndex + 1).padStart(2, "0")} / {String(count).padStart(2, "0")}
-                    </text>
-                  </svg>
-
-                  <p className="mt-2 text-center text-xs text-white/65">Scroll, swipe eller bruk piltaster</p>
-                </div>
-              </aside>
-            </div>
-
-            <div className="mt-4 space-y-2">
-              <div className="h-1.5 overflow-hidden rounded-full bg-white/12">
-                <div
-                  className="h-full rounded-full bg-[var(--accent)] transition-[width] duration-150"
-                  style={{ width: `${Math.round(scrollProgress * 100)}%` }}
-                />
-              </div>
-              <div className="flex flex-wrap items-center justify-between gap-3 text-sm">
-                <p className="text-white/70">
-                  {isDragging ? "Dra sideveis for å spinne manuelt." : "Scroll nedover for å navigere gjennom stor wheel."}
-                </p>
-                {activeItem ? (
-                  <Link href={activeItem.href} className="font-semibold underline underline-offset-4 hover:text-[var(--accent)]">
-                    Åpne: {activeItem.name}
-                  </Link>
-                ) : null}
-              </div>
+        {activeItem ? (
+          <div className="absolute bottom-4 left-4 z-40 max-w-[min(92vw,720px)] rounded-2xl border border-white/16 bg-black/46 p-4 backdrop-blur md:bottom-6 md:left-6 md:p-5">
+            <p className="text-[11px] uppercase tracking-[0.18em] text-white/66">{activeItem.eyebrow || "KiReklame"}</p>
+            <h2 className="mt-1 text-[clamp(1.2rem,3.2vw,2.5rem)] font-semibold leading-[1.08]">{activeItem.name}</h2>
+            {activeItem.description ? <p className="mt-2 text-sm text-white/82 md:text-base">{activeItem.description}</p> : null}
+            <div className="mt-3 flex flex-wrap gap-2">
+              <Link
+                href={activeItem.href}
+                className="pointer-events-auto inline-flex items-center rounded-xl border border-white/28 bg-black/45 px-3 py-2 text-sm font-semibold hover:bg-black/62"
+              >
+                {activeItem.ctaLabel || "Åpne case"} <span className="ml-2">&gt;</span>
+              </Link>
             </div>
           </div>
-        </div>
+        ) : null}
+
+        <aside className="absolute bottom-4 right-4 z-40 w-[min(37vw,260px)] rounded-2xl border border-white/16 bg-black/46 p-2 backdrop-blur md:bottom-6 md:right-6 md:w-[280px] md:p-3">
+          <svg viewBox="0 0 100 100" className="w-full" role="presentation">
+            <defs>
+              {items.map((_, idx) => (
+                <clipPath key={`${clipSeed}-clip-${idx}`} id={`${clipSeed}-clip-${idx}`} clipPathUnits="userSpaceOnUse">
+                  <rect x={43.4} y={4.9} width={13.2} height={15.4} rx={2.15} ry={2.15} />
+                </clipPath>
+              ))}
+            </defs>
+
+            <circle cx={50} cy={50} r={49.2} className="fill-[#101a33] stroke-white/24" strokeWidth={1.2} />
+            <circle cx={50} cy={50} r={31} className="fill-[#0b1328] stroke-white/15" strokeWidth={1} />
+            {Array.from({ length: 24 }).map((_, idx) => {
+              const angle = (idx * 360) / 24;
+              const rad = (angle * Math.PI) / 180;
+              const x = 50 + Math.cos(rad) * 46.2;
+              const y = 50 + Math.sin(rad) * 46.2;
+              return <circle key={`hole-${idx}`} cx={x} cy={y} r={1.15} className="fill-[#d7e4ff]/26" />;
+            })}
+
+            {items.map((item, idx) => {
+              const angle = idx * step + rotation;
+              const isActive = idx === activeIndex;
+              const thumb = item.thumbnailUrl;
+
+              return (
+                <g
+                  key={`thumb-${item.id}`}
+                  transform={`rotate(${angle} 50 50)`}
+                  role="button"
+                  tabIndex={0}
+                  aria-label={item.name}
+                  onClick={() => moveToIndex(idx)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      moveToIndex(idx);
+                    }
+                  }}
+                  style={{ cursor: "pointer" }}
+                >
+                  <rect x={48.6} y={0.85} width={2.8} height={5.65} rx={0.64} ry={0.64} className="fill-white/40" />
+                  <rect
+                    x={42.9}
+                    y={4.4}
+                    width={14.2}
+                    height={16.4}
+                    rx={2.6}
+                    ry={2.6}
+                    className={isActive ? "fill-[#c6f67d] stroke-[#f7ffe3]" : "fill-[#141f3d] stroke-white/30"}
+                    strokeWidth={0.6}
+                  />
+                  {thumb ? (
+                    <image
+                      href={thumb}
+                      x={43.4}
+                      y={4.9}
+                      width={13.2}
+                      height={15.4}
+                      preserveAspectRatio="xMidYMid slice"
+                      clipPath={`url(#${clipSeed}-clip-${idx})`}
+                    />
+                  ) : (
+                    <rect
+                      x={43.4}
+                      y={4.9}
+                      width={13.2}
+                      height={15.4}
+                      rx={2.15}
+                      ry={2.15}
+                      className={isActive ? "fill-[#bdf460]" : "fill-[#1b2a51]"}
+                    />
+                  )}
+                  <rect x={43.4} y={4.9} width={13.2} height={15.4} rx={2.15} ry={2.15} className="fill-transparent stroke-white/30" strokeWidth={0.5} />
+                  <text x={50} y={29.4} textAnchor="middle" className="fill-white/80 text-[4px] tracking-[0.04em]">
+                    {shorten(item.name, 7)}
+                  </text>
+                </g>
+              );
+            })}
+
+            <circle cx={50} cy={50} r={16.2} className="fill-[#121f40] stroke-white/15" strokeWidth={0.8} />
+            <circle cx={50} cy={50} r={2.3} className="fill-white/60" />
+            <text x={50} y={45.8} textAnchor="middle" className="fill-white/70 text-[3.4px] tracking-[0.08em] uppercase">
+              KiReklame
+            </text>
+            <text x={50} y={51.8} textAnchor="middle" className="fill-white text-[4.2px] font-semibold">
+              {shorten(activeItem?.name ?? "Showreel", 20)}
+            </text>
+            <text x={50} y={57.1} textAnchor="middle" className="fill-white/75 text-[3.8px]">
+              {String(activeIndex + 1).padStart(2, "0")} / {String(count).padStart(2, "0")}
+            </text>
+          </svg>
+
+          <div className="mt-1 flex items-center justify-between gap-2 text-[10px] text-white/70 md:text-xs">
+            <span>{isDragging ? "DRAGGING" : "SCROLL / DRAG"}</span>
+            <span>{Math.round(scrollProgress * 100)}%</span>
+          </div>
+        </aside>
       </div>
     </section>
   );

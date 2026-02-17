@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import type { Locale } from "@/lib/i18n";
 import { localizePath } from "@/lib/i18n";
 import { getLocale } from "@/lib/i18n.server";
@@ -139,91 +138,18 @@ export default async function KiReklamePage() {
     });
   }
 
-  const faq =
-    locale === "en"
-      ? [
-          {
-            q: "What is AI advertising?",
-            a: "AI advertising combines strategy, creative, and production with AI tools to produce and optimize campaigns faster.",
-          },
-          {
-            q: "Why a showreel page?",
-            a: "It gives buyers one place to compare visual quality, style, and production speed across agencies.",
-          },
-          {
-            q: "Which videos appear in the wheel?",
-            a: "Norwegian and international companies with public direct mp4 URLs are included, plus videos you add in the Cloudflare directory.",
-          },
-        ]
-      : [
-          {
-            q: "Hva er KI-reklame?",
-            a: "KI-reklame kombinerer strategi, kreativitet og produksjon med AI-verktøy for raskere utvikling og optimalisering av kampanjer.",
-          },
-          {
-            q: "Hvorfor en egen showreel-side?",
-            a: "Siden gjør det enkelt å sammenligne visuell kvalitet, stil og produksjonstempo på tvers av byråer.",
-          },
-          {
-            q: "Hvilke videoer vises i hjulet?",
-            a: "Vi viser norske og internasjonale selskaper med offentlig direkte mp4-URL, pluss videoer du legger i Cloudflare-mappen. Videoene spilles av med lyd av/autoplay der nettleseren tillater det.",
-          },
-        ];
-
-  const faqSchema = {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    mainEntity: faq.map((item) => ({
-      "@type": "Question",
-      name: item.q,
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: item.a,
-      },
-    })),
-  };
-
   return (
-    <main className="mx-auto max-w-6xl px-4 py-10">
-      <script
-        type="application/ld+json"
-        // eslint-disable-next-line react/no-danger
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
-      />
-
-      <header className="rounded-3xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] p-6 shadow-soft md:p-8">
-        <p className="text-xs uppercase tracking-[0.22em] text-[rgb(var(--muted))]">KI-reklame</p>
-        <h1 className="mt-2 text-3xl font-semibold tracking-tight md:text-5xl">
-          {locale === "en"
-            ? "AI advertising in Norway: showreel + agency landscape"
-            : "KI-reklame i Norge: showreel + byråoversikt"}
-        </h1>
-        <p className="mt-4 max-w-3xl text-[rgb(var(--muted))] leading-relaxed">
-          {locale === "en"
-            ? "This page is built for high-intent searches around AI advertising. Explore real showreels in a stereoscopic wheel and jump directly to agencies working with AI-first production."
-            : "Denne siden er laget for søk med høy intensjon rundt KI-reklame. Utforsk ekte showreels i et stereoskopisk hjul og gå direkte til byråer som jobber AI-first i produksjon."}
-        </p>
-        <div className="mt-5 flex flex-wrap gap-2">
-          <Link
-            href={localizePath(locale, "/selskaper")}
-            className="inline-flex items-center rounded-xl bg-[rgb(var(--fg))] px-4 py-2.5 text-sm font-semibold text-[rgb(var(--bg))] shadow-soft hover:opacity-90 transition"
-          >
-            {locale === "en" ? "Explore agencies" : "Utforsk byråer"}
-          </Link>
-          <Link
-            href={localizePath(locale, "/ai-video")}
-            className="inline-flex items-center rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))] px-4 py-2.5 text-sm font-semibold hover:opacity-80 transition"
-          >
-            {locale === "en" ? "AI video production" : "AI-video produksjon"}
-          </Link>
-        </div>
-      </header>
-
-      <section className="mt-8">
+    <main>
+      <h1 className="sr-only">
+        {locale === "en"
+          ? "AI advertising showreel and agencies"
+          : "KI-reklame showreel og byråer"}
+      </h1>
+      <section>
         {reelItems.length > 0 ? (
           <StereoscopicViewerWheel items={reelItems} />
         ) : (
-          <div className="rounded-3xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] p-6 shadow-soft">
+          <div className="mx-auto mt-10 max-w-3xl rounded-3xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] p-6 shadow-soft">
             <h2 className="text-xl font-semibold">
               {locale === "en" ? "No public mp4 showreels yet" : "Ingen offentlige mp4-showreels ennå"}
             </h2>
@@ -234,20 +160,6 @@ export default async function KiReklamePage() {
             </p>
           </div>
         )}
-      </section>
-
-      <section className="mt-8 rounded-3xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] p-6 shadow-soft md:p-8">
-        <h2 className="text-2xl font-semibold tracking-tight">
-          {locale === "en" ? "Frequently asked questions" : "Ofte stilte spørsmål"}
-        </h2>
-        <div className="mt-4 space-y-4 text-[rgb(var(--muted))]">
-          {faq.map((item) => (
-            <div key={item.q}>
-              <p className="font-semibold text-[rgb(var(--fg))]">{item.q}</p>
-              <p className="mt-1 leading-relaxed">{item.a}</p>
-            </div>
-          ))}
-        </div>
       </section>
     </main>
   );
