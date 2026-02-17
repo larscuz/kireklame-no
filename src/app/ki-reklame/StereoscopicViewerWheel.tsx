@@ -50,6 +50,10 @@ export default function StereoscopicViewerWheel({ items }: { items: ShowreelItem
   const rotation = scrollRotation + manualRotation;
   const activeIndex = count > 0 ? mod(Math.round(-rotation / step), count) : 0;
   const activeItem = items[activeIndex] ?? null;
+  const wheelLayerStyle = {
+    "--reel-radius": "clamp(340px, 52vh, 640px)",
+    "--wheel-center-y": "calc(50% + var(--reel-radius))",
+  } as CSSProperties;
 
   function rotateBySteps(steps: number) {
     if (!step) return;
@@ -151,37 +155,45 @@ export default function StereoscopicViewerWheel({ items }: { items: ShowreelItem
         ) : null}
 
         <div
-          className="pointer-events-none absolute left-1/2 top-[74%] h-[max(210vw,210vh)] w-[max(210vw,210vh)] -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/16 bg-[radial-gradient(circle_at_50%_40%,rgba(13,29,63,.86),rgba(2,6,14,.97)_68%)] shadow-[inset_0_0_0_2px_rgba(255,255,255,.05)]"
-          style={{ "--reel-radius": "clamp(340px, 52vh, 640px)" } as CSSProperties}
+          className="pointer-events-none absolute left-1/2 top-[var(--wheel-center-y)] h-[max(210vw,210vh)] w-[max(210vw,210vh)] -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/16 bg-[radial-gradient(circle_at_50%_40%,rgba(13,29,63,.86),rgba(2,6,14,.97)_68%)] shadow-[inset_0_0_0_2px_rgba(255,255,255,.05)]"
+          style={wheelLayerStyle}
         />
-        <div className="pointer-events-none absolute left-1/2 top-[74%] h-[max(190vw,190vh)] w-[max(190vw,190vh)] -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/10" />
+        <div
+          className="pointer-events-none absolute left-1/2 top-[var(--wheel-center-y)] h-[max(190vw,190vh)] w-[max(190vw,190vh)] -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/10"
+          style={wheelLayerStyle}
+        />
 
         <div
-          className="pointer-events-none absolute left-1/2 top-[74%] h-[max(210vw,210vh)] w-[max(210vw,210vh)] -translate-x-1/2 -translate-y-1/2"
-          style={{ transform: `translate(-50%, -50%) rotate(${rotation}deg)` }}
+          className="pointer-events-none absolute left-1/2 top-[var(--wheel-center-y)] h-[max(210vw,210vh)] w-[max(210vw,210vh)] -translate-x-1/2 -translate-y-1/2"
+          style={wheelLayerStyle}
         >
-          {items.map((item, idx) => {
-            const angle = idx * step;
-            return (
-              <article
-                key={`ring-${item.id}`}
-                className="absolute left-1/2 top-1/2"
-                style={{
-                  transform: `translate(-50%, -50%) rotate(${angle}deg) translateY(calc(var(--reel-radius) * -1))`,
-                  opacity: 0.65,
-                }}
-              >
-                <div className="h-[clamp(90px,10vw,170px)] w-[clamp(84px,9vw,150px)] overflow-hidden rounded-[14px] border border-white/22 bg-black/65 shadow-[0_10px_24px_rgba(0,0,0,.35)]">
-                  {item.thumbnailUrl ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img src={item.thumbnailUrl} alt="" loading="lazy" className="h-full w-full object-cover" />
-                  ) : (
-                    <div className="h-full w-full bg-[radial-gradient(circle_at_30%_20%,rgba(189,244,96,.35),rgba(11,26,54,.95))]" />
-                  )}
-                </div>
-              </article>
-            );
-          })}
+          <div
+            className="absolute inset-0"
+            style={{ transform: `rotate(${rotation}deg)` }}
+          >
+            {items.map((item, idx) => {
+              const angle = idx * step;
+              return (
+                <article
+                  key={`ring-${item.id}`}
+                  className="absolute left-1/2 top-1/2"
+                  style={{
+                    transform: `translate(-50%, -50%) rotate(${angle}deg) translateY(calc(var(--reel-radius) * -1))`,
+                    opacity: 0.65,
+                  }}
+                >
+                  <div className="h-[clamp(90px,10vw,170px)] w-[clamp(84px,9vw,150px)] overflow-hidden rounded-[14px] border border-white/22 bg-black/65 shadow-[0_10px_24px_rgba(0,0,0,.35)]">
+                    {item.thumbnailUrl ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={item.thumbnailUrl} alt="" loading="lazy" className="h-full w-full object-cover" />
+                    ) : (
+                      <div className="h-full w-full bg-[radial-gradient(circle_at_30%_20%,rgba(189,244,96,.35),rgba(11,26,54,.95))]" />
+                    )}
+                  </div>
+                </article>
+              );
+            })}
+          </div>
         </div>
 
         <div className="pointer-events-none absolute left-1/2 top-1/2 z-20 h-[min(84vh,920px)] w-[min(96vw,1540px)] -translate-x-1/2 -translate-y-1/2 rounded-[clamp(18px,2.8vw,42px)] border border-white/26">
