@@ -160,6 +160,28 @@ create trigger trg_ads_updated_at
 before update on public.ads
 for each row execute function public.set_updated_at();
 
+create table if not exists public.showreel_entries (
+  id uuid primary key default gen_random_uuid(),
+  name text not null,
+  href text not null,
+  video_url text not null,
+  description text,
+  thumbnail_url text,
+  eyebrow text,
+  cta_label text,
+  sort_order int not null default 0,
+  is_active boolean not null default true,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create trigger trg_showreel_entries_updated_at
+before update on public.showreel_entries
+for each row execute function public.set_updated_at();
+
+create index if not exists idx_showreel_entries_sort
+  on public.showreel_entries (is_active desc, sort_order asc, created_at asc);
+
 alter table public.locations enable row level security;
 alter table public.tags enable row level security;
 alter table public.companies enable row level security;
@@ -170,6 +192,7 @@ alter table public.claims enable row level security;
 alter table public.submissions enable row level security;
 alter table public.news_articles enable row level security;
 alter table public.ads enable row level security;
+alter table public.showreel_entries enable row level security;
 
 create policy "public read locations" on public.locations
 for select using (true);
@@ -209,3 +232,6 @@ for select using (status = 'published');
 
 create policy "public read ads" on public.ads
 for select using (true);
+
+create policy "public read active showreel entries" on public.showreel_entries
+for select using (is_active = true);

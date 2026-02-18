@@ -57,6 +57,11 @@ export default async function AdminDashboardPage() {
           desc="Plasser hovedsak og Forside nå-slots visuelt uten lang scrolling."
         />
         <Card
+          href="/admin/showheel"
+          title="Showheel CMS"
+          desc="Visuell kontroll på /ki-reklame: legg til, fjern og sjekk duplikater."
+        />
+        <Card
           href="/admin/settings"
           title="Innstillinger"
           desc="Featured selskap + hero video på forsiden."

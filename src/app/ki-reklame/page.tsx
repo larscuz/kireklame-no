@@ -1,94 +1,37 @@
 import type { Metadata } from "next";
-import type { Locale } from "@/lib/i18n";
 import { localizePath } from "@/lib/i18n";
 import { getLocale } from "@/lib/i18n.server";
 import { siteMeta } from "@/lib/seo";
+import {
+  dedupeShowreelItems,
+  getDirectMp4Url,
+  mapShowreelCmsRows,
+  parseCloudflareShowreels,
+  type ShowreelCmsRow,
+  type ShowreelItem,
+} from "@/lib/showreel";
+import { supabaseAdmin } from "@/lib/supabase/admin";
 import { getCompanies } from "@/lib/supabase/server";
 import StereoscopicViewerWheel from "./StereoscopicViewerWheel";
 
-type ReelItem = {
-  id: string;
-  name: string;
-  href: string;
-  videoUrl: string;
-  description?: string | null;
-  thumbnailUrl?: string | null;
-  eyebrow?: string | null;
-  ctaLabel?: string | null;
-};
+async function loadCmsShowreelItems(): Promise<ShowreelItem[]> {
+  const db = supabaseAdmin();
+  const { data, error } = await db
+    .from("showreel_entries")
+    .select(
+      "id,name,href,video_url,description,thumbnail_url,eyebrow,cta_label,sort_order,is_active,created_at,updated_at"
+    )
+    .order("sort_order", { ascending: true })
+    .order("created_at", { ascending: true });
 
-function getMp4Url(raw: string | null | undefined): string | null {
-  const url = String(raw ?? "").trim();
-  if (!/^https?:\/\//i.test(url)) return null;
-  const lower = url.toLowerCase();
-  if (!lower.endsWith(".mp4") && !lower.includes(".mp4?")) return null;
-  return url;
-}
-
-function titleFromFileName(value: string): string {
-  const tail = String(value ?? "").split("/").filter(Boolean).pop() ?? value;
-  const base = tail.replace(/\.[a-z0-9]+$/i, "");
-  return base
-    .replace(/[-_]+/g, " ")
-    .replace(/\s+/g, " ")
-    .trim()
-    .replace(/\b\w/g, (ch) => ch.toUpperCase());
-}
-
-function parseCloudflareShowreels(locale: Locale): ReelItem[] {
-  const rawEntries = String(process.env.SHOWREEL_CLOUDFLARE_VIDEOS ?? "").trim();
-  if (!rawEntries) return [];
-
-  const baseDir = String(process.env.SHOWREEL_CLOUDFLARE_DIR_URL ?? "")
-    .trim()
-    .replace(/\/+$/, "");
-  const fallbackHref = String(
-    process.env.SHOWREEL_CLOUDFLARE_DEFAULT_HREF ?? localizePath(locale, "/kontakt")
-  ).trim();
-  const defaultDescription = locale === "en" ? "Cloudflare showreel" : "Cloudflare-showreel";
-
-  const out: ReelItem[] = [];
-  for (const [idx, chunk] of rawEntries.split(",").entries()) {
-    const entry = chunk.trim();
-    if (!entry) continue;
-
-    const parts = entry.split("|").map((item) => item.trim());
-    const ref = parts[0] ?? "";
-    const explicitName = parts[1] ?? "";
-    const explicitHref = parts[2] ?? "";
-    const explicitThumb = parts[3] ?? "";
-    const explicitEyebrow = parts[4] ?? "";
-    const explicitCta = parts[5] ?? "";
-    if (!ref) continue;
-
-    const resolvedUrl =
-      /^https?:\/\//i.test(ref)
-        ? ref
-        : baseDir
-          ? `${baseDir}/${ref.replace(/^\/+/, "")}`
-          : "";
-    const videoUrl = getMp4Url(resolvedUrl);
-    if (!videoUrl) continue;
-    const thumbCandidate =
-      /^https?:\/\//i.test(explicitThumb)
-        ? explicitThumb
-        : explicitThumb && baseDir
-          ? `${baseDir}/${explicitThumb.replace(/^\/+/, "")}`
-          : null;
-
-    out.push({
-      id: `cf-${idx}`,
-      name: explicitName || titleFromFileName(ref) || `Showreel ${idx + 1}`,
-      href: explicitHref || fallbackHref || localizePath(locale, "/kontakt"),
-      videoUrl,
-      description: defaultDescription,
-      thumbnailUrl: thumbCandidate,
-      eyebrow: explicitEyebrow || "Cloudflare",
-      ctaLabel: explicitCta || null,
-    });
+  if (error) {
+    if (error.code !== "42P01") {
+      console.error("[ki-reklame] could not load showreel_entries:", error.message);
+    }
+    return [];
   }
 
-  return out;
+  return mapShowreelCmsRows((data ?? []) as ShowreelCmsRow[]);
 }
 
 export const metadata: Metadata = siteMeta({
@@ -100,29 +43,22 @@ export const metadata: Metadata = siteMeta({
 
 export default async function KiReklamePage() {
   const locale = await getLocale();
-  const [{ companies: noCompanies }, { companies: intlCompanies }] = await Promise.all([
-    getCompanies({}, { market: "no" }),
-    getCompanies({}, { market: "intl" }),
-  ]);
+  const [cmsItems, { companies: noCompanies }, { companies: intlCompanies }] =
+    await Promise.all([
+      loadCmsShowreelItems(),
+      getCompanies({}, { market: "no" }),
+      getCompanies({}, { market: "intl" }),
+    ]);
   const companies = [...noCompanies, ...intlCompanies];
   const intlIds = new Set(intlCompanies.map((company) => company.id));
-  const cloudflareItems = parseCloudflareShowreels(locale);
 
-  const seen = new Set<string>();
-  const reelItems: ReelItem[] = [];
-
-  for (const item of cloudflareItems) {
-    if (seen.has(item.videoUrl)) continue;
-    seen.add(item.videoUrl);
-    reelItems.push(item);
-  }
-
+  const fallbackItems: ShowreelItem[] = [...parseCloudflareShowreels({ locale })];
   for (const company of companies) {
-    const videoUrl = getMp4Url(company.video_url ?? null);
-    if (!videoUrl || seen.has(videoUrl)) continue;
-    seen.add(videoUrl);
+    const videoUrl = getDirectMp4Url(company.video_url ?? null);
+    if (!videoUrl) continue;
+
     const isIntl = intlIds.has(company.id);
-    reelItems.push({
+    fallbackItems.push({
       id: company.id,
       name: company.name,
       href: localizePath(locale, `/selskap/${company.slug}`),
@@ -135,8 +71,12 @@ export default async function KiReklamePage() {
           : "Internasjonalt"
         : company.location?.name ?? (locale === "en" ? "Norway" : "Norge"),
       ctaLabel: locale === "en" ? "View case" : "Åpne case",
+      source: "company",
     });
   }
+
+  const reelItems =
+    cmsItems.length > 0 ? dedupeShowreelItems(cmsItems) : dedupeShowreelItems(fallbackItems);
 
   return (
     <main>
