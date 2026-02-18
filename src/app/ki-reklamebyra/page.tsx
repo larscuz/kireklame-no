@@ -137,6 +137,12 @@ export default async function KiReklamebyraPage() {
 
       <div className="mt-8 flex flex-col sm:flex-row gap-3">
         <Link
+          href={localizePath(locale, "/ki-reklame")}
+          className="inline-flex items-center justify-center rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-5 py-3 font-semibold shadow-soft hover:shadow-lift transition"
+        >
+          {locale === "en" ? "AI advertising showreel" : "KI-reklame showreel"}
+        </Link>
+        <Link
           href={localizePath(locale, "/selskaper")}
           className="inline-flex items-center justify-center rounded-2xl bg-[rgb(var(--fg))] text-[rgb(var(--bg))] px-5 py-3 font-semibold shadow-soft hover:opacity-90 transition"
         >

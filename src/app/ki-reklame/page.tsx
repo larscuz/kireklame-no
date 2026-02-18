@@ -44,6 +44,7 @@ export const metadata: Metadata = siteMeta({
 
 export default async function KiReklamePage() {
   const locale = await getLocale();
+  const site = process.env.NEXT_PUBLIC_SITE_URL || "https://kireklame.no";
   const cmsItems = await loadCmsShowreelItems();
   const cmsMode = cmsItems !== null;
 
@@ -83,8 +84,78 @@ export default async function KiReklamePage() {
     reelItems = dedupeShowreelItems(fallbackItems);
   }
 
+  const faqItems =
+    locale === "en"
+      ? [
+          {
+            q: "What is AI advertising?",
+            a: "AI advertising combines strategy, creative work, and AI tools to produce and optimize ads faster.",
+          },
+          {
+            q: "How do I choose an AI advertising agency?",
+            a: "Look for relevant cases, clear process, and fit on format, budget, and delivery speed.",
+          },
+          {
+            q: "Does this page include only selected videos?",
+            a: cmsMode
+              ? "Yes. The showheel is managed manually in Showheel CMS."
+              : "The page is currently using automatic fallback data until Showheel CMS table is enabled.",
+          },
+        ]
+      : [
+          {
+            q: "Hva er KI-reklame?",
+            a: "KI-reklame kombinerer strategi, kreativitet og AI-verktøy for raskere produksjon og optimalisering av annonser.",
+          },
+          {
+            q: "Hvordan velger jeg riktig KI-reklamebyrå?",
+            a: "Se etter relevante caser, tydelig prosess og god match på format, budsjett og leveringstakt.",
+          },
+          {
+            q: "Viser denne siden kun utvalgte videoer?",
+            a: cmsMode
+              ? "Ja. Showheel styres manuelt i Showheel CMS."
+              : "Siden bruker foreløpig automatisk fallback-data til Showheel CMS-tabellen er aktivert.",
+          },
+        ];
+
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faqItems.map((item) => ({
+      "@type": "Question",
+      name: item.q,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: item.a,
+      },
+    })),
+  };
+
+  const itemListSchema = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: locale === "en" ? "AI advertising showreel" : "KI-reklame showreel",
+    itemListElement: reelItems.map((item, idx) => ({
+      "@type": "ListItem",
+      position: idx + 1,
+      name: item.name,
+      url: item.href.startsWith("http") ? item.href : `${site}${item.href}`,
+    })),
+  };
+
   return (
     <main>
+      <script
+        type="application/ld+json"
+        // eslint-disable-next-line react/no-danger
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        // eslint-disable-next-line react/no-danger
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListSchema) }}
+      />
       <h1 className="sr-only">
         {locale === "en"
           ? "AI advertising showreel and agencies"

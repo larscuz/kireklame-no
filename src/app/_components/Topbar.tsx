@@ -45,7 +45,7 @@ export default async function Topbar() {
           </Link>
 
           <Link href={localizePath(locale, "/ki-reklame")} className="hover:opacity-80 transition">
-            Showheel
+            {locale === "en" ? "AI advertising" : "KI-reklame"}
           </Link>
 
           <Link href={localizePath(locale, "/annonsere")} className="hover:opacity-80 transition">
