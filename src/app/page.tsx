@@ -23,6 +23,45 @@ export default async function Home(props: any) {
   const locale = await getLocale();
   const params = await parseSearchParamsAsync(props?.searchParams);
   const apprenticeQuery = locale === "en" ? "apprentice" : "lærling";
+  const faqItems =
+    locale === "en"
+      ? [
+          {
+            q: "What does AI video production for commercial campaigns cost?",
+            a: "Price depends on scope, formats, and delivery speed. Compare agencies and studios to get quotes for your campaign needs.",
+          },
+          {
+            q: "What is the difference between AI advertising and general marketing automation?",
+            a: "AI advertising here means customer-facing campaign creative and commercial video production, not only backend automation.",
+          },
+          {
+            q: "Can I order campaign video directly from listed companies?",
+            a: "Yes. KiReklame is built to help buyers find relevant suppliers for commercial AI creative production in Norway.",
+          },
+          {
+            q: "How do I choose an AI agency for commercial video?",
+            a: "Review relevant cases, service fit, delivery model, and budget alignment before contacting shortlisted providers.",
+          },
+        ]
+      : [
+          {
+            q: "Hva koster AI videoproduksjon for reklamekampanjer?",
+            a: "Pris avhenger av omfang, format og leveringstakt. Sammenlign byråer og studioer for å få konkrete tilbud til kampanjen din.",
+          },
+          {
+            q: "Hva er forskjellen på KI-reklame og generell markedsføringsautomatisering?",
+            a: "Her betyr KI-reklame kundevendt kampanjekreativitet og kommersiell videoproduksjon, ikke bare intern automatisering.",
+          },
+          {
+            q: "Kan jeg bestille kampanjevideo direkte fra selskapene i katalogen?",
+            a: "Ja. KiReklame er laget for å hjelpe kjøpere med å finne relevante leverandører for kommersiell AI-kreativ produksjon i Norge.",
+          },
+          {
+            q: "Hvordan velger jeg riktig KI-byrå for reklamefilm?",
+            a: "Se på relevante caser, tjenestematch, leveransemodell og budsjett før du kontakter aktuelle leverandører.",
+          },
+        ];
+
   const highIntentLinks =
     locale === "en"
       ? [
@@ -47,6 +86,18 @@ export default async function Home(props: any) {
           { label: "lærlinger", href: `${localizePath(locale, "/selskaper")}?q=${encodeURIComponent(apprenticeQuery)}` },
           { label: "ai videoproduksjon", href: localizePath(locale, "/ai-video") },
         ];
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faqItems.map((item) => ({
+      "@type": "Question",
+      name: item.q,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: item.a,
+      },
+    })),
+  };
 
   // 1) Hent katalog-data som før
   const { companies, facets } = await getCompanies(params);
@@ -85,6 +136,12 @@ export default async function Home(props: any) {
 
   return (
     <div className="bg-[rgb(var(--bg))]">
+      <script
+        type="application/ld+json"
+        // eslint-disable-next-line react/no-danger
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+      />
+
       {bannerAd ? (
         <section className="mx-auto max-w-6xl px-4 pt-3 mb-2">
           <AdSlot
@@ -158,6 +215,27 @@ export default async function Home(props: any) {
               >
                 {item.label}
               </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-6xl px-4 pb-8">
+        <div className="rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] p-6 shadow-soft">
+          <h2 className="text-2xl font-semibold tracking-tight">
+            {locale === "en"
+              ? "FAQ: commercial AI video production"
+              : "FAQ: kommersiell AI videoproduksjon"}
+          </h2>
+          <div className="mt-4 grid gap-4">
+            {faqItems.map((item) => (
+              <article
+                key={item.q}
+                className="rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/50 p-4"
+              >
+                <h3 className="text-base font-semibold">{item.q}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-[rgb(var(--muted))]">{item.a}</p>
+              </article>
             ))}
           </div>
         </div>
