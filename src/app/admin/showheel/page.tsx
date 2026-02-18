@@ -583,7 +583,7 @@ export default async function AdminShowheelPage() {
             })}
             {entries.length === 0 ? (
               <div className="rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] p-4 text-sm text-[rgb(var(--muted))]">
-                Ingen entries ennå. Når listen er tom brukes automatisk fallback på /ki-reklame.
+                Ingen entries ennå. /ki-reklame vil være tom til du legger til items her.
               </div>
             ) : null}
           </div>

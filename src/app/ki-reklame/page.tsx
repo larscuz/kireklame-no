@@ -14,7 +14,7 @@ import { supabaseAdmin } from "@/lib/supabase/admin";
 import { getCompanies } from "@/lib/supabase/server";
 import StereoscopicViewerWheel from "./StereoscopicViewerWheel";
 
-async function loadCmsShowreelItems(): Promise<ShowreelItem[]> {
+async function loadCmsShowreelItems(): Promise<ShowreelItem[] | null> {
   const db = supabaseAdmin();
   const { data, error } = await db
     .from("showreel_entries")
@@ -25,9 +25,10 @@ async function loadCmsShowreelItems(): Promise<ShowreelItem[]> {
     .order("created_at", { ascending: true });
 
   if (error) {
-    if (error.code !== "42P01") {
-      console.error("[ki-reklame] could not load showreel_entries:", error.message);
+    if (error.code === "42P01") {
+      return null;
     }
+    console.error("[ki-reklame] could not load showreel_entries:", error.message);
     return [];
   }
 
@@ -43,40 +44,44 @@ export const metadata: Metadata = siteMeta({
 
 export default async function KiReklamePage() {
   const locale = await getLocale();
-  const [cmsItems, { companies: noCompanies }, { companies: intlCompanies }] =
-    await Promise.all([
-      loadCmsShowreelItems(),
+  const cmsItems = await loadCmsShowreelItems();
+  const cmsMode = cmsItems !== null;
+
+  let reelItems: ShowreelItem[] = [];
+  if (cmsMode) {
+    reelItems = dedupeShowreelItems(cmsItems);
+  } else {
+    const [{ companies: noCompanies }, { companies: intlCompanies }] = await Promise.all([
       getCompanies({}, { market: "no" }),
       getCompanies({}, { market: "intl" }),
     ]);
-  const companies = [...noCompanies, ...intlCompanies];
-  const intlIds = new Set(intlCompanies.map((company) => company.id));
+    const companies = [...noCompanies, ...intlCompanies];
+    const intlIds = new Set(intlCompanies.map((company) => company.id));
+    const fallbackItems: ShowreelItem[] = [...parseCloudflareShowreels({ locale })];
 
-  const fallbackItems: ShowreelItem[] = [...parseCloudflareShowreels({ locale })];
-  for (const company of companies) {
-    const videoUrl = getDirectMp4Url(company.video_url ?? null);
-    if (!videoUrl) continue;
+    for (const company of companies) {
+      const videoUrl = getDirectMp4Url(company.video_url ?? null);
+      if (!videoUrl) continue;
 
-    const isIntl = intlIds.has(company.id);
-    fallbackItems.push({
-      id: company.id,
-      name: company.name,
-      href: localizePath(locale, `/selskap/${company.slug}`),
-      videoUrl,
-      description: company.short_description ?? null,
-      thumbnailUrl: company.cover_image ?? null,
-      eyebrow: isIntl
-        ? locale === "en"
-          ? "International"
-          : "Internasjonalt"
-        : company.location?.name ?? (locale === "en" ? "Norway" : "Norge"),
-      ctaLabel: locale === "en" ? "View case" : "Åpne case",
-      source: "company",
-    });
+      const isIntl = intlIds.has(company.id);
+      fallbackItems.push({
+        id: company.id,
+        name: company.name,
+        href: localizePath(locale, `/selskap/${company.slug}`),
+        videoUrl,
+        description: company.short_description ?? null,
+        thumbnailUrl: company.cover_image ?? null,
+        eyebrow: isIntl
+          ? locale === "en"
+            ? "International"
+            : "Internasjonalt"
+          : company.location?.name ?? (locale === "en" ? "Norway" : "Norge"),
+        ctaLabel: locale === "en" ? "View case" : "Åpne case",
+        source: "company",
+      });
+    }
+    reelItems = dedupeShowreelItems(fallbackItems);
   }
-
-  const reelItems =
-    cmsItems.length > 0 ? dedupeShowreelItems(cmsItems) : dedupeShowreelItems(fallbackItems);
 
   return (
     <main>
@@ -91,12 +96,16 @@ export default async function KiReklamePage() {
         ) : (
           <div className="mx-auto mt-10 max-w-3xl rounded-3xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] p-6 shadow-soft">
             <h2 className="text-xl font-semibold">
-              {locale === "en" ? "No public mp4 showreels yet" : "Ingen offentlige mp4-showreels ennå"}
+              {locale === "en" ? "No showheel videos yet" : "Ingen showheel-videoer ennå"}
             </h2>
             <p className="mt-2 text-[rgb(var(--muted))]">
-              {locale === "en"
-                ? "When companies add direct mp4 URLs, they will appear automatically on this page."
-                : "Når selskaper legger inn direkte mp4-URL, vises de automatisk på denne siden."}
+              {cmsMode
+                ? locale === "en"
+                  ? "This page is controlled by Showheel CMS. Add videos in /admin/showheel."
+                  : "Denne siden styres av Showheel CMS. Legg til videoer i /admin/showheel."
+                : locale === "en"
+                  ? "Add the showreel_entries table to switch to manual Showheel CMS control."
+                  : "Legg til showreel_entries-tabellen for å bytte til manuell Showheel CMS-styring."}
             </p>
           </div>
         )}
