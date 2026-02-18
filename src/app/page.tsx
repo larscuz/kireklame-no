@@ -13,15 +13,40 @@ import { getAdForPlacement } from "@/lib/ads";
 import AdSlot from "./_components/AdSlot";
 
 export const metadata = siteMeta({
-  title: "KI reklame i Norge – byråer, video og markedsføring | KiReklame",
+  title: "KI reklame i Norge – AI videoproduksjon, byråer og reklamefilm | KiReklame",
   description:
-    "Finn norske KI‑byråer, reklamebyråer og studioer som lager AI‑video, annonser og markedsføring. Filtrer på tjenester, pris og AI‑nivå.",
+    "Finn norske leverandører for kommersiell AI videoproduksjon, reklamefilm og KI-reklame. Sammenlign byråer, studioer og relevante caser.",
   path: "/",
 });
 
 export default async function Home(props: any) {
   const locale = await getLocale();
   const params = await parseSearchParamsAsync(props?.searchParams);
+  const apprenticeQuery = locale === "en" ? "apprentice" : "lærling";
+  const highIntentLinks =
+    locale === "en"
+      ? [
+          { label: "AI advertising", href: localizePath(locale, "/ki-reklame") },
+          { label: "AI commercial production price", href: localizePath(locale, "/ai-video") },
+          { label: "Commercial production", href: localizePath(locale, "/ai-video") },
+          { label: "AI agency", href: localizePath(locale, "/ki-reklamebyra") },
+          { label: "AI media agency", href: localizePath(locale, "/ki-reklamebyra") },
+          { label: "AI campaign", href: localizePath(locale, "/ki-markedsforing") },
+          { label: "Apprentices", href: `${localizePath(locale, "/selskaper")}?q=${encodeURIComponent(apprenticeQuery)}` },
+          { label: "AI video production", href: localizePath(locale, "/ai-video") },
+        ]
+      : [
+          { label: "ki reklame", href: localizePath(locale, "/ki-reklame") },
+          { label: "ai reklame", href: localizePath(locale, "/ki-reklame") },
+          { label: "reklamefilm bedrift pris", href: localizePath(locale, "/ai-video") },
+          { label: "reklamefilm produksjon", href: localizePath(locale, "/ai-video") },
+          { label: "reklamefilmproduksjon", href: localizePath(locale, "/ai-video") },
+          { label: "ai digitalbyrå", href: localizePath(locale, "/ki-reklamebyra") },
+          { label: "ai mediebyrå", href: localizePath(locale, "/ki-reklamebyra") },
+          { label: "ki kampanje", href: localizePath(locale, "/ki-markedsforing") },
+          { label: "lærlinger", href: `${localizePath(locale, "/selskaper")}?q=${encodeURIComponent(apprenticeQuery)}` },
+          { label: "ai videoproduksjon", href: localizePath(locale, "/ai-video") },
+        ];
 
   // 1) Hent katalog-data som før
   const { companies, facets } = await getCompanies(params);
@@ -107,6 +132,35 @@ export default async function Home(props: any) {
           gridBannerAd2={gridBannerAd2}
           gridBannerAd3={gridBannerAd3}
         />
+      </section>
+
+      <section className="mx-auto max-w-6xl px-4 pb-8">
+        <div className="rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] p-6 shadow-soft">
+          <div className="text-[11px] uppercase tracking-[0.22em] text-[rgb(var(--muted))]">
+            {locale === "en" ? "High-intent searches" : "Høy-intensjon søk"}
+          </div>
+          <h2 className="mt-3 text-2xl font-semibold tracking-tight">
+            {locale === "en"
+              ? "Commercial AI video production in Norway"
+              : "Kommersiell AI videoproduksjon i Norge"}
+          </h2>
+          <p className="mt-2 max-w-3xl text-sm leading-relaxed text-[rgb(var(--muted))]">
+            {locale === "en"
+              ? "We prioritize buying intent for customer-ordered commercial production: AI advertising, campaign video, and commercial delivery."
+              : "Vi prioriterer kjøpsintensjon for bestillt kommersiell produksjon: KI-reklame, kampanjevideo og reklamefilm-leveranser."}
+          </p>
+          <div className="mt-4 flex flex-wrap gap-2 text-sm">
+            {highIntentLinks.map((item) => (
+              <Link
+                key={`intent-${item.label}`}
+                href={item.href}
+                className="rounded-full border border-[rgb(var(--border))] bg-[rgb(var(--bg))] px-3 py-1.5 text-[rgb(var(--fg))] hover:opacity-80 transition"
+              >
+                {item.label}
+              </Link>
+            ))}
+          </div>
+        </div>
       </section>
 
       {/* SEO: hold this at the bottom */}
