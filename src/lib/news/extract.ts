@@ -64,6 +64,8 @@ const INDUSTRY_BRAND_HINTS = [
   "ipg",
   "apriil",
   "try",
+  "bonnier",
+  "nrk",
   "schibsted",
   "aller",
   "egmont",

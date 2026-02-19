@@ -20,6 +20,8 @@ const PRIORITY_NEWS_QUERIES: string[] = [
   "site:m24.no KI reklame",
   "site:m24.no KI byrå",
   "site:kode24.no KI reklamebyrå",
+  "site:nrk.no kunstig intelligens bokomslag",
+  "site:nrk.no kunstig intelligens reklame",
 ];
 
 const CORE_NEWS_QUERIES: string[] = [
@@ -64,6 +66,8 @@ const SOURCE_FOCUSED_QUERIES: string[] = [
   "site:kode24.no AI reklame",
   "site:kode24.no KI kompetanse",
   "site:kode24.no reklamebyrå KI",
+  "site:nrk.no kunstig intelligens bokomslag",
+  "site:nrk.no kunstig intelligens medie",
   "site:cw.no KI markedsføring",
   "site:digi.no KI reklame",
   "site:digitalnorway.com KI markedsføring",
