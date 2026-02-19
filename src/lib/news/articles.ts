@@ -185,6 +185,7 @@ export async function listNewsForAdmin(limit = 250): Promise<NewsArticle[]> {
   const { data, error } = await db
     .from("news_articles")
     .select("*")
+    .order("updated_at", { ascending: false })
     .order("created_at", { ascending: false })
     .limit(limit);
 
@@ -202,9 +203,11 @@ export async function listNewsForAdmin(limit = 250): Promise<NewsArticle[]> {
   }
 
   return Array.from(deduped.values()).sort((a, b) => {
+    const updatedDiff = toTimestamp(b.updated_at) - toTimestamp(a.updated_at);
+    if (updatedDiff !== 0) return updatedDiff;
     const createdDiff = toTimestamp(b.created_at) - toTimestamp(a.created_at);
     if (createdDiff !== 0) return createdDiff;
-    return toTimestamp(b.updated_at) - toTimestamp(a.updated_at);
+    return toTimestamp(b.published_at) - toTimestamp(a.published_at);
   });
 }
 

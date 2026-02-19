@@ -814,8 +814,9 @@ export default async function KIAvisAdminPage({
   const sp = (await searchParams) ?? {};
   const notice = resolveAdminNotice(sp.notice);
   const noticeItemId = firstSearchParam(sp.item);
-  const rows = await listNewsForAdmin(240);
+  const rows = await listNewsForAdmin(600);
   const byFreshestFirst = (a: (typeof rows)[number], b: (typeof rows)[number]) =>
+    toTimestamp(b.updated_at) - toTimestamp(a.updated_at) ||
     toTimestamp(b.published_at) - toTimestamp(a.published_at) ||
     toTimestamp(b.created_at) - toTimestamp(a.created_at);
   const reviewRows = rows.filter((row) => row.status === "draft");
