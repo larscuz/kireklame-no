@@ -365,6 +365,32 @@ function toAbsoluteUrl(input: string | null | undefined, sourceUrl?: string | nu
   return null;
 }
 
+function hostnameFromUrl(raw: string | null | undefined): string {
+  const value = String(raw ?? "").trim();
+  if (!value) return "";
+  try {
+    return new URL(value).hostname.toLowerCase();
+  } catch {
+    return "";
+  }
+}
+
+function isKnownDefaultSocialImage(url: string, sourceUrl?: string | null): boolean {
+  const lc = String(url ?? "").toLowerCase();
+  if (!lc) return false;
+
+  // NRK frequently sets this generic image in og:image even when the article has a real lead photo.
+  if (lc.includes("/nrkno/serum/") && lc.includes("/common/img/default.jpg")) return true;
+
+  const sourceHost = hostnameFromUrl(sourceUrl);
+  const imageHost = hostnameFromUrl(url);
+  const sourceIsNrk = sourceHost === "nrk.no" || sourceHost.endsWith(".nrk.no");
+  const imageIsStaticNrk = imageHost === "static.nrk.no";
+  if (sourceIsNrk && imageIsStaticNrk && lc.includes("/common/img/default.jpg")) return true;
+
+  return false;
+}
+
 function isLikelyDecorativeImage(url: string): boolean {
   const lc = url.toLowerCase();
   if (lc.endsWith(".svg") || lc.endsWith(".ico")) return true;
@@ -464,6 +490,7 @@ function imageFromHtmlTag(html: string, sourceUrl?: string | null): string | nul
     const resolved = toAbsoluteUrl(candidate, sourceUrl);
     if (!resolved) continue;
     if (isLikelyDecorativeImage(resolved)) continue;
+    if (isKnownDefaultSocialImage(resolved, sourceUrl)) continue;
     return resolved;
   }
 
@@ -489,11 +516,15 @@ function heroImageFromHtml(
   for (const key of metaCandidates) {
     const fromMeta = firstMetaContent(lookup, [key], 1800);
     const resolved = toAbsoluteUrl(fromMeta, sourceUrl);
-    if (resolved && !isLikelyDecorativeImage(resolved)) return resolved;
+    if (resolved && !isLikelyDecorativeImage(resolved) && !isKnownDefaultSocialImage(resolved, sourceUrl)) {
+      return resolved;
+    }
   }
 
   const fromJsonLd = imageFromJsonLd(html, sourceUrl);
-  if (fromJsonLd && !isLikelyDecorativeImage(fromJsonLd)) return fromJsonLd;
+  if (fromJsonLd && !isLikelyDecorativeImage(fromJsonLd) && !isKnownDefaultSocialImage(fromJsonLd, sourceUrl)) {
+    return fromJsonLd;
+  }
 
   const fromImg = imageFromHtmlTag(html, sourceUrl);
   if (fromImg) return fromImg;
