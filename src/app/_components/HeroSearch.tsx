@@ -25,10 +25,6 @@ export default function HeroSearch({
   sponsorAd?: SponsorAd | null;
   locale: Locale;
   copy: {
-    title: string;
-    titleMuted: string;
-    subtitle: string;
-    ctaRegister: string;
     featuredLabel: string;
     sponsorLabel: string;
     openLinkFallback: string;
@@ -50,31 +46,10 @@ export default function HeroSearch({
           <HeroBackgroundVideo src={heroVideoUrl} poster="/covers/cover-1.jpg" />
 
           {/* Foreground content */}
-          <div className="relative z-10 p-6 md:p-12">
-            {/* Title + CTA */}
-            <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
-              <h1 className="text-4xl md:text-5xl font-semibold tracking-tight">
-                {copy.title}{" "}
-                <span className="text-[rgb(var(--muted))] font-normal">
-                  {copy.titleMuted}
-                </span>
-              </h1>
-
-              <a
-                href={localizePath(locale, "/register/company")}
-                className="inline-flex items-center justify-center rounded-2xl bg-[rgb(var(--fg))] text-[rgb(var(--bg))] px-4 py-3 font-semibold shadow-soft hover:opacity-90 transition"
-              >
-                {copy.ctaRegister}
-              </a>
-            </div>
-
-            <p className="mt-4 max-w-2xl text-[rgb(var(--muted))] leading-relaxed">
-              {copy.subtitle}
-            </p>
-
+          <div className="relative z-10 flex h-full items-end p-6 md:p-12">
             {/* Featured */}
             {featuredCompany?.slug ? (
-              <div className="mt-6 text-sm text-[rgb(var(--muted))]">
+              <div className="text-sm text-[rgb(var(--muted))]">
                 <span className="mr-2 inline-flex items-center rounded-full border border-[rgb(var(--border))] bg-[rgb(var(--bg))] px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide">
                   {copy.featuredLabel}
                 </span>

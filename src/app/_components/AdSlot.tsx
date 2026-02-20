@@ -8,6 +8,7 @@ export default function AdSlot({
   sponsorLabel,
   openLinkFallback,
   variant = "card",
+  compact = false,
   className,
   locale,
 }: {
@@ -15,6 +16,7 @@ export default function AdSlot({
   sponsorLabel: string;
   openLinkFallback: string;
   variant?: "card" | "banner" | "sidebar" | "hero" | "miniBanner";
+  compact?: boolean;
   className?: string;
   locale: "en" | "no" | "nb" | string;
 }) {
@@ -117,7 +119,13 @@ export default function AdSlot({
             </div>
           </div>
         ) : isBanner ? (
-          <div className="relative isolate h-[54px] w-full overflow-hidden bg-[rgb(var(--bg))] sm:h-[62px] md:h-auto md:aspect-[8/1]">
+          <div
+            className={`relative isolate w-full overflow-hidden bg-[rgb(var(--bg))] ${
+              compact
+                ? "h-[36px] sm:h-[42px] md:h-auto md:aspect-[12/1]"
+                : "h-[54px] sm:h-[62px] md:h-auto md:aspect-[8/1]"
+            }`}
+          >
             {bannerDesktopImg ? (
               <picture className="absolute inset-0 block h-full w-full">
                 <source media="(max-width: 767px)" srcSet={bannerMobileImg} />

@@ -1,7 +1,6 @@
 // src/app/page.tsx
 import Link from "next/link";
 import HeroSearch from "./_components/HeroSearch";
-import FilterChips from "./_components/FilterChips";
 import ListingGrid from "./_components/ListingGrid";
 import { getCompanies, getCompanyBySlug } from "@/lib/supabase/server";
 import { parseSearchParamsAsync } from "@/lib/utils";
@@ -100,7 +99,7 @@ export default async function Home(props: any) {
   };
 
   // 1) Hent katalog-data som før
-  const { companies, facets } = await getCompanies(params);
+  const { companies } = await getCompanies(params);
 
   // 2) Hent hero settings (featured + video)
   const { data: settings } = await supabaseAdmin()
@@ -149,10 +148,25 @@ export default async function Home(props: any) {
             sponsorLabel={locale === "en" ? "Sponsored" : "Sponset"}
             openLinkFallback={locale === "en" ? "Open link" : "Åpne lenke"}
             variant="banner"
+            compact
             locale={locale}
           />
         </section>
       ) : null}
+
+      <section className="mx-auto max-w-6xl px-4 pt-3 pb-1">
+        <h2 className="text-[1.6rem] font-semibold leading-[1.15] tracking-tight text-[rgb(var(--fg))] md:text-[2rem] lg:text-[2.2rem]">
+          <span className="text-[rgb(var(--fg))]">KiReklame - </span>
+          <span className="text-[rgb(var(--muted))]">
+            {locale === "en" ? "Norwegian AI agencies" : "Norske KI‑byråer"}
+          </span>
+        </h2>
+        <p className="mt-1.5 text-sm leading-relaxed text-[rgb(var(--muted))] md:text-base">
+          {locale === "en"
+            ? "Find Norway's leading AI video creators in one place"
+            : "Finn Norges fremste AI-videokreatører på ett sted"}
+        </p>
+      </section>
 
       <HeroSearch
         initialQuery={params.q ?? ""}
@@ -161,25 +175,11 @@ export default async function Home(props: any) {
         sponsorAd={ad ?? null}
         locale={locale}
         copy={{
-          title: locale === "en" ? "AI advertising" : "KI reklame",
-          titleMuted: locale === "en" ? "in Norway" : "i Norge",
-          subtitle:
-            locale === "en"
-              ? "Find Norwegian AI agencies and studios for advertising, AI video, and marketing."
-              : "Finn norske KI‑byråer og studioer for reklame, AI‑video og markedsføring.",
-          ctaRegister: locale === "en" ? "Register company" : "Registrer bedrift",
           featuredLabel: locale === "en" ? "Featured" : "Utvalgt",
           sponsorLabel: locale === "en" ? "Sponsored" : "Sponset",
           openLinkFallback: locale === "en" ? "Open link" : "Åpne lenke",
         }}
       />
-
-      {/* FILTER (kun desktop/tablet) */}
-      <section className="hidden md:block mx-auto max-w-6xl px-4 pb-4">
-        <div className="rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] shadow-soft px-3 py-3">
-          <FilterChips facets={facets} params={params} locale={locale} />
-        </div>
-      </section>
 
       <section className="mx-auto max-w-6xl px-4 pb-10">
         <ListingGrid
