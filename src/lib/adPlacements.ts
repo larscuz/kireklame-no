@@ -47,6 +47,18 @@ export const AD_PLACEMENTS: PlacementDefinition[] = [
     durationsDays: [7, 14, 30],
   },
   {
+    key: "company_cover_mini_banner",
+    name: { no: "Selskapsside mini-banner", en: "Company mini banner" },
+    description: {
+      no: "Mini-banner under cover-bildet på detaljsiden.",
+      en: "Mini banner below the cover image on company pages.",
+    },
+    surfaces: { no: ["Selskapsside"], en: ["Company page"] },
+    format: "banner",
+    tier: "standard",
+    durationsDays: [7, 14, 30],
+  },
+  {
     key: "international_hero_sidebar",
     name: { no: "Internasjonalt hero-side", en: "International hero sidebar" },
     description: {

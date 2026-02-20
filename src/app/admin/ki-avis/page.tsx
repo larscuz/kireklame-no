@@ -26,8 +26,10 @@ import {
 } from "@/lib/news/frontLayout";
 import {
   cleanText,
+  canonicalizeNewsUrl,
   coerceNewsPerspective,
   coerceNewsStatus,
+  domainFromUrl,
   parseTopicTagsCsv,
   topicTagsToCsv,
 } from "@/lib/news/utils";
@@ -114,6 +116,41 @@ function formatPublishedDateForQueue(value: string | null | undefined): string {
   const ts = toTimestamp(value);
   if (!ts) return "Publisert dato: ukjent";
   return `Publisert: ${new Date(ts).toLocaleDateString("nb-NO")}`;
+}
+
+function crawlRunTimestampFromId(value: string | null | undefined): number {
+  const runId = String(value ?? "").trim();
+  const matched = runId.match(
+    /^news(?:_international)?_(\d{4}-\d{2}-\d{2}T\d{2})-(\d{2})-(\d{2})-(\d{3})Z_/
+  );
+  if (!matched) return 0;
+  const [, base, minute, second, millis] = matched;
+  const ts = Date.parse(`${base}:${minute}:${second}.${millis}Z`);
+  return Number.isFinite(ts) ? ts : 0;
+}
+
+function sourceUrlKey(value: string | null | undefined): string {
+  const canonical = canonicalizeNewsUrl(String(value ?? "").trim());
+  return canonical ? canonical.replace(/\/+$/g, "") : "";
+}
+
+function isOwnKireklameSource(value: { source_url: string; source_domain: string | null }): boolean {
+  const fromColumn = String(value.source_domain ?? "")
+    .trim()
+    .toLowerCase()
+    .replace(/^www\./, "");
+  const fromUrl = String(domainFromUrl(value.source_url) ?? "")
+    .trim()
+    .toLowerCase()
+    .replace(/^www\./, "");
+  const domain = fromColumn || fromUrl;
+  if (!domain) return false;
+  return domain === "kireklame.no" || domain.endsWith(".kireklame.no") || domain === "kireklame-no.vercel.app";
+}
+
+function isFromLatestRun(value: { crawl_run_id: string | null }, latestRunTs: number): boolean {
+  if (latestRunTs <= 0) return false;
+  return crawlRunTimestampFromId(value.crawl_run_id) >= latestRunTs;
 }
 
 function firstSearchParam(
@@ -819,16 +856,40 @@ export default async function KIAvisAdminPage({
     toTimestamp(b.updated_at) - toTimestamp(a.updated_at) ||
     toTimestamp(b.published_at) - toTimestamp(a.published_at) ||
     toTimestamp(b.created_at) - toTimestamp(a.created_at);
-  const reviewRows = rows.filter((row) => row.status === "draft");
-  const reviewNorwegianRows = reviewRows.filter(
-    (row) => !isLikelyInternationalDeskArticle(row)
-  ).sort(byFreshestFirst);
-  const reviewInternationalRows = reviewRows.filter((row) =>
-    isLikelyInternationalDeskArticle(row)
-  ).sort(byFreshestFirst);
-  const nonPublishedRows = rows.filter(
-    (row) => row.status !== "draft" && row.status !== "published"
+
+  const publishedSourceKeys = new Set(
+    rows
+      .filter((row) => row.status === "published")
+      .map((row) => sourceUrlKey(row.source_url))
+      .filter(Boolean)
   );
+
+  const strictDraftCandidates = rows.filter((row) => {
+    if (row.status !== "draft") return false;
+    if (!toTimestamp(row.published_at)) return false;
+    if (isOwnKireklameSource(row)) return false;
+    const sourceKey = sourceUrlKey(row.source_url);
+    if (sourceKey && publishedSourceKeys.has(sourceKey)) return false;
+    return true;
+  });
+
+  const latestNorwegianRunTs = strictDraftCandidates
+    .filter((row) => !isLikelyInternationalDeskArticle(row))
+    .reduce((latest, row) => Math.max(latest, crawlRunTimestampFromId(row.crawl_run_id)), 0);
+  const latestInternationalRunTs = strictDraftCandidates
+    .filter((row) => isLikelyInternationalDeskArticle(row))
+    .reduce((latest, row) => Math.max(latest, crawlRunTimestampFromId(row.crawl_run_id)), 0);
+
+  const reviewNorwegianRows = strictDraftCandidates
+    .filter((row) => !isLikelyInternationalDeskArticle(row) && isFromLatestRun(row, latestNorwegianRunTs))
+    .sort(byFreshestFirst);
+  const reviewInternationalRows = strictDraftCandidates
+    .filter((row) => isLikelyInternationalDeskArticle(row) && isFromLatestRun(row, latestInternationalRunTs))
+    .sort(byFreshestFirst);
+  const reviewRows = [...reviewNorwegianRows, ...reviewInternationalRows];
+  const reviewRowIds = new Set(reviewRows.map((row) => row.id));
+
+  const nonPublishedRows = rows.filter((row) => row.status !== "published" && !reviewRowIds.has(row.id));
   const publishedRows = rows.filter((row) => row.status === "published");
   const orderedRows = [
     ...reviewNorwegianRows,

@@ -9,6 +9,17 @@ import { aiLevelLabel, priceLevelLabel } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 
+function parseClientNames(raw: string): string[] {
+  return Array.from(
+    new Set(
+      raw
+        .split(/\r?\n|,/)
+        .map((part) => part.trim())
+        .filter(Boolean)
+    )
+  ).slice(0, 40);
+}
+
 async function updateCompanyAction(formData: FormData) {
   "use server";
 
@@ -46,6 +57,10 @@ async function updateCompanyAction(formData: FormData) {
 
   const descRaw = String(formData.get("description") ?? "").trim();
   const description = descRaw === "" ? null : descRaw;
+  const secondaryRaw = String(formData.get("secondary_media_url") ?? "").trim();
+  const secondary_media_url = secondaryRaw === "" ? null : secondaryRaw;
+  const clientsRaw = String(formData.get("featured_clients") ?? "").trim();
+  const client_names = parseClientNames(clientsRaw);
 
 
   await updateCompanyProfile(id, {
@@ -59,6 +74,8 @@ async function updateCompanyAction(formData: FormData) {
   short_description,
   description,
   video_url,
+  secondary_media_url,
+  client_names,
 });
 
 
@@ -145,6 +162,12 @@ export default async function AdminCompanyEditPage({
       cover_image,
       video_url,
       location_id,
+      links:links (
+        id,
+        kind,
+        label,
+        url
+      ),
       locations:location_id (
         id,
         name,
@@ -197,6 +220,21 @@ export default async function AdminCompanyEditPage({
     : (company as any).locations;
 
   const isActive = Boolean((company as any).is_active);
+  const companyLinks = Array.isArray((company as any).links) ? (company as any).links : [];
+  const secondaryMediaDefault =
+    companyLinks.find((link: any) => String(link?.kind ?? "").toLowerCase() === "secondary_media")
+      ?.url ?? "";
+  const featuredClientsDefault = companyLinks
+    .filter((link: any) => String(link?.kind ?? "").toLowerCase() === "client")
+    .map((link: any) => {
+      const label = String(link?.label ?? "").trim();
+      if (label) return label;
+      const url = String(link?.url ?? "").trim();
+      if (url && url !== "#") return url;
+      return "";
+    })
+    .filter(Boolean)
+    .join("\n");
 
   return (
     <main className="mx-auto max-w-3xl px-4 py-10">
@@ -394,6 +432,33 @@ export default async function AdminCompanyEditPage({
     className="w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-4 py-2"
   />
 </div>
+
+        <div className="grid gap-2">
+          <label className="text-sm font-semibold">Media nr. 2 (video eller bilde URL)</label>
+          <input
+            name="secondary_media_url"
+            defaultValue={secondaryMediaDefault}
+            placeholder="https://... eller /path"
+            className="w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-4 py-2"
+          />
+          <div className="text-xs text-[rgb(var(--muted))]">
+            Vises under lang beskrivelse på profilsiden.
+          </div>
+        </div>
+
+        <div className="grid gap-2">
+          <label className="text-sm font-semibold">Kunder (én per linje)</label>
+          <textarea
+            name="featured_clients"
+            defaultValue={featuredClientsDefault}
+            rows={5}
+            placeholder={"Kunde 1\nKunde 2\nKunde 3"}
+            className="w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-4 py-2"
+          />
+          <div className="text-xs text-[rgb(var(--muted))]">
+            Vises nederst på profilsiden.
+          </div>
+        </div>
 
 
         <div className="grid gap-2">

@@ -39,6 +39,10 @@ type AdLeadRecord = {
   status: string | null;
 };
 
+type OutreachSendRow = {
+  recipient_email: string | null;
+};
+
 const TEMPLATES: Record<
   MarketType,
   { subject: string; body: (name: string, listingUrl: string) => string }
@@ -324,21 +328,23 @@ export default function OutreachApp() {
     let active = true;
     (async () => {
       try {
-        const { data, error } = await supabase
-          .from("companies")
-          .select("id,name,email,website,slug,market,cover_image")
-          .eq("is_active", true)
-          .is("deleted_at", null)
-          .eq("market", marketCode)
-          .order("name", { ascending: true });
+        const res = await fetch(
+          `/api/admin/outreach/data?kind=companies&market=${marketCode}`,
+          { cache: "no-store" }
+        );
+        const payload = await res.json().catch(() => null);
 
         if (!active) return;
-        if (error) {
-          setCompaniesError(error.message);
+        if (!res.ok) {
+          setCompaniesError(payload?.error ?? `Feil ved henting (${res.status})`);
           setCompanies([]);
         } else {
-          setCompanies((data || []) as CompanyRecord[]);
+          setCompanies((payload?.data || []) as CompanyRecord[]);
         }
+      } catch (error) {
+        if (!active) return;
+        setCompaniesError(error instanceof Error ? error.message : "Ukjent feil");
+        setCompanies([]);
       } finally {
         if (active) setCompaniesLoading(false);
       }
@@ -347,7 +353,7 @@ export default function OutreachApp() {
     return () => {
       active = false;
     };
-  }, [market, hasSupabaseConfig, supabase]);
+  }, [market, hasSupabaseConfig]);
 
   useEffect(() => {
     if (!hasSupabaseConfig) {
@@ -364,18 +370,22 @@ export default function OutreachApp() {
     let active = true;
     (async () => {
       try {
-        const { data, error } = await supabase
-          .from("ad_leads")
-          .select("id,name,email,website,source_url,market,status")
-          .order("name", { ascending: true });
+        const res = await fetch("/api/admin/outreach/data?kind=ad_leads", {
+          cache: "no-store",
+        });
+        const payload = await res.json().catch(() => null);
 
         if (!active) return;
-        if (error) {
-          setAdLeadsError(error.message);
+        if (!res.ok) {
+          setAdLeadsError(payload?.error ?? `Feil ved henting (${res.status})`);
           setAdLeads([]);
         } else {
-          setAdLeads((data || []) as AdLeadRecord[]);
+          setAdLeads((payload?.data || []) as AdLeadRecord[]);
         }
+      } catch (error) {
+        if (!active) return;
+        setAdLeadsError(error instanceof Error ? error.message : "Ukjent feil");
+        setAdLeads([]);
       } finally {
         if (active) setAdLeadsLoading(false);
       }
@@ -384,7 +394,7 @@ export default function OutreachApp() {
     return () => {
       active = false;
     };
-  }, [activeMode, hasSupabaseConfig, supabase]);
+  }, [activeMode, hasSupabaseConfig]);
 
   useEffect(() => {
     if (!hasSupabaseConfig) {
@@ -399,23 +409,28 @@ export default function OutreachApp() {
     let active = true;
     (async () => {
       try {
-        const { data, error } = await supabase
-          .from("outreach_sends")
-          .select("recipient_email");
+        const res = await fetch("/api/admin/outreach/data?kind=outreach_sends", {
+          cache: "no-store",
+        });
+        const payload = await res.json().catch(() => null);
 
         if (!active) return;
-        if (error) {
-          setSentEmailsError(error.message);
+        if (!res.ok) {
+          setSentEmailsError(payload?.error ?? `Feil ved henting (${res.status})`);
           setSentEmails(new Set());
         } else {
           const next = new Set<string>();
-          (data || []).forEach((row) => {
+          ((payload?.data || []) as OutreachSendRow[]).forEach((row) => {
             if (row.recipient_email) {
               next.add(String(row.recipient_email).toLowerCase());
             }
           });
           setSentEmails(next);
         }
+      } catch (error) {
+        if (!active) return;
+        setSentEmailsError(error instanceof Error ? error.message : "Ukjent feil");
+        setSentEmails(new Set());
       } finally {
         if (active) setSentEmailsLoading(false);
       }
@@ -424,7 +439,7 @@ export default function OutreachApp() {
     return () => {
       active = false;
     };
-  }, [hasSupabaseConfig, supabase]);
+  }, [hasSupabaseConfig]);
 
   useEffect(() => {
     if (!selectedCompanyId) return;

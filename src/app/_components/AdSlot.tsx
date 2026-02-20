@@ -14,18 +14,19 @@ export default function AdSlot({
   ad: SponsorAd | null;
   sponsorLabel: string;
   openLinkFallback: string;
-  variant?: "card" | "banner" | "sidebar" | "hero";
+  variant?: "card" | "banner" | "sidebar" | "hero" | "miniBanner";
   className?: string;
   locale: "en" | "no" | "nb" | string;
 }) {
   if (!ad) return null;
 
   const isBanner = variant === "banner";
+  const isMiniBanner = variant === "miniBanner";
   const isSidebar = variant === "sidebar";
   const isHero = variant === "hero";
   const bannerMobileImg = ad.mobile_image_url ?? ad.image_url;
   const bannerDesktopImg = ad.image_url;
-  const img = isBanner
+  const img = isBanner || isMiniBanner
     ? bannerDesktopImg
     : isHero
       ? ad.image_url ?? ad.mobile_image_url ?? null
@@ -85,6 +86,31 @@ export default function AdSlot({
             <div className="absolute inset-0 p-2.5 sm:p-3 flex justify-end">
               <div className="flex justify-end self-start">
                 <span className="inline-flex items-center rounded-full border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/80 backdrop-blur px-2 py-0.5 text-[10px] sm:text-[11px] font-semibold uppercase tracking-wide text-[rgb(var(--muted))]">
+                  {label}
+                </span>
+              </div>
+            </div>
+          </div>
+        ) : isMiniBanner ? (
+          <div className="relative isolate h-[42px] w-full overflow-hidden bg-[rgb(var(--bg))] sm:h-[50px]">
+            {bannerDesktopImg ? (
+              <picture className="absolute inset-0 block h-full w-full">
+                <source media="(max-width: 767px)" srcSet={bannerMobileImg} />
+                <img
+                  src={bannerDesktopImg}
+                  alt={ad.alt}
+                  className="h-full w-full object-cover object-center"
+                  style={{ objectPosition: "center center" }}
+                  loading="lazy"
+                />
+              </picture>
+            ) : null}
+
+            <div className="absolute inset-0 bg-gradient-to-t from-black/16 via-black/6 to-transparent group-hover:from-black/10 transition" />
+
+            <div className="absolute inset-0 p-1.5 sm:p-2 flex justify-end">
+              <div className="flex justify-end self-start">
+                <span className="inline-flex items-center rounded-full border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/85 backdrop-blur px-1.5 py-0.5 text-[9px] sm:text-[10px] font-semibold uppercase tracking-wide text-[rgb(var(--muted))]">
                   {label}
                 </span>
               </div>

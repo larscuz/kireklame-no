@@ -101,6 +101,8 @@ export const NEWS_BLOCKED_DOMAINS = new Set<string>([
   "tiktok.com",
   "reddit.com",
   "wikipedia.org",
+  "kireklame.no",
+  "kireklame-no.vercel.app",
 ]);
 
 const NEWS_ALLOWED_NORWEGIAN_DOMAINS = new Set<string>([

@@ -14,7 +14,7 @@ export function siteMeta(args: {
     description: args.description,
     alternates: { canonical: url },
     icons: {
-      icon: "/KIREKLAMElogo-black.gif",
+      icon: "/ip-mark.svg",
     },
     openGraph: {
       title: args.title,

@@ -26,7 +26,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         url: "https://kireklame.no/",
         logo: {
           "@type": "ImageObject",
-          url: "https://kireklame.no/KIREKLAMElogo-black.gif",
+          url: "https://kireklame.no/ip-logo.svg",
         },
       },
       {

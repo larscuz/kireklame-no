@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { supabaseServerClient } from "@/lib/supabase/server";
+import { supabaseAdmin } from "@/lib/supabase/admin";
 import { siteMeta } from "@/lib/seo";
 import { getLocale } from "@/lib/i18n.server";
 import { getAdForPlacement } from "@/lib/ads";
@@ -21,7 +22,9 @@ type AdLead = {
 
 export default async function OtherAiServicesPage() {
   const locale = await getLocale();
-  const supabase = await supabaseServerClient();
+  const supabase = process.env.SUPABASE_SERVICE_ROLE_KEY
+    ? supabaseAdmin()
+    : await supabaseServerClient();
   const [
     { data, error },
     topBannerAd,

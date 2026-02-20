@@ -1,0 +1,102 @@
+[
+  {
+    "id": "2a236f02-6a8b-46ba-996b-05ca20b7c5d2",
+    "slug": "aiaiai",
+    "description": "AIAIAI er et kreativt AI-samfunn med spisskompetanse innen design, AI, reklamefilmproduksjon og mediestrategi. Miljøet samler fagfolk og virksomheter som vil bruke AI mer målrettet i kreativt arbeid. De tilbyr nettverk, kurs og praktiske verktøy som gjør det enklere å teste, lære og implementere AI i produksjon og kommunikasjon."
+  },
+  {
+    "id": "e17d6569-9168-4d0f-ab05-09666541c891",
+    "slug": "alf-gundersen",
+    "description": "Alf Gundersen er et reklamebyrå i Bergen som leverer strategi, design, digital markedsføring og innholdsproduksjon. Byrået arbeider med alt fra webutvikling og merkevarearbeid til kampanje- og kommunikasjonsleveranser. De kommuniserer også bruk av AI i innsikt, optimalisering og deler av kreativ produksjon."
+  },
+  {
+    "id": "0e6d5439-3794-4176-a1cc-0feb11ccdac7",
+    "slug": "avia-produksjon",
+    "description": "AVIA Produksjon er et kreativt miljø i Oslo som produserer film og innhold for flere plattformer. Tjenestene omfatter reklamefilm, SoMe-video, holdningskampanjer, animasjon, VR og AI-støttet produksjon. Selskapet kombinerer konseptutvikling, produksjon og etterarbeid i leveranser til både merkevarer og organisasjoner."
+  },
+  {
+    "id": "0d554db1-5e54-444f-9586-9e70ab9eb8c0",
+    "slug": "chimney-ai-studio",
+    "description": "Chimney AI-Studio er en AI-first produksjonshub som tilbyr full produksjonsledelse fra konsept til postproduksjon. Studioet kobler kunder med erfarne AI-kreatører, teknologer og tverrfaglige produksjonsteam. Leveransemodellen er bygget for kampanjer og innhold der hastighet, variasjon og visuell kvalitet må kombineres."
+  },
+  {
+    "id": "cfd1a190-caed-4f30-b0d1-010a0f67a0d8",
+    "slug": "cuz-media",
+    "description": "Cuz Media er et AI-first kreativt studio som leverer video, SoMe-innhold, reklame og digitale konsepter. Studioet kombinerer kreativ kompetanse med KI-drevne arbeidsflyter for raskere produksjon og flere innholdsvarianter. En sentral del av modellen er praktisk gjennomføring med lærlinger i reelle kundeprosjekter."
+  },
+  {
+    "id": "b17c6fca-bef8-4532-828c-1825753c0a43",
+    "slug": "edmond-yang",
+    "description": "Edmond Yang er en prisvinnende, tverrfaglig AI-basert visuell kunstner og entreprenør. Han jobber med generativ AI, visuell historiefortelling og eksperimentell design i kommersielle og redaksjonelle formater. Han holder også workshops og foredrag om kunstig intelligens i kreativ praksis, og arbeidene hans har nådd bred internasjonal distribusjon."
+  },
+  {
+    "id": "978322bf-951d-4e74-9987-953621a90d3a",
+    "slug": "ellevill-produksjon",
+    "description": "Ellevill Produksjon er et filmproduksjonsmiljø i Oslo som lager reklamefilm, informasjonsfilm og SoMe-innhold. De produserer både små og store filmprosjekter for ulike plattformer og medieflater. Selskapet tilbyr helhetlige leveranser fra idé og manus til ferdig publiserbart innhold."
+  },
+  {
+    "id": "599b2e2b-df3c-44a4-838d-8e3b084b06e7",
+    "slug": "good-morning",
+    "description": "Good Morning er et norsk teknologi- og designbyrå som jobber med digitale produkter, merkevare og kommunikasjon. Byrået kombinerer strategi, design og teknologi i leveranser for virksomheter med høye krav til digital kvalitet. De profilerer også AI som en del av metode og gjennomføring i relevante prosjekter."
+  },
+  {
+    "id": "cbeba2f8-b200-4dcb-b0fd-6f32133411dd",
+    "slug": "gullhaien",
+    "description": "Gullhaien er en norsk bransjepris som løfter frem kreativ bruk av kunstig intelligens i kommunikasjons- og reklamefeltet. Prisen synliggjør prosjekter som er blitt bedre ved bruk av AI, eller som ikke ville blitt realisert uten AI-verktøy. Initiativet bidrar til å dokumentere utviklingen av AI-drevet kreativt håndverk i Norge."
+  },
+  {
+    "id": "6f1f4a3a-7959-483a-a539-03d8499a59c7",
+    "slug": "headspin",
+    "description": "Headspin er et kommunikasjonsbyrå i Trondheim som leverer strategi, kampanje, design, film og teknologinære tjenester. Selskapet arbeider med innholds- og reklameproduksjon for kommersielle kunder på tvers av kanaler. Profilen beskriver en bred leveransemodell som kombinerer kreativitet, produksjon og rådgivning."
+  },
+  {
+    "id": "831bf434-3a96-4158-af0f-e03bc73507a1",
+    "slug": "intelligenspartiet",
+    "description": "Intelligenspartiet (The Intelligence Party) er et norsk kunst- og dialogprosjekt som utforsker forholdet mellom mennesker og kunstig intelligens. Prosjektet tematiserer erstatningsangst gjennom eksperimentell politikk, samtale og offentlig deltakelse. AI brukes både som tematisk kjerne og som del av prosjektets kreative identitet."
+  },
+  {
+    "id": "7ecb1ac2-d525-44db-9ca0-99a6dcdf068c",
+    "slug": "involve",
+    "description": "Involve er et norsk byrå som kommuniserer AI som en integrert del av metode og leveranse. Selskapet jobber med strategi, innsikt og gjennomføring i skjæringspunktet mellom kommunikasjon, teknologi og marked. Profilen peker på praktisk bruk av AI i både arbeidsprosess og kundeleveranser."
+  },
+  {
+    "id": "f2230ad5-378c-4b7f-9edc-1ba0ff00d9e1",
+    "slug": "kreativ-ki",
+    "description": "Kreativ KI AS hjelper kreative team med å integrere kunstig intelligens i arbeidsflyt og produksjon, særlig innen film- og medieprosesser. Tjenestene inkluderer workshops, foredrag, opplæring og utvikling av skreddersydde KI-verktøy. Målet er å gjøre AI anvendbart i konkret kreativ produksjon, ikke bare på idéstadiet."
+  },
+  {
+    "id": "7e742943-5f78-478a-a18e-9f1761461357",
+    "slug": "manuela-hofer",
+    "description": "Manuela Hofer er en kreativ teknolog og AI-kunstner som arbeider i skjæringspunktet mellom musikk, film og generativ teknologi. Hun er kjent for tidlig bruk av AI i profesjonell videoproduksjon, blant annet knyttet til Norges første AI-genererte musikkvideo. Arbeidet hennes kombinerer kunstnerisk uttrykk med eksperimentell teknologibruk."
+  },
+  {
+    "id": "80110b4c-574e-4c9b-96d2-cffd36f41680",
+    "slug": "native",
+    "description": "Native tilbyr en agentisk AI-løsning for sosiale medier som dekker research, innholdsplan, produksjon og publisering. Tjenesten er rettet mot små og mellomstore bedrifter som ønsker jevn synlighet uten tradisjonell byråmodell. Plattformen er bygget for kontinuerlig innholdsproduksjon og effektiv distribusjon i daglige kanaler."
+  },
+  {
+    "id": "c2438699-6967-4f13-bab9-6873d2804d5c",
+    "slug": "noa-anorak",
+    "description": "NOA Anorak er et fullservice kreativt byrå som jobber med merkevarebygging, reklame, design og digitale løsninger for nasjonale og internasjonale kunder. Byrået kombinerer strategi, kreativitet og teknologi i tverrfaglige leveranser. De beskriver også bruk av AI i analyse, innsikt og deler av produksjonsarbeidet."
+  },
+  {
+    "id": "678742af-dbd7-402c-b219-13c232fdb1b6",
+    "slug": "reimagine-studios",
+    "description": "Reimagine Studios er et next-gen kreativt studio med base i Oslo som jobber med AI, film og interaktiv historiefortelling. Studioet utvikler kampanjer og opplevelser ved å kombinere generative verktøy, kreativ teknologi og moderne produksjonsmetoder. De tilbyr også workshops, foredrag og skreddersydde kurs for virksomheter som vil forstå hvordan generativ AI påvirker arbeidsflyt, strategi og kreativ utvikling. Reimagine samarbeider i tillegg med internasjonale AI-filmskapere og utviklere i prosjekter på tvers av markeder."
+  },
+  {
+    "id": "2697e334-2329-45a1-bef0-b785f39ed558",
+    "slug": "tenk-byra",
+    "description": "Tenk Byrå er et norsk byrå som kommuniserer AI-first i metode og leveranse. Selskapet jobber med kreativ og strategisk kommunikasjon for digitale flater, med fokus på effektiv produksjon og tydelig budskap. Profilen beskriver AI som en aktiv del av hvordan tjenester utvikles og leveres."
+  },
+  {
+    "id": "5a25699a-3e28-494b-ae07-a58bb69aa48f",
+    "slug": "trim-media",
+    "description": "Trim Media UB er en norsk ungdomsbedrift som leverer innholdsproduksjon, spesielt video og short-form til sosiale medier. Bedriften bruker AI-verktøy i idéutvikling, redigering, klipp, teksting og publisering for å øke tempo og kvalitet i leveransene. Modellen fungerer også som en alternativ lærings- og arbeidsarena for elever uten tradisjonell læreplass."
+  },
+  {
+    "id": "1133259b-8751-4145-8a28-3d3ea7743180",
+    "slug": "well-told-aigency",
+    "description": "Well Told er et storytelling-byrå i Oslo som kombinerer kunstig intelligens med kreativ markedsføring. De bruker AI til analyse, innsikt og effektiv produksjon, og leverer kampanjer og innhold raskere enn tradisjonelle arbeidsmåter. Byrået publiserer også dokumenterte AI-case der teknologien brukes direkte i det visuelle uttrykket."
+  }
+]

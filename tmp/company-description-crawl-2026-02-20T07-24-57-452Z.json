@@ -1,0 +1,35 @@
+[
+  {
+    "id": "028edf42-1003-47ed-bb98-6bbb7522a765",
+    "name": "Advids",
+    "slug": "advids",
+    "website": "https://advids.co/our-portfolio/ai-video-ad-production-by-advids/",
+    "is_placeholder": false,
+    "old_description": "Advids har en egen porteføljeside for \"ai video ad Production\" og beskriver produksjon for AI/tech-verticals (bl.a. AI/ML, computer vision, business automation).",
+    "new_description": "Video studio med AI-relatert annonse-/kampanjeproduksjon (ai video ad production). Tjenestene omfatter videoproduksjon for digitale flater, design og merkevareutvikling, nettsider og digitale brukeropplevelser. Nettsiden viser at kunstig intelligens inngår i arbeidsflyt, metode eller produksjon. Mer informasjon finnes på advids.co.",
+    "changed": true,
+    "crawl_ok": true,
+    "crawl_reason": "ok",
+    "mode": "heuristic",
+    "evidence": {
+      "crawledUrls": [
+        "https://advids.co/our-portfolio/ai-video-ad-production-by-advids/"
+      ],
+      "title": "ai video ad Production - Advids Video Portfolio",
+      "metaDescription": "Automating Insights with Powerful Video Production 2D character design, environment illustration, motion graphics, UI animation, visual effects integration, sound design, compositing, final editing, color grading, output mastering",
+      "headings": [
+        "Automating Insights with Powerful Video Production"
+      ],
+      "paragraphs": [
+        "Advanced AI Vision Transforms Business Challenges AWS Rekognition elevates visual data processing. It efficiently solves diverse business challenges from content moderation to inventory management, providing scalable and accurate deep learning analysis. This automation significantly reduces manual inspection efforts and costs. The video beautifully illustrates intuitive interfaces and precise object detection. Its engaging design simplifies complex AI functionalities, making advanced computer vision accessible. The polished visuals effectively communicate seamless integration and powerful insights, ensuring user clarity.",
+        "Our 2D animation brilliantly conveys intricate AI processes. This dynamic visual approach transforms complex technical information into easily digestible content, enhancing viewer comprehension. It effectively communicates the profound value of AWS Rekognition through clear and engaging visuals. The creative team meticulously crafted every visual element, ensuring optimal clarity. Diverse design approaches were explored, resulting in an aesthetically pleasing and highly informative visual journey. This showcases our expertise in delivering sophisticated, impactful animated narratives.",
+        "\"Advids delivered a superb AI video ad for AWS Rekognition. Their expert animation brilliantly conveyed our complex vision technology. The engaging visuals deeply resonated with our audience, making complex concepts incredibly clear and impactful.\"",
+        "Primary Industry: Technology Sub Industry: Artificial Intelligence Industries: Cloud Computing Services, Machine Learning Solutions, Software Development Platforms, Data Analysis Systems, Business Automation Tools, Computer Vision Applications",
+        "2D character design, environment illustration, motion graphics, UI animation, visual effects integration, sound design, compositing, final editing, color grading, output mastering",
+        "To effectively demonstrate AWS Rekognition's transformative AI capabilities for automated visual insight generation.",
+        "Sarah Chen Director of Product Marketing, AWS Rekognition",
+        "Please fill out the form below and we’ll get in touch."
+      ]
+    }
+  }
+]

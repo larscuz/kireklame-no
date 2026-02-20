@@ -6,10 +6,12 @@ import { createServerClient } from "@supabase/ssr";
 import Separator from "@/app/_components/Separator";
 import ClaimCta from "@/app/_components/ClaimCta";
 import CoverImg from "@/app/_components/CoverImg";
+import AdSlot from "@/app/_components/AdSlot";
 import { getCompanyBySlug } from "@/lib/supabase/server";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import { siteMeta } from "@/lib/seo";
 import { aiLevelLabel, priceLevelLabel, typeLabel } from "@/lib/utils";
+import { getAdForPlacement } from "@/lib/ads";
 import type { Metadata } from "next";
 import { localizePath } from "@/lib/i18n";
 import { getLocale } from "@/lib/i18n.server";
@@ -32,6 +34,19 @@ function normalizeVideoUrl(url: string | null): string | null {
 function isMp4Url(url: string | null): boolean {
   if (!url) return false;
   return url.toLowerCase().endsWith(".mp4") || url.toLowerCase().includes(".mp4?");
+}
+
+function isImageUrl(url: string | null): boolean {
+  if (!url) return false;
+  return /\.(png|jpe?g|webp|gif|avif|svg)(\?|#|$)/i.test(url);
+}
+
+function normalizeMediaUrl(raw: string | null | undefined): string | null {
+  const s = (raw ?? "").trim();
+  if (!s) return null;
+  if (s.startsWith("/")) return s;
+  if (s.startsWith("http://") || s.startsWith("https://")) return s;
+  return `https://${s}`;
 }
 
 function toAbsoluteUrl(raw: string | null | undefined): string | null {
@@ -165,7 +180,11 @@ export default async function CompanyPage({
 }) {
   const locale = await getLocale();
   const { slug } = await params;
-  const company = await getCompanyBySlug(slug);
+  const [company, companyMiniBannerAd, topBannerAd] = await Promise.all([
+    getCompanyBySlug(slug),
+    getAdForPlacement("company_cover_mini_banner"),
+    getAdForPlacement("catalog_top_banner"),
+  ]);
 
   if (!company) {
     return (
@@ -216,8 +235,30 @@ export default async function CompanyPage({
   const rawVideo = company.video_url ?? null;
   const mp4 = isMp4Url(rawVideo);
   const embedSrc = mp4 ? null : normalizeVideoUrl(rawVideo);
-
-  
+  const links = Array.isArray((company as any).links) ? (company as any).links : [];
+  const secondaryMediaLink = links.find(
+    (link: any) => String(link?.kind ?? "").toLowerCase() === "secondary_media"
+  );
+  const secondaryMediaUrl = normalizeMediaUrl(secondaryMediaLink?.url ?? null);
+  const secondaryMediaIsMp4 = isMp4Url(secondaryMediaUrl);
+  const secondaryMediaEmbedSrc = secondaryMediaIsMp4
+    ? null
+    : normalizeVideoUrl(secondaryMediaUrl);
+  const secondaryMediaIsImage = isImageUrl(secondaryMediaUrl);
+  const featuredClients: string[] = Array.from(
+    new Set<string>(
+      links
+        .filter((link: any) => String(link?.kind ?? "").toLowerCase() === "client")
+        .map((link: any) => {
+          const label = String(link?.label ?? "").trim();
+          if (label) return label;
+          const url = String(link?.url ?? "").trim();
+          if (url && url !== "#") return url;
+          return "";
+        })
+        .filter(Boolean)
+    )
+  );
 
   const websiteRaw: string | null =
     (company as any).website ??
@@ -259,6 +300,18 @@ export default async function CompanyPage({
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-10">
+      {topBannerAd ? (
+        <div className="mb-4">
+          <AdSlot
+            ad={topBannerAd}
+            sponsorLabel={locale === "en" ? "Sponsored" : "Sponset"}
+            openLinkFallback={locale === "en" ? "Open link" : "Åpne lenke"}
+            variant="banner"
+            locale={locale}
+          />
+        </div>
+      ) : null}
+
       <script
         type="application/ld+json"
         // eslint-disable-next-line react/no-danger
@@ -266,8 +319,8 @@ export default async function CompanyPage({
       />
 
       {/* MEDIA */}
-      <div className="grid grid-cols-1 gap-3 md:grid-cols-5 md:grid-rows-2">
-        <div className="relative md:col-span-3 md:row-span-2 aspect-[16/10] overflow-hidden rounded-2xl border bg-black">
+      <div className="grid grid-cols-1 gap-3 md:grid-cols-5">
+        <div className="relative md:col-span-3 aspect-[16/10] overflow-hidden rounded-2xl border bg-black">
           {!rawVideo ? (
             <div className="absolute inset-0 flex items-center justify-center text-sm text-muted">
               {locale === "en" ? "No video" : "Ingen video"}
@@ -284,8 +337,20 @@ export default async function CompanyPage({
           ) : null}
         </div>
 
-        <div className="relative md:col-span-2 md:row-span-2 aspect-[16/10] overflow-hidden rounded-2xl border">
-          <CoverImg src={cover} alt={company.name} className="h-full w-full object-cover" />
+        <div className="md:col-span-2 flex flex-col gap-3">
+          <div className="relative aspect-[16/10] overflow-hidden rounded-2xl border">
+            <CoverImg src={cover} alt={company.name} className="h-full w-full object-cover" />
+          </div>
+
+          {companyMiniBannerAd ? (
+            <AdSlot
+              ad={companyMiniBannerAd}
+              sponsorLabel={locale === "en" ? "Sponsored" : "Sponset"}
+              openLinkFallback={locale === "en" ? "Open link" : "Åpne lenke"}
+              variant="miniBanner"
+              locale={locale}
+            />
+          ) : null}
         </div>
       </div>
 
@@ -307,8 +372,51 @@ export default async function CompanyPage({
       </div>
 
       <div className="mt-10 grid grid-cols-1 lg:grid-cols-12 gap-8">
-        <div className="lg:col-span-8">
+        <div className="lg:col-span-8 space-y-6">
           <p className="text-muted">{company.description || company.short_description}</p>
+
+          {secondaryMediaUrl ? (
+            <section className="rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] p-3 sm:p-4">
+              <div className="mb-3 text-xs font-semibold uppercase tracking-wide text-[rgb(var(--muted))]">
+                {locale === "en" ? "More from the company" : "Mer fra bedriften"}
+              </div>
+
+              {secondaryMediaIsImage ? (
+                <div className="overflow-hidden rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))]">
+                  <img
+                    src={secondaryMediaUrl}
+                    alt={company.name}
+                    className="h-full w-full object-cover"
+                    loading="lazy"
+                  />
+                </div>
+              ) : secondaryMediaIsMp4 ? (
+                <video
+                  src={secondaryMediaUrl}
+                  controls
+                  playsInline
+                  className="w-full rounded-xl border border-[rgb(var(--border))] bg-black"
+                />
+              ) : secondaryMediaEmbedSrc ? (
+                <div className="overflow-hidden rounded-xl border border-[rgb(var(--border))] bg-black aspect-video">
+                  <iframe
+                    src={secondaryMediaEmbedSrc}
+                    className="h-full w-full"
+                    allowFullScreen
+                  />
+                </div>
+              ) : (
+                <a
+                  href={secondaryMediaUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center rounded-lg border px-3 py-2 text-sm font-medium hover:bg-[rgb(var(--bg))]"
+                >
+                  {locale === "en" ? "Open media ↗" : "Åpne media ↗"}
+                </a>
+              )}
+            </section>
+          ) : null}
         </div>
 
         <div className="lg:col-span-4 self-start">
@@ -374,6 +482,29 @@ export default async function CompanyPage({
           </div>
         </div>
       </div>
+
+      {featuredClients.length ? (
+        <section className="mt-10 rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] p-5 shadow-soft">
+          <h2 className="text-lg font-semibold tracking-tight">
+            {locale === "en" ? "Clients" : "Kunder"}
+          </h2>
+          <p className="mt-1 text-sm text-[rgb(var(--muted))]">
+            {locale === "en"
+              ? "Selected clients the company has worked with."
+              : "Utvalgte kunder bedriften har jobbet med."}
+          </p>
+          <div className="mt-4 flex flex-wrap gap-2">
+            {featuredClients.map((client) => (
+              <span
+                key={`client-${client}`}
+                className="inline-flex items-center rounded-full border border-[rgb(var(--border))] bg-[rgb(var(--bg))] px-3 py-1.5 text-sm"
+              >
+                {client}
+              </span>
+            ))}
+          </div>
+        </section>
+      ) : null}
     </div>
   );
 }

@@ -11,6 +11,7 @@ type DailyCrawlPayload = {
   maxArticles: number;
   resultsPerQuery: number;
   minPublishedAt: string | null;
+  requirePublishedAt: boolean;
   requirePublishedAtAfterMin: boolean;
 };
 
@@ -119,6 +120,7 @@ async function payloadFromRequest(req: Request): Promise<DailyCrawlPayload> {
     maxArticles: clampInt(params.get("maxArticles"), 1, 240, 60),
     resultsPerQuery: clampInt(params.get("resultsPerQuery"), 1, 10, 8),
     minPublishedAt,
+    requirePublishedAt: parseBooleanParam(params.get("requirePublishedAt"), true),
     requirePublishedAtAfterMin: minPublishedAt ? strictFresh : false,
   };
 }

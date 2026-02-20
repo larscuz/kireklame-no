@@ -1,0 +1,91 @@
+[
+  {
+    "id": "028edf42-1003-47ed-bb98-6bbb7522a765",
+    "name": "Advids",
+    "slug": "advids",
+    "website": "https://advids.co/our-portfolio/ai-video-ad-production-by-advids/",
+    "is_placeholder": false,
+    "old_description": "Advids har en egen porteføljeside for \"ai video ad Production\" og beskriver produksjon for AI/tech-verticals (bl.a. AI/ML, computer vision, business automation).",
+    "new_description": "Video studio med AI-relatert annonse-/kampanjeproduksjon (ai video ad production). Tjenestene omfatter videoproduksjon for digitale flater, design og merkevareutvikling, nettsider og digitale brukeropplevelser. Nettsiden viser at kunstig intelligens inngar i arbeidsflyt, metode eller produksjon. Mer informasjon finnes pa advids.co.",
+    "changed": true,
+    "crawl_ok": true,
+    "crawl_reason": "ok",
+    "mode": "heuristic",
+    "evidence": {
+      "crawledUrls": [
+        "https://advids.co/our-portfolio/ai-video-ad-production-by-advids/"
+      ],
+      "title": "ai video ad Production - Advids Video Portfolio",
+      "metaDescription": "Automating Insights with Powerful Video Production 2D character design, environment illustration, motion graphics, UI animation, visual effects integration, sound design, compositing, final editing, color grading, output mastering",
+      "headings": [
+        "Automating Insights with Powerful Video Production"
+      ],
+      "paragraphs": [
+        "Advanced AI Vision Transforms Business Challenges AWS Rekognition elevates visual data processing. It efficiently solves diverse business challenges from content moderation to inventory management, providing scalable and accurate deep learning analysis. This automation significantly reduces manual inspection efforts and costs. The video beautifully illustrates intuitive interfaces and precise object detection. Its engaging design simplifies complex AI functionalities, making advanced computer vision accessible. The polished visuals effectively communicate seamless integration and powerful insights, ensuring user clarity.",
+        "Our 2D animation brilliantly conveys intricate AI processes. This dynamic visual approach transforms complex technical information into easily digestible content, enhancing viewer comprehension. It effectively communicates the profound value of AWS Rekognition through clear and engaging visuals. The creative team meticulously crafted every visual element, ensuring optimal clarity. Diverse design approaches were explored, resulting in an aesthetically pleasing and highly informative visual journey. This showcases our expertise in delivering sophisticated, impactful animated narratives.",
+        "\"Advids delivered a superb AI video ad for AWS Rekognition. Their expert animation brilliantly conveyed our complex vision technology. The engaging visuals deeply resonated with our audience, making complex concepts incredibly clear and impactful.\"",
+        "Primary Industry: Technology Sub Industry: Artificial Intelligence Industries: Cloud Computing Services, Machine Learning Solutions, Software Development Platforms, Data Analysis Systems, Business Automation Tools, Computer Vision Applications",
+        "2D character design, environment illustration, motion graphics, UI animation, visual effects integration, sound design, compositing, final editing, color grading, output mastering",
+        "To effectively demonstrate AWS Rekognition's transformative AI capabilities for automated visual insight generation.",
+        "Sarah Chen Director of Product Marketing, AWS Rekognition",
+        "Please fill out the form below and we’ll get in touch."
+      ]
+    }
+  },
+  {
+    "id": "2a236f02-6a8b-46ba-996b-05ca20b7c5d2",
+    "name": "AIAIAI AS",
+    "slug": "aiaiai",
+    "website": "https://aiaiai.as/",
+    "is_placeholder": false,
+    "old_description": "AIAIAI er et kreativt AI-samfunn og miljø med samlet spisskompetanse på design, AI, reklamefilmproduksjon og mediestrategi. De tilbyr nettverk, kurs og praktiske AI-verktøy som hjelper frilansere og bedrifter å ta AI i bruk i kreativt arbeid.",
+    "new_description": "Norges kreative AI-samfunn – spisskompetanse på design, AI, reklamefilmproduksjon og mediestrategi. Tjenestene omfatter design og merkevareutvikling, kurs, opplaring og faglig veiledning. Nettsiden viser at kunstig intelligens inngar i arbeidsflyt, metode eller produksjon. Mer informasjon finnes pa aiaiai.as.",
+    "changed": true,
+    "crawl_ok": true,
+    "crawl_reason": "ok",
+    "mode": "heuristic",
+    "evidence": {
+      "crawledUrls": [
+        "https://aiaiai.as/"
+      ],
+      "title": "AIAIAI - Norges kreative AI-samfunn",
+      "metaDescription": "AI læring for kreativ bransje. Vi tilbyr skreddersydde AI-verktøy, kurs, og nettverk som hjelper deg å utnytte potensialet i AI. Bli med på en reise mot en smartere, mer innovativ fremtid.",
+      "headings": [],
+      "paragraphs": []
+    }
+  },
+  {
+    "id": "e17d6569-9168-4d0f-ab05-09666541c891",
+    "name": "Alf Gundersen",
+    "slug": "alf-gundersen",
+    "website": "https://alfgundersen.no/",
+    "is_placeholder": false,
+    "old_description": "Alf Gundersen kommuniserer eksplisitt bruk av AI i innsikt, optimalisering og kreativ produksjon. Profilen er opprettet fra åpne kilder og kan oppdateres via claim.",
+    "new_description": "Norsk byrå med tydelig AI-kommunikasjon i metode og leveranser. Tjenestene omfatter design og merkevareutvikling, nettsider og digitale brukeropplevelser, markedsforing og kampanjearbeid. Nettsiden viser at kunstig intelligens inngar i arbeidsflyt, metode eller produksjon. Mer informasjon finnes pa alfgundersen.no.",
+    "changed": true,
+    "crawl_ok": true,
+    "crawl_reason": "ok",
+    "mode": "heuristic",
+    "evidence": {
+      "crawledUrls": [
+        "https://alfgundersen.no/",
+        "https://alfgundersen.no/tjenester/",
+        "https://alfgundersen.no/tjenester/innsikt/",
+        "https://alfgundersen.no/tjenester/design/"
+      ],
+      "title": "Reklamebyrå i Bergen - Alf Gundersen Strategi, Design og Digital",
+      "metaDescription": "Det bergenske reklamebyrået AlfGundersen kan hjelpe deg med webutvikling, kommunikasjon, branding, digital markedsføring, design og innhold.",
+      "headings": [],
+      "paragraphs": [
+        "Vi bruker AI-modeller og syntetiske «respondenter» til å teste budskap, konsepter og kundereiser, og til å samle og analysere data om målgrupper, markeder og kunder. Metoden gir gode svar på «hva hvis»-scenarioer, og brukes til blant annet segmentering og forbedring av digitale flater og kundereiser, kampanje- og konsepttesting og testing av hypoteser for målgrupper. Kort sagt kan metoden brukes for å få svar på alt du ellers ville spurt mennesker om. Syntetisk research er et veldig godt verktøy som gir gode resultater for en brøkdel av prisen det koster å gjennomføre undersøkelser og tester med ekte mennesker. All syntetisk innsikt valideres og tolkes alltid av en fagspesialist eller konsulent, for å sikre kvalitet og relevans.",
+        "UX-design (brukeropplevelse) handler om hvordan mennesker bruker digitale løsninger som nettsider og apper. UI henger tett sammen med UX, og sammen utgjør de designet til en digital løsning. Nettsiden er ofte din aller viktigste kommunikasjonsflate, og designet har stor betydning for både merkeopplevelsen og kundeopplevelsen. Navigasjonen må være intuitiv, knappene tydelige og innholdet må gi svar på det du lurer på. Derfor har vi egne spesialister på UX- og UI-design som sørger for at sidene er enkle å bruke, tiltalende og fungerer som de skal.",
+        "En god logo er ikke et pynteelement, det er et strategisk verktøy som skaper umiddelbar identitet, skiller deg fra konkurrentene, er skalerbar og fungerer på tvers av flater og kanaler. Våre AD-er har designet logoer for store og små merkevarer og virksomheter i et bredt spekter av bransjer og markeder. Felles for dem alle, enten de er enkle eller komplekse, er at de er forankret i merkevaren og ikke minst at de fungerer effektivt i praksis. I denne artikkelen forklarer vi mer detaljert om hva som gjør at en logo fungerer.",
+        "En årsrapport er ikke bare en årsrapport. Skal den være i pdf-format eller interaktiv og digital? Er dere så store at dere omfattes av ESEF-regelverket og må publisere rapporten i XHTML-format? Skal dere legge mye i årsrapporten og bruke den til å lage innhold dere kan publiserer i andre kanaler også, eller «bare» gjøre det enkelt? Vi har lang erfaring med å utforme årsrapporter etter alle formelle krav, og i alle former. Vi kan bistå med alt fra planlegging, innholdsproduksjon og utforming til trykking.",
+        "Universell utforming handler om å planlegge og utforme fysiske og digitale produkter, omgivelser og tjenester så de kan brukes av alle, uansett funksjonsnedsettelse. For oss handler dette i størst grad om visuelt og teknisk design og interaksjon. Det kan for eksempel være å utforme nettsider slik at det er enklere for blinde og svaksynte å lese innholdet med eller uten skjermleser, eller å gjøre det enklere for alle å bruke digitale tjenester på mobil, selv med redusert finmotorikk.",
+        "En visuell identitet/grafisk profil skapes gjennom logo, farger, typografi, tilleggselementer, slagord, idékonsept, animasjoner og annet som preger kommunikasjonsflatene våre. Men identitet handler om mer enn det visuelle. Det handler om mennesker i møtet med kunder og omgivelser. Stemmen, kundeservice, brukerreisen, måten vi svarer på, altså den totale kundeopplevelsen. Vi hjelper dere å finne riktig identitet for dere, og å få den ut i alle relevante flater og kanaler.",
+        "En god messestand handler om helhetsinntrykket. Både fysisk utforming, illustrasjoner, tekst og materialvalg må sitte for at publikum skal få en opplevelse de husker. Vi har hjulpet kunder med å skille seg ut på messer over hele verden gjennom konseptutvikling, design og utforming, budskap, illustrasjoner, oppfølging av produsenter og kvalitetssikring. Når det gjelder den fysiske byggingen, samarbeider vi med dyktige aktører i både inn- og utland.",
+        "Motion graphics er enkelt fortalt grafiske elementer som beveger seg. Du har garantert sett eksempler på det: Logoer som beveger seg, tekst som flyr hit og dit – alt av grafiske elementer som beveger seg på skjermen. Motion graphics faller inn under den bredere betegnelsen «animasjon», men når vi produserer for våre kunder, skiller vi som regel mellom animasjonsfilmer og motion graphics. Pixar lager animasjonsfilmer, vi lager motion graphics."
+      ]
+    }
+  }
+]

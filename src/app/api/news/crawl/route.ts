@@ -34,6 +34,7 @@ type CrawlPayload = {
   resultsPerQuery?: number;
   maxArticleAgeDays?: number;
   minPublishedAt?: string | null;
+  requirePublishedAt?: boolean;
   requirePublishedAtAfterMin?: boolean;
   queries?: string[];
   seedUrls?: string[];
@@ -181,6 +182,7 @@ export async function POST(req: Request) {
   const resultsPerQuery = clampInt(payload.resultsPerQuery, 1, 10, 10);
   const maxArticleAgeDays = clampInt(payload.maxArticleAgeDays, 30, 3650, 730);
   const minPublishedAtTs = parseTimestamp(payload.minPublishedAt ?? null);
+  const requirePublishedAt = payload.requirePublishedAt !== false;
   const requirePublishedAtAfterMin =
     minPublishedAtTs > 0 ? payload.requirePublishedAtAfterMin !== false : false;
   const crawlRunId = makeRunId();
@@ -240,6 +242,7 @@ export async function POST(req: Request) {
   let skippedIrrelevant = 0;
   let skippedTooOld = 0;
   let skippedBeforeMinPublishedAt = 0;
+  let skippedMissingPublishedAt = 0;
   let skippedMissingPublishedAtForFreshness = 0;
   const preview: Array<{
     title: string;
@@ -317,8 +320,13 @@ export async function POST(req: Request) {
         continue;
       }
 
+      const publishedTs = parseTimestamp(extracted.publishedAt);
+      if (requirePublishedAt && publishedTs <= 0) {
+        skippedMissingPublishedAt += 1;
+        continue;
+      }
+
       if (minPublishedAtTs > 0) {
-        const publishedTs = parseTimestamp(extracted.publishedAt);
         if (publishedTs > 0) {
           if (publishedTs <= minPublishedAtTs) {
             skippedBeforeMinPublishedAt += 1;
@@ -490,6 +498,7 @@ export async function POST(req: Request) {
       skippedIrrelevant,
       skippedTooOld,
       skippedBeforeMinPublishedAt,
+      skippedMissingPublishedAt,
       skippedMissingPublishedAtForFreshness,
       skippedAlreadyPublished,
     },

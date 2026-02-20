@@ -62,6 +62,8 @@ function getFallbackAd(placement: string): SponsorAd | null {
       return base;
     case "catalog_top_banner":
       return { ...base, image_url: banner, mobile_image_url: banner };
+    case "company_cover_mini_banner":
+      return { ...base, image_url: banner, mobile_image_url: banner };
     case "catalog_inline_card":
       return { ...base, image_url: hero, mobile_image_url: banner };
     case "catalog_grid_banner":

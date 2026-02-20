@@ -43,6 +43,7 @@ type CrawlPayload = {
   maxArticles?: number;
   resultsPerQuery?: number;
   minPublishedAt?: string | null;
+  requirePublishedAt?: boolean;
   requirePublishedAtAfterMin?: boolean;
   queries?: string[];
   seedUrls?: string[];
@@ -169,6 +170,7 @@ export async function POST(req: Request) {
   const maxArticles = clampInt(payload.maxArticles, 1, 320, 180);
   const resultsPerQuery = clampInt(payload.resultsPerQuery, 1, 10, 10);
   const minPublishedAtTs = parseTimestamp(payload.minPublishedAt ?? null);
+  const requirePublishedAt = payload.requirePublishedAt !== false;
   const requirePublishedAtAfterMin =
     minPublishedAtTs > 0 ? payload.requirePublishedAtAfterMin !== false : false;
   const queries = normalizeQueryList(payload, maxQueries);
@@ -226,8 +228,10 @@ export async function POST(req: Request) {
 
   const upsertRows: ReturnType<typeof normalizeNewsUpsert>[] = [];
   let skippedNoImage = 0;
+  let keptWithoutImage = 0;
   let skippedNonArticle = 0;
   let skippedBeforeMinPublishedAt = 0;
+  let skippedMissingPublishedAt = 0;
   let skippedMissingPublishedAtForFreshness = 0;
   const preview: Array<{
     title: string;
@@ -299,8 +303,13 @@ export async function POST(req: Request) {
       const keepAsInternational = looksRelevantToInternationalAIAgency(combinedText);
       if (!keepAsInternational) continue;
 
+      const publishedTs = parseTimestamp(extracted.publishedAt);
+      if (requirePublishedAt && publishedTs <= 0) {
+        skippedMissingPublishedAt += 1;
+        continue;
+      }
+
       if (minPublishedAtTs > 0) {
-        const publishedTs = parseTimestamp(extracted.publishedAt);
         if (publishedTs > 0) {
           if (publishedTs <= minPublishedAtTs) {
             skippedBeforeMinPublishedAt += 1;
@@ -324,9 +333,13 @@ export async function POST(req: Request) {
         : hasValidImageUrl(item.imageUrl)
           ? item.imageUrl
           : null;
-      if (!heroImageUrl) {
+      const missingImage = !heroImageUrl;
+      if (missingImage && autoPublish) {
         skippedNoImage += 1;
         continue;
+      }
+      if (missingImage) {
+        keptWithoutImage += 1;
       }
 
       let translatedTitle = title;
@@ -498,8 +511,10 @@ export async function POST(req: Request) {
       prepared: rowsToUpsert.length,
       upserted: upsertedCount,
       skippedNoImage,
+      keptWithoutImage,
       skippedNonArticle,
       skippedBeforeMinPublishedAt,
+      skippedMissingPublishedAt,
       skippedMissingPublishedAtForFreshness,
       skippedAlreadyPublished,
     },

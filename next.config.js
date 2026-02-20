@@ -4,6 +4,8 @@ const nextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
+  // ✅ Disable streaming metadata so social crawlers always get OG tags in <head>
+  htmlLimitedBots: /.*/,
 
   images: {
     remotePatterns: [

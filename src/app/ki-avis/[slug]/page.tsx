@@ -690,7 +690,7 @@ export default async function KIRNyheterArticlePage({
         url: site,
         logo: {
           "@type": "ImageObject",
-          url: `${site}/KIREKLAMElogo-black.gif`,
+          url: `${site}/ip-logo.svg`,
         },
       },
       {
