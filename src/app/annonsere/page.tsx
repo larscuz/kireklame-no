@@ -1,397 +1,340 @@
+import type { CSSProperties } from "react";
 import type { Metadata } from "next";
 import Link from "next/link";
-import { siteMeta } from "@/lib/seo";
+import { Manrope, Space_Grotesk } from "next/font/google";
 import { localizePath } from "@/lib/i18n";
 import { getLocale } from "@/lib/i18n.server";
-import { supabaseAdmin } from "@/lib/supabase/admin";
-import {
-  AD_PLACEMENTS,
-  placementFormatLabel,
-  placementTierLabel,
-  type PlacementDefinition,
-} from "@/lib/adPlacements";
+import { siteMeta } from "@/lib/seo";
+
+const headingFont = Space_Grotesk({
+  subsets: ["latin"],
+  weight: ["500", "600", "700"],
+});
+
+const bodyFont = Manrope({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+});
+
+const pagePalette = {
+  "--ads-bg": "#060709",
+  "--ads-panel": "#0b0e12",
+  "--ads-panel-strong": "#10151c",
+  "--ads-border": "#232d3b",
+  "--ads-text": "#f3f6fa",
+  "--ads-muted": "#9ca8b8",
+  "--ads-accent": "#84c9ff",
+  "--ads-accent-soft": "rgba(132, 201, 255, 0.14)",
+  "--ads-highlight": "rgba(209, 241, 255, 0.08)",
+} as CSSProperties;
+
+type PackagePlan = {
+  name: string;
+  description: string;
+  subtitle?: string;
+  label?: string;
+  originalMonthly: string;
+  originalYearly: string;
+  campaignMonthly: string;
+  campaignYearly: string;
+  savings: string;
+  features: string[];
+  highlighted?: boolean;
+};
+
+const pricingPlans: PackagePlan[] = [
+  {
+    name: "Annonsepakke Basis",
+    description: "Enkel annonseplass med tydelig synlighet i valgt flate.",
+    originalMonthly: "1 990 kr / mnd",
+    originalYearly: "23 880 kr / år",
+    campaignMonthly: "995 kr / mnd",
+    campaignYearly: "11 940 kr / år",
+    savings: "Spar 11 940 kr første året",
+    features: [
+      "Visning på avtalt plassering i kategori",
+      "Klikkbar lenke til egen nettside",
+      "Synlighet i hele avtaleperioden",
+      "Mulighet for oppdatert annonsemateriell",
+      "Rotasjon med andre annonsører i samme flate",
+    ],
+  },
+  {
+    name: "Annonsepakke Fremhevet",
+    description: "Premium plassering for høyere synlighet på sentrale flater.",
+    subtitle:
+      "For selskaper som vil ha sterkere eksponering i relevante kontekster.",
+    originalMonthly: "3 900 kr / mnd",
+    originalYearly: "46 800 kr / år",
+    campaignMonthly: "1 950 kr / mnd",
+    campaignYearly: "23 400 kr / år",
+    savings: "Spar 23 400 kr første året",
+    features: [
+      "Fremhevet plassering",
+      "\"Verified AI\" badge i annonsevisning",
+      "Større visuell eksponering enn Basis",
+      "Klikkbar henvisning til egen nettside",
+      "Mulighet for oppdatert annonsemateriell",
+    ],
+    highlighted: true,
+  },
+  {
+    name: "Annonsepakke Partner",
+    description: "Kombinert annonsepakke med synlighet på flere flater.",
+    label: "Kun 5 plasser",
+    originalMonthly: "6 900 kr / mnd",
+    originalYearly: "82 800 kr / år",
+    campaignMonthly: "3 450 kr / mnd",
+    campaignYearly: "41 400 kr / år",
+    savings: "Spar 41 400 kr første året",
+    features: [
+      "Frontpage-rotasjon",
+      "Banner i KI Nyheter (1920x200)",
+      "Synlighet på flere avtaleflater i samme periode",
+      "Klikkbar henvisning til egen nettside",
+      "Løpende oppdatering av annonsemateriell",
+    ],
+  },
+];
+
+const visibilitySurfaces = [
+  {
+    title: "Frontpage placement",
+    detail: "Målrettet plassering i katalogens hovedflate.",
+    imageSrc:
+      "https://pub-b53c56f5af3e471cb8b3610afdc49a36.r2.dev/ki-reklame/ChatGPT%20Image%20Feb%2020%2C%202026%2C%2011_24_40%20AM.png",
+    imageAlt: "Eksempel på frontpage placement i KiReklame",
+  },
+  {
+    title: "Company profile page",
+    detail: "Profilside med produkt, metode og kontaktpunkt.",
+    imageSrc:
+      "https://pub-b53c56f5af3e471cb8b3610afdc49a36.r2.dev/ki-reklame/ChatGPT%20Image%20Feb%2020%2C%202026%2C%2011_24_33%20AM.png",
+    imageAlt: "Eksempel på company profile page i KiReklame",
+  },
+  {
+    title: "KI Nyheter banner (1920x200)",
+    detail: "Toppbanner i nyhetsstrøm med premium synlighet.",
+    imageSrc:
+      "https://pub-b53c56f5af3e471cb8b3610afdc49a36.r2.dev/ki-reklame/ChatGPT%20Image%20Feb%2020%2C%202026%2C%2011_25_35%20AM.png",
+    imageAlt: "Eksempel på KI Nyheter-banner med format 1920x200",
+  },
+];
 
 export const metadata: Metadata = siteMeta({
-  title: "Annonsere på KiReklame | Synlige annonseplasser",
+  title: "Annonsér på KiReklame – Annonseplass 2026",
   description:
-    "Se tilgjengelige annonseplasser på KiReklame. Oversikt over plassering, synlighetsnivå, varighet og enkel kontakt for booking.",
+    "Se ordinære priser og lanseringspriser for annonseplass i 2026 på KiReklame. Prisene gjelder kun avtaler inngått i 2026.",
   path: "/annonsere",
 });
 
-type AdSnapshot = {
-  id: number;
-  placement: string;
-  title: string | null;
-  is_active: boolean;
-  starts_at: string | null;
-  ends_at: string | null;
-};
+function PricingCard({ plan, ctaHref }: { plan: PackagePlan; ctaHref: string }) {
+  return (
+    <article
+      className={`rounded-3xl border p-6 sm:p-7 ${
+        plan.highlighted
+          ? "border-[var(--ads-accent)]/60 bg-[var(--ads-panel-strong)] shadow-[0_0_0_1px_rgba(132,201,255,0.18)]"
+          : "border-[var(--ads-border)] bg-[var(--ads-panel)]"
+      }`}
+    >
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <h3 className={`${headingFont.className} text-xl font-semibold tracking-tight`}>{plan.name}</h3>
+          <p className="mt-2 text-sm text-[var(--ads-muted)]">{plan.description}</p>
+        </div>
+        {plan.label ? (
+          <span className="rounded-full border border-[var(--ads-accent)]/55 bg-[var(--ads-accent-soft)] px-3 py-1 text-xs font-semibold text-[var(--ads-text)]">
+            {plan.label}
+          </span>
+        ) : null}
+      </div>
 
-type PlacementStats = {
-  totalCampaigns: number;
-  activeNowCount: number;
-  upcomingCount: number;
-  activeNowTitles: string[];
-};
+      {plan.subtitle ? <p className="mt-3 text-xs text-[var(--ads-muted)]">{plan.subtitle}</p> : null}
 
-const durationOptionsMonths = [1, 3, 6] as const;
+      <div className="mt-6 rounded-2xl border border-[var(--ads-border)] bg-black/20 p-4">
+        <div className="text-xs uppercase tracking-[0.14em] text-[var(--ads-muted)]">Ordinær pris</div>
+        <div className="mt-2 text-sm text-[var(--ads-muted)] line-through">{plan.originalMonthly}</div>
+        <div className="text-sm text-[var(--ads-muted)] line-through">{plan.originalYearly}</div>
 
-function parseTime(value: string | null) {
-  if (!value) return null;
-  const parsed = Date.parse(value);
-  return Number.isFinite(parsed) ? parsed : null;
+        <div className="mt-4 text-xs uppercase tracking-[0.14em] text-[var(--ads-muted)]">
+          Oppstartskampanje 2026
+        </div>
+        <div className={`${headingFont.className} mt-2 text-3xl font-bold tracking-tight`}>
+          {plan.campaignMonthly}
+        </div>
+        <div className="text-base text-[var(--ads-text)]/90">{plan.campaignYearly}</div>
+
+        <div className="mt-4 inline-flex rounded-full border border-[var(--ads-accent)]/35 bg-[var(--ads-highlight)] px-3 py-1 text-xs font-semibold text-[var(--ads-accent)]">
+          {plan.savings}
+        </div>
+      </div>
+
+      <ul className="mt-6 space-y-2 text-sm text-[var(--ads-text)]/92">
+        {plan.features.map((feature) => (
+          <li key={feature} className="flex items-start gap-2">
+            <span className="mt-1 h-1.5 w-1.5 rounded-full bg-[var(--ads-accent)]" aria-hidden="true" />
+            <span>{feature}</span>
+          </li>
+        ))}
+      </ul>
+
+      <Link
+        href={ctaHref}
+        className="mt-7 inline-flex w-full items-center justify-center rounded-2xl border border-[var(--ads-border)] bg-[var(--ads-panel-strong)] px-4 py-3 text-sm font-semibold transition hover:border-[var(--ads-accent)]/50 hover:bg-[var(--ads-highlight)]"
+      >
+        Be om annonseforslag
+      </Link>
+    </article>
+  );
 }
 
-function isActiveNow(ad: AdSnapshot, nowMs: number) {
-  if (!ad.is_active) return false;
-  const starts = parseTime(ad.starts_at);
-  const ends = parseTime(ad.ends_at);
-  if (starts !== null && starts > nowMs) return false;
-  if (ends !== null && ends < nowMs) return false;
-  return true;
+function SurfaceBlock({
+  title,
+  detail,
+  imageSrc,
+  imageAlt,
+}: {
+  title: string;
+  detail: string;
+  imageSrc: string;
+  imageAlt: string;
+}) {
+  return (
+    <article className="rounded-3xl border border-[var(--ads-border)] bg-[var(--ads-panel)] p-6">
+      <div className={`${headingFont.className} text-lg font-semibold tracking-tight`}>{title}</div>
+      <p className="mt-2 text-sm text-[var(--ads-muted)]">{detail}</p>
+
+      <div className="mt-5 overflow-hidden rounded-2xl border border-[var(--ads-border)] bg-[var(--ads-panel-strong)]">
+        <img src={imageSrc} alt={imageAlt} loading="lazy" decoding="async" className="h-auto w-full" />
+      </div>
+    </article>
+  );
 }
 
-function isUpcoming(ad: AdSnapshot, nowMs: number) {
-  if (!ad.is_active) return false;
-  const starts = parseTime(ad.starts_at);
-  return starts !== null && starts > nowMs;
-}
-
-function buildPlacementStats(adRows: AdSnapshot[]) {
-  const now = Date.now();
-  const statsByPlacement = new Map<string, PlacementStats>();
-
-  for (const ad of adRows) {
-    const current = statsByPlacement.get(ad.placement) ?? {
-      totalCampaigns: 0,
-      activeNowCount: 0,
-      upcomingCount: 0,
-      activeNowTitles: [],
-    };
-
-    current.totalCampaigns += 1;
-    if (isActiveNow(ad, now)) {
-      current.activeNowCount += 1;
-      if (ad.title) current.activeNowTitles.push(ad.title);
-    }
-    if (isUpcoming(ad, now)) {
-      current.upcomingCount += 1;
-    }
-
-    statsByPlacement.set(ad.placement, current);
-  }
-
-  return statsByPlacement;
-}
-
-function availabilityLabel(
-  stats: PlacementStats,
-  locale: "no" | "en"
-): { label: string; tone: string; detail: string } {
-  if (stats.activeNowCount === 0 && stats.upcomingCount === 0) {
-    return {
-      label: locale === "en" ? "Open now" : "Ledig nå",
-      tone: "text-emerald-300 border-emerald-500/30 bg-emerald-500/10",
-      detail:
-        locale === "en"
-          ? "No active campaign in this placement."
-          : "Ingen aktiv kampanje i denne plasseringen.",
-    };
-  }
-
-  if (stats.activeNowCount === 0 && stats.upcomingCount > 0) {
-    return {
-      label: locale === "en" ? "Scheduled" : "Planlagt",
-      tone: "text-amber-300 border-amber-500/30 bg-amber-500/10",
-      detail:
-        locale === "en"
-          ? "Upcoming campaign exists, but no live campaign right now."
-          : "Det finnes planlagt kampanje, men ingen aktiv akkurat nå.",
-    };
-  }
-
-  if (stats.activeNowCount > 0 && stats.upcomingCount > 0) {
-    return {
-      label: locale === "en" ? "High demand" : "Høy etterspørsel",
-      tone: "text-orange-300 border-orange-500/30 bg-orange-500/10",
-      detail:
-        locale === "en"
-          ? "Live campaign plus upcoming schedule."
-          : "Aktiv kampanje kombinert med fremtidig planlegging.",
-    };
-  }
-
-  return {
-    label: locale === "en" ? "Running now" : "Aktiv nå",
-    tone: "text-sky-300 border-sky-500/30 bg-sky-500/10",
-    detail:
-      locale === "en"
-        ? "Placement currently has a live campaign."
-        : "Plasseringen har en aktiv kampanje.",
-  };
-}
-
-function getTiers(locale: "no" | "en") {
-  return [
-    {
-      key: "starter",
-      name: locale === "en" ? "Starter" : "Start",
-      description:
-        locale === "en"
-          ? "Entry-level visibility for sustained presence."
-          : "Inngangsnivå for jevn tilstedeværelse.",
-    },
-    {
-      key: "standard",
-      name: locale === "en" ? "Standard" : "Standard",
-      description:
-        locale === "en"
-          ? "Balanced reach for broad campaign visibility."
-          : "Balansert rekkevidde for bred kampanjesynlighet.",
-    },
-    {
-      key: "premium",
-      name: locale === "en" ? "Premium" : "Premium",
-      description:
-        locale === "en"
-          ? "High-impact placements with strongest visibility."
-          : "Høy-eksponerte plasseringer med sterkest synlighet.",
-    },
-  ];
-}
-
-export default async function AdvertisePage() {
+export default async function AdvertisingPage() {
   const locale = await getLocale();
   const contactPath = localizePath(locale, "/kontakt");
-
-  const { data, error } = await supabaseAdmin()
-    .from("ads")
-    .select("id, placement, title, is_active, starts_at, ends_at")
-    .order("placement", { ascending: true });
-
-  const adRows = (data ?? []) as AdSnapshot[];
-  const statsByPlacement = buildPlacementStats(adRows);
-
-  const knownPlacementKeys = new Set(AD_PLACEMENTS.map((placement) => placement.key));
-  const unknownPlacements = [...new Set(adRows.map((ad) => ad.placement))]
-    .filter((placement) => placement && !knownPlacementKeys.has(placement))
-    .sort((a, b) => a.localeCompare(b, "nb-NO"))
-    .map(
-      (placement): PlacementDefinition => ({
-        key: placement,
-        name: { no: placement, en: placement },
-        description: {
-          no: "Plassering funnet i databasen, men mangler manuell klassifisering.",
-          en: "Placement found in the database but not yet manually classified.",
-        },
-        surfaces: {
-          no: ["Ikke klassifisert"],
-          en: ["Unclassified surface"],
-        },
-        format: "banner",
-        tier: "standard",
-        durationsDays: [7, 14, 30],
-      })
-    );
-
-  const placements = [...AD_PLACEMENTS, ...unknownPlacements];
-  const tierCards = getTiers(locale);
+  const ctaHref = `${contactPath}?topic=${encodeURIComponent("annonsering")}`;
 
   return (
-    <main className="mx-auto max-w-6xl px-4 py-10">
-      <section className="rounded-3xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] p-6 shadow-soft sm:p-8">
-        <div className="flex flex-wrap items-start justify-between gap-4">
-          <div>
-            <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">
-              {locale === "en" ? "Advertise on KiReklame" : "Annonsere på KiReklame"}
-            </h1>
-            <p className="mt-3 max-w-3xl text-sm text-[rgb(var(--muted))] sm:text-base">
-              {locale === "en"
-                ? "This page is generated from active placement definitions and ad inventory data. Update placements in admin/DB, and this overview updates automatically."
-                : "Denne siden bygges fra aktive plasseringer og annonseoversikt i databasen. Endrer dere plasseringer i admin/DB, oppdateres oversikten automatisk."}
-            </p>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            <Link
-              href={contactPath}
-              className="inline-flex items-center rounded-xl bg-[rgb(var(--fg))] px-4 py-2 text-sm font-semibold text-[rgb(var(--bg))] hover:opacity-90 transition"
-            >
-              {locale === "en" ? "Contact sales" : "Kontakt salg"}
-            </Link>
-            <Link
-              href={`${contactPath}?topic=${encodeURIComponent("annonsere")}`}
-              className="inline-flex items-center rounded-xl border border-[rgb(var(--border))] px-4 py-2 text-sm font-semibold hover:bg-[rgb(var(--bg))] transition"
-            >
-              {locale === "en" ? "Request ad placement" : "Be om annonseplass"}
-            </Link>
-          </div>
-        </div>
-      </section>
+    <div style={pagePalette} className={`${bodyFont.className} bg-[var(--ads-bg)] text-[var(--ads-text)]`}>
+      <div className="mx-auto max-w-6xl px-4 py-8 sm:py-12 lg:py-14">
+        <section className="relative overflow-hidden rounded-[2rem] border border-[var(--ads-border)] bg-[var(--ads-panel)] px-4 py-3 sm:px-6 sm:py-4 lg:px-8">
+          <div
+            className="pointer-events-none absolute inset-0 opacity-30 [background-image:linear-gradient(to_right,rgba(156,168,184,0.15)_1px,transparent_1px),linear-gradient(to_bottom,rgba(156,168,184,0.15)_1px,transparent_1px)] [background-size:46px_46px] animate-[pulse_12s_ease-in-out_infinite]"
+            aria-hidden="true"
+          />
+          <div
+            className="pointer-events-none absolute -right-10 top-3 h-24 w-24 rounded-full border border-[var(--ads-border)]"
+            aria-hidden="true"
+          />
 
-      <section className="mt-8 rounded-3xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] p-6 shadow-soft sm:p-8">
-        <h2 className="text-xl font-semibold">
-          {locale === "en" ? "Visibility hierarchy" : "Synlighetshierarki"}
-        </h2>
-        <p className="mt-2 text-sm text-[rgb(var(--muted))]">
-          {locale === "en"
-            ? "Price levels are handled in dialogue. This hierarchy shows relative exposure level without publishing rates."
-            : "Prisnivå avtales i dialog. Hierarkiet under viser relativ eksponering uten publiserte priser."}
-        </p>
-        <div className="mt-4 grid gap-3 sm:grid-cols-3">
-          {tierCards.map((tier) => (
-            <div
-              key={`tier-${tier.key}`}
-              className="rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))] px-4 py-4"
-            >
-              <div className="text-sm font-semibold">{tier.name}</div>
-              <p className="mt-2 text-sm text-[rgb(var(--muted))]">{tier.description}</p>
+          <div className="relative flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+            <div className="max-w-2xl">
+              <p className="text-[9px] font-semibold uppercase tracking-[0.18em] text-[var(--ads-muted)]">
+                KiReklame 2026
+              </p>
+              <h1 className={`${headingFont.className} mt-1 text-2xl font-semibold tracking-tight sm:text-3xl`}>
+                Annonsér på KiReklame
+              </h1>
+              <p className="mt-1.5 max-w-lg text-sm text-[var(--ads-muted)] sm:text-[15px]">
+                50 % lanseringsrabatt første 12 måneder. Betalt synlighet på definerte flater i 2026.
+              </p>
             </div>
-          ))}
-        </div>
-      </section>
+            <Link
+              href={ctaHref}
+              className="inline-flex w-fit items-center rounded-xl border border-[var(--ads-accent)]/60 bg-[var(--ads-accent-soft)] px-4 py-1.5 text-xs font-semibold text-[var(--ads-text)] transition hover:bg-[var(--ads-highlight)] sm:text-sm md:shrink-0"
+            >
+              Be om annonseforslag
+            </Link>
+          </div>
+        </section>
 
-      <section className="mt-8">
-        <div className="flex items-end justify-between gap-3">
-          <h2 className="text-xl font-semibold">
-            {locale === "en" ? "Available ad spaces" : "Tilgjengelige annonseplasser"}
+        <section className="mt-16">
+          <h2 className={`${headingFont.className} text-3xl font-semibold tracking-tight sm:text-4xl`}>
+            Ordinære priser vs. Oppstartskampanje 2026
           </h2>
-          <div className="text-xs text-[rgb(var(--muted))]">
-            {locale === "en"
-              ? `${placements.length} placement options`
-              : `${placements.length} plasseringsvalg`}
+          <div className="mt-4 rounded-2xl border border-[var(--ads-border)] bg-black/20 px-4 py-3 text-sm text-[var(--ads-muted)]">
+            Prisene på denne siden gjelder kun avtaler inngått i perioden 1. januar 2026 til 31. desember 2026.
+            Fornyelse eller videreføring etter 2026 prises etter gjeldende prisliste på fornyelsestidspunktet.
           </div>
-        </div>
-
-        {error ? (
-          <div className="mt-4 rounded-2xl border border-rose-500/40 bg-rose-500/10 px-4 py-3 text-sm text-rose-200">
-            {locale === "en"
-              ? `Could not read ad inventory: ${error.message}`
-              : `Kunne ikke lese annonseoversikt: ${error.message}`}
+          <div className="mt-8 grid gap-5 lg:grid-cols-3">
+            {pricingPlans.map((plan) => (
+              <PricingCard key={plan.name} plan={plan} ctaHref={ctaHref} />
+            ))}
           </div>
-        ) : null}
+        </section>
 
-        <div className="mt-4 grid gap-4">
-          {placements.map((placement) => {
-            const stats = statsByPlacement.get(placement.key) ?? {
-              totalCampaigns: 0,
-              activeNowCount: 0,
-              upcomingCount: 0,
-              activeNowTitles: [],
-            };
-            const availability = availabilityLabel(stats, locale);
-            const contactHref = `${contactPath}?placement=${encodeURIComponent(
-              placement.key
-            )}&topic=${encodeURIComponent("annonsere")}`;
+        <section className="mt-12 rounded-3xl border border-[var(--ads-border)] bg-[var(--ads-panel)] px-6 py-8 sm:px-8">
+          <h2 className={`${headingFont.className} text-2xl font-semibold tracking-tight`}>
+            Hva innebærer annonsering på KiReklame?
+          </h2>
+          <p className="mt-4 max-w-4xl text-base leading-relaxed text-[var(--ads-muted)]">
+            Annonsering gir betalt synlighet på definerte flater på kireklame.no.
+          </p>
+          <ul className="mt-5 space-y-2 text-sm text-[var(--ads-text)]/92">
+            {[
+              "Visning på avtalt plassering (forside, kategori eller KI Nyheter)",
+              "Klikkbar henvisning til egen nettside",
+              "Synlighet i hele avtaleperioden",
+              "Mulighet for oppdatert annonsemateriell ved behov",
+              "Rotasjon eller plassbegrensning avtales per annonseflate",
+              "Priser gjelder kun avtaler inngått i kalenderåret 2026",
+            ].map((item) => (
+              <li key={item} className="flex items-start gap-2">
+                <span className="mt-1 h-1.5 w-1.5 rounded-full bg-[var(--ads-accent)]" aria-hidden="true" />
+                <span>{item}</span>
+              </li>
+            ))}
+          </ul>
+          <div className="mt-6 rounded-2xl border border-[var(--ads-border)] bg-black/20 px-4 py-3 text-sm text-[var(--ads-muted)]">
+            KiReklame tilbyr eksponering og bransjesynlighet. Vi garanterer ikke antall visninger, klikk eller leads.
+            Prisnivå etter 31. desember 2026 fastsettes separat.
+          </div>
+        </section>
 
-            return (
-              <article
-                key={`placement-card-${placement.key}`}
-                className="rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] p-4 shadow-soft"
-              >
-                <div className="flex flex-wrap items-start justify-between gap-3">
-                  <div>
-                    <h3 className="text-lg font-semibold">
-                      {placement.name[locale]}
-                    </h3>
-                    <p className="mt-1 text-sm text-[rgb(var(--muted))]">
-                      {placement.description[locale]}
-                    </p>
-                    <div className="mt-2 inline-flex items-center rounded-full border border-[rgb(var(--border))] bg-[rgb(var(--bg))] px-2.5 py-1 font-mono text-[11px] text-[rgb(var(--muted))]">
-                      {placement.key}
-                    </div>
-                  </div>
-                  <div
-                    className={`inline-flex items-center rounded-full border px-3 py-1 text-xs font-semibold ${availability.tone}`}
-                  >
-                    {availability.label}
-                  </div>
-                </div>
+        <section className="mt-16">
+          <h2 className={`${headingFont.className} text-3xl font-semibold tracking-tight sm:text-4xl`}>
+            Hvor blir dere synlige?
+          </h2>
+          <div className="mt-8 grid gap-5 md:grid-cols-3">
+            {visibilitySurfaces.map((surface) => (
+              <SurfaceBlock
+                key={surface.title}
+                title={surface.title}
+                detail={surface.detail}
+                imageSrc={surface.imageSrc}
+                imageAlt={surface.imageAlt}
+              />
+            ))}
+          </div>
+        </section>
 
-                <div className="mt-4 grid gap-3 md:grid-cols-2 lg:grid-cols-3">
-                  <div>
-                    <div className="text-xs uppercase tracking-wide text-[rgb(var(--muted))]">
-                      {locale === "en" ? "Format" : "Format"}
-                    </div>
-                    <div className="mt-1 text-sm font-medium">
-                      {placementFormatLabel(placement.format, locale)}
-                    </div>
-                  </div>
-                  <div>
-                    <div className="text-xs uppercase tracking-wide text-[rgb(var(--muted))]">
-                      {locale === "en" ? "Visibility level" : "Synlighetsnivå"}
-                    </div>
-                    <div className="mt-1 text-sm font-medium">
-                      {placementTierLabel(placement.tier, locale)}
-                    </div>
-                  </div>
-                  <div>
-                    <div className="text-xs uppercase tracking-wide text-[rgb(var(--muted))]">
-                      {locale === "en" ? "Duration options" : "Varighetsvalg"}
-                    </div>
-                    <select
-                      name={`duration-${placement.key}`}
-                      defaultValue="3"
-                      className="mt-1 w-full rounded-lg border border-[rgb(var(--border))] bg-[rgb(var(--bg))] px-2 py-1.5 text-sm"
-                    >
-                      {durationOptionsMonths.map((months) => (
-                        <option key={`${placement.key}-duration-${months}`} value={months}>
-                          {locale === "en"
-                            ? `${months} month${months > 1 ? "s" : ""}`
-                            : `${months} måned${months > 1 ? "er" : ""}`}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
+        <section className="mt-16 rounded-3xl border border-[var(--ads-border)] bg-[var(--ads-panel)] px-6 py-8 sm:px-8">
+          <h2 className={`${headingFont.className} text-2xl font-semibold tracking-tight`}>
+            Avgrensning mellom katalog og annonse
+          </h2>
+          <p className="mt-4 max-w-4xl text-base leading-relaxed text-[var(--ads-muted)]">
+            Denne siden gjelder kun betalt annonseplass. Katalogoppføring og eventuelle redaksjonelle vurderinger
+            håndteres separat og inngår ikke automatisk i annonsepakker.
+          </p>
+        </section>
 
-                <div className="mt-4 grid gap-3 lg:grid-cols-[1fr,auto]">
-                  <div>
-                    <div className="text-xs uppercase tracking-wide text-[rgb(var(--muted))]">
-                      {locale === "en" ? "Shown on" : "Vises på"}
-                    </div>
-                    <div className="mt-1 flex flex-wrap gap-1.5">
-                      {placement.surfaces[locale].map((surface) => (
-                        <span
-                          key={`${placement.key}-surface-${surface}`}
-                          className="rounded-full border border-[rgb(var(--border))] bg-[rgb(var(--bg))] px-2 py-0.5 text-xs"
-                        >
-                          {surface}
-                        </span>
-                      ))}
-                    </div>
-                    <div className="mt-3 text-xs text-[rgb(var(--muted))]">
-                      {locale === "en"
-                        ? `Campaigns in DB: ${stats.totalCampaigns} · Active now: ${stats.activeNowCount} · Upcoming: ${stats.upcomingCount}`
-                        : `Kampanjer i DB: ${stats.totalCampaigns} · Aktiv nå: ${stats.activeNowCount} · Fremtidige: ${stats.upcomingCount}`}
-                    </div>
-                    {stats.activeNowTitles.length ? (
-                      <div className="mt-1 text-xs text-[rgb(var(--muted))]">
-                        {locale === "en" ? "Current titles:" : "Aktive titler:"}{" "}
-                        {stats.activeNowTitles.slice(0, 3).join(", ")}
-                      </div>
-                    ) : null}
-                  </div>
-
-                  <div className="flex flex-wrap items-center gap-2">
-                    <Link
-                      href={contactHref}
-                      className="inline-flex items-center rounded-xl bg-[rgb(var(--fg))] px-3 py-2 text-xs font-semibold text-[rgb(var(--bg))] hover:opacity-90 transition"
-                    >
-                      {locale === "en" ? "Request this slot" : "Be om denne plassen"}
-                    </Link>
-                    <Link
-                      href={contactHref}
-                      className="inline-flex items-center rounded-xl border border-[rgb(var(--border))] px-3 py-2 text-xs font-semibold hover:bg-[rgb(var(--bg))] transition"
-                    >
-                      {locale === "en" ? "Open contact form" : "Åpne kontaktskjema"}
-                    </Link>
-                  </div>
-                </div>
-              </article>
-            );
-          })}
-        </div>
-      </section>
-    </main>
+        <section className="mt-16 rounded-[2rem] border border-[var(--ads-border)] bg-[var(--ads-panel)] px-6 py-12 text-center sm:px-10">
+          <h2 className={`${headingFont.className} text-3xl font-semibold tracking-tight sm:text-4xl`}>
+            Vil dere være blant de første?
+          </h2>
+          <p className="mx-auto mt-4 max-w-2xl text-base text-[var(--ads-muted)]">
+            Lanseringspriser gjelder et begrenset antall selskaper i 2026.
+          </p>
+          <Link
+            href={ctaHref}
+            className="mt-8 inline-flex items-center rounded-2xl border border-[var(--ads-accent)]/60 bg-[var(--ads-accent-soft)] px-7 py-3.5 text-sm font-semibold text-[var(--ads-text)] transition hover:bg-[var(--ads-highlight)]"
+          >
+            Be om konkret annonseforslag
+          </Link>
+        </section>
+      </div>
+    </div>
   );
 }

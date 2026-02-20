@@ -72,6 +72,11 @@ export default async function AdminDashboardPage() {
           desc="Legg til og administrer annonse-plasseringer."
         />
         <Card
+          href="/admin/annonsere"
+          title="Annonseoversikt"
+          desc="Oversikt over aktive/plante kampanjer og tilgjengelige plasseringer."
+        />
+        <Card
           href="/admin/moderate"
           title="Moderering"
           desc="Godkjenn/avslå innsendinger og publisering."

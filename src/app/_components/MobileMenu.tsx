@@ -76,7 +76,7 @@ export default function MobileMenu({ isAuthed, isAdmin, locale }: Props) {
               </Link>
 
               <Link href={localizePath(locale, "/annonsere")} onClick={close} className={itemClass}>
-                {locale === "en" ? "Advertise" : "Annonsere"}
+                {locale === "en" ? "Advertise" : "Annonsér"}
               </Link>
 
               <Link
