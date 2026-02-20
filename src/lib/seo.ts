@@ -14,7 +14,12 @@ export function siteMeta(args: {
     description: args.description,
     alternates: { canonical: url },
     icons: {
-      icon: "/ip-mark.svg",
+      icon: [
+        { url: "/KiR_logo_Black.png", type: "image/png" },
+        { url: "/favicon.ico" },
+      ],
+      shortcut: ["/favicon.ico"],
+      apple: [{ url: "/KiR_logo_Black.png" }],
     },
     openGraph: {
       title: args.title,
