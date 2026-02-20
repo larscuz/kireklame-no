@@ -54,7 +54,12 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           // eslint-disable-next-line react/no-danger
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
-        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem={false}>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="dark"
+          enableSystem={false}
+          storageKey="kireklame-theme-v2"
+        >
           <div className="min-h-screen flex flex-col">
             <Topbar />
             <main className="flex-1">{children}</main>

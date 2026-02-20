@@ -3,6 +3,14 @@
 @tailwind utilities;
 
 :root {
+  --bg: 11 13 18;
+  --fg: 245 247 250;
+  --muted: 165 175 190;
+  --card: 15 20 32;
+  --border: 34 41 58;
+}
+
+.light {
   --bg: 255 255 255;
   --fg: 12 16 26;
   --muted: 99 115 129;
