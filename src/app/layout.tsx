@@ -5,6 +5,7 @@ import Topbar from "./_components/Topbar";
 import Footer from "./_components/Footer";
 import { siteMeta } from "@/lib/seo";
 import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import { getLocale } from "@/lib/i18n.server";
 
 export const metadata: Metadata = siteMeta({
@@ -61,6 +62,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           </div>
         </ThemeProvider>
         <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );
