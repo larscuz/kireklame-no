@@ -15,11 +15,10 @@ export function siteMeta(args: {
     alternates: { canonical: url },
     icons: {
       icon: [
-        { url: "/KiR_logo_Black.png", type: "image/png" },
-        { url: "/favicon.ico" },
+        { url: "/KiR_logo_White.png?v=3", type: "image/png" },
       ],
-      shortcut: ["/favicon.ico"],
-      apple: [{ url: "/KiR_logo_Black.png" }],
+      shortcut: ["/KiR_logo_White.png?v=3"],
+      apple: [{ url: "/KiR_logo_White.png?v=3" }],
     },
     openGraph: {
       title: args.title,
