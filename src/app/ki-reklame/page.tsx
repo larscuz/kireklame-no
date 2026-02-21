@@ -36,9 +36,9 @@ async function loadCmsShowreelItems(): Promise<ShowreelItem[] | null> {
 }
 
 export const metadata: Metadata = siteMeta({
-  title: "KI-reklame i Norge – showreels, byråer og eksempler | KiReklame",
+  title: "KI-reklame / AI reklame i Norge – showreels, byråer og eksempler | KiReklame",
   description:
-    "Utforsk KI-reklame i Norge med autoplay showreel, AI-first byråer og konkrete eksempler på video, kampanjer og kreativ produksjon.",
+    "Utforsk KI-reklame og AI reklame i Norge med autoplay showreel, byråer og konkrete eksempler. Siden dekker også søk etter KI i reklame og AI i reklame.",
   path: "/ki-reklame",
 });
 
@@ -106,6 +106,10 @@ export default async function KiReklamePage() {
           {
             q: "Hva er KI-reklame?",
             a: "KI-reklame kombinerer strategi, kreativitet og AI-verktøy for raskere produksjon og optimalisering av annonser.",
+          },
+          {
+            q: "Er «KI i reklame» og «AI i reklame» det samme?",
+            a: "Ja, uttrykkene brukes ofte om samme fagområde: bruk av kunstig intelligens i reklame, kampanjer og kommersiell videoproduksjon.",
           },
           {
             q: "Hvordan velger jeg riktig KI-reklamebyrå?",

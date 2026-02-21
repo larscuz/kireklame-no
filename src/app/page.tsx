@@ -14,7 +14,7 @@ import AdSlot from "./_components/AdSlot";
 export const metadata = siteMeta({
   title: "KI reklame i Norge – AI videoproduksjon, byråer og reklamefilm | KiReklame",
   description:
-    "Finn norske leverandører for kommersiell AI videoproduksjon, reklamefilm og KI-reklame. Sammenlign byråer, studioer og relevante caser.",
+    "Finn norske leverandører for kommersiell AI videoproduksjon, reklamefilm og KI reklame. Dekk behov for AI reklame, KI i reklame og AI i reklame i ett samlet markedsoverblikk.",
   path: "/",
 });
 
@@ -59,6 +59,10 @@ export default async function Home(props: any) {
             q: "Hvordan velger jeg riktig KI-byrå for reklamefilm?",
             a: "Se på relevante caser, tjenestematch, leveransemodell og budsjett før du kontakter aktuelle leverandører.",
           },
+          {
+            q: "Er det forskjell på «KI i reklame» og «AI i reklame»?",
+            a: "Begrepene brukes ofte om samme område: bruk av kunstig intelligens i kommersiell reklameproduksjon og kampanjekreativitet.",
+          },
         ];
 
   const highIntentLinks =
@@ -76,6 +80,8 @@ export default async function Home(props: any) {
       : [
           { label: "ki reklame", href: localizePath(locale, "/ki-reklame") },
           { label: "ai reklame", href: localizePath(locale, "/ki-reklame") },
+          { label: "ki i reklame", href: localizePath(locale, "/ki-reklame") },
+          { label: "ai i reklame", href: localizePath(locale, "/ki-reklame") },
           { label: "reklamefilm bedrift pris", href: localizePath(locale, "/ai-video") },
           { label: "reklamefilm produksjon", href: localizePath(locale, "/ai-video") },
           { label: "reklamefilmproduksjon", href: localizePath(locale, "/ai-video") },
@@ -257,7 +263,7 @@ export default async function Home(props: any) {
               <p className="mt-3 max-w-2xl text-sm leading-relaxed text-[rgb(var(--muted))]">
                 {locale === "en"
                   ? "KiReklame is a curated overview of Norwegian players working with AI in advertising, video, and creative production. Whether you need an AI agency, AI-driven commercial production, or performance marketing content, you’ll find relevant providers here."
-                  : "KiReklame er en kuratert oversikt over norske aktører som jobber med KI i reklame, annonser, video og kreativ produksjon. Enten du trenger et KI‑byrå, AI‑drevet reklamefilm eller produksjon av innhold for performance marketing, finner du relevante leverandører her."}
+                  : "KiReklame er en kuratert oversikt over norske aktører som jobber med KI i reklame, annonser, video og kreativ produksjon. Enten du søker KI reklame, AI reklame, KI i reklame eller AI i reklame, finner du relevante leverandører her."}
               </p>
               <p className="mt-3 max-w-2xl text-sm leading-relaxed text-[rgb(var(--muted))]">
                 {locale === "en"
