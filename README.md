@@ -40,6 +40,9 @@ INGEST_API_KEY="change-me-long-random"
 REVALIDATE_API_KEY="change-me-too"
 NEXT_PUBLIC_SITE_URL="http://localhost:3000"
 SERPER_API_KEY="serper-key-for-news-crawl"
+RESEND_API_KEY="re_xxx"
+CONTACT_FROM_EMAIL="kontakt@kireklame.no"
+CONTACT_TO_EMAIL="you@domain.com"
 ```
 
 ## 3) Auth (passord)
@@ -94,6 +97,9 @@ Payload:
    - `SERPER_API_KEY`
    - `REVALIDATE_API_KEY`
    - `NEXT_PUBLIC_SITE_URL` (f.eks. `https://kireklame.no`)
+   - `RESEND_API_KEY`
+   - `CONTACT_FROM_EMAIL`
+   - `CONTACT_TO_EMAIL` (valgfri kopi/monitoring)
 
 4. Deploy
 

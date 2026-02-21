@@ -6,6 +6,19 @@ export const dynamic = "force-dynamic";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
+function isLikelyEmail(value: string): boolean {
+  if (!value || value.length < 5 || value.length > 320) return false;
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+}
+
+function parseEmailList(raw: string): string[] {
+  const seen = new Set<string>();
+  return raw
+    .split(",")
+    .map((v) => v.trim().toLowerCase())
+    .filter((v) => isLikelyEmail(v) && !seen.has(v) && seen.add(v));
+}
+
 function esc(s: string) {
   return s.replace(/[&<>"']/g, (c) => ({
     "&": "&amp;",
@@ -41,9 +54,16 @@ export async function POST(req: Request) {
       );
     }
 
-    const to = process.env.CONTACT_TO_EMAIL || "lars@larscuzner.com";
+    const configuredTo =
+      process.env.CONTACT_TO_EMAIL ||
+      process.env.ADMIN_NOTIFY_EMAILS ||
+      "lars@larscuzner.com";
+    const toList = parseEmailList(configuredTo);
+    const to = toList.length ? toList : ["lars@larscuzner.com"];
     const from =
-      process.env.CONTACT_FROM_EMAIL || "kontakt@kireklame.no";
+      process.env.CONTACT_FROM_EMAIL ||
+      process.env.MAIL_FROM ||
+      "kontakt@kireklame.no";
 
     await resend.emails.send({
       from,
