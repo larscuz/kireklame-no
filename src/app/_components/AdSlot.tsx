@@ -102,7 +102,7 @@ export default function AdSlot({
                 <img
                   src={desktopImg}
                   alt={ad.alt}
-                  className="h-full w-full object-cover object-center"
+                  className="h-full w-full object-contain object-center"
                   style={{ objectPosition: "center center" }}
                   loading="lazy"
                 />
@@ -123,8 +123,8 @@ export default function AdSlot({
           <div
             className={`relative isolate w-full overflow-hidden bg-[rgb(var(--bg))] ${
               compact
-                ? "h-[36px] sm:h-[42px] md:h-auto md:aspect-[12/1]"
-                : "h-[54px] sm:h-[62px] md:h-auto md:aspect-[8/1]"
+                ? "h-[44px] sm:h-[42px] md:h-auto md:aspect-[12/1]"
+                : "h-[74px] sm:h-[62px] md:h-auto md:aspect-[8/1]"
             }`}
           >
             {desktopImg ? (
@@ -133,7 +133,7 @@ export default function AdSlot({
                 <img
                   src={desktopImg}
                   alt={ad.alt}
-                  className="h-full w-full object-cover object-center md:object-contain"
+                  className="h-full w-full object-contain object-center"
                   style={{ objectPosition: "center center" }}
                   loading="lazy"
                 />

@@ -54,13 +54,27 @@ export default async function ListingGrid({
         <div key={c.id} className="contents">
           <CompanyCard company={c} />
           {shouldInsertInline && index === inlineInsertAt - 1 ? (
-            <AdSlot
-              ad={inlineAd ?? null}
-              sponsorLabel={locale === "en" ? "Sponsored" : "Sponset"}
-              openLinkFallback={locale === "en" ? "Open link" : "Åpne lenke"}
-              variant="card"
-              locale={locale}
-            />
+            <>
+              <div className="sm:hidden">
+                <AdSlot
+                  ad={inlineAd ?? null}
+                  sponsorLabel={locale === "en" ? "Sponsored" : "Sponset"}
+                  openLinkFallback={locale === "en" ? "Open link" : "Åpne lenke"}
+                  variant="banner"
+                  compact
+                  locale={locale}
+                />
+              </div>
+              <div className="hidden sm:block">
+                <AdSlot
+                  ad={inlineAd ?? null}
+                  sponsorLabel={locale === "en" ? "Sponsored" : "Sponset"}
+                  openLinkFallback={locale === "en" ? "Open link" : "Åpne lenke"}
+                  variant="card"
+                  locale={locale}
+                />
+              </div>
+            </>
           ) : null}
           {shouldInsertGridBanner && index === bannerInsertAfterCompanyIndex ? (
             <div className="sm:col-span-2 lg:col-span-3">
