@@ -343,7 +343,7 @@ export default function StereoscopicViewerWheel({ items }: { items: ShowreelItem
         </div>
 
         {activeItem ? (
-          <div className="absolute bottom-6 left-4 z-50 max-w-[min(92vw,720px)] rounded-2xl border border-white/16 bg-black/46 p-4 backdrop-blur md:bottom-8 md:left-6 md:p-5">
+          <div className="absolute bottom-6 left-4 right-[calc(min(37vw,260px)+1rem)] z-[60] min-w-0 rounded-2xl border border-white/16 bg-black/46 p-4 backdrop-blur md:bottom-8 md:left-6 md:right-auto md:max-w-[min(92vw,720px)] md:p-5">
             <p className="text-[11px] uppercase tracking-[0.18em] text-white/66">{activeItem.eyebrow || "KiReklame"}</p>
             <h2 className="mt-1 text-[clamp(1.2rem,3.2vw,2.5rem)] font-semibold leading-[1.08]">{activeItem.name}</h2>
             {activeItem.description ? <p className="mt-2 text-sm text-white/82 md:text-base">{activeItem.description}</p> : null}
