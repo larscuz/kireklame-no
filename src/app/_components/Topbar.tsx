@@ -65,8 +65,6 @@ export default async function Topbar() {
           <Link href={localizePath(locale, "/kontakt")} className="hover:opacity-80 transition">
             {locale === "en" ? "Contact" : "Kontakt"}
           </Link>
-
-
           {isAdmin ? (
             <Link href={localizePath(locale, "/admin")} className="hover:opacity-80 transition">
               Admin
@@ -78,13 +76,6 @@ export default async function Topbar() {
               {locale === "en" ? "My page" : "Min side"}
             </Link>
           ) : null}
-
-          <Link
-            href={localizePath(locale, "/ki-opplaring")}
-            className="inline-flex items-center rounded-xl border border-black/15 bg-white px-3 py-2 text-sm font-semibold text-black shadow-soft hover:bg-neutral-100 transition-colors"
-          >
-            {locale === "en" ? "AI Training" : "KI Opplæring"}
-          </Link>
 </nav>
 
 
