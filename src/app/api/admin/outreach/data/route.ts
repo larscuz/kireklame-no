@@ -59,7 +59,7 @@ export async function GET(req: Request) {
   if (kind === "ad_leads") {
     const { data, error } = await db
       .from("ad_leads")
-      .select("id,name,email,website,source_url,market,status")
+      .select("id,name,email,website,source_url,market,status,category")
       .order("name", { ascending: true });
 
     if (error) {

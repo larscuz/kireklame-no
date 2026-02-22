@@ -781,6 +781,14 @@ export default async function KIRNyheterArticlePage({
       </header>
 
       <div className="mx-auto max-w-[1260px] px-3 py-5 md:px-4">
+        <section className="mb-4 border border-black/25 bg-[#fff8e8] px-4 py-3 text-[12px] uppercase tracking-[0.12em] text-black/70">
+          Denne seksjonen er nå en del av{" "}
+          <Link href="/ki-opplaring" className="font-semibold underline underline-offset-4">
+            KI Opplæring
+          </Link>
+          .
+        </section>
+
         {topAd ? (
           <section className="mb-4 border border-black/20 bg-[#f8f4eb]">
             <AdSlot

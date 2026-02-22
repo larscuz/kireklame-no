@@ -84,6 +84,75 @@ Payload:
 }
 ```
 
+### Andre KI-tjenester (kategori-crawl)
+
+For kategorier på `/andre-ki-tjenester` (AI-first, AI-konferanser, AI-utdanning):
+
+1. Kjør SQL for kategori-kolonne:
+   - `supabase/ad-leads-categories-2026-02-22.sql`
+2. Trigger crawler:
+   - `POST /api/crawl/other-ai-services`
+   - Header: `x-ingest-key: <INGEST_API_KEY>`
+   - Valgfri body:
+```json
+{
+  "dryRun": true,
+  "category": "ai_conference",
+  "maxQueriesPerCategory": 4,
+  "resultsPerQuery": 6,
+  "maxLeadsPerCategory": 25
+}
+```
+`category` kan være `ai_conference`, `ai_education`, `all` eller utelates for begge.
+
+### YouTube-tutorials i KI Opplæring
+
+Detaljsider i `/ki-opplaring` kan hente relevante YouTube-tutorials automatisk basert på
+`topics` og `tools` i innholdet.
+
+1. Sett API-nøkkel:
+   - `YOUTUBE_API_KEY=<din-youtube-data-api-key>`
+2. Uten nøkkel:
+   - siden viser relevante YouTube-søkelenker som fallback.
+
+### KI-øvelser (PromptTransform / PromptExercise / Brief Builder)
+
+Ny verkstedflate:
+- `/ki-opplaring/ovelser`
+- API: `POST /api/ki-opplaring/llm`
+
+Env:
+- `OPENROUTER_API_KEY=<din-key>`
+- `OPENROUTER_MODEL=qwen/qwen2.5-7b-instruct:free`
+
+Hvis API-nøkkel mangler, faller øvelsene tilbake til lokal mock-respons for utvikling.
+
+### KI-verktøy (sekundærkatalog)
+
+For ny verktøykatalog på `/ki-verktoy`:
+
+1. Kjør SQL for tabell + seed-data:
+   - `supabase/tool-catalog-2026-02-22.sql`
+2. Startkategorier:
+   - `adcreative`
+   - `image_video_tools`
+
+### AI-educators (Knowledge Layer)
+
+For kuratert feed over generøse AI-educators:
+
+1. Kjør migrasjon:
+   - `supabase/ai-educators-2026-02-22.sql`
+2. Kjør seed-mal (rediger først med egne profiler):
+   - `supabase/ai-educators-seed-template-2026-02-22.sql`
+3. For rask test med nordisk startliste:
+   - `supabase/ai-educators-seed-nordic-2026-02-22.sql`
+
+Struktur:
+- `ai_educators`: kildeprofiler (plattform, niche, språk/region, scorefelter)
+- `ai_educator_updates`: konkrete oppdateringer per profil (video/post/artikkel)
+- `ai_educator_rankings` (view): beregnet `computed_score` for sortering
+
 ## 6) Deploy til Vercel
 
 1. Push repo til GitHub

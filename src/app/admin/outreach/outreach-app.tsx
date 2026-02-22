@@ -37,6 +37,7 @@ type AdLeadRecord = {
   source_url: string | null;
   market: string | null;
   status: string | null;
+  category: string | null;
 };
 
 type OutreachSendRow = {

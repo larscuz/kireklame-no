@@ -56,10 +56,10 @@ export default async function Topbar() {
           </Link>
 
           <Link
-            href={localizePath(locale, "/andre-ki-tjenester")}
+            href={localizePath(locale, "/ki-verktoy")}
             className="rounded-xl px-3 py-2 text-sm font-medium text-[rgb(var(--fg))] hover:bg-[rgb(var(--muted))]"
           >
-            {locale === "en" ? "Other AI" : "Annen KI"}
+            KI-verktøy
           </Link>
 
           <Link href={localizePath(locale, "/kontakt")} className="hover:opacity-80 transition">
@@ -80,10 +80,10 @@ export default async function Topbar() {
           ) : null}
 
           <Link
-            href={localizePath(locale, "/ki-avis")}
+            href={localizePath(locale, "/ki-opplaring")}
             className="inline-flex items-center rounded-xl border border-black/15 bg-white px-3 py-2 text-sm font-semibold text-black shadow-soft hover:bg-neutral-100 transition-colors"
           >
-            {locale === "en" ? "KiR News" : "KiR Nyheter"}
+            {locale === "en" ? "AI Training" : "KI Opplæring"}
           </Link>
 </nav>
 

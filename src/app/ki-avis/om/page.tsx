@@ -47,11 +47,11 @@ export default function KIRAvisOmPage() {
               </p>
             </div>
             <div className="flex flex-wrap items-center gap-3 text-[12px] font-semibold uppercase tracking-[0.14em]">
-              <Link href="/ki-avis" className="underline underline-offset-4 hover:opacity-80">
-                Forside
+              <Link href="/ki-opplaring/nyheter" className="underline underline-offset-4 hover:opacity-80">
+                Nyhetsfeed
               </Link>
-              <Link href="/ki-avis/internasjonalt" className="underline underline-offset-4 hover:opacity-80">
-                Internasjonalt
+              <Link href="/ki-opplaring" className="underline underline-offset-4 hover:opacity-80">
+                KI Opplæring
               </Link>
             </div>
           </div>
@@ -59,6 +59,14 @@ export default function KIRAvisOmPage() {
       </header>
 
       <div className="mx-auto max-w-[1260px] px-3 py-6 md:px-4">
+        <section className="mb-4 border border-black/25 bg-[#fff8e8] px-4 py-3 text-[12px] uppercase tracking-[0.12em] text-black/70">
+          Denne seksjonen er nå en del av{" "}
+          <Link href="/ki-opplaring" className="font-semibold underline underline-offset-4">
+            KI Opplæring
+          </Link>
+          .
+        </section>
+
         <section className="grid gap-4 border-y border-black/20 py-4 lg:grid-cols-[1.25fr_0.9fr]">
           <article className="min-w-0 border-b border-black/15 pb-4 lg:border-b-0 lg:border-r lg:pb-0 lg:pr-6">
             <h2 className={`${headline.className} text-[30px] leading-[1.03] md:text-[40px]`}>Hva er en aivis?</h2>

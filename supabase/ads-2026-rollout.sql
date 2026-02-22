@@ -10,7 +10,7 @@ delete from public.ads
 where lower(coalesce(title, '')) in ('ki- og mediedagen 2026', 'ki-og mediedagen 2026');
 
 -- 2) Add/update outreach ad leads for 2026 events (8 entries).
-with lead_rows (name, website, email, source_url, market, status, description) as (
+with lead_rows (name, website, email, source_url, market, status, category, description) as (
   values
     (
       'AI+ 2026',
@@ -19,6 +19,7 @@ with lead_rows (name, website, email, source_url, market, status, description) a
       'https://smartinnovationnorway.com/en/events-2/ai-2025/',
       'no',
       'new',
+      'ai_conference',
       'AI conference (Smart Innovation Norway).'
     ),
     (
@@ -28,6 +29,7 @@ with lead_rows (name, website, email, source_url, market, status, description) a
       'https://www.nora.ai/norsk/nora-arrangementer/annual-conference-2025/',
       'no',
       'new',
+      'ai_conference',
       'NORA annual conference in Oslo (current public page link is 2025).'
     ),
     (
@@ -37,6 +39,7 @@ with lead_rows (name, website, email, source_url, market, status, description) a
       'https://www.nora.ai/norsk/events/2026/women-in-ai-from-algorithms-to-action-living-in-th.html',
       'no',
       'new',
+      'ai_conference',
       'Women in AI event in Oslo.'
     ),
     (
@@ -46,6 +49,7 @@ with lead_rows (name, website, email, source_url, market, status, description) a
       'https://oslotechshow.com/',
       'no',
       'new',
+      'ai_conference',
       'Oslo Tech Show (AI and Big Data).'
     ),
     (
@@ -55,6 +59,7 @@ with lead_rows (name, website, email, source_url, market, status, description) a
       'https://www.ntnu.edu/nldb2026',
       'no',
       'new',
+      'ai_conference',
       'NLDB 2026, Trondheim (NTNU).'
     ),
     (
@@ -64,6 +69,7 @@ with lead_rows (name, website, email, source_url, market, status, description) a
       'https://techpointconference.no/',
       'no',
       'new',
+      'ai_conference',
       'Techpoint, Kristiansand.'
     ),
     (
@@ -73,6 +79,7 @@ with lead_rows (name, website, email, source_url, market, status, description) a
       'https://www.oiw.no/',
       'no',
       'new',
+      'ai_conference',
       'Oslo Innovation Week.'
     ),
     (
@@ -82,6 +89,7 @@ with lead_rows (name, website, email, source_url, market, status, description) a
       'https://ndc-ai.com/',
       'no',
       'new',
+      'ai_conference',
       'NDC AI, Oslo.'
     )
 )
@@ -92,11 +100,12 @@ set
   source_url = lr.source_url,
   market = lr.market,
   status = lr.status,
+  category = lr.category,
   description = lr.description
 from lead_rows lr
 where lower(al.name) = lower(lr.name);
 
-with lead_rows (name, website, email, source_url, market, status, description) as (
+with lead_rows (name, website, email, source_url, market, status, category, description) as (
   values
     (
       'AI+ 2026',
@@ -105,6 +114,7 @@ with lead_rows (name, website, email, source_url, market, status, description) a
       'https://smartinnovationnorway.com/en/events-2/ai-2025/',
       'no',
       'new',
+      'ai_conference',
       'AI conference (Smart Innovation Norway).'
     ),
     (
@@ -114,6 +124,7 @@ with lead_rows (name, website, email, source_url, market, status, description) a
       'https://www.nora.ai/norsk/nora-arrangementer/annual-conference-2025/',
       'no',
       'new',
+      'ai_conference',
       'NORA annual conference in Oslo (current public page link is 2025).'
     ),
     (
@@ -123,6 +134,7 @@ with lead_rows (name, website, email, source_url, market, status, description) a
       'https://www.nora.ai/norsk/events/2026/women-in-ai-from-algorithms-to-action-living-in-th.html',
       'no',
       'new',
+      'ai_conference',
       'Women in AI event in Oslo.'
     ),
     (
@@ -132,6 +144,7 @@ with lead_rows (name, website, email, source_url, market, status, description) a
       'https://oslotechshow.com/',
       'no',
       'new',
+      'ai_conference',
       'Oslo Tech Show (AI and Big Data).'
     ),
     (
@@ -141,6 +154,7 @@ with lead_rows (name, website, email, source_url, market, status, description) a
       'https://www.ntnu.edu/nldb2026',
       'no',
       'new',
+      'ai_conference',
       'NLDB 2026, Trondheim (NTNU).'
     ),
     (
@@ -150,6 +164,7 @@ with lead_rows (name, website, email, source_url, market, status, description) a
       'https://techpointconference.no/',
       'no',
       'new',
+      'ai_conference',
       'Techpoint, Kristiansand.'
     ),
     (
@@ -159,6 +174,7 @@ with lead_rows (name, website, email, source_url, market, status, description) a
       'https://www.oiw.no/',
       'no',
       'new',
+      'ai_conference',
       'Oslo Innovation Week.'
     ),
     (
@@ -168,6 +184,7 @@ with lead_rows (name, website, email, source_url, market, status, description) a
       'https://ndc-ai.com/',
       'no',
       'new',
+      'ai_conference',
       'NDC AI, Oslo.'
     )
 )
@@ -179,6 +196,7 @@ insert into public.ad_leads (
   source_url,
   market,
   status,
+  category,
   description
 )
 select
@@ -189,6 +207,7 @@ select
   lr.source_url,
   lr.market,
   lr.status,
+  lr.category,
   lr.description
 from lead_rows lr
 where not exists (

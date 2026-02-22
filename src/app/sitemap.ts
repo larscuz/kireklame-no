@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { adminListSitemapEntities } from "@/lib/supabase/admin";
+import { listAllKiOpplaringEntries } from "@/lib/ki-opplaring/content";
 
 function uniqByUrl(items: MetadataRoute.Sitemap) {
   const seen = new Set<string>();
@@ -12,18 +13,28 @@ function uniqByUrl(items: MetadataRoute.Sitemap) {
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const site = process.env.NEXT_PUBLIC_SITE_URL || "https://kireklame.no";
-  const { companies, locations, tags, newsArticles } = await adminListSitemapEntities();
+  const [{ companies, locations, tags, newsArticles }, kiOpplaringEntries] = await Promise.all([
+    adminListSitemapEntities(),
+    listAllKiOpplaringEntries(),
+  ]);
 
   const base: MetadataRoute.Sitemap = [
     { url: `${site}/`, changeFrequency: "daily", priority: 1 },
     { url: `${site}/annonsere`, changeFrequency: "weekly", priority: 0.8 },
     { url: `${site}/selskaper`, changeFrequency: "daily", priority: 0.9 },
+    { url: `${site}/ki-verktoy`, changeFrequency: "weekly", priority: 0.75 },
     { url: `${site}/andre-ki-tjenester`, changeFrequency: "weekly", priority: 0.7 },
     { url: `${site}/ki-reklame`, changeFrequency: "daily", priority: 0.9 },
     { url: `${site}/ki-reklamebyra`, changeFrequency: "weekly", priority: 0.8 },
     { url: `${site}/ai-video`, changeFrequency: "weekly", priority: 0.8 },
     { url: `${site}/ki-markedsforing`, changeFrequency: "weekly", priority: 0.8 },
-    { url: `${site}/ki-avis`, changeFrequency: "daily", priority: 0.9 },
+    { url: `${site}/ki-opplaring`, changeFrequency: "daily", priority: 0.95 },
+    { url: `${site}/ki-opplaring/ovelser`, changeFrequency: "daily", priority: 0.92 },
+    { url: `${site}/ki-opplaring/guider`, changeFrequency: "weekly", priority: 0.9 },
+    { url: `${site}/ki-opplaring/tema`, changeFrequency: "weekly", priority: 0.9 },
+    { url: `${site}/ki-opplaring/verktoy`, changeFrequency: "weekly", priority: 0.85 },
+    { url: `${site}/ki-opplaring/ordliste`, changeFrequency: "weekly", priority: 0.85 },
+    { url: `${site}/ki-opplaring/nyheter`, changeFrequency: "daily", priority: 0.7 },
     { url: `${site}/ki-avis/om`, changeFrequency: "weekly", priority: 0.7 },
   ];
 
@@ -68,5 +79,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.8,
     }));
 
-  return uniqByUrl([...base, ...companyUrls, ...cityUrls, ...tagUrls, ...newsUrls]);
+  const opplaringUrls: MetadataRoute.Sitemap = kiOpplaringEntries.map((entry) => ({
+    url: `${site}${entry.url}`,
+    changeFrequency: "weekly" as const,
+    priority: entry.type === "guider" || entry.type === "tema" ? 0.85 : 0.75,
+  }));
+
+  return uniqByUrl([...base, ...companyUrls, ...cityUrls, ...tagUrls, ...newsUrls, ...opplaringUrls]);
 }

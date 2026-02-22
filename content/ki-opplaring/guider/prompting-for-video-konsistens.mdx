@@ -1,0 +1,46 @@
+---
+slug: prompting-for-video-konsistens
+title: "Prompting for video: konsistens, first/last og bevegelsesregler"
+description: "Praktisk økt for stabil AI-video: first/last, bevegelse og tydelige begrensninger."
+updatedAt: "2026-02-22"
+topics: ["KI video", "Prompting"]
+level: intermediate
+audience: ["Byrå", "Innholdsprodusent"]
+tools: ["Runway", "Veo", "Kling"]
+exercises: 2
+estimatedMinutes: 18
+learningPath: ["intermediate", "pro"]
+outcomes: ["Låse scene-geometri i video", "Redusere visuelle hopp"]
+templates: ["video-konsistens-v1", "leveranse-sjekk-v1"]
+---
+
+## Mål
+
+Etter dette kan du styre AI-video med stabil first/last og tydelig bevegelseslogikk.
+
+## Du skal lage
+
+- Én konsistent video-prompt
+- Én sammenligning av svak vs sterk prompt
+
+## Tidsbruk
+
+10-18 min
+
+## Trinn (gjør dette nå)
+
+1. Definer first frame.
+2. Definer last frame.
+3. Skriv bevegelsesregler.
+4. Legg inn begrensninger.
+5. Kjør sammenligning.
+
+<TemplateBlock templateId="video-konsistens-v1" actionId="action-video-konsistens-v2" />
+
+<ActionBlock id="action-video-konsistens-v2" title="Mikro-oppgave: bygg stabil videoprompt" task="Skriv en 5-sekunders prompt med first/last, kamera og constraints." placeholder="First frame..., Last frame..., Camera..., Constraints..." example="First frame: Person med produkt i Oslo-gate.\nLast frame: Samme scene, kamera 2 meter nærmere.\nCamera: slow dolly forward.\nConstraints: no new objects, maintain logo integrity, stable geometry.\nOutput: 5 sec, 16:9." />
+
+<PromptExercise id="video-compare-v2" title="Resultatboks: dårlig vs bra video-prompt" context="AI-video for kampanjepitch" defaultBadPrompt="Lag en cinematic video med produktet" defaultGoodPrompt="Lag 16:9 video, 5 sek. First frame: produkt i hånd i dagslys. Last frame: samme produkt i samme posisjon, kamera 1 m nærmere. Ingen nye objekter, ingen logo-deformasjon." />
+
+<Checklist id="checklist-video-konsistens-v2" title="Godt nok når" items='["First og last frame er eksplisitt","Kamera og tempo er definert","Constraints for geometri/logo er satt","Varighet og format er spesifisert","Prompten er testet og lagret"]' />
+
+<Deliverable title="Leveranse" description="Når du er ferdig har du en testklar prompt for stabil AI-video." items='["Prompt med first/last","Kort notat om forskjeller","Klar-sjekk før produksjon"]' />
