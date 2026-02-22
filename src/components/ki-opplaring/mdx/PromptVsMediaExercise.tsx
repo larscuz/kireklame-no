@@ -48,6 +48,7 @@ function providerLabel(provider: LlmProviderInfo | null): string | null {
   if (!provider) return null;
   if (provider.name === "openrouter") return `Motor: OpenRouter (${provider.model})`;
   if (provider.name === "cloudflare") return `Motor: Cloudflare (${provider.model})`;
+  if (provider.name === "pollinations") return `Motor: Pollinations (${provider.model})`;
   if (provider.name === "fal") return `Motor: fal (${provider.model})`;
   return "Motor: Lokal fallback";
 }

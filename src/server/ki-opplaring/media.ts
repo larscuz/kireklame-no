@@ -163,6 +163,13 @@ async function runCloudflareImage(prompt: string, aspectRatio: "1:1" | "16:9"): 
   throw new Error("Cloudflare image returnerte ugyldig format");
 }
 
+async function runPollinationsImage(prompt: string, aspectRatio: "1:1" | "16:9"): Promise<string> {
+  const { width, height } = aspectRatioToSize(aspectRatio);
+  const model = toText(process.env.POLLINATIONS_IMAGE_MODEL) || "flux";
+  const encodedPrompt = encodeURIComponent(prompt);
+  return `https://image.pollinations.ai/prompt/${encodedPrompt}?model=${encodeURIComponent(model)}&width=${width}&height=${height}&nologo=true&safe=true`;
+}
+
 function getFalUrlFromPayload(payload: unknown): string {
   if (!payload || typeof payload !== "object") return "";
 
@@ -304,9 +311,9 @@ export async function runImageCompareGenerate(payload: ImageComparePayload): Pro
     };
   }
 
-  const provider = toText(process.env.IMAGE_PROVIDER).toLowerCase() || "cloudflare";
+  const provider = toText(process.env.IMAGE_PROVIDER).toLowerCase() || "pollinations";
 
-  if (provider !== "cloudflare") {
+  if (provider !== "cloudflare" && provider !== "pollinations") {
     const mock = mockImagePair();
     return {
       result: {
@@ -324,10 +331,16 @@ export async function runImageCompareGenerate(payload: ImageComparePayload): Pro
   }
 
   try {
+    const imageRunner = provider === "pollinations" ? runPollinationsImage : runCloudflareImage;
     const [originalImage, improvedImage] = await Promise.all([
-      runCloudflareImage(prompt, aspectRatio),
-      runCloudflareImage(rewrite.data.improved_prompt, aspectRatio),
+      imageRunner(prompt, aspectRatio),
+      imageRunner(rewrite.data.improved_prompt, aspectRatio),
     ]);
+
+    const providerModel =
+      provider === "pollinations"
+        ? toText(process.env.POLLINATIONS_IMAGE_MODEL) || "flux"
+        : toText(process.env.CLOUDFLARE_IMAGE_MODEL) || "@cf/stabilityai/stable-diffusion-xl-base-1.0";
 
     return {
       result: {
@@ -337,8 +350,8 @@ export async function runImageCompareGenerate(payload: ImageComparePayload): Pro
         mock: false,
       },
       provider: {
-        name: "cloudflare",
-        model: toText(process.env.CLOUDFLARE_IMAGE_MODEL) || "@cf/stabilityai/stable-diffusion-xl-base-1.0",
+        name: provider as "cloudflare" | "pollinations",
+        model: providerModel,
         cached: false,
       },
     };

@@ -86,7 +86,7 @@ export type LlmResult =
   | { task: "build_script_10s"; data: BuildScript10sResponse };
 
 export type LlmProviderInfo = {
-  name: "openrouter" | "mock" | "cloudflare" | "fal";
+  name: "openrouter" | "mock" | "cloudflare" | "fal" | "pollinations";
   model: string;
   cached: boolean;
 };
