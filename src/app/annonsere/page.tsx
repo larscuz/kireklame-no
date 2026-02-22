@@ -5,6 +5,7 @@ import { Manrope, Space_Grotesk } from "next/font/google";
 import { localizePath } from "@/lib/i18n";
 import { getLocale } from "@/lib/i18n.server";
 import { siteMeta } from "@/lib/seo";
+import { AD_PLACEMENTS } from "@/lib/adPlacements";
 
 const headingFont = Space_Grotesk({
   subsets: ["latin"],
@@ -33,71 +34,227 @@ type PackagePlan = {
   description: string;
   subtitle?: string;
   label?: string;
+  placementKeys: string[];
   features: string[];
   highlighted?: boolean;
 };
 
 const packagePlans: PackagePlan[] = [
   {
-    name: "Annonsepakke Basis",
-    description: "Enkel annonseplass med tydelig synlighet i valgt flate.",
+    name: "Annonsepakke Start",
+    description: "Kortformat i katalogstrømmer for stabil, løpende synlighet.",
+    subtitle: "Matcher inline-kortene som er markert i visualiseringskartet under.",
+    placementKeys: ["catalog_inline_card", "other_inline_card", "other_inline_card_2"],
     features: [
-      "Visning på avtalt plassering i kategori",
+      "Card-format med sponsormerking",
       "Klikkbar lenke til egen nettside",
-      "Synlighet i hele avtaleperioden",
-      "Mulighet for oppdatert annonsemateriell",
-      "Rotasjon med andre annonsører i samme flate",
+      "Egnet for budskap med mer visuelt innhold",
+      "Kan oppdateres i avtaleperioden",
     ],
   },
   {
-    name: "Annonsepakke Fremhevet",
-    description: "Premium plassering for høyere synlighet på sentrale flater.",
-    subtitle:
-      "For selskaper som vil ha sterkere eksponering i relevante kontekster.",
+    name: "Annonsepakke Banner",
+    description: "Horisontale bannerflater på tvers av katalog og relaterte sider.",
+    subtitle: "Matcher banner-placeringene i visualiseringskartet under.",
+    placementKeys: [
+      "home_hero_mini_banner",
+      "catalog_grid_banner",
+      "catalog_grid_banner_2",
+      "catalog_grid_banner_3",
+      "other_mid_banner",
+    ],
     features: [
-      "Fremhevet plassering",
-      "\"Verified AI\" badge i annonsevisning",
-      "Større visuell eksponering enn Basis",
-      "Klikkbar henvisning til egen nettside",
-      "Mulighet for oppdatert annonsemateriell",
+      "Desktop + mobil leveranse per bannerplassering",
+      "Klikkbar trafikk til egen nettside",
+      "Passer kampanjer med tydelig CTA",
+      "Kan kjøres i rotasjon eller faste perioder",
     ],
     highlighted: true,
   },
   {
-    name: "Annonsepakke Partner",
-    description: "Kombinert annonsepakke med synlighet på flere flater.",
-    label: "Kun 5 plasser",
+    name: "Annonsepakke Premium",
+    description: "Mest synlige hero- og toppflater med høy eksponering.",
+    subtitle: "Matcher premium hero- og toppflater i visualiseringskartet under.",
+    label: "5 premium-plasseringer",
+    placementKeys: [
+      "home_hero_sidebar",
+      "international_hero_sidebar",
+      "catalog_top_banner",
+      "other_hero_sidebar",
+      "other_top_banner",
+    ],
     features: [
-      "Frontpage-rotasjon",
-      "Banner i KI Nyheter (1920x200)",
-      "Synlighet på flere avtaleflater i samme periode",
-      "Klikkbar henvisning til egen nettside",
-      "Løpende oppdatering av annonsemateriell",
+      "Hero-side + toppbanner i sentrale flater",
+      "Klikkbar trafikk til egen nettside",
+      "Egnet for lanseringer og brand awareness",
+      "Tilgjengelighet styres av kapasitet og kalender",
     ],
   },
 ];
 
-const visibilitySurfaces = [
+type PlacementAssetSpec = {
+  key: string;
+  desktop: string;
+  mobile: string;
+  note: string;
+};
+
+type SurfaceMapHotspot = {
+  key: string;
+  left: number;
+  top: number;
+  width: number;
+  height: number;
+};
+
+type SurfaceMap = {
+  title: string;
+  description: string;
+  variant: "home" | "international" | "catalog" | "company" | "other";
+  hotspots: SurfaceMapHotspot[];
+};
+
+const placementAssetSpecs: PlacementAssetSpec[] = [
   {
-    title: "Frontpage placement",
-    detail: "Målrettet plassering i katalogens hovedflate.",
-    imageSrc:
-      "https://pub-b53c56f5af3e471cb8b3610afdc49a36.r2.dev/ki-reklame/ChatGPT%20Image%20Feb%2020%2C%202026%2C%2011_24_40%20AM.png",
-    imageAlt: "Eksempel på frontpage placement i KiReklame",
+    key: "home_hero_sidebar",
+    desktop: "1120x1000",
+    mobile: "1600x200",
+    note: "Desktop sidebar + mobile compact banner.",
   },
   {
-    title: "Company profile page",
-    detail: "Profilside med produkt, metode og kontaktpunkt.",
-    imageSrc:
-      "https://pub-b53c56f5af3e471cb8b3610afdc49a36.r2.dev/ki-reklame/ChatGPT%20Image%20Feb%2020%2C%202026%2C%2011_24_33%20AM.png",
-    imageAlt: "Eksempel på company profile page i KiReklame",
+    key: "home_hero_mini_banner",
+    desktop: "1440x200",
+    mobile: "1280x160",
+    note: "Desktop mini banner under home hero ad.",
   },
   {
-    title: "KI Nyheter banner (1920x200)",
-    detail: "Toppbanner i nyhetsstrøm med premium synlighet.",
-    imageSrc:
-      "https://pub-b53c56f5af3e471cb8b3610afdc49a36.r2.dev/ki-reklame/ChatGPT%20Image%20Feb%2020%2C%202026%2C%2011_25_35%20AM.png",
-    imageAlt: "Eksempel på KI Nyheter-banner med format 1920x200",
+    key: "companies_hero_sidebar",
+    desktop: "1120x1000",
+    mobile: "1600x200",
+    note: "Companies hero right slot.",
+  },
+  {
+    key: "company_cover_mini_banner",
+    desktop: "1440x200",
+    mobile: "1280x160",
+    note: "Mini banner on company detail page.",
+  },
+  {
+    key: "international_hero_sidebar",
+    desktop: "1120x1000",
+    mobile: "1600x200",
+    note: "International hero right slot.",
+  },
+  {
+    key: "catalog_top_banner",
+    desktop: "1920x240",
+    mobile: "1366x200",
+    note: "Shared top banner (home + catalog pages).",
+  },
+  {
+    key: "catalog_inline_card",
+    desktop: "1760x1210",
+    mobile: "1600x1000",
+    note: "Card slot (still used in KI Avis flows).",
+  },
+  {
+    key: "catalog_grid_banner",
+    desktop: "1920x240",
+    mobile: "1600x200",
+    note: "Banner between company rows.",
+  },
+  {
+    key: "catalog_grid_banner_2",
+    desktop: "1920x240",
+    mobile: "1600x200",
+    note: "Banner between company rows.",
+  },
+  {
+    key: "catalog_grid_banner_3",
+    desktop: "1920x240",
+    mobile: "1600x200",
+    note: "Banner between company rows.",
+  },
+  {
+    key: "other_top_banner",
+    desktop: "1920x240",
+    mobile: "1200x250",
+    note: "Top banner on other/news-style pages.",
+  },
+  {
+    key: "other_mid_banner",
+    desktop: "1920x240",
+    mobile: "1200x250",
+    note: "Mid-page banner on other/news-style pages.",
+  },
+  {
+    key: "other_hero_sidebar",
+    desktop: "1120x1000",
+    mobile: "1600x200",
+    note: "Other services hero right slot.",
+  },
+  {
+    key: "other_inline_card",
+    desktop: "1760x1210",
+    mobile: "1600x1000",
+    note: "Card slot.",
+  },
+  {
+    key: "other_inline_card_2",
+    desktop: "1760x1210",
+    mobile: "1600x1000",
+    note: "Card slot.",
+  },
+];
+
+const surfaceMaps: SurfaceMap[] = [
+  {
+    title: "Forside",
+    description: "Norsk katalog på forsiden: toppbanner + hero-side + mini-banner + katalogflater i feed.",
+    variant: "home",
+    hotspots: [
+      { key: "catalog_top_banner", left: 8, top: 4, width: 84, height: 9 },
+      { key: "home_hero_sidebar", left: 66, top: 24, width: 26, height: 31 },
+      { key: "home_hero_mini_banner", left: 66, top: 55.5, width: 26, height: 6.5 },
+      { key: "catalog_inline_card", left: 37, top: 65, width: 26, height: 13 },
+      { key: "catalog_grid_banner", left: 8, top: 83, width: 84, height: 3.5 },
+      { key: "catalog_grid_banner_2", left: 8, top: 88, width: 84, height: 3.5 },
+      { key: "catalog_grid_banner_3", left: 8, top: 93, width: 84, height: 3.5 },
+    ],
+  },
+  {
+    title: "Internasjonalt",
+    description: "Internasjonal forside: toppbanner + hero-side + katalogflater i feed.",
+    variant: "international",
+    hotspots: [
+      { key: "catalog_top_banner", left: 8, top: 4, width: 84, height: 9 },
+      { key: "international_hero_sidebar", left: 66, top: 24, width: 26, height: 31 },
+      { key: "catalog_inline_card", left: 37, top: 65, width: 26, height: 13 },
+      { key: "catalog_grid_banner", left: 8, top: 83, width: 84, height: 3.5 },
+      { key: "catalog_grid_banner_2", left: 8, top: 88, width: 84, height: 3.5 },
+      { key: "catalog_grid_banner_3", left: 8, top: 93, width: 84, height: 3.5 },
+    ],
+  },
+  {
+    title: "Selskapsside",
+    description: "Detaljside: toppbanner + mini-banner i høyre kolonne.",
+    variant: "company",
+    hotspots: [
+      { key: "catalog_top_banner", left: 8, top: 4, width: 84, height: 10 },
+      { key: "home_hero_mini_banner", left: 64, top: 50, width: 28, height: 7 },
+    ],
+  },
+  {
+    title: "Andre KI-tjenester",
+    description: "Kategori med toppbanner, hero-side, kort-grid og midtbanner lenger ned i feed.",
+    variant: "other",
+    hotspots: [
+      { key: "other_top_banner", left: 8, top: 4, width: 84, height: 10 },
+      { key: "other_hero_sidebar", left: 64, top: 24, width: 28, height: 31 },
+      { key: "other_inline_card", left: 8, top: 63, width: 26, height: 15 },
+      { key: "other_inline_card_2", left: 37, top: 63, width: 26, height: 15 },
+      { key: "other_mid_banner", left: 8, top: 94, width: 84, height: 4 },
+    ],
   },
 ];
 
@@ -108,7 +265,23 @@ export const metadata: Metadata = siteMeta({
   path: "/annonsere",
 });
 
-function PricingCard({ plan, ctaHref }: { plan: PackagePlan; ctaHref: string }) {
+type PlacementDefinition = (typeof AD_PLACEMENTS)[number];
+
+function PricingCard({
+  plan,
+  ctaHref,
+  locale,
+  placementByKey,
+  specByKey,
+  surfaceLabelsByKey,
+}: {
+  plan: PackagePlan;
+  ctaHref: string;
+  locale: "no" | "en";
+  placementByKey: Map<string, PlacementDefinition>;
+  specByKey: Map<string, PlacementAssetSpec>;
+  surfaceLabelsByKey: Map<string, string[]>;
+}) {
   return (
     <article
       className={`rounded-3xl border p-6 sm:p-7 ${
@@ -155,6 +328,52 @@ function PricingCard({ plan, ctaHref }: { plan: PackagePlan; ctaHref: string }) 
         ))}
       </ul>
 
+      <div className="mt-6 rounded-2xl border border-[var(--ads-border)] bg-black/20 p-4">
+        <div className="text-xs uppercase tracking-[0.14em] text-[var(--ads-muted)]">
+          Inkluderte annonseflater
+        </div>
+        <ul className="mt-3 space-y-3">
+          {plan.placementKeys.map((placementKey) => {
+            const placement = placementByKey.get(placementKey);
+            const spec = specByKey.get(placementKey);
+            const placementName = placement ? placement.name[locale] : placementKey;
+            const desktop = spec?.desktop ?? "N/A";
+            const mobile = spec?.mobile ?? "N/A";
+            const surfaces = surfaceLabelsByKey.get(placementKey) ?? [];
+
+            return (
+              <li key={`${plan.name}-${placementKey}`} className="rounded-xl border border-[var(--ads-border)] p-3">
+                <div className="text-sm font-semibold text-[var(--ads-text)]">{placementName}</div>
+                <div className="mt-1 font-mono text-[11px] text-[var(--ads-muted)]">{placementKey}</div>
+                <div className="mt-2 flex flex-wrap gap-2 text-[10px] text-[var(--ads-muted)]">
+                  <span className="rounded-full border border-[var(--ads-border)] px-2 py-0.5">
+                    Desktop: {desktop}
+                  </span>
+                  <span className="rounded-full border border-[var(--ads-border)] px-2 py-0.5">
+                    Mobil: {mobile}
+                  </span>
+                </div>
+                {surfaces.length ? (
+                  <div className="mt-2">
+                    <div className="text-[10px] uppercase tracking-[0.12em] text-[var(--ads-muted)]">Vises i kart</div>
+                    <div className="mt-1 flex flex-wrap gap-1.5">
+                      {surfaces.map((surface) => (
+                        <span
+                          key={`${placementKey}-${surface}`}
+                          className="rounded-full border border-[var(--ads-border)] bg-black/25 px-2 py-0.5 text-[10px] text-[var(--ads-muted)]"
+                        >
+                          {surface}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                ) : null}
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+
       <Link
         href={ctaHref}
         className="mt-7 inline-flex w-full items-center justify-center rounded-2xl border border-[var(--ads-border)] bg-[var(--ads-panel-strong)] px-4 py-3 text-sm font-semibold transition hover:border-[var(--ads-accent)]/50 hover:bg-[var(--ads-highlight)]"
@@ -165,33 +384,220 @@ function PricingCard({ plan, ctaHref }: { plan: PackagePlan; ctaHref: string }) 
   );
 }
 
-function SurfaceBlock({
-  title,
-  detail,
-  imageSrc,
-  imageAlt,
-}: {
-  title: string;
-  detail: string;
-  imageSrc: string;
-  imageAlt: string;
-}) {
+function PageBackdrop({ variant }: { variant: SurfaceMap["variant"] }) {
   return (
-    <article className="rounded-3xl border border-[var(--ads-border)] bg-[var(--ads-panel)] p-6">
-      <div className={`${headingFont.className} text-lg font-semibold tracking-tight`}>{title}</div>
-      <p className="mt-2 text-sm text-[var(--ads-muted)]">{detail}</p>
+    <>
+      <div className="absolute inset-0 bg-[#0f151d]" />
+      <div
+        className="pointer-events-none absolute inset-0 opacity-30 [background-image:linear-gradient(to_right,rgba(156,168,184,0.12)_1px,transparent_1px),linear-gradient(to_bottom,rgba(156,168,184,0.12)_1px,transparent_1px)] [background-size:18px_18px]"
+        aria-hidden="true"
+      />
+      {variant === "home" || variant === "international" || variant === "company" || variant === "other" ? null : (
+        <div className="absolute left-[6%] top-[5%] h-[6%] w-[88%] rounded-md bg-white/10" />
+      )}
 
-      <div className="mt-5 overflow-hidden rounded-2xl border border-[var(--ads-border)] bg-[var(--ads-panel-strong)]">
-        <img src={imageSrc} alt={imageAlt} loading="lazy" decoding="async" className="h-auto w-full" />
+      {variant === "home" ? (
+        <>
+          <div className="absolute left-[8%] top-[15%] h-[4.6%] w-[40%] rounded-md bg-[rgba(148,163,184,0.3)]" />
+          <div className="absolute left-[8%] top-[21%] h-[2.8%] w-[29%] rounded-md bg-[rgba(148,163,184,0.22)]" />
+
+          <div className="absolute left-[8%] top-[24%] h-[31%] w-[55%] rounded-xl bg-[rgba(148,163,184,0.24)]" />
+          <div className="absolute left-[9.2%] top-[50%] h-[2.8%] w-[20%] rounded-full bg-[rgba(148,163,184,0.2)]" />
+
+          <div className="absolute left-[8%] top-[65%] h-[13%] w-[26%] rounded-xl bg-[rgba(148,163,184,0.22)]" />
+          <div className="absolute left-[37%] top-[65%] h-[13%] w-[26%] rounded-xl bg-[rgba(148,163,184,0.22)]" />
+          <div className="absolute left-[66%] top-[65%] h-[13%] w-[26%] rounded-xl bg-[rgba(148,163,184,0.22)]" />
+        </>
+      ) : null}
+
+      {variant === "international" ? (
+        <>
+          <div className="absolute left-[8%] top-[24%] h-[31%] w-[55%] rounded-xl bg-[rgba(148,163,184,0.24)]" />
+          <div className="absolute left-[9.2%] top-[29%] h-[5.2%] w-[22%] rounded-md bg-[rgba(148,163,184,0.3)]" />
+          <div className="absolute left-[9.2%] top-[35.2%] h-[4.2%] w-[12%] rounded-md bg-[rgba(148,163,184,0.24)]" />
+          <div className="absolute left-[9.2%] top-[41.2%] h-[2.8%] w-[40%] rounded-md bg-[rgba(148,163,184,0.2)]" />
+          <div className="absolute left-[41.5%] top-[28.3%] h-[6.5%] w-[14.5%] rounded-xl bg-[rgba(248,250,252,0.55)]" />
+          <div className="absolute left-[9.2%] top-[50%] h-[2.8%] w-[22%] rounded-full bg-[rgba(148,163,184,0.2)]" />
+
+          <div className="absolute left-[8%] top-[65%] h-[13%] w-[26%] rounded-xl bg-[rgba(148,163,184,0.22)]" />
+          <div className="absolute left-[37%] top-[65%] h-[13%] w-[26%] rounded-xl bg-[rgba(148,163,184,0.22)]" />
+          <div className="absolute left-[66%] top-[65%] h-[13%] w-[26%] rounded-xl bg-[rgba(148,163,184,0.22)]" />
+        </>
+      ) : null}
+
+      {variant === "catalog" ? (
+        <>
+          <div className="absolute left-[8%] top-[28%] h-[31%] w-[55%] rounded-md bg-white/10" />
+          <div className="absolute left-[8%] top-[63%] h-[16%] w-[26%] rounded-md bg-white/10" />
+          <div className="absolute left-[37%] top-[63%] h-[16%] w-[26%] rounded-md bg-white/10" />
+          <div className="absolute left-[66%] top-[63%] h-[16%] w-[26%] rounded-md bg-white/10" />
+        </>
+      ) : null}
+
+      {variant === "company" ? (
+        <>
+          <div className="absolute left-[8%] top-[24%] h-[34%] w-[55%] rounded-xl bg-[rgba(148,163,184,0.24)]" />
+          <div className="absolute left-[64%] top-[24%] h-[24%] w-[28%] rounded-xl bg-[rgba(148,163,184,0.24)]" />
+          <div className="absolute left-[64%] top-[59%] h-[14%] w-[28%] rounded-xl bg-[rgba(148,163,184,0.22)]" />
+          <div className="absolute left-[64%] top-[75.5%] h-[10%] w-[28%] rounded-xl bg-[rgba(148,163,184,0.2)]" />
+
+          <div className="absolute left-[8%] top-[60%] h-[4.8%] w-[28%] rounded-md bg-[rgba(148,163,184,0.3)]" />
+          <div className="absolute left-[8%] top-[66%] h-[2.6%] w-[33%] rounded-md bg-[rgba(148,163,184,0.22)]" />
+          <div className="absolute left-[8%] top-[70%] h-[12%] w-[52%] rounded-xl bg-[rgba(148,163,184,0.21)]" />
+
+          <div className="absolute left-[8%] top-[87%] h-[10%] w-[84%] rounded-xl bg-[rgba(148,163,184,0.2)]" />
+          <div className="absolute left-[10%] top-[89.6%] h-[4%] w-[11%] rounded-full bg-[rgba(248,250,252,0.3)]" />
+          <div className="absolute left-[72%] top-[89.6%] h-[4%] w-[8%] rounded-full bg-[rgba(248,250,252,0.34)]" />
+          <div className="absolute left-[81%] top-[89.6%] h-[4%] w-[8%] rounded-full bg-[rgba(248,250,252,0.34)]" />
+        </>
+      ) : null}
+
+      {variant === "other" ? (
+        <>
+          <div className="absolute left-[8%] top-[24%] h-[31%] w-[55%] rounded-xl bg-[rgba(148,163,184,0.24)]" />
+          <div className="absolute left-[9.2%] top-[28.4%] h-[2.9%] w-[14%] rounded-full bg-[rgba(248,250,252,0.24)]" />
+          <div className="absolute left-[24.5%] top-[28.4%] h-[2.9%] w-[12%] rounded-full bg-[rgba(248,250,252,0.24)]" />
+          <div className="absolute left-[9.2%] top-[34.1%] h-[5%] w-[26%] rounded-md bg-[rgba(248,250,252,0.38)]" />
+          <div className="absolute left-[9.2%] top-[41.2%] h-[3%] w-[40%] rounded-md bg-[rgba(148,163,184,0.22)]" />
+          <div className="absolute left-[9.2%] top-[45.2%] h-[3%] w-[33%] rounded-md bg-[rgba(148,163,184,0.18)]" />
+          <div className="absolute left-[9.2%] top-[51.1%] h-[4%] w-[16%] rounded-full bg-[rgba(248,250,252,0.24)]" />
+
+          <div className="absolute left-[8%] top-[63%] h-[15%] w-[26%] rounded-xl bg-[rgba(148,163,184,0.22)]" />
+          <div className="absolute left-[37%] top-[63%] h-[15%] w-[26%] rounded-xl bg-[rgba(148,163,184,0.22)]" />
+          <div className="absolute left-[66%] top-[63%] h-[15%] w-[26%] rounded-xl bg-[rgba(148,163,184,0.22)]" />
+          <div className="absolute left-[8%] top-[79%] h-[13%] w-[26%] rounded-xl bg-[rgba(148,163,184,0.18)]" />
+          <div className="absolute left-[37%] top-[79%] h-[13%] w-[26%] rounded-xl bg-[rgba(148,163,184,0.18)]" />
+          <div className="absolute left-[66%] top-[79%] h-[13%] w-[26%] rounded-xl bg-[rgba(148,163,184,0.18)]" />
+        </>
+      ) : null}
+    </>
+  );
+}
+
+function SurfaceMapCard({
+  map,
+  locale,
+  placementByKey,
+  specByKey,
+}: {
+  map: SurfaceMap;
+  locale: "no" | "en";
+  placementByKey: Map<string, PlacementDefinition>;
+  specByKey: Map<string, PlacementAssetSpec>;
+}) {
+  const mapHeightClass =
+    map.variant === "home" || map.variant === "international" || map.variant === "other"
+      ? "sm:h-[860px]"
+      : "sm:h-[680px]";
+
+  return (
+    <article className="rounded-3xl border border-[var(--ads-border)] bg-[var(--ads-panel)] p-5">
+      <h3 className={`${headingFont.className} text-xl font-semibold tracking-tight`}>{map.title}</h3>
+      <p className="mt-2 text-sm text-[var(--ads-muted)]">{map.description}</p>
+
+      <div
+        className={`relative mt-4 h-[560px] overflow-hidden rounded-2xl border border-[var(--ads-border)] bg-black/20 ${mapHeightClass}`}
+      >
+        <PageBackdrop variant={map.variant} />
+        {map.hotspots.map((hotspot, index) => {
+          const placement = placementByKey.get(hotspot.key);
+          const spec = specByKey.get(hotspot.key);
+          const placementName = placement ? placement.name[locale] : hotspot.key;
+          const desktop = spec?.desktop ?? "N/A";
+          const mobile = spec?.mobile ?? "N/A";
+          const compactDimensions = `${desktop} / ${mobile}`;
+          const isCompact = hotspot.height <= 10 || hotspot.width <= 26;
+          const isMicro = hotspot.height <= 7;
+
+          return (
+            <div
+              key={`${map.title}-${hotspot.key}`}
+              style={{
+                left: `${hotspot.left}%`,
+                top: `${hotspot.top}%`,
+                width: `${hotspot.width}%`,
+                height: `${hotspot.height}%`,
+              }}
+              className="absolute overflow-hidden rounded-lg border border-[var(--ads-accent)]/90 bg-[#101a2a]/84 shadow-[0_0_0_1px_rgba(132,201,255,0.25)]"
+            >
+              <span
+                className={`absolute right-1 top-1 inline-flex items-center justify-center rounded-full border border-[var(--ads-accent)]/80 bg-[var(--ads-panel-strong)] px-1 text-[10px] font-semibold text-[var(--ads-text)] ${
+                  isMicro ? "h-4 min-w-4 text-[9px]" : "h-5 min-w-5"
+                }`}
+              >
+                {index + 1}
+              </span>
+              <div className={`absolute inset-0 ${isMicro ? "px-2 py-1" : isCompact ? "p-2" : "p-2.5"}`}>
+                {isMicro ? (
+                  <div className="flex h-full items-center gap-2 pr-6">
+                    <div className="min-w-0 truncate text-[9px] font-semibold leading-tight text-[var(--ads-text)]">
+                      {placementName}
+                    </div>
+                    <span
+                      className="ml-auto inline-flex shrink-0 rounded-full border border-[var(--ads-border)] bg-[var(--ads-panel-strong)]/95 px-2 py-0.5 font-medium text-[7px] text-[var(--ads-muted)]"
+                    >
+                      {compactDimensions}
+                    </span>
+                  </div>
+                ) : (
+                  <div>
+                    <div
+                      className={`truncate font-semibold leading-tight text-[var(--ads-text)] ${
+                        isCompact ? "text-[11px]" : "text-sm"
+                      }`}
+                    >
+                      {placementName}
+                    </div>
+                    {isCompact ? (
+                      <div className="mt-0.5 pr-6">
+                        <span className="inline-flex max-w-full truncate rounded-full border border-[var(--ads-border)] bg-[var(--ads-panel-strong)]/95 px-2 py-0.5 text-[8px] font-medium text-[var(--ads-muted)]">
+                          {compactDimensions}
+                        </span>
+                      </div>
+                    ) : (
+                      <>
+                        <div className="mt-0.5 truncate font-mono text-[11px] leading-tight text-[var(--ads-muted)]">
+                          {hotspot.key}
+                        </div>
+                        <div className="mt-1.5 flex flex-wrap gap-1.5 text-[10px]">
+                          <span className="rounded-full border border-[var(--ads-border)] bg-[var(--ads-panel-strong)]/95 px-2 py-0.5 font-medium text-[var(--ads-muted)]">
+                            Desktop: {desktop}
+                          </span>
+                          <span className="rounded-full border border-[var(--ads-border)] bg-[var(--ads-panel-strong)]/95 px-2 py-0.5 font-medium text-[var(--ads-muted)]">
+                            Mobil: {mobile}
+                          </span>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
+          );
+        })}
       </div>
     </article>
   );
 }
-
 export default async function AdvertisingPage() {
   const locale = await getLocale();
   const contactPath = localizePath(locale, "/kontakt");
   const ctaHref = `${contactPath}?topic=${encodeURIComponent("annonsering")}`;
+  const placementByKey = new Map<string, PlacementDefinition>(
+    AD_PLACEMENTS.map((placement) => [placement.key, placement])
+  );
+  const specByKey = new Map(placementAssetSpecs.map((spec) => [spec.key, spec]));
+  const surfaceLabelsByKey = new Map<string, string[]>();
+
+  for (const mapDef of surfaceMaps) {
+    for (const hotspot of mapDef.hotspots) {
+      const existing = surfaceLabelsByKey.get(hotspot.key) ?? [];
+      if (!existing.includes(mapDef.title)) {
+        existing.push(mapDef.title);
+        surfaceLabelsByKey.set(hotspot.key, existing);
+      }
+    }
+  }
 
   return (
     <div style={pagePalette} className={`${bodyFont.className} bg-[var(--ads-bg)] text-[var(--ads-text)]`}>
@@ -229,11 +635,23 @@ export default async function AdvertisingPage() {
 
         <section className="mt-16">
           <h2 className={`${headingFont.className} text-3xl font-semibold tracking-tight sm:text-4xl`}>
-            Annonsepakker 2026
+            Annonsepakker 2026 (knyttet til annonseflater)
           </h2>
+          <p className="mt-4 max-w-4xl text-sm text-[var(--ads-muted)] sm:text-base">
+            Hver pakke under er synket mot visualiseringskartet lenger ned. Samme navn, samme key og tydelig
+            markering av hvilke sidekart hver annonseflate faktisk vises i.
+          </p>
           <div className="mt-8 grid gap-5 lg:grid-cols-3">
             {packagePlans.map((plan) => (
-              <PricingCard key={plan.name} plan={plan} ctaHref={ctaHref} />
+              <PricingCard
+                key={plan.name}
+                plan={plan}
+                ctaHref={ctaHref}
+                locale={locale}
+                placementByKey={placementByKey}
+                specByKey={specByKey}
+                surfaceLabelsByKey={surfaceLabelsByKey}
+              />
             ))}
           </div>
         </section>
@@ -268,18 +686,35 @@ export default async function AdvertisingPage() {
 
         <section className="mt-16">
           <h2 className={`${headingFont.className} text-3xl font-semibold tracking-tight sm:text-4xl`}>
-            Hvor blir dere synlige?
+            Annonseflater og leveranseformat
           </h2>
-          <div className="mt-8 grid gap-5 md:grid-cols-3">
-            {visibilitySurfaces.map((surface) => (
-              <SurfaceBlock
-                key={surface.title}
-                title={surface.title}
-                detail={surface.detail}
-                imageSrc={surface.imageSrc}
-                imageAlt={surface.imageAlt}
+          <p className="mt-4 max-w-4xl text-sm text-[var(--ads-muted)] sm:text-base">
+            Illustrasjonene under viser grået sideinnhold med markerte annonseflater.
+            Hver markering viser navn og leveranseformat direkte i kartet:
+            <span className="font-mono"> image_url</span> (desktop) og
+            <span className="font-mono"> mobile_image_url</span> (mobil).
+          </p>
+
+          <div className="mt-8 grid gap-5 2xl:grid-cols-2">
+            {surfaceMaps.map((map) => (
+              <SurfaceMapCard
+                key={map.title}
+                map={map}
+                locale={locale}
+                placementByKey={placementByKey}
+                specByKey={specByKey}
               />
             ))}
+          </div>
+
+          <div className="mt-6 grid gap-3 md:grid-cols-2">
+            <div className="rounded-2xl border border-[var(--ads-border)] bg-black/20 px-4 py-3 text-sm text-[var(--ads-muted)]">
+              Hold kritisk tekst og logo unna øvre høyre hjørne. Sponsor-pill vises der i dagens layout.
+            </div>
+            <div className="rounded-2xl border border-[var(--ads-border)] bg-black/20 px-4 py-3 text-sm text-[var(--ads-muted)]">
+              <span className="font-mono">catalog_top_banner</span> brukes i to ulike frame-stiler.
+              Del i separate placements hvis dere vil ha pixel-perfect fit per side.
+            </div>
           </div>
         </section>
 

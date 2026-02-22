@@ -71,10 +71,13 @@ export default function MobileMenu({ isAuthed, isAdmin, locale }: Props) {
                 {locale === "en" ? "International" : "Internasjonal"}
               </Link>
 
-              <Link href={localizePath(locale, "/ki-reklame")} onClick={close} className={itemClass}>
-                ShoWheel
+              <Link
+                href={localizePath(locale, "/andre-ki-tjenester")}
+                onClick={close}
+                className={itemClass}
+              >
+                {locale === "en" ? "Other AI" : "Annen KI"}
               </Link>
-
               <Link href={localizePath(locale, "/annonsere")} onClick={close} className={itemClass}>
                 {locale === "en" ? "Advertise" : "Annonsér"}
               </Link>
