@@ -31,10 +31,9 @@ export default async function TagPage({
   const locale = await getLocale();
   const { slug } = await params;
 
-  const [tag, companies, inlineAd, gridBannerAd] = await Promise.all([
+  const [tag, companies, gridBannerAd] = await Promise.all([
     getTagBySlug(slug),
     getCompaniesByTagSlug(slug),
-    getAdForPlacement("catalog_inline_card"),
     getAdForPlacement("catalog_grid_banner"),
   ]);
 
@@ -82,7 +81,6 @@ export default async function TagPage({
       <div className="mt-8">
         <ListingGrid
           companies={companies}
-          inlineAd={inlineAd}
           gridBannerAd={gridBannerAd}
         />
       </div>

@@ -130,10 +130,10 @@ export default async function Home(props: any) {
       : null;
 
   // 3) Annonser
-  const [ad, bannerAd, inlineAd, gridBannerAd, gridBannerAd2, gridBannerAd3] = await Promise.all([
+  const [ad, heroMiniAd, bannerAd, gridBannerAd, gridBannerAd2, gridBannerAd3] = await Promise.all([
     getAdForPlacement("home_hero_sidebar"),
+    getAdForPlacement("home_hero_mini_banner"),
     getAdForPlacement("catalog_top_banner"),
-    getAdForPlacement("catalog_inline_card"),
     getAdForPlacement("catalog_grid_banner"),
     getAdForPlacement("catalog_grid_banner_2"),
     getAdForPlacement("catalog_grid_banner_3"),
@@ -179,6 +179,7 @@ export default async function Home(props: any) {
         heroVideoUrl={heroVideoUrl}
         featuredCompany={featured}
         sponsorAd={ad ?? null}
+        sponsorMiniAd={heroMiniAd ?? null}
         locale={locale}
         copy={{
           featuredLabel: locale === "en" ? "Featured" : "Utvalgt",
@@ -190,7 +191,6 @@ export default async function Home(props: any) {
       <section className="mx-auto max-w-6xl px-4 pb-10">
         <ListingGrid
           companies={companies}
-          inlineAd={inlineAd}
           gridBannerAd={gridBannerAd}
           gridBannerAd2={gridBannerAd2}
           gridBannerAd3={gridBannerAd3}

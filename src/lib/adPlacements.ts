@@ -35,6 +35,18 @@ export const AD_PLACEMENTS: PlacementDefinition[] = [
     durationsDays: [7, 14, 30],
   },
   {
+    key: "home_hero_mini_banner",
+    name: { no: "Forside hero mini-banner", en: "Home hero mini banner" },
+    description: {
+      no: "Mini-banner under hero-sideannonsen på desktop.",
+      en: "Mini banner below the desktop home hero sidebar ad.",
+    },
+    surfaces: { no: ["Forside"], en: ["Home"] },
+    format: "banner",
+    tier: "standard",
+    durationsDays: [7, 14, 30],
+  },
+  {
     key: "companies_hero_sidebar",
     name: { no: "Selskaper hero-side", en: "Companies hero sidebar" },
     description: {

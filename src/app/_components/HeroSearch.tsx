@@ -11,6 +11,7 @@ export default function HeroSearch({
   heroVideoUrl,
   featuredCompany,
   sponsorAd,
+  sponsorMiniAd,
   locale,
   copy,
 }: {
@@ -23,6 +24,7 @@ export default function HeroSearch({
     locationName?: string | null;
   } | null;
   sponsorAd?: SponsorAd | null;
+  sponsorMiniAd?: SponsorAd | null;
   locale: Locale;
   copy: {
     featuredLabel: string;
@@ -35,8 +37,8 @@ export default function HeroSearch({
       {/* HERO + SPONSOR SLOT */}
       <div
         className={
-          sponsorAd
-            ? "grid gap-6 lg:grid-cols-[1fr_360px] items-stretch"
+          sponsorAd || sponsorMiniAd
+            ? "grid gap-6 lg:grid-cols-[1fr_360px] items-start"
             : "grid gap-6 items-start"
         }
       >
@@ -73,27 +75,39 @@ export default function HeroSearch({
         </div>
 
         {/* SPONSOR */}
-        {sponsorAd ? (
+        {sponsorAd || sponsorMiniAd ? (
           <>
             <div className="lg:hidden">
-              <AdSlot
-                ad={sponsorAd}
-                sponsorLabel={copy.sponsorLabel}
-                openLinkFallback={copy.openLinkFallback}
-                variant="hero"
-                locale={locale}
-              />
+              {sponsorAd ? (
+                <AdSlot
+                  ad={sponsorAd}
+                  sponsorLabel={copy.sponsorLabel}
+                  openLinkFallback={copy.openLinkFallback}
+                  variant="hero"
+                  locale={locale}
+                />
+              ) : null}
             </div>
 
-            <div className="hidden lg:block">
-              <AdSlot
-                ad={sponsorAd}
-                sponsorLabel={copy.sponsorLabel}
-                openLinkFallback={copy.openLinkFallback}
-                variant="sidebar"
-                className="h-full"
-                locale={locale}
-              />
+            <div className="hidden lg:flex lg:flex-col lg:gap-3">
+              {sponsorAd ? (
+                <AdSlot
+                  ad={sponsorAd}
+                  sponsorLabel={copy.sponsorLabel}
+                  openLinkFallback={copy.openLinkFallback}
+                  variant="sidebar"
+                  locale={locale}
+                />
+              ) : null}
+              {sponsorMiniAd ? (
+                <AdSlot
+                  ad={sponsorMiniAd}
+                  sponsorLabel={copy.sponsorLabel}
+                  openLinkFallback={copy.openLinkFallback}
+                  variant="miniBanner"
+                  locale={locale}
+                />
+              ) : null}
             </div>
           </>
         ) : null}

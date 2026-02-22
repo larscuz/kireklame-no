@@ -29,7 +29,6 @@ export default async function OtherAiServicesPage() {
     { data, error },
     topBannerAd,
     heroAd,
-    inlineAd,
     gridBannerAd,
     gridBannerAd2,
     gridBannerAd3,
@@ -40,25 +39,21 @@ export default async function OtherAiServicesPage() {
       .order("name", { ascending: true }),
     getAdForPlacement("catalog_top_banner"),
     getAdForPlacement("other_hero_sidebar"),
-    getAdForPlacement("catalog_inline_card"),
     getAdForPlacement("catalog_grid_banner"),
     getAdForPlacement("catalog_grid_banner_2"),
     getAdForPlacement("catalog_grid_banner_3"),
   ]);
 
   const leads: AdLead[] = (data ?? []) as AdLead[];
-  const inlineInsertAt = 3;
-  const shouldInsertInline = Boolean(inlineAd) && leads.length > inlineInsertAt;
-
-  const bannerInsertAfterLeadIndex = shouldInsertInline ? 4 : 5;
+  const bannerInsertAfterLeadIndex = 5;
   const shouldInsertGridBanner =
     Boolean(gridBannerAd) && leads.length > bannerInsertAfterLeadIndex;
 
-  const banner2InsertAfterLeadIndex = shouldInsertInline ? 10 : 11;
+  const banner2InsertAfterLeadIndex = 11;
   const shouldInsertGridBanner2 =
     Boolean(gridBannerAd2) && leads.length >= banner2InsertAfterLeadIndex + 2;
 
-  const banner3InsertAfterLeadIndex = shouldInsertInline ? 16 : 17;
+  const banner3InsertAfterLeadIndex = 17;
   const shouldInsertGridBanner3 =
     Boolean(gridBannerAd3) && leads.length >= banner3InsertAfterLeadIndex + 2;
 
@@ -130,7 +125,6 @@ export default async function OtherAiServicesPage() {
                 sponsorLabel={locale === "en" ? "Sponsored" : "Sponset"}
                 openLinkFallback={locale === "en" ? "Open link" : "Åpne lenke"}
                 variant="sidebar"
-                className="h-full"
                 locale={locale}
               />
             </div>
@@ -180,16 +174,6 @@ export default async function OtherAiServicesPage() {
                 </div>
               )}
             </div>
-
-            {shouldInsertInline && index === inlineInsertAt - 1 ? (
-              <AdSlot
-                ad={inlineAd}
-                sponsorLabel={locale === "en" ? "Sponsored" : "Sponset"}
-                openLinkFallback={locale === "en" ? "Open link" : "Åpne lenke"}
-                variant="card"
-                locale={locale}
-              />
-            ) : null}
             {shouldInsertGridBanner && index === bannerInsertAfterLeadIndex ? (
               <div className="sm:col-span-2 lg:col-span-3">
                 <AdSlot

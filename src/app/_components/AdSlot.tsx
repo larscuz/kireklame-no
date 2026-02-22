@@ -43,20 +43,18 @@ export default function AdSlot({
         aria-label={`${label}: ${ad.title ?? openLinkFallback}`}
       >
         {isSidebar ? (
-          <div className="relative isolate h-full min-h-[190px] sm:min-h-[220px] lg:min-h-[280px] overflow-hidden bg-[rgb(var(--bg))]">
+          <div className="relative isolate w-full overflow-hidden bg-black">
             {desktopImg ? (
-              <div className="absolute inset-0 p-2 sm:p-3">
-                <picture className="block h-full w-full">
-                  {mobileImg ? <source media="(max-width: 767px)" srcSet={mobileImg} /> : null}
-                  <img
-                    src={desktopImg}
-                    alt={ad.alt}
-                    className="h-full w-full object-contain object-center"
-                    style={{ objectPosition: "center center" }}
-                    loading="lazy"
-                  />
-                </picture>
-              </div>
+              <picture className="block w-full">
+                {mobileImg ? <source media="(max-width: 767px)" srcSet={mobileImg} /> : null}
+                <img
+                  src={desktopImg}
+                  alt={ad.alt}
+                  className="block h-auto w-full object-contain object-center"
+                  style={{ objectPosition: "center center" }}
+                  loading="lazy"
+                />
+              </picture>
             ) : null}
 
             <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-black/15 to-black/10 group-hover:from-black/20 transition" />
@@ -70,14 +68,14 @@ export default function AdSlot({
             </div>
           </div>
         ) : isHero ? (
-          <div className="relative isolate h-[106px] w-full overflow-hidden bg-[rgb(var(--bg))] sm:h-[118px]">
+          <div className="relative isolate h-[106px] w-full overflow-hidden bg-black sm:h-[118px]">
             {desktopImg ? (
               <picture className="absolute inset-0 block h-full w-full">
                 {mobileImg ? <source media="(max-width: 767px)" srcSet={mobileImg} /> : null}
                 <img
                   src={desktopImg}
                   alt={ad.alt}
-                  className="h-full w-full object-cover object-center"
+                  className="h-full w-full object-contain object-center"
                   style={{ objectPosition: "center center" }}
                   loading="lazy"
                 />
@@ -95,7 +93,7 @@ export default function AdSlot({
             </div>
           </div>
         ) : isMiniBanner ? (
-          <div className="relative isolate h-[42px] w-full overflow-hidden bg-[rgb(var(--bg))] sm:h-[50px]">
+          <div className="relative isolate h-[42px] w-full overflow-hidden bg-black sm:h-[50px]">
             {desktopImg ? (
               <picture className="absolute inset-0 block h-full w-full">
                 {mobileImg ? <source media="(max-width: 767px)" srcSet={mobileImg} /> : null}
@@ -121,7 +119,7 @@ export default function AdSlot({
           </div>
         ) : isBanner ? (
           <div
-            className={`relative isolate w-full overflow-hidden bg-[rgb(var(--bg))] ${
+            className={`relative isolate w-full overflow-hidden bg-black ${
               compact
                 ? "h-[44px] sm:h-[42px] md:h-auto md:aspect-[12/1]"
                 : "h-[74px] sm:h-[62px] md:h-auto md:aspect-[8/1]"

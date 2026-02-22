@@ -30,10 +30,9 @@ export default async function CityPage({
   const locale = await getLocale();
   const { slug } = await params;
 
-  const [location, companies, inlineAd, gridBannerAd] = await Promise.all([
+  const [location, companies, gridBannerAd] = await Promise.all([
     getLocationBySlug(slug),
     getCompaniesByLocationSlug(slug),
-    getAdForPlacement("catalog_inline_card"),
     getAdForPlacement("catalog_grid_banner"),
   ]);
 
@@ -78,7 +77,6 @@ export default async function CityPage({
       <div className="mt-8">
         <ListingGrid
           companies={companies}
-          inlineAd={inlineAd}
           gridBannerAd={gridBannerAd}
         />
       </div>

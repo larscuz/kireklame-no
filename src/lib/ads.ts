@@ -57,6 +57,8 @@ function getFallbackAd(placement: string): SponsorAd | null {
   switch (placement) {
     case "home_hero_sidebar":
       return base;
+    case "home_hero_mini_banner":
+      return { ...base, image_url: banner, mobile_image_url: banner };
     case "international_hero_sidebar":
     case "companies_hero_sidebar":
       return base;

@@ -6,13 +6,11 @@ import type { SponsorAd } from "@/lib/ads";
 
 export default async function ListingGrid({
   companies,
-  inlineAd,
   gridBannerAd,
   gridBannerAd2,
   gridBannerAd3,
 }: {
   companies: CompanyCardModel[];
-  inlineAd?: SponsorAd | null;
   gridBannerAd?: SponsorAd | null;
   gridBannerAd2?: SponsorAd | null;
   gridBannerAd3?: SponsorAd | null;
@@ -28,23 +26,19 @@ export default async function ListingGrid({
     );
   }
 
-  const inlineInsertAt = 3;
-  const shouldInsertInline = Boolean(inlineAd) && companies.length > inlineInsertAt;
-
-  // On desktop (3 columns), keep inline card at slot #4, then place a full-width
-  // banner between row 2 and row 3.
-  const bannerInsertAfterCompanyIndex = shouldInsertInline ? 4 : 5;
+  // On desktop (3 columns), place a full-width banner between row 2 and row 3.
+  const bannerInsertAfterCompanyIndex = 5;
   const shouldInsertGridBanner =
     Boolean(gridBannerAd) && companies.length > bannerInsertAfterCompanyIndex;
 
   // Second full-width grid banner between row 4 and row 5.
   // Keep one banner per two company rows.
-  const banner2InsertAfterCompanyIndex = shouldInsertInline ? 10 : 11;
+  const banner2InsertAfterCompanyIndex = 11;
   const shouldInsertGridBanner2 =
     Boolean(gridBannerAd2) && companies.length >= banner2InsertAfterCompanyIndex + 2;
 
   // Third full-width grid banner between row 6 and row 7.
-  const banner3InsertAfterCompanyIndex = shouldInsertInline ? 16 : 17;
+  const banner3InsertAfterCompanyIndex = 17;
   const shouldInsertGridBanner3 =
     Boolean(gridBannerAd3) && companies.length >= banner3InsertAfterCompanyIndex + 2;
 
@@ -53,29 +47,6 @@ export default async function ListingGrid({
       {companies.map((c, index) => (
         <div key={c.id} className="contents">
           <CompanyCard company={c} />
-          {shouldInsertInline && index === inlineInsertAt - 1 ? (
-            <>
-              <div className="sm:hidden">
-                <AdSlot
-                  ad={inlineAd ?? null}
-                  sponsorLabel={locale === "en" ? "Sponsored" : "Sponset"}
-                  openLinkFallback={locale === "en" ? "Open link" : "Åpne lenke"}
-                  variant="banner"
-                  compact
-                  locale={locale}
-                />
-              </div>
-              <div className="hidden sm:block">
-                <AdSlot
-                  ad={inlineAd ?? null}
-                  sponsorLabel={locale === "en" ? "Sponsored" : "Sponset"}
-                  openLinkFallback={locale === "en" ? "Open link" : "Åpne lenke"}
-                  variant="card"
-                  locale={locale}
-                />
-              </div>
-            </>
-          ) : null}
           {shouldInsertGridBanner && index === bannerInsertAfterCompanyIndex ? (
             <div className="sm:col-span-2 lg:col-span-3">
               <AdSlot

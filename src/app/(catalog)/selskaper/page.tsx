@@ -33,7 +33,6 @@ export default async function CompaniesPage({
     { companies, facets },
     heroAd,
     bannerAd,
-    inlineAd,
     gridBannerAd,
     gridBannerAd2,
     gridBannerAd3,
@@ -42,7 +41,6 @@ export default async function CompaniesPage({
     getCompanies(params),
     getAdForPlacement("companies_hero_sidebar"),
     getAdForPlacement("catalog_top_banner"),
-    getAdForPlacement("catalog_inline_card"),
     getAdForPlacement("catalog_grid_banner"),
     getAdForPlacement("catalog_grid_banner_2"),
     getAdForPlacement("catalog_grid_banner_3"),
@@ -154,7 +152,6 @@ export default async function CompaniesPage({
                 sponsorLabel={locale === "en" ? "Sponsored" : "Sponset"}
                 openLinkFallback={locale === "en" ? "Open link" : "Åpne lenke"}
                 variant="sidebar"
-                className="h-full"
                 locale={locale}
               />
             </div>
@@ -201,7 +198,6 @@ export default async function CompaniesPage({
       <div className="mt-8">
         <ListingGrid
           companies={companies}
-          inlineAd={inlineAd}
           gridBannerAd={gridBannerAd}
           gridBannerAd2={gridBannerAd2}
           gridBannerAd3={gridBannerAd3}

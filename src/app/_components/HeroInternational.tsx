@@ -112,7 +112,6 @@ export default function HeroInternational({
                 sponsorLabel={copy.sponsorLabel}
                 openLinkFallback={copy.openLinkFallback}
                 variant="sidebar"
-                className="h-full"
                 locale={locale}
               />
             </div>
