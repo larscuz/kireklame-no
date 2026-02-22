@@ -59,6 +59,11 @@ const nextConfig = {
         permanent: true,
       },
       {
+        source: "/ki-verktoy",
+        destination: "/ki-opplaring/verktoy",
+        permanent: true,
+      },
+      {
         source: "/:path*",
         has: [{ type: "host", value: "www.kireklame.no" }],
         destination: "https://kireklame.no/:path*",
