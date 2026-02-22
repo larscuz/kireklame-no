@@ -656,34 +656,6 @@ export default async function AdvertisingPage() {
           </div>
         </section>
 
-        <section className="mt-12 rounded-3xl border border-[var(--ads-border)] bg-[var(--ads-panel)] px-6 py-8 sm:px-8">
-          <h2 className={`${headingFont.className} text-2xl font-semibold tracking-tight`}>
-            Hva innebærer annonsering på KiReklame?
-          </h2>
-          <p className="mt-4 max-w-4xl text-base leading-relaxed text-[var(--ads-muted)]">
-            Annonsering gir betalt synlighet på definerte flater på kireklame.no.
-          </p>
-          <ul className="mt-5 space-y-2 text-sm text-[var(--ads-text)]/92">
-            {[
-              "Visning på avtalt plassering (forside, kategori eller KI Nyheter)",
-              "Klikkbar henvisning til egen nettside",
-              "Synlighet i hele avtaleperioden",
-              "Mulighet for oppdatert annonsemateriell ved behov",
-              "Rotasjon eller plassbegrensning avtales per annonseflate",
-              "Tilbud og kapasitet for 2026 avtales ved kontakt",
-            ].map((item) => (
-              <li key={item} className="flex items-start gap-2">
-                <span className="mt-1 h-1.5 w-1.5 rounded-full bg-[var(--ads-accent)]" aria-hidden="true" />
-                <span>{item}</span>
-              </li>
-            ))}
-          </ul>
-          <div className="mt-6 rounded-2xl border border-[var(--ads-border)] bg-black/20 px-4 py-3 text-sm text-[var(--ads-muted)]">
-            KiReklame tilbyr eksponering og bransjesynlighet. Vi garanterer ikke antall visninger, klikk eller leads.
-            Endelig tilbud og vilkår fastsettes ved bestilling.
-          </div>
-        </section>
-
         <section className="mt-16">
           <h2 className={`${headingFont.className} text-3xl font-semibold tracking-tight sm:text-4xl`}>
             Annonseflater og leveranseformat
@@ -715,6 +687,34 @@ export default async function AdvertisingPage() {
               <span className="font-mono">catalog_top_banner</span> brukes i to ulike frame-stiler.
               Del i separate placements hvis dere vil ha pixel-perfect fit per side.
             </div>
+          </div>
+        </section>
+
+        <section className="mt-12 rounded-3xl border border-[var(--ads-border)] bg-[var(--ads-panel)] px-6 py-8 sm:px-8">
+          <h2 className={`${headingFont.className} text-2xl font-semibold tracking-tight`}>
+            Hva innebærer annonsering på KiReklame?
+          </h2>
+          <p className="mt-4 max-w-4xl text-base leading-relaxed text-[var(--ads-muted)]">
+            Annonsering gir betalt synlighet på definerte flater på kireklame.no.
+          </p>
+          <ul className="mt-5 space-y-2 text-sm text-[var(--ads-text)]/92">
+            {[
+              "Visning på avtalt plassering (forside, kategori eller KI Nyheter)",
+              "Klikkbar henvisning til egen nettside",
+              "Synlighet i hele avtaleperioden",
+              "Mulighet for oppdatert annonsemateriell ved behov",
+              "Rotasjon eller plassbegrensning avtales per annonseflate",
+              "Tilbud og kapasitet for 2026 avtales ved kontakt",
+            ].map((item) => (
+              <li key={item} className="flex items-start gap-2">
+                <span className="mt-1 h-1.5 w-1.5 rounded-full bg-[var(--ads-accent)]" aria-hidden="true" />
+                <span>{item}</span>
+              </li>
+            ))}
+          </ul>
+          <div className="mt-6 rounded-2xl border border-[var(--ads-border)] bg-black/20 px-4 py-3 text-sm text-[var(--ads-muted)]">
+            KiReklame tilbyr eksponering og bransjesynlighet. Vi garanterer ikke antall visninger, klikk eller leads.
+            Endelig tilbud og vilkår fastsettes ved bestilling.
           </div>
         </section>
 
