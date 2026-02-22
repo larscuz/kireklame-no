@@ -83,7 +83,8 @@ export default function HeroSearch({
                   ad={sponsorAd}
                   sponsorLabel={copy.sponsorLabel}
                   openLinkFallback={copy.openLinkFallback}
-                  variant="hero"
+                  variant="banner"
+                  compact
                   locale={locale}
                 />
               ) : null}

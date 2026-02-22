@@ -523,7 +523,8 @@ export default async function KIRInternationalPage() {
                       ad={heroAd}
                       sponsorLabel={sponsorLabel}
                       openLinkFallback={openLinkFallback}
-                      variant="hero"
+                      variant="banner"
+                      compact
                       locale={locale}
                     />
                   </div>

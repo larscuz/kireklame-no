@@ -115,7 +115,8 @@ export default async function OtherAiServicesPage() {
                 ad={heroAd}
                 sponsorLabel={locale === "en" ? "Sponsored" : "Sponset"}
                 openLinkFallback={locale === "en" ? "Open link" : "Åpne lenke"}
-                variant="hero"
+                variant="banner"
+                compact
                 locale={locale}
               />
             </div>

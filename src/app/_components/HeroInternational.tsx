@@ -102,7 +102,8 @@ export default function HeroInternational({
                 ad={sponsorAd}
                 sponsorLabel={copy.sponsorLabel}
                 openLinkFallback={copy.openLinkFallback}
-                variant="hero"
+                variant="banner"
+                compact
                 locale={locale}
               />
             </div>
