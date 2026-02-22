@@ -49,35 +49,71 @@ export default async function ListingGrid({
           <CompanyCard company={c} />
           {shouldInsertGridBanner && index === bannerInsertAfterCompanyIndex ? (
             <div className="sm:col-span-2 lg:col-span-3">
-              <AdSlot
-                ad={gridBannerAd ?? null}
-                sponsorLabel={locale === "en" ? "Sponsored" : "Sponset"}
-                openLinkFallback={locale === "en" ? "Open link" : "Åpne lenke"}
-                variant="banner"
-                locale={locale}
-              />
+              <div className="sm:hidden">
+                <AdSlot
+                  ad={gridBannerAd ?? null}
+                  sponsorLabel={locale === "en" ? "Sponsored" : "Sponset"}
+                  openLinkFallback={locale === "en" ? "Open link" : "Åpne lenke"}
+                  variant="banner"
+                  compact
+                  locale={locale}
+                />
+              </div>
+              <div className="hidden sm:block">
+                <AdSlot
+                  ad={gridBannerAd ?? null}
+                  sponsorLabel={locale === "en" ? "Sponsored" : "Sponset"}
+                  openLinkFallback={locale === "en" ? "Open link" : "Åpne lenke"}
+                  variant="banner"
+                  locale={locale}
+                />
+              </div>
             </div>
           ) : null}
           {shouldInsertGridBanner2 && index === banner2InsertAfterCompanyIndex ? (
             <div className="sm:col-span-2 lg:col-span-3">
-              <AdSlot
-                ad={gridBannerAd2 ?? null}
-                sponsorLabel={locale === "en" ? "Sponsored" : "Sponset"}
-                openLinkFallback={locale === "en" ? "Open link" : "Åpne lenke"}
-                variant="banner"
-                locale={locale}
-              />
+              <div className="sm:hidden">
+                <AdSlot
+                  ad={gridBannerAd2 ?? null}
+                  sponsorLabel={locale === "en" ? "Sponsored" : "Sponset"}
+                  openLinkFallback={locale === "en" ? "Open link" : "Åpne lenke"}
+                  variant="banner"
+                  compact
+                  locale={locale}
+                />
+              </div>
+              <div className="hidden sm:block">
+                <AdSlot
+                  ad={gridBannerAd2 ?? null}
+                  sponsorLabel={locale === "en" ? "Sponsored" : "Sponset"}
+                  openLinkFallback={locale === "en" ? "Open link" : "Åpne lenke"}
+                  variant="banner"
+                  locale={locale}
+                />
+              </div>
             </div>
           ) : null}
           {shouldInsertGridBanner3 && index === banner3InsertAfterCompanyIndex ? (
             <div className="sm:col-span-2 lg:col-span-3">
-              <AdSlot
-                ad={gridBannerAd3 ?? null}
-                sponsorLabel={locale === "en" ? "Sponsored" : "Sponset"}
-                openLinkFallback={locale === "en" ? "Open link" : "Åpne lenke"}
-                variant="banner"
-                locale={locale}
-              />
+              <div className="sm:hidden">
+                <AdSlot
+                  ad={gridBannerAd3 ?? null}
+                  sponsorLabel={locale === "en" ? "Sponsored" : "Sponset"}
+                  openLinkFallback={locale === "en" ? "Open link" : "Åpne lenke"}
+                  variant="banner"
+                  compact
+                  locale={locale}
+                />
+              </div>
+              <div className="hidden sm:block">
+                <AdSlot
+                  ad={gridBannerAd3 ?? null}
+                  sponsorLabel={locale === "en" ? "Sponsored" : "Sponset"}
+                  openLinkFallback={locale === "en" ? "Open link" : "Åpne lenke"}
+                  variant="banner"
+                  locale={locale}
+                />
+              </div>
             </div>
           ) : null}
         </div>
