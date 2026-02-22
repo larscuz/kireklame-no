@@ -2,6 +2,7 @@ import Link from "next/link";
 import Checklist from "@/components/ki-opplaring/mdx/Checklist";
 import PromptExercise from "@/components/ki-opplaring/mdx/PromptExercise";
 import PromptTransform from "@/components/ki-opplaring/mdx/PromptTransform";
+import PromptVsMediaExercise from "@/components/ki-opplaring/mdx/PromptVsMediaExercise";
 import Script10sExercise from "@/components/ki-opplaring/mdx/Script10sExercise";
 import { siteMeta } from "@/lib/seo";
 import ExercisesUsagePanel from "./_components/ExercisesUsagePanel";
@@ -28,7 +29,7 @@ export default function KiOpplaringOvelserPage() {
             Dette er en produksjonsflate. Du skal skrive, teste, få output og levere.
           </p>
 
-          <div className="mt-5 grid gap-3 sm:grid-cols-3">
+          <div className="mt-5 grid gap-3 sm:grid-cols-4">
             <a
               href="#forbedre-prompt"
               className="rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] p-4 hover:shadow-lift"
@@ -49,6 +50,13 @@ export default function KiOpplaringOvelserPage() {
             >
               <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">3</p>
               <p className="mt-1 text-base font-semibold">Dårlig vs bra prompt</p>
+            </a>
+            <a
+              href="#prompt-vs-media"
+              className="rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] p-4 hover:shadow-lift"
+            >
+              <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">4</p>
+              <p className="mt-1 text-base font-semibold">Prompt vs media</p>
             </a>
           </div>
         </div>
@@ -151,6 +159,38 @@ export default function KiOpplaringOvelserPage() {
               "Bra prompt har format + begrensninger",
               "Forskjeller er dokumentert i minst 2 punkter",
               "Bra prompt er kopiert for videre bruk",
+            ]}
+          />
+        </article>
+
+        <article id="prompt-vs-media" className="rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] p-4 sm:p-5">
+          <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">Økt 4</p>
+          <h2 className="mt-1 text-2xl font-semibold tracking-tight">Prompt vs media: se forskjellen visuelt</h2>
+          <p className="mt-3 text-sm"><strong>Mål:</strong> Etter dette kan du dokumentere hvorfor strukturert prompt gir bedre output.</p>
+          <p className="mt-1 text-sm"><strong>Du skal lage:</strong> 1 original + 1 forbedret prompt, med side-by-side media.</p>
+          <p className="mt-1 text-sm"><strong>Tidsbruk:</strong> 8-15 min</p>
+
+          <div className="mt-3 rounded-xl border border-[rgb(var(--border))] bg-black/5 p-3 text-sm dark:bg-white/5">
+            <p className="font-semibold">Trinn</p>
+            <ol className="mt-2 list-decimal space-y-1 pl-5">
+              <li>Skriv inn en vag prompt.</li>
+              <li>Velg bilde eller video.</li>
+              <li>Kjør sammenligning.</li>
+              <li>Studer endringer og output side ved side.</li>
+              <li>Kopier forbedret prompt til produksjon.</li>
+            </ol>
+          </div>
+
+          <PromptVsMediaExercise id="ovelse-prompt-vs-media-v1" title="Gjør dette nå: Prompt vs media" />
+
+          <Checklist
+            id="checklist-ovelse-prompt-vs-media-v1"
+            title="Godt nok når"
+            items={[
+              "Original og forbedret prompt er synlige side om side",
+              "Minst tre konkrete endringer er dokumentert",
+              "Lys, materiale og constraints er eksplisitt beskrevet",
+              "Forbedret prompt er kopiert til videre test",
             ]}
           />
         </article>

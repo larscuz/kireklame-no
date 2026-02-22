@@ -8,6 +8,7 @@ import OutcomeBlock from "@/components/ki-opplaring/mdx/OutcomeBlock";
 import Pitfalls from "@/components/ki-opplaring/mdx/Pitfalls";
 import PromptExercise from "@/components/ki-opplaring/mdx/PromptExercise";
 import PromptTransform from "@/components/ki-opplaring/mdx/PromptTransform";
+import PromptVsMediaExercise from "@/components/ki-opplaring/mdx/PromptVsMediaExercise";
 import Script10sExercise from "@/components/ki-opplaring/mdx/Script10sExercise";
 import TemplateBlock from "@/components/ki-opplaring/mdx/TemplateBlock";
 import { slugify } from "@/lib/slug";
@@ -343,6 +344,17 @@ export default function TrainingMarkdown({ markdown, entryKey }: Props) {
                 context={props.context}
                 defaultBadPrompt={props.defaultBadPrompt}
                 defaultGoodPrompt={props.defaultGoodPrompt}
+              />
+            );
+          }
+
+          if (block.name === "PromptVsMediaExercise") {
+            return (
+              <PromptVsMediaExercise
+                key={`component-${index}`}
+                id={props.id ?? `prompt-vs-media-${index}`}
+                title={props.title}
+                guideKey={entryKey}
               />
             );
           }

@@ -1,12 +1,40 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { runKiOpplaringTask, type BuildScript10sPayload, type ExerciseComparePayload, type LlmTask, type TransformPromptPayload } from "@/lib/ki-opplaring/llm";
-import { consumeRateLimit, QUOTA_FALLBACK_COOKIE_NAME, resolveQuotaSubject, tryConsumeDailyQuota, type QuotaUsage } from "@/server/ki-opplaring/quota";
+import {
+  runKiOpplaringTask,
+  type BuildScript10sPayload,
+  type ExerciseComparePayload,
+  type LlmTask,
+  type TransformPromptPayload,
+} from "@/lib/ki-opplaring/llm";
+import {
+  consumeRateLimit,
+  QUOTA_FALLBACK_COOKIE_NAME,
+  quotaLimit,
+  resolveQuotaSubject,
+  tryConsumeDailyQuota,
+  type QuotaBucket,
+  type QuotaUsage,
+} from "@/server/ki-opplaring/quota";
+import {
+  runImageCompareGenerate,
+  runVideoCompareGenerate,
+  type ImageComparePayload,
+  type VideoComparePayload,
+} from "@/server/ki-opplaring/media";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-const TASKS = ["transform_prompt", "exercise_compare", "build_script_10s"] as const;
+const TASKS = [
+  "transform_prompt",
+  "exercise_compare",
+  "build_script_10s",
+  "image_compare_generate",
+  "video_compare_generate",
+] as const;
+
+type ApiTask = (typeof TASKS)[number];
 
 const bodySchema = z.object({
   task: z.enum(TASKS),
@@ -35,9 +63,24 @@ const scriptPayloadSchema = z.object({
   format: z.enum(["9:16", "16:9"]),
 });
 
-type ParsedPayload = TransformPromptPayload | ExerciseComparePayload | BuildScript10sPayload;
+const imageComparePayloadSchema = z.object({
+  prompt: z.string().trim().min(1).max(1200),
+  aspectRatio: z.enum(["1:1", "16:9"]).optional().default("1:1"),
+});
 
-function parsePayload(task: LlmTask, payload: unknown): { ok: true; data: ParsedPayload } | { ok: false; error: string } {
+const videoComparePayloadSchema = z.object({
+  prompt: z.string().trim().min(1).max(1000),
+  durationSec: z.number().int().min(1).max(4).optional().default(4),
+});
+
+type ParsedPayload =
+  | TransformPromptPayload
+  | ExerciseComparePayload
+  | BuildScript10sPayload
+  | ImageComparePayload
+  | VideoComparePayload;
+
+function parsePayload(task: ApiTask, payload: unknown): { ok: true; data: ParsedPayload } | { ok: false; error: string } {
   if (task === "transform_prompt") {
     const parsed = transformPayloadSchema.safeParse(payload ?? {});
     return parsed.success ? { ok: true, data: parsed.data } : { ok: false, error: "Ugyldig payload for transform_prompt." };
@@ -48,25 +91,55 @@ function parsePayload(task: LlmTask, payload: unknown): { ok: true; data: Parsed
     return parsed.success ? { ok: true, data: parsed.data } : { ok: false, error: "Ugyldig payload for exercise_compare." };
   }
 
-  const parsed = scriptPayloadSchema.safeParse(payload ?? {});
-  return parsed.success ? { ok: true, data: parsed.data } : { ok: false, error: "Ugyldig payload for build_script_10s." };
+  if (task === "build_script_10s") {
+    const parsed = scriptPayloadSchema.safeParse(payload ?? {});
+    return parsed.success ? { ok: true, data: parsed.data } : { ok: false, error: "Ugyldig payload for build_script_10s." };
+  }
+
+  if (task === "image_compare_generate") {
+    const parsed = imageComparePayloadSchema.safeParse(payload ?? {});
+    return parsed.success ? { ok: true, data: parsed.data } : { ok: false, error: "Ugyldig payload for image_compare_generate." };
+  }
+
+  const parsed = videoComparePayloadSchema.safeParse(payload ?? {});
+  return parsed.success ? { ok: true, data: parsed.data } : { ok: false, error: "Ugyldig payload for video_compare_generate." };
 }
 
 function payloadSize(payload: ParsedPayload): number {
   return JSON.stringify(payload).length;
 }
 
-function limitedUsage(mode: "anon" | "user", limit: number, status: QuotaUsage["status"] = "limited"): QuotaUsage {
+function taskBucket(task: ApiTask): QuotaBucket {
+  if (task === "image_compare_generate") return "media_image";
+  if (task === "video_compare_generate") return "media_video";
+  return "llm_text";
+}
+
+function taskErrorMessage(task: ApiTask): string {
+  if (task === "video_compare_generate") {
+    return "Klarte ikke kjøre video-sammenligningen akkurat nå.";
+  }
+
+  if (task === "image_compare_generate") {
+    return "Klarte ikke kjøre bilde-sammenligningen akkurat nå.";
+  }
+
+  return "Klarte ikke kjøre KI-øvelsen akkurat nå.";
+}
+
+function toUsage(mode: "anon" | "user", limit: number, status: QuotaUsage["status"]): QuotaUsage {
   return {
     mode,
-    used: limit,
+    used: Math.max(0, limit),
     remaining: 0,
-    limit,
+    limit: Math.max(0, limit),
     status,
   };
 }
 
 export async function POST(req: NextRequest) {
+  let activeTask: ApiTask | null = null;
+
   try {
     const body = bodySchema.safeParse(await req.json().catch(() => ({})));
 
@@ -88,6 +161,7 @@ export async function POST(req: NextRequest) {
     }
 
     const task = body.data.task;
+    activeTask = task;
     const parsedPayload = parsePayload(task, body.data.payload ?? {});
 
     if (!parsedPayload.ok) {
@@ -108,6 +182,8 @@ export async function POST(req: NextRequest) {
     }
 
     const subject = await resolveQuotaSubject(req);
+    const bucket = taskBucket(task);
+    const limit = quotaLimit(subject.mode, bucket);
 
     if (subject.mode === "anon" && payloadSize(parsedPayload.data) > 1200) {
       return NextResponse.json(
@@ -117,8 +193,8 @@ export async function POST(req: NextRequest) {
           usage: {
             mode: subject.mode,
             used: 0,
-            remaining: subject.limit,
-            limit: subject.limit,
+            remaining: limit,
+            limit,
             status: "ok",
           },
         },
@@ -133,7 +209,7 @@ export async function POST(req: NextRequest) {
         {
           ok: false,
           error: "For mange forespørsler. Vent litt før neste kjøring.",
-          usage: limitedUsage(subject.mode, subject.limit, "limited"),
+          usage: toUsage(subject.mode, limit, "limited"),
         },
         { status: 429 }
       );
@@ -144,6 +220,7 @@ export async function POST(req: NextRequest) {
 
     const quota = await tryConsumeDailyQuota(
       subject,
+      bucket,
       req.cookies.get(QUOTA_FALLBACK_COOKIE_NAME)?.value
     );
 
@@ -152,9 +229,11 @@ export async function POST(req: NextRequest) {
         {
           ok: false,
           error:
-            quota.usage.status === "degraded"
-              ? "Midlertidig begrenset modus aktiv. Daglig kvote er brukt opp."
-              : "Daglig kvote er brukt opp. Prøv igjen etter midnatt UTC.",
+            limit === 0
+              ? "Denne øvelsen krever innlogging i gratis tier."
+              : quota.usage.status === "degraded"
+                ? "Midlertidig begrenset modus aktiv. Daglig kvote er brukt opp."
+                : "Daglig kvote er brukt opp. Prøv igjen etter midnatt UTC.",
           usage: quota.usage,
           provider: {
             name: "mock",
@@ -180,16 +259,31 @@ export async function POST(req: NextRequest) {
       return response;
     }
 
-    const maxTokens = subject.mode === "anon" ? 700 : 900;
-    const { result, provider } = await runKiOpplaringTask(task, parsedPayload.data, {
-      maxTokens,
-    });
+    let taskResult: unknown;
+    let provider: { name: string; model: string; cached: boolean };
+
+    if (task === "image_compare_generate") {
+      const generated = await runImageCompareGenerate(parsedPayload.data as ImageComparePayload);
+      taskResult = generated.result;
+      provider = generated.provider;
+    } else if (task === "video_compare_generate") {
+      const generated = await runVideoCompareGenerate(parsedPayload.data as VideoComparePayload);
+      taskResult = generated.result;
+      provider = generated.provider;
+    } else {
+      const maxTokens = subject.mode === "anon" ? 700 : 900;
+      const generated = await runKiOpplaringTask(task as LlmTask, parsedPayload.data, {
+        maxTokens,
+      });
+      taskResult = generated.result.data;
+      provider = generated.provider;
+    }
 
     const response = NextResponse.json({
       ok: true,
-      task: result.task,
-      result: result.data,
-      data: result.data,
+      task,
+      result: taskResult,
+      data: taskResult,
       usage: quota.usage,
       provider,
     });
@@ -211,7 +305,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json(
       {
         ok: false,
-        error: "Klarte ikke kjøre KI-øvelsen akkurat nå.",
+        error: taskErrorMessage(activeTask ?? "transform_prompt"),
         detail: error instanceof Error ? error.message : "Ukjent feil",
         usage: {
           mode: "anon",

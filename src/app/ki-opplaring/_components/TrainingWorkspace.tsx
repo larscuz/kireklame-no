@@ -502,7 +502,7 @@ export default function TrainingWorkspace({ counts, entries, topicCards }: Props
 
             <section className="rounded-3xl border border-white/10 bg-[#0a0f17]/90 p-4 shadow-2xl backdrop-blur">
               <p className="text-xs font-semibold uppercase tracking-[0.14em] text-cyan-200/75">Gjør dette nå</p>
-              <div className="mt-3 grid gap-2 sm:grid-cols-3">
+              <div className="mt-3 grid gap-2 sm:grid-cols-4">
                 <Link
                   href="/ki-opplaring/ovelser#forbedre-prompt"
                   className="rounded-2xl border border-cyan-300/30 bg-cyan-300/10 p-3 text-sm font-semibold hover:bg-cyan-300/20"
@@ -520,6 +520,12 @@ export default function TrainingWorkspace({ counts, entries, topicCards }: Props
                   className="rounded-2xl border border-cyan-300/30 bg-cyan-300/10 p-3 text-sm font-semibold hover:bg-cyan-300/20"
                 >
                   Dårlig vs bra prompt
+                </Link>
+                <Link
+                  href="/ki-opplaring/ovelser#prompt-vs-media"
+                  className="rounded-2xl border border-cyan-300/30 bg-cyan-300/10 p-3 text-sm font-semibold hover:bg-cyan-300/20"
+                >
+                  Prompt vs media
                 </Link>
               </div>
             </section>

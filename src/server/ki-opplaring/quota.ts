@@ -4,6 +4,7 @@ import { supabaseAdmin } from "@/lib/supabase/admin";
 import { getUserOrNull } from "@/lib/supabase/server";
 
 export type QuotaMode = "anon" | "user";
+export type QuotaBucket = "llm_text" | "media_image" | "media_video";
 
 export type QuotaUsage = {
   remaining: number;
@@ -17,7 +18,6 @@ export type QuotaSubject = {
   type: QuotaMode;
   id: string;
   mode: QuotaMode;
-  limit: number;
   rateWindowSeconds: number;
   rateBurst: number;
 };
@@ -31,8 +31,36 @@ export type QuotaResult = {
 export const QUOTA_FALLBACK_COOKIE_NAME = "kir_quota_fb_v1";
 
 const QUOTA_FEATURE_FLAG = "QUOTA_ENABLED";
-const ANON_DAILY_LIMIT = 3;
-const USER_DAILY_LIMIT = 20;
+const QUOTA_LIMITS: Record<QuotaBucket, Record<QuotaMode, number>> = {
+  llm_text: {
+    anon: 3,
+    user: 20,
+  },
+  media_image: {
+    anon: 1,
+    user: 3,
+  },
+  media_video: {
+    anon: 0,
+    user: 1,
+  },
+};
+
+const DEGRADE_LIMITS: Record<QuotaBucket, Record<QuotaMode, number>> = {
+  llm_text: {
+    anon: 1,
+    user: 3,
+  },
+  media_image: {
+    anon: 1,
+    user: 1,
+  },
+  media_video: {
+    anon: 0,
+    user: 1,
+  },
+};
+
 const ANON_RATE_WINDOW_SECONDS = 20;
 const USER_RATE_WINDOW_SECONDS = 8;
 const ANON_RATE_BURST = 2;
@@ -48,6 +76,7 @@ type RateStore = Map<string, RateBucket>;
 type DegradeCookiePayload = {
   d: string;
   m: QuotaMode;
+  b: QuotaBucket;
   s: string;
   c: number;
 };
@@ -137,6 +166,7 @@ function decodeDegradeCookie(raw: string | undefined): DegradeCookiePayload | nu
   if (
     typeof parsed.d !== "string" ||
     (parsed.m !== "anon" && parsed.m !== "user") ||
+    (parsed.b !== "llm_text" && parsed.b !== "media_image" && parsed.b !== "media_video") ||
     typeof parsed.s !== "string" ||
     typeof parsed.c !== "number" ||
     !Number.isFinite(parsed.c)
@@ -147,6 +177,7 @@ function decodeDegradeCookie(raw: string | undefined): DegradeCookiePayload | nu
   return {
     d: parsed.d,
     m: parsed.m,
+    b: parsed.b,
     s: parsed.s,
     c: Math.max(0, Math.floor(parsed.c)),
   };
@@ -169,6 +200,14 @@ function getSubjectSalt(): string {
   return process.env.QUOTA_SUBJECT_SALT?.trim() || getHmacSecret();
 }
 
+export function quotaLimit(mode: QuotaMode, bucket: QuotaBucket): number {
+  return QUOTA_LIMITS[bucket][mode];
+}
+
+function degradeLimit(mode: QuotaMode, bucket: QuotaBucket): number {
+  return DEGRADE_LIMITS[bucket][mode];
+}
+
 export async function resolveQuotaSubject(req: NextRequest): Promise<QuotaSubject> {
   const user = await getUserOrNull().catch(() => null);
 
@@ -177,7 +216,6 @@ export async function resolveQuotaSubject(req: NextRequest): Promise<QuotaSubjec
       type: "user",
       id: user.id,
       mode: "user",
-      limit: USER_DAILY_LIMIT,
       rateWindowSeconds: USER_RATE_WINDOW_SECONDS,
       rateBurst: USER_RATE_BURST,
     };
@@ -191,28 +229,41 @@ export async function resolveQuotaSubject(req: NextRequest): Promise<QuotaSubjec
     type: "anon",
     id: anonId,
     mode: "anon",
-    limit: ANON_DAILY_LIMIT,
     rateWindowSeconds: ANON_RATE_WINDOW_SECONDS,
     rateBurst: ANON_RATE_BURST,
   };
 }
 
-function degradeLimit(mode: QuotaMode): number {
-  return mode === "user" ? 3 : 1;
+function degradeSubjectToken(subject: QuotaSubject, bucket: QuotaBucket): string {
+  return sha256(`${subject.type}:${subject.id}:${bucket}`).slice(0, 20);
 }
 
-function degradeSubjectToken(subject: QuotaSubject): string {
-  return sha256(`${subject.type}:${subject.id}`).slice(0, 20);
+function limitedUsage(mode: QuotaMode, limit: number, status: QuotaUsage["status"]): QuotaUsage {
+  return {
+    mode,
+    used: Math.max(0, limit),
+    limit: Math.max(0, limit),
+    remaining: 0,
+    status,
+  };
 }
 
-function consumeDegradedQuota(subject: QuotaSubject, rawCookie: string | undefined): QuotaResult {
-  const limit = degradeLimit(subject.mode);
+function consumeDegradedQuota(subject: QuotaSubject, bucket: QuotaBucket, rawCookie: string | undefined): QuotaResult {
+  const limit = degradeLimit(subject.mode, bucket);
+
+  if (limit <= 0) {
+    return {
+      allowed: false,
+      usage: limitedUsage(subject.mode, 0, "degraded"),
+    };
+  }
+
   const day = utcDayString();
-  const token = degradeSubjectToken(subject);
+  const token = degradeSubjectToken(subject, bucket);
 
   const parsed = decodeDegradeCookie(rawCookie);
   const baseCount =
-    parsed && parsed.d === day && parsed.m === subject.mode && parsed.s === token
+    parsed && parsed.d === day && parsed.m === subject.mode && parsed.b === bucket && parsed.s === token
       ? parsed.c
       : 0;
 
@@ -233,6 +284,7 @@ function consumeDegradedQuota(subject: QuotaSubject, rawCookie: string | undefin
   const payload: DegradeCookiePayload = {
     d: day,
     m: subject.mode,
+    b: bucket,
     s: token,
     c: used,
   };
@@ -311,22 +363,35 @@ function supportsSupabaseQuota(): boolean {
   return Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY);
 }
 
-export async function tryConsumeDailyQuota(subject: QuotaSubject, rawDegradeCookie: string | undefined): Promise<QuotaResult> {
+export async function tryConsumeDailyQuota(
+  subject: QuotaSubject,
+  bucket: QuotaBucket,
+  rawDegradeCookie: string | undefined
+): Promise<QuotaResult> {
+  const limit = quotaLimit(subject.mode, bucket);
+
+  if (limit <= 0) {
+    return {
+      allowed: false,
+      usage: limitedUsage(subject.mode, 0, "limited"),
+    };
+  }
+
   if (!quotaEnabled()) {
     return {
       allowed: true,
       usage: {
         mode: subject.mode,
         used: 0,
-        limit: subject.limit,
-        remaining: subject.limit,
+        limit,
+        remaining: limit,
         status: "ok",
       },
     };
   }
 
   if (!supportsSupabaseQuota()) {
-    return consumeDegradedQuota(subject, rawDegradeCookie);
+    return consumeDegradedQuota(subject, bucket, rawDegradeCookie);
   }
 
   try {
@@ -336,7 +401,8 @@ export async function tryConsumeDailyQuota(subject: QuotaSubject, rawDegradeCook
         db.rpc("ki_try_consume_quota", {
           p_subject_type: subject.type,
           p_subject_id: subject.id,
-          p_limit: subject.limit,
+          p_limit: limit,
+          p_bucket: bucket,
         })
       ),
       2500
@@ -349,27 +415,27 @@ export async function tryConsumeDailyQuota(subject: QuotaSubject, rawDegradeCook
     };
 
     if (rpcResult.error) {
-      return consumeDegradedQuota(subject, rawDegradeCookie);
+      return consumeDegradedQuota(subject, bucket, rawDegradeCookie);
     }
 
     const row = Array.isArray(rpcResult.data) ? rpcResult.data[0] : rpcResult.data;
 
     const allowed = row?.allowed === true;
     const used = Number(row?.used ?? 0);
-    const limit = Number(row?.quota_limit ?? subject.limit);
-    const remaining = Number(row?.remaining ?? Math.max(limit - used, 0));
+    const resolvedLimit = Number(row?.quota_limit ?? limit);
+    const remaining = Number(row?.remaining ?? Math.max(resolvedLimit - used, 0));
 
     return {
       allowed,
       usage: {
         mode: subject.mode,
         used: Math.max(0, used),
-        limit: Math.max(1, limit),
+        limit: Math.max(0, resolvedLimit),
         remaining: Math.max(0, remaining),
         status: allowed ? "ok" : "limited",
       },
     };
   } catch {
-    return consumeDegradedQuota(subject, rawDegradeCookie);
+    return consumeDegradedQuota(subject, bucket, rawDegradeCookie);
   }
 }

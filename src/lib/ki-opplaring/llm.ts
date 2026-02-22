@@ -86,10 +86,25 @@ export type LlmResult =
   | { task: "build_script_10s"; data: BuildScript10sResponse };
 
 export type LlmProviderInfo = {
-  name: "openrouter" | "mock";
+  name: "openrouter" | "mock" | "cloudflare" | "fal";
   model: string;
   cached: boolean;
 };
+
+const syntaxProtocolRewriteSchema = z.object({
+  improved_prompt: z.string().min(1),
+  changes: z
+    .array(
+      z.object({
+        reason: z.string().min(1),
+        before: z.string().min(1),
+        after: z.string().min(1),
+      })
+    )
+    .min(1),
+});
+
+export type SyntaxProtocolRewrite = z.infer<typeof syntaxProtocolRewriteSchema>;
 
 type ChatMessage = {
   role: "system" | "user";
@@ -137,6 +152,61 @@ function parseJsonObject(raw: string): Record<string, unknown> | null {
   } catch {
     return null;
   }
+}
+
+function fallbackSyntaxRewrite(prompt: string): SyntaxProtocolRewrite {
+  const trimmed = toText(prompt);
+  const base = trimmed || "Produkt i naturlig miljø med tydelig handling";
+
+  return {
+    improved_prompt: [
+      "Scene: kommersiell produktdemonstrasjon i ekte miljø.",
+      "Lys: myk key light 45 grader, diffus fill, 5200K, naturlig kontrast.",
+      "Materialer: behold realistisk overflaterespons, ingen plastisk glans.",
+      "Anatomi/bevegelse: naturlig pust, stabil kroppsholdning, ingen deformasjon.",
+      "Constraints: ingen nye objekter, stabil geometri, bevar logo og proporsjoner.",
+      `Original idé: ${base}`,
+    ].join(" "),
+    changes: [
+      {
+        reason: "Fjernet vage estetikkord og la inn fysisk lysbeskrivelse",
+        before: base,
+        after: "Lys definert med retning, diffusjon og temperatur.",
+      },
+      {
+        reason: "La til materialrespons og anatomiske begrensninger",
+        before: "Uspesifisert materialfølelse",
+        after: "Realistisk overflaterespons og naturlig kroppslig bevegelse.",
+      },
+    ],
+  };
+}
+
+function syntaxProtocolSystemPrompt(): string {
+  return [
+    "You are rewriting a creative AI image/video prompt using structured semantic precision.",
+    "Rewrite the user's prompt using these rules:",
+    "- Remove aesthetic wish words like cinematic, realistic, masterpiece.",
+    "- Replace vague descriptors with physical mechanisms.",
+    "- Describe light source physics (angle, diffusion, temperature).",
+    "- Describe material properties (surface response, texture).",
+    "- Describe anatomical detail (muscle tension, breath).",
+    "- Describe environmental constraints.",
+    "- No poetic adjectives.",
+    "- No buzzwords.",
+    "- Output only JSON.",
+    'Return {"improved_prompt":"...","changes":[{"reason":"...","before":"...","after":"..."}]}',
+  ].join(" ");
+}
+
+function syntaxProtocolUserPrompt(prompt: string, context?: string): string {
+  return [
+    "Rewrite this prompt according to the rules.",
+    `Context: ${toText(context) || "Commercial creative production"}`,
+    `Prompt: ${toText(prompt)}`,
+    "Language: Norwegian.",
+    "Return only JSON.",
+  ].join("\n");
 }
 
 function makeSystemPrompt(task: LlmTask): string {
@@ -385,6 +455,80 @@ function validateResult(task: LlmTask, parsed: Record<string, unknown> | null): 
 
   const validated = buildScript10sResponseSchema.safeParse(parsed);
   return validated.success ? { task, data: validated.data } : null;
+}
+
+export async function rewritePromptWithSyntaxProtocol(
+  prompt: string,
+  context?: string,
+  options: { maxTokens?: number } = {}
+): Promise<{ data: SyntaxProtocolRewrite; provider: LlmProviderInfo }> {
+  const sourcePrompt = toText(prompt);
+  if (!sourcePrompt) {
+    return {
+      data: fallbackSyntaxRewrite(""),
+      provider: {
+        name: "mock",
+        model: "syntax-fallback-v1",
+        cached: false,
+      },
+    };
+  }
+
+  const messages: ChatMessage[] = [
+    { role: "system", content: syntaxProtocolSystemPrompt() },
+    { role: "user", content: syntaxProtocolUserPrompt(sourcePrompt, context) },
+  ];
+
+  const maxTokens = Math.max(250, Math.min(1200, options.maxTokens ?? 700));
+
+  try {
+    const firstRaw = await callOpenRouter(messages, maxTokens);
+    let validated = syntaxProtocolRewriteSchema.safeParse(parseJsonObject(firstRaw));
+
+    if (!validated.success) {
+      const retryRaw = await callOpenRouter(
+        [
+          ...messages,
+          {
+            role: "user",
+            content:
+              "Previous output was invalid JSON. Return only valid JSON with improved_prompt and changes.",
+          },
+        ],
+        maxTokens
+      );
+      validated = syntaxProtocolRewriteSchema.safeParse(parseJsonObject(retryRaw));
+    }
+
+    if (!validated.success) {
+      return {
+        data: fallbackSyntaxRewrite(sourcePrompt),
+        provider: {
+          name: "mock",
+          model: "syntax-fallback-v1",
+          cached: false,
+        },
+      };
+    }
+
+    return {
+      data: validated.data,
+      provider: {
+        name: "openrouter",
+        model: OPENROUTER_MODEL,
+        cached: false,
+      },
+    };
+  } catch {
+    return {
+      data: fallbackSyntaxRewrite(sourcePrompt),
+      provider: {
+        name: "mock",
+        model: "syntax-fallback-v1",
+        cached: false,
+      },
+    };
+  }
 }
 
 export async function runKiOpplaringTask(
