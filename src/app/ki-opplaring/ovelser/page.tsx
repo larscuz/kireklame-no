@@ -173,15 +173,88 @@ export default function KiOpplaringOvelserPage() {
           <div className="mt-3 rounded-xl border border-[rgb(var(--border))] bg-black/5 p-3 text-sm dark:bg-white/5">
             <p className="font-semibold">Trinn</p>
             <ol className="mt-2 list-decimal space-y-1 pl-5">
-              <li>Skriv en bevisst vag prompt i venstre felt.</li>
-              <li>Skriv en strukturert prompt i høyre felt.</li>
+              <li>Bruk ferdig case i feltene (dårlig vs god prompt).</li>
+              <li>Les hva som skaper feil i den dårlige prompten.</li>
               <li>Trykk "Kjør begge".</li>
               <li>Les forskjell og hvorfor-resultat.</li>
               <li>Eksporter markdown og bruk i intern læring.</li>
             </ol>
           </div>
 
-          <PromptExercise id="ovelse-compare-v1" title="Gjør dette nå: Kjør dårlig vs bra" context="Kampanjebilde for norsk SMB-produkt" />
+          <div className="mt-3 rounded-xl border border-cyan-300/20 bg-cyan-500/10 p-3 text-sm text-[rgb(var(--fg))]/90">
+            <p><strong>Vi bruker Syntax Protocol-logikken.</strong> Samme komplekse scene i begge felter: kvinne løper gjennom travel togstasjon i kraftig regn, mister mobilen i en vanndam, og vi ser både henne, refleksjonen i vannet og mobilskjermen i samme bilde.</p>
+            <p className="mt-2 font-semibold">Hvorfor dårlig prompt feiler:</p>
+            <ul className="mt-1 list-disc space-y-1 pl-5">
+              <li>Adjektiver uten fysikk gir estetisk gjennomsnitt.</li>
+              <li>Ingen tyngdekraft, regnlogikk eller optisk konsistens.</li>
+              <li>Ingen regler for hva som faktisk kan speiles i vannet.</li>
+              <li>Resultatet blir visuelt kult, men fysisk feil.</li>
+            </ul>
+            <p className="mt-2"><strong>Forskjellen:</strong> Dårlig prompt beskriver følelse. God prompt beskriver hvordan verden fysisk fungerer og lukker tolkningsrommet.</p>
+          </div>
+
+          <PromptExercise
+            id="ovelse-compare-v1"
+            title="Gjør dette nå: Kjør dårlig vs bra"
+            context="Samme komplekse scene: kvinne i regnfull togstasjon mister mobil i vanndam, med refleksjon og mobilskjerm i samme bilde."
+            defaultBadPrompt={`Cinematisk og dramatisk scene av en kvinne som løper gjennom en regnfull togstasjon om natten, hun mister mobilen i en vanndam, sterke refleksjoner i vannet, følelsesladet stemning, ultra realistisk, 8k, mesterverk, høy detaljgrad, slow motion, episk lyssetting.`}
+            defaultGoodPrompt={`Fotografisk øyeblikk, fysisk plausibel situasjon.
+
+Lokasjon:
+Europeisk togstasjon.
+Betonggulv med vannfilm.
+Ingen futuristisk arkitektur.
+
+Vær:
+Kraftig vertikalt regn.
+Regndråper kun synlige i lyskjegler fra takarmatur.
+Ingen diagonale «filmregn»-streker.
+
+Motiv:
+Kvinne 30 år.
+Midt i løpesteg.
+Høyre fot 2–4 cm over bakken.
+Kroppens tyngdepunkt fremoverlent.
+
+Mobil:
+Slipper fra hånden.
+30–50 cm over bakken.
+Roterer naturlig rundt eget massesenter.
+Ingen svevende effekt.
+
+Vannpytt:
+Reell dybde 0,5–1 cm.
+Overflatespenning intakt.
+Refleksjon speilvendt og perspektivkorrekt.
+Kun objekter innenfor refleksjonsvinkel vises i vannet.
+
+Mobilskjerm:
+Aktiv skjerm.
+6000K kald LED.
+Lysintensitet svakere enn taklys.
+Reflekteres svakt i vannet, men ikke sterkere enn hovedlyskilde.
+
+Lys:
+Fluorescerende taklys 4500K.
+Diffus refleksjon i vått betonggulv.
+Ingen dramatisk kantlys.
+Ingen filmatisk fargegradering.
+
+Kamera:
+35mm objektiv.
+Hoftehøyde.
+Lukker 1/500 for å fryse bevegelse.
+Ingen kunstig motion blur.
+
+Strenge begrensninger:
+– Ingen Hollywood-estetikk.
+– Ingen blå/oransje grading.
+– Ingen regn som går gjennom tak.
+– Ingen dobbel refleksjon uten fysisk kilde.
+– Ingen svevende objekter.
+
+Bildet skal fremstå som et realistisk fotografi tatt i en faktisk fysisk situasjon.`}
+          />
 
           <Checklist
             id="checklist-ovelse-compare-v1"
