@@ -33,24 +33,14 @@ type PackagePlan = {
   description: string;
   subtitle?: string;
   label?: string;
-  originalMonthly: string;
-  originalYearly: string;
-  campaignMonthly: string;
-  campaignYearly: string;
-  savings: string;
   features: string[];
   highlighted?: boolean;
 };
 
-const pricingPlans: PackagePlan[] = [
+const packagePlans: PackagePlan[] = [
   {
     name: "Annonsepakke Basis",
     description: "Enkel annonseplass med tydelig synlighet i valgt flate.",
-    originalMonthly: "1 990 kr / mnd",
-    originalYearly: "23 880 kr / år",
-    campaignMonthly: "995 kr / mnd",
-    campaignYearly: "11 940 kr / år",
-    savings: "Spar 11 940 kr første året",
     features: [
       "Visning på avtalt plassering i kategori",
       "Klikkbar lenke til egen nettside",
@@ -64,11 +54,6 @@ const pricingPlans: PackagePlan[] = [
     description: "Premium plassering for høyere synlighet på sentrale flater.",
     subtitle:
       "For selskaper som vil ha sterkere eksponering i relevante kontekster.",
-    originalMonthly: "3 900 kr / mnd",
-    originalYearly: "46 800 kr / år",
-    campaignMonthly: "1 950 kr / mnd",
-    campaignYearly: "23 400 kr / år",
-    savings: "Spar 23 400 kr første året",
     features: [
       "Fremhevet plassering",
       "\"Verified AI\" badge i annonsevisning",
@@ -82,11 +67,6 @@ const pricingPlans: PackagePlan[] = [
     name: "Annonsepakke Partner",
     description: "Kombinert annonsepakke med synlighet på flere flater.",
     label: "Kun 5 plasser",
-    originalMonthly: "6 900 kr / mnd",
-    originalYearly: "82 800 kr / år",
-    campaignMonthly: "3 450 kr / mnd",
-    campaignYearly: "41 400 kr / år",
-    savings: "Spar 41 400 kr første året",
     features: [
       "Frontpage-rotasjon",
       "Banner i KI Nyheter (1920x200)",
@@ -124,7 +104,7 @@ const visibilitySurfaces = [
 export const metadata: Metadata = siteMeta({
   title: "Annonsér på KiReklame – Annonseplass 2026",
   description:
-    "Se ordinære priser og lanseringspriser for annonseplass i 2026 på KiReklame. Prisene gjelder kun avtaler inngått i 2026.",
+    "Betalt synlighet på definerte annonseflater i 2026 på KiReklame. Se annonsepakker og kontakt oss for konkret tilbud.",
   path: "/annonsere",
 });
 
@@ -152,21 +132,18 @@ function PricingCard({ plan, ctaHref }: { plan: PackagePlan; ctaHref: string }) 
       {plan.subtitle ? <p className="mt-3 text-xs text-[var(--ads-muted)]">{plan.subtitle}</p> : null}
 
       <div className="mt-6 rounded-2xl border border-[var(--ads-border)] bg-black/20 p-4">
-        <div className="text-xs uppercase tracking-[0.14em] text-[var(--ads-muted)]">Ordinær pris</div>
-        <div className="mt-2 text-sm text-[var(--ads-muted)] line-through">{plan.originalMonthly}</div>
-        <div className="text-sm text-[var(--ads-muted)] line-through">{plan.originalYearly}</div>
-
-        <div className="mt-4 text-xs uppercase tracking-[0.14em] text-[var(--ads-muted)]">
-          Oppstartskampanje 2026
+        <div className="text-xs uppercase tracking-[0.14em] text-[var(--ads-muted)]">
+          Pris og tilgjengelighet
         </div>
-        <div className={`${headingFont.className} mt-2 text-3xl font-bold tracking-tight`}>
-          {plan.campaignMonthly}
-        </div>
-        <div className="text-base text-[var(--ads-text)]/90">{plan.campaignYearly}</div>
-
-        <div className="mt-4 inline-flex rounded-full border border-[var(--ads-accent)]/35 bg-[var(--ads-highlight)] px-3 py-1 text-xs font-semibold text-[var(--ads-accent)]">
-          {plan.savings}
-        </div>
+        <p className="mt-2 text-sm text-[var(--ads-muted)]">
+          Kontakt oss for konkret tilbud basert på plassering, varighet og kapasitet.
+        </p>
+        <Link
+          href={ctaHref}
+          className="mt-4 inline-flex items-center rounded-xl border border-[var(--ads-accent)]/60 bg-[var(--ads-accent-soft)] px-3 py-1.5 text-xs font-semibold text-[var(--ads-text)] transition hover:bg-[var(--ads-highlight)]"
+        >
+          Kontakt for tilbud
+        </Link>
       </div>
 
       <ul className="mt-6 space-y-2 text-sm text-[var(--ads-text)]/92">
@@ -238,7 +215,7 @@ export default async function AdvertisingPage() {
                 Annonsér på KiReklame
               </h1>
               <p className="mt-1.5 max-w-lg text-sm text-[var(--ads-muted)] sm:text-[15px]">
-                50 % lanseringsrabatt første 12 måneder. Betalt synlighet på definerte flater i 2026.
+                Betalt synlighet på definerte flater i 2026. Begrenset kapasitet.
               </p>
             </div>
             <Link
@@ -252,14 +229,10 @@ export default async function AdvertisingPage() {
 
         <section className="mt-16">
           <h2 className={`${headingFont.className} text-3xl font-semibold tracking-tight sm:text-4xl`}>
-            Ordinære priser vs. Oppstartskampanje 2026
+            Annonsepakker 2026
           </h2>
-          <div className="mt-4 rounded-2xl border border-[var(--ads-border)] bg-black/20 px-4 py-3 text-sm text-[var(--ads-muted)]">
-            Prisene på denne siden gjelder kun avtaler inngått i perioden 1. januar 2026 til 31. desember 2026.
-            Fornyelse eller videreføring etter 2026 prises etter gjeldende prisliste på fornyelsestidspunktet.
-          </div>
           <div className="mt-8 grid gap-5 lg:grid-cols-3">
-            {pricingPlans.map((plan) => (
+            {packagePlans.map((plan) => (
               <PricingCard key={plan.name} plan={plan} ctaHref={ctaHref} />
             ))}
           </div>
@@ -279,7 +252,7 @@ export default async function AdvertisingPage() {
               "Synlighet i hele avtaleperioden",
               "Mulighet for oppdatert annonsemateriell ved behov",
               "Rotasjon eller plassbegrensning avtales per annonseflate",
-              "Priser gjelder kun avtaler inngått i kalenderåret 2026",
+              "Tilbud og kapasitet for 2026 avtales ved kontakt",
             ].map((item) => (
               <li key={item} className="flex items-start gap-2">
                 <span className="mt-1 h-1.5 w-1.5 rounded-full bg-[var(--ads-accent)]" aria-hidden="true" />
@@ -289,7 +262,7 @@ export default async function AdvertisingPage() {
           </ul>
           <div className="mt-6 rounded-2xl border border-[var(--ads-border)] bg-black/20 px-4 py-3 text-sm text-[var(--ads-muted)]">
             KiReklame tilbyr eksponering og bransjesynlighet. Vi garanterer ikke antall visninger, klikk eller leads.
-            Prisnivå etter 31. desember 2026 fastsettes separat.
+            Endelig tilbud og vilkår fastsettes ved bestilling.
           </div>
         </section>
 
@@ -325,7 +298,7 @@ export default async function AdvertisingPage() {
             Vil dere være blant de første?
           </h2>
           <p className="mx-auto mt-4 max-w-2xl text-base text-[var(--ads-muted)]">
-            Lanseringspriser gjelder et begrenset antall selskaper i 2026.
+            Kapasiteten er begrenset i 2026.
           </p>
           <Link
             href={ctaHref}
