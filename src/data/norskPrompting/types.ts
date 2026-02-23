@@ -32,7 +32,10 @@ export type RuleCategory =
   | "Historisk troverdighet"
   | "Fysikk"
   | "Produksjonslogikk"
-  | "Lys";
+  | "Lys"
+  | "Reklame Standard"
+  | "Debugger"
+  | "Anti-AI-look";
 
 export type NorskPromptingRule = {
   id: string;
@@ -74,6 +77,17 @@ export type PromptTemplate = {
   recommendedRules: string[];
 };
 
+export type CinematicGenre = {
+  id: string;
+  navn: string;
+  effekt: string;
+  representasjonsskift?: string;
+  promptStruktur: {
+    mal: string;
+  };
+  sterkeBegreper: string[];
+};
+
 export type PromptExample = {
   slug: string;
   title: string;
@@ -85,4 +99,40 @@ export type PromptExample = {
   ruleIds: string[];
   termSlugs: string[];
   updatedAt: string;
+};
+
+export type GovernanceSeverity = "low" | "medium" | "high" | "critical";
+
+export type GovernanceAppliesTo =
+  | "rules"
+  | "glossary"
+  | "templates"
+  | "examples"
+  | "representationSwitches";
+
+export type NorskPromptingGovernanceRule = {
+  id: string;
+  name: string;
+  category: string;
+  severity: GovernanceSeverity;
+  appliesTo: GovernanceAppliesTo[];
+  description: string;
+  enforcementLogic: string;
+  addToPrompt: string;
+  negativeAdd: string;
+};
+
+export type SemantiskDuplikatAction =
+  | "forkast"
+  | "sla_sammen"
+  | "berik_eksisterende"
+  | "opprett_ny";
+
+export type SemantiskDuplikatMetrikk = {
+  nameSimilarity: number;
+  definitionSimilarity: number;
+  promptImpactSimilarity: number;
+  constraintsSimilarity: number;
+  negativeSimilarity: number;
+  samletOverlap: number;
 };
