@@ -1,0 +1,61 @@
+import Link from "next/link";
+import { promptExamples } from "@/data/norskPrompting/examples";
+import NorskPromptingShell from "../_components/NorskPromptingShell";
+import SearchPanel from "../_components/SearchPanel";
+import { siteMeta } from "@/lib/seo";
+import { absoluteUrl, buildArticleJsonLd, buildBreadcrumbJsonLd } from "@/lib/norsk-prompting/seo";
+
+export const metadata = siteMeta({
+  title: "Eksempler | Norsk Prompting",
+  description:
+    "Eksempelbibliotek med kort norsk input, lang output, regelsett og term-injeksjon for profesjonell prompting.",
+  path: "/norsk-prompting/eksempler",
+});
+
+export default function NorskPromptingEksemplerPage() {
+  const description = "Casebibliotek: kort input → lang output med forklaring på hvorfor prompten fungerer.";
+
+  const searchItems = promptExamples.map((example) => ({
+    type: "eksempel" as const,
+    title: example.title,
+    description: example.shortInput,
+    href: `/norsk-prompting/eksempler/${example.slug}`,
+  }));
+
+  return (
+    <NorskPromptingShell
+      currentPath="/norsk-prompting/eksempler"
+      title="Eksempelbibliotek"
+      description={description}
+      jsonLd={[
+        buildArticleJsonLd({
+          headline: "Eksempelbibliotek for Norsk Prompting",
+          description,
+          path: "/norsk-prompting/eksempler",
+          dateModified: "2026-02-23",
+        }),
+        buildBreadcrumbJsonLd([
+          { name: "Forside", item: absoluteUrl("/") },
+          { name: "Norsk Prompting", item: absoluteUrl("/norsk-prompting") },
+          { name: "Eksempler", item: absoluteUrl("/norsk-prompting/eksempler") },
+        ]),
+      ]}
+    >
+      <SearchPanel items={searchItems} />
+
+      <div className="grid gap-3 md:grid-cols-2">
+        {promptExamples.map((example) => (
+          <Link
+            key={example.slug}
+            href={`/norsk-prompting/eksempler/${example.slug}`}
+            className="rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] p-4 hover:border-cyan-300/35"
+          >
+            <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">{example.outputType} · {example.domain}</p>
+            <h2 className="mt-2 text-lg font-semibold tracking-tight">{example.title}</h2>
+            <p className="mt-2 text-sm text-[rgb(var(--muted))]">{example.shortInput}</p>
+          </Link>
+        ))}
+      </div>
+    </NorskPromptingShell>
+  );
+}

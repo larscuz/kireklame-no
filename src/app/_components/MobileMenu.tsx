@@ -20,6 +20,8 @@ export default function MobileMenu({ isAuthed, isAdmin, locale }: Props) {
   // Enkel listestil på solid panel (ikke separate kort-knapper)
   const itemClass =
     "block w-full px-4 py-3.5 text-base font-medium text-[rgb(var(--fg))] hover:bg-[rgb(var(--bg))]/60 transition text-left";
+  const promptingItemClass =
+    "block w-full px-4 py-3.5 text-base font-semibold text-black bg-white hover:bg-neutral-100 transition text-left";
 
   return (
     <>
@@ -104,6 +106,14 @@ export default function MobileMenu({ isAuthed, isAdmin, locale }: Props) {
                     {locale === "en" ? "My page" : "Min side"}
                   </Link>
 
+                  <Link
+                    href={localizePath(locale, "/norsk-prompting")}
+                    onClick={close}
+                    className={promptingItemClass}
+                  >
+                    {locale === "en" ? "Norwegian Prompting" : "Norsk Prompting"}
+                  </Link>
+
                   {/* SignOutButton støtter ikke onClick -> vi lukker via wrapper */}
                   <div onClick={close}>
                     <SignOutButton className={itemClass}>
@@ -113,6 +123,14 @@ export default function MobileMenu({ isAuthed, isAdmin, locale }: Props) {
                 </>
               ) : (
                 <>
+                  <Link
+                    href={localizePath(locale, "/norsk-prompting")}
+                    onClick={close}
+                    className={promptingItemClass}
+                  >
+                    {locale === "en" ? "Norwegian Prompting" : "Norsk Prompting"}
+                  </Link>
+
                   <Link href={localizePath(locale, "/auth")} onClick={close} className={itemClass}>
                     {locale === "en" ? "Sign in" : "Logg inn"}
                   </Link>

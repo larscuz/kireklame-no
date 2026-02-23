@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
+import { promptExamples } from "@/data/norskPrompting/examples";
+import { glossaryTerms } from "@/data/norskPrompting/glossary";
 import { adminListSitemapEntities } from "@/lib/supabase/admin";
-import { listAllKiOpplaringEntries } from "@/lib/ki-opplaring/content";
 
 function uniqByUrl(items: MetadataRoute.Sitemap) {
   const seen = new Set<string>();
@@ -13,10 +14,7 @@ function uniqByUrl(items: MetadataRoute.Sitemap) {
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const site = process.env.NEXT_PUBLIC_SITE_URL || "https://kireklame.no";
-  const [{ companies, locations, tags, newsArticles }, kiOpplaringEntries] = await Promise.all([
-    adminListSitemapEntities(),
-    listAllKiOpplaringEntries(),
-  ]);
+  const { companies, locations, tags, newsArticles } = await adminListSitemapEntities();
 
   const base: MetadataRoute.Sitemap = [
     { url: `${site}/`, changeFrequency: "daily", priority: 1 },
@@ -27,13 +25,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${site}/ki-reklamebyra`, changeFrequency: "weekly", priority: 0.8 },
     { url: `${site}/ai-video`, changeFrequency: "weekly", priority: 0.8 },
     { url: `${site}/ki-markedsforing`, changeFrequency: "weekly", priority: 0.8 },
-    { url: `${site}/ki-opplaring`, changeFrequency: "daily", priority: 0.95 },
-    { url: `${site}/ki-opplaring/ovelser`, changeFrequency: "daily", priority: 0.92 },
-    { url: `${site}/ki-opplaring/guider`, changeFrequency: "weekly", priority: 0.9 },
-    { url: `${site}/ki-opplaring/tema`, changeFrequency: "weekly", priority: 0.9 },
-    { url: `${site}/ki-opplaring/verktoy`, changeFrequency: "weekly", priority: 0.85 },
-    { url: `${site}/ki-opplaring/ordliste`, changeFrequency: "weekly", priority: 0.85 },
-    { url: `${site}/ki-opplaring/nyheter`, changeFrequency: "daily", priority: 0.7 },
+    { url: `${site}/norsk-prompting`, changeFrequency: "daily", priority: 0.95 },
+    { url: `${site}/norsk-prompting/prompt-utvider`, changeFrequency: "daily", priority: 0.92 },
+    { url: `${site}/norsk-prompting/regler`, changeFrequency: "weekly", priority: 0.9 },
+    { url: `${site}/norsk-prompting/maler`, changeFrequency: "weekly", priority: 0.88 },
+    { url: `${site}/norsk-prompting/ordforrad`, changeFrequency: "weekly", priority: 0.88 },
+    { url: `${site}/norsk-prompting/eksempler`, changeFrequency: "weekly", priority: 0.9 },
+    { url: `${site}/norsk-prompting/changelog`, changeFrequency: "weekly", priority: 0.7 },
     { url: `${site}/ki-avis/om`, changeFrequency: "weekly", priority: 0.7 },
   ];
 
@@ -78,11 +76,25 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.8,
     }));
 
-  const opplaringUrls: MetadataRoute.Sitemap = kiOpplaringEntries.map((entry) => ({
-    url: `${site}${entry.url}`,
+  const glossaryUrls: MetadataRoute.Sitemap = glossaryTerms.map((entry) => ({
+    url: `${site}/norsk-prompting/ordforrad/${entry.slug}`,
     changeFrequency: "weekly" as const,
-    priority: entry.type === "guider" || entry.type === "tema" ? 0.85 : 0.75,
+    priority: 0.72,
   }));
 
-  return uniqByUrl([...base, ...companyUrls, ...cityUrls, ...tagUrls, ...newsUrls, ...opplaringUrls]);
+  const exampleUrls: MetadataRoute.Sitemap = promptExamples.map((entry) => ({
+    url: `${site}/norsk-prompting/eksempler/${entry.slug}`,
+    changeFrequency: "weekly" as const,
+    priority: 0.82,
+  }));
+
+  return uniqByUrl([
+    ...base,
+    ...companyUrls,
+    ...cityUrls,
+    ...tagUrls,
+    ...newsUrls,
+    ...glossaryUrls,
+    ...exampleUrls,
+  ]);
 }

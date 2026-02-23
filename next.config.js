@@ -35,32 +35,102 @@ const nextConfig = {
       },
       {
         source: "/ki-nyheter",
-        destination: "/ki-opplaring",
+        destination: "/norsk-prompting",
         permanent: true,
       },
       {
         source: "/ki-nyheter/:path*",
-        destination: "/ki-opplaring/nyheter",
+        destination: "/norsk-prompting/changelog",
         permanent: true,
       },
       {
         source: "/ki-avis",
-        destination: "/ki-opplaring/nyheter",
+        destination: "/norsk-prompting/changelog",
         permanent: true,
       },
       {
         source: "/ki-avis/internasjonalt",
-        destination: "/ki-opplaring/nyheter",
+        destination: "/norsk-prompting/changelog",
         permanent: true,
       },
       {
         source: "/ki-avis/rss.xml",
-        destination: "/ki-opplaring/nyheter",
+        destination: "/norsk-prompting/changelog",
+        permanent: true,
+      },
+      {
+        source: "/ki-opplaring",
+        destination: "/norsk-prompting",
+        permanent: true,
+      },
+      {
+        source: "/ki-opplaring/ovelser",
+        destination: "/norsk-prompting/prompt-utvider",
+        permanent: true,
+      },
+      {
+        source: "/ki-opplaring/guider",
+        destination: "/norsk-prompting/eksempler",
+        permanent: true,
+      },
+      {
+        source: "/ki-opplaring/guider/:slug",
+        destination: "/norsk-prompting/eksempler",
+        permanent: true,
+      },
+      {
+        source: "/ki-opplaring/tema",
+        destination: "/norsk-prompting/regler",
+        permanent: true,
+      },
+      {
+        source: "/ki-opplaring/tema/:slug",
+        destination: "/norsk-prompting/regler",
+        permanent: true,
+      },
+      {
+        source: "/ki-opplaring/verktoy",
+        destination: "/norsk-prompting/maler",
+        permanent: true,
+      },
+      {
+        source: "/ki-opplaring/verktoy/:slug",
+        destination: "/norsk-prompting/maler",
+        permanent: true,
+      },
+      {
+        source: "/ki-opplaring/ordliste",
+        destination: "/norsk-prompting/ordforrad",
+        permanent: true,
+      },
+      {
+        source: "/ki-opplaring/ordliste/:slug",
+        destination: "/norsk-prompting/ordforrad/:slug",
+        permanent: true,
+      },
+      {
+        source: "/ki-opplaring/nyheter",
+        destination: "/norsk-prompting/changelog",
+        permanent: true,
+      },
+      {
+        source: "/ki-opplaring/:path*",
+        destination: "/norsk-prompting",
+        permanent: true,
+      },
+      {
+        source: "/ki-opplaering",
+        destination: "/norsk-prompting",
+        permanent: true,
+      },
+      {
+        source: "/ki-opplaering/:path*",
+        destination: "/norsk-prompting",
         permanent: true,
       },
       {
         source: "/ki-verktoy",
-        destination: "/ki-opplaring/verktoy",
+        destination: "/norsk-prompting/maler",
         permanent: true,
       },
       {
