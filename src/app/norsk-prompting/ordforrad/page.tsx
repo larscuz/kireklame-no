@@ -85,7 +85,7 @@ export default async function NorskPromptingOrdforradPage({ searchParams }: Prop
         ]),
       ]}
     >
-      <section className="rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] p-4">
+      <section className="rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))]/90 p-4 shadow-[0_10px_30px_rgba(2,6,23,0.18)]">
         <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">Visning</p>
         <p className="mt-2 text-sm text-[rgb(var(--muted))]">
           Registrert: {runtimeCounts.glossaryRegistered} termer
@@ -120,7 +120,7 @@ export default async function NorskPromptingOrdforradPage({ searchParams }: Prop
               .map(([domain, terms]) => (
                 <section
                   key={domain}
-                  className="rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] p-4"
+                  className="rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))]/90 p-4"
                 >
                   <h2 className="text-xl font-semibold tracking-tight">
                     {domainLabel[domain as keyof typeof domainLabel]}
@@ -134,7 +134,7 @@ export default async function NorskPromptingOrdforradPage({ searchParams }: Prop
                         <Link
                           key={term.slug}
                           href={`/norsk-prompting/ordforrad/${term.slug}`}
-                          className="rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))] px-3 py-2 hover:border-cyan-300/35 hover:bg-cyan-300/10"
+                          className="rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/70 px-3 py-2 hover:border-cyan-300/35 hover:bg-cyan-300/10"
                         >
                           <p className="text-sm font-semibold">{term.term_no}</p>
                           <p className="mt-1 text-xs text-[rgb(var(--muted))]">{term.term_en}</p>
@@ -148,7 +148,7 @@ export default async function NorskPromptingOrdforradPage({ searchParams }: Prop
               .map(([letter, terms]) => (
                 <section
                   key={letter}
-                  className="rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] p-4"
+                  className="rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))]/90 p-4"
                 >
                   <h2 className="text-xl font-semibold tracking-tight">{letter}</h2>
                   <p className="mt-1 text-sm text-[rgb(var(--muted))]">{terms.length} termer</p>
@@ -157,7 +157,7 @@ export default async function NorskPromptingOrdforradPage({ searchParams }: Prop
                       <Link
                         key={term.slug}
                         href={`/norsk-prompting/ordforrad/${term.slug}`}
-                        className="rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))] px-3 py-2 hover:border-cyan-300/35 hover:bg-cyan-300/10"
+                        className="rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/70 px-3 py-2 hover:border-cyan-300/35 hover:bg-cyan-300/10"
                       >
                         <p className="text-sm font-semibold">{term.term_no}</p>
                         <p className="mt-1 text-xs text-[rgb(var(--muted))]">{term.term_en}</p>

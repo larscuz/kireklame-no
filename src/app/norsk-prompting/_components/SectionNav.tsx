@@ -16,21 +16,30 @@ type Props = {
 
 export default function SectionNav({ currentPath }: Props) {
   return (
-    <nav className="rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] p-2">
-      <ul className="flex flex-wrap gap-2">
-        {links.map((link) => {
+    <nav className="np-nav overflow-x-auto rounded-2xl border border-[rgb(var(--border))] p-2 shadow-[0_16px_36px_rgba(2,6,23,0.3)]">
+      <ul className="flex min-w-max gap-2">
+        {links.map((link, index) => {
           const active = currentPath === link.href || (link.href !== "/norsk-prompting" && currentPath.startsWith(link.href));
 
           return (
             <li key={link.href}>
               <Link
                 href={link.href}
-                className={`inline-flex rounded-xl px-3 py-2 text-sm transition ${
+                className={`inline-flex items-center gap-2 rounded-xl px-3 py-2 text-sm transition ${
                   active
-                    ? "border border-cyan-300/40 bg-cyan-300/15 font-semibold text-cyan-100"
+                    ? "border border-cyan-300/45 bg-cyan-300/15 font-semibold text-cyan-100 shadow-[inset_0_0_0_1px_rgba(125,211,252,0.25)]"
                     : "border border-transparent text-[rgb(var(--fg))] hover:border-[rgb(var(--border))] hover:bg-black/5 dark:hover:bg-white/5"
                 }`}
               >
+                <span
+                  className={`inline-flex h-5 min-w-5 items-center justify-center rounded-full border px-1 text-[10px] font-semibold ${
+                    active
+                      ? "border-cyan-300/45 bg-cyan-300/20 text-cyan-100"
+                      : "border-[rgb(var(--border))] text-[rgb(var(--muted))]"
+                  }`}
+                >
+                  {index + 1}
+                </span>
                 {link.label}
               </Link>
             </li>

@@ -60,7 +60,7 @@ export default async function TermPage({ params }: Props) {
   ];
 
   return (
-    <main className="min-h-screen bg-[rgb(var(--bg))] text-[rgb(var(--fg))]">
+    <main className="np-shell min-h-screen bg-[rgb(var(--bg))] text-[rgb(var(--fg))]">
       {jsonLd.map((entry, index) => (
         <script
           key={`jsonld-${index}`}
@@ -70,19 +70,21 @@ export default async function TermPage({ params }: Props) {
         />
       ))}
 
-      <section className="border-b border-[rgb(var(--border))] bg-gradient-to-br from-black/10 via-transparent to-black/5 dark:from-white/5 dark:to-transparent">
+      <section className="np-hero border-b border-[rgb(var(--border))]">
         <div className="mx-auto max-w-6xl px-4 py-10 sm:py-12">
-          <p className="text-xs font-semibold uppercase tracking-[0.15em] text-[rgb(var(--muted))]">Norsk Prompting · Ordforråd</p>
-          <h1 className="mt-2 text-[clamp(2rem,4vw,3rem)] font-semibold leading-tight tracking-tight">{term.term_no}</h1>
-          <p className="mt-2 text-sm text-[rgb(var(--muted))]">{term.term_en}</p>
-          <p className="mt-3 max-w-4xl text-base text-[rgb(var(--muted))]">{term.definition_no}</p>
+          <div className="np-hero-card rounded-3xl border border-[rgb(var(--border))] bg-[rgb(var(--card))]/80 p-5 backdrop-blur sm:p-7">
+            <p className="text-xs font-semibold uppercase tracking-[0.15em] text-[rgb(var(--muted))]">Norsk Prompting · Ordforråd</p>
+            <h1 className="mt-2 text-[clamp(2rem,4vw,3rem)] font-semibold leading-tight tracking-tight">{term.term_no}</h1>
+            <p className="mt-2 text-sm text-[rgb(var(--muted))]">{term.term_en}</p>
+            <p className="mt-3 max-w-4xl text-base text-[rgb(var(--muted))]">{term.definition_no}</p>
+          </div>
         </div>
       </section>
 
       <section className="mx-auto max-w-6xl space-y-4 px-4 py-6 sm:py-8">
         <SectionNav currentPath="/norsk-prompting/ordforrad" />
 
-        <article className="rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] p-4">
+        <article className="rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))]/90 p-4 shadow-[0_10px_30px_rgba(2,6,23,0.18)]">
           <p className="text-sm"><strong>Prompteffekt:</strong> {term.promptImpact}</p>
 
           <div className="mt-3 flex flex-wrap gap-2">

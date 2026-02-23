@@ -53,7 +53,7 @@ export default function NorskPromptingEksemplerPage() {
           <Link
             key={example.slug}
             href={`/norsk-prompting/eksempler/${example.slug}`}
-            className="rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] p-4 hover:border-cyan-300/35"
+            className="rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))]/90 p-4 shadow-[0_10px_30px_rgba(2,6,23,0.18)] transition hover:-translate-y-px hover:border-cyan-300/35"
           >
             <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">
               {outputTypeLabel[example.outputType]} · {domainLabel[example.domain]}

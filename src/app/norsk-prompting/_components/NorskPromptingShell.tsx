@@ -17,7 +17,7 @@ export default function NorskPromptingShell({
   jsonLd = [],
 }: Props) {
   return (
-    <main className="min-h-screen bg-[rgb(var(--bg))] text-[rgb(var(--fg))]">
+    <main className="np-shell min-h-screen bg-[rgb(var(--bg))] text-[rgb(var(--fg))]">
       {jsonLd.map((entry, index) => (
         <script
           key={`jsonld-${index}`}
@@ -27,11 +27,29 @@ export default function NorskPromptingShell({
         />
       ))}
 
-      <section className="border-b border-[rgb(var(--border))] bg-gradient-to-br from-black/10 via-transparent to-black/5 dark:from-white/5 dark:to-transparent">
+      <section className="np-hero border-b border-[rgb(var(--border))]">
         <div className="mx-auto max-w-6xl px-4 py-10 sm:py-12">
-          <p className="text-xs font-semibold uppercase tracking-[0.15em] text-[rgb(var(--muted))]">Norsk Prompting</p>
-          <h1 className="mt-2 text-[clamp(2rem,4vw,3rem)] font-semibold leading-tight tracking-tight">{title}</h1>
-          <p className="mt-3 max-w-4xl text-base text-[rgb(var(--muted))]">{description}</p>
+          <div className="np-hero-card rounded-3xl border border-[rgb(var(--border))] p-5 backdrop-blur sm:p-7">
+            <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_18rem] lg:items-end">
+              <div>
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="np-chip text-xs font-semibold uppercase tracking-[0.14em]">Norsk Prompting</span>
+                  <span className="np-chip-muted text-xs font-semibold uppercase tracking-[0.14em]">Arbeidsflate</span>
+                </div>
+                <h1 className="mt-3 text-[clamp(2rem,4vw,3.2rem)] font-semibold leading-[1.05] tracking-tight">{title}</h1>
+                <p className="mt-3 max-w-4xl text-base text-[rgb(var(--muted))]">{description}</p>
+              </div>
+
+              <aside className="rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/55 p-3">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.13em] text-cyan-100/90">Arbeidslogikk</p>
+                <ol className="mt-2 space-y-2 text-sm text-[rgb(var(--muted))]">
+                  <li><strong className="text-[rgb(var(--fg))]">1.</strong> Definer mål</li>
+                  <li><strong className="text-[rgb(var(--fg))]">2.</strong> Lås produksjon</li>
+                  <li><strong className="text-[rgb(var(--fg))]">3.</strong> Lever prompt</li>
+                </ol>
+              </aside>
+            </div>
+          </div>
         </div>
       </section>
 

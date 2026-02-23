@@ -65,7 +65,7 @@ export default async function ExampleDetailPage({ params }: Props) {
   ];
 
   return (
-    <main className="min-h-screen bg-[rgb(var(--bg))] text-[rgb(var(--fg))]">
+    <main className="np-shell min-h-screen bg-[rgb(var(--bg))] text-[rgb(var(--fg))]">
       {jsonLd.map((entry, index) => (
         <script
           key={`jsonld-${index}`}
@@ -75,18 +75,20 @@ export default async function ExampleDetailPage({ params }: Props) {
         />
       ))}
 
-      <section className="border-b border-[rgb(var(--border))] bg-gradient-to-br from-black/10 via-transparent to-black/5 dark:from-white/5 dark:to-transparent">
+      <section className="np-hero border-b border-[rgb(var(--border))]">
         <div className="mx-auto max-w-6xl px-4 py-10 sm:py-12">
-          <p className="text-xs font-semibold uppercase tracking-[0.15em] text-[rgb(var(--muted))]">Norsk Prompting · Eksempel</p>
-          <h1 className="mt-2 text-[clamp(2rem,4vw,3rem)] font-semibold leading-tight tracking-tight">{example.title}</h1>
-          <p className="mt-3 max-w-4xl text-base text-[rgb(var(--muted))]">{example.shortInput}</p>
+          <div className="np-hero-card rounded-3xl border border-[rgb(var(--border))] bg-[rgb(var(--card))]/80 p-5 backdrop-blur sm:p-7">
+            <p className="text-xs font-semibold uppercase tracking-[0.15em] text-[rgb(var(--muted))]">Norsk Prompting · Eksempel</p>
+            <h1 className="mt-2 text-[clamp(2rem,4vw,3rem)] font-semibold leading-tight tracking-tight">{example.title}</h1>
+            <p className="mt-3 max-w-4xl text-base text-[rgb(var(--muted))]">{example.shortInput}</p>
+          </div>
         </div>
       </section>
 
       <section className="mx-auto max-w-6xl space-y-4 px-4 py-6 sm:py-8">
         <SectionNav currentPath="/norsk-prompting/eksempler" />
 
-        <article className="rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] p-4">
+        <article className="rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))]/90 p-4 shadow-[0_10px_30px_rgba(2,6,23,0.18)]">
           <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">Kort input</p>
           <p className="mt-2 text-sm">{example.shortInput}</p>
 
@@ -101,13 +103,13 @@ export default async function ExampleDetailPage({ params }: Props) {
           </div>
 
           <p className="mt-4 text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">Langt resultat</p>
-          <pre className="mt-2 whitespace-pre-wrap rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))] p-3 text-sm text-[rgb(var(--fg))]/90">
+          <pre className="mt-2 whitespace-pre-wrap rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/70 p-3 text-sm text-[rgb(var(--fg))]/90">
             {example.longOutput}
           </pre>
         </article>
 
         <div className="grid gap-4 lg:grid-cols-2">
-          <article className="rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] p-4">
+          <article className="rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))]/90 p-4">
             <h2 className="text-lg font-semibold">Hvorfor dette fungerer</h2>
             <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-[rgb(var(--fg))]/85">
               {example.whyWorks.map((point, index) => (
@@ -116,7 +118,7 @@ export default async function ExampleDetailPage({ params }: Props) {
             </ul>
           </article>
 
-          <article className="rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] p-4">
+          <article className="rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))]/90 p-4">
             <h2 className="text-lg font-semibold">Regler brukt</h2>
             <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-[rgb(var(--fg))]/85">
               {usedRules.map((rule) => (

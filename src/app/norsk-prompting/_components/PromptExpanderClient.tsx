@@ -130,12 +130,18 @@ export default function PromptExpanderClient() {
   );
 
   return (
-    <section className="rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] p-4 sm:p-5">
+    <section className="np-template-card rounded-3xl border border-[rgb(var(--border))] bg-[rgb(var(--card))]/92 p-4 shadow-[0_18px_60px_rgba(2,6,23,0.3)] sm:p-6">
       <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[rgb(var(--muted))]">Prompt-utvider</p>
       <h1 className="mt-2 text-3xl font-semibold tracking-tight">Kort norsk input → lang pro-prompt</h1>
       <p className="mt-2 text-sm text-[rgb(var(--muted))]">
         Generatoren bruker interne regler, maler og termbank. Ingen eksterne LLM-kall.
       </p>
+
+      <div className="mt-4 grid gap-2 rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/60 p-3 text-xs text-[rgb(var(--muted))] sm:grid-cols-3">
+        <p><strong>1.</strong> Beskriv hensikt kort</p>
+        <p><strong>2.</strong> Sett kontrollvalg</p>
+        <p><strong>3.</strong> Oppdater og kopier resultat</p>
+      </div>
 
       <label className="mt-4 block text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">
         Kort beskrivelse / hensikt
@@ -143,16 +149,16 @@ export default function PromptExpanderClient() {
       <textarea
         value={input}
         onChange={(event) => setInput(event.target.value)}
-        className="mt-2 min-h-28 w-full rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))] px-3 py-3 text-sm outline-none focus:border-cyan-400"
+        className="mt-2 min-h-28 w-full rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))] px-3 py-3 text-sm shadow-inner outline-none focus:border-cyan-400"
       />
 
-      <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="mt-4 grid gap-3 rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/50 p-3 sm:grid-cols-2 lg:grid-cols-3">
         <label className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">
           Outputtype
           <select
             value={outputType}
             onChange={(event) => setOutputType(event.target.value as PromptOutputType)}
-            className="mt-1 w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))] px-3 py-2 text-sm"
+            className="mt-1 w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-3 py-2 text-sm"
           >
             {outputTypeOptions.map((option) => (
               <option key={option.value} value={option.value}>
@@ -167,7 +173,7 @@ export default function PromptExpanderClient() {
           <select
             value={domain}
             onChange={(event) => setDomain(event.target.value as PromptDomain)}
-            className="mt-1 w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))] px-3 py-2 text-sm"
+            className="mt-1 w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-3 py-2 text-sm"
           >
             {domainOptions.map((option) => (
               <option key={option.value} value={option.value}>
@@ -182,7 +188,7 @@ export default function PromptExpanderClient() {
           <select
             value={style}
             onChange={(event) => setStyle(event.target.value as PromptStyle)}
-            className="mt-1 w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))] px-3 py-2 text-sm"
+            className="mt-1 w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-3 py-2 text-sm"
           >
             {styleOptions.map((option) => (
               <option key={option.value} value={option.value}>
@@ -197,7 +203,7 @@ export default function PromptExpanderClient() {
           <select
             value={length}
             onChange={(event) => setLength(event.target.value as PromptLength)}
-            className="mt-1 w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))] px-3 py-2 text-sm"
+            className="mt-1 w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-3 py-2 text-sm"
           >
             {lengthOptions.map((option) => (
               <option key={option.value} value={option.value}>
@@ -212,7 +218,7 @@ export default function PromptExpanderClient() {
           <select
             value={templateId}
             onChange={(event) => setTemplateId(event.target.value)}
-            className="mt-1 w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))] px-3 py-2 text-sm"
+            className="mt-1 w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-3 py-2 text-sm"
           >
             <option value="">Automatisk</option>
             {templateOptions.map((template) => (
@@ -224,7 +230,7 @@ export default function PromptExpanderClient() {
         </label>
       </div>
 
-      <div className="mt-4 grid gap-3 md:grid-cols-2">
+      <div className="mt-4 grid gap-3 rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/50 p-3 md:grid-cols-2">
         <label className="text-sm">
           <span className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">
             Stramhet: {strictness}
@@ -255,18 +261,18 @@ export default function PromptExpanderClient() {
       </div>
 
       <div className="mt-4 flex flex-wrap gap-2 text-sm">
-        <label className="inline-flex items-center gap-2 rounded-full border border-[rgb(var(--border))] px-3 py-1">
+        <label className="inline-flex items-center gap-2 rounded-full border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/60 px-3 py-1">
           <input type="checkbox" checked={lockRules} onChange={(event) => setLockRules(event.target.checked)} />
           Regellås (følg Norsk Prompting-reglene)
         </label>
-        <label className="inline-flex items-center gap-2 rounded-full border border-[rgb(var(--border))] px-3 py-1">
+        <label className="inline-flex items-center gap-2 rounded-full border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/60 px-3 py-1">
           <input type="checkbox" checked={jsonMode} onChange={(event) => setJsonMode(event.target.checked)} />
           JSON-format
         </label>
       </div>
 
       {(outputType === "image" || outputType === "video") && (
-        <div className="mt-4 rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))] p-3">
+        <div className="mt-4 rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/70 p-3">
           <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">
             Tekst i bilde/video
           </p>
@@ -353,7 +359,7 @@ export default function PromptExpanderClient() {
         </div>
       )}
 
-      <div className="mt-4 flex flex-wrap items-center gap-3">
+      <div className="mt-4 flex flex-wrap items-center gap-3 rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/50 p-3">
         <button
           type="button"
           onClick={() => setActiveRequest(draftRequest)}
@@ -369,16 +375,16 @@ export default function PromptExpanderClient() {
         </p>
       </div>
 
-      <div className="mt-5 rounded-2xl border border-cyan-300/25 bg-cyan-500/10 p-4">
+      <div className="mt-5 rounded-2xl border border-cyan-300/25 bg-gradient-to-br from-cyan-500/18 via-cyan-500/5 to-amber-400/12 p-4">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <p className="text-sm font-semibold">Generert prompt</p>
           <CopyTextButton value={result.prompt} label="Kopier prompt" />
         </div>
-        <pre className="mt-3 whitespace-pre-wrap text-sm text-[rgb(var(--fg))]/90">{result.prompt}</pre>
+        <pre className="mt-3 max-h-[28rem] overflow-auto whitespace-pre-wrap rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/70 p-3 text-sm text-[rgb(var(--fg))]/90">{result.prompt}</pre>
       </div>
 
       <div className="mt-4 grid gap-3 lg:grid-cols-2">
-        <article className="rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))] p-3">
+        <article className="rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/65 p-3">
           <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">Regler brukt</p>
           <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-[rgb(var(--fg))]/85">
             {result.usedRules.map((rule) => (
@@ -390,7 +396,7 @@ export default function PromptExpanderClient() {
           </ul>
         </article>
 
-        <article className="rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))] p-3">
+        <article className="rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/65 p-3">
           <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">Termer injisert</p>
           <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-[rgb(var(--fg))]/85">
             {result.usedTerms.map((term) => (

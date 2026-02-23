@@ -33,7 +33,7 @@ export default function SearchPanel({ items, showResultsOnEmptyQuery = true }: P
   }, [items, needle, showResultsOnEmptyQuery]);
 
   return (
-    <section className="rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] p-4">
+    <section className="np-template-card rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))]/92 p-4 shadow-[0_10px_35px_rgba(2,6,23,0.24)]">
       <label htmlFor="norsk-prompting-search" className="text-xs font-semibold uppercase tracking-[0.14em] text-[rgb(var(--muted))]">
         Søk i ordforråd, maler og eksempler
       </label>
@@ -51,9 +51,9 @@ export default function SearchPanel({ items, showResultsOnEmptyQuery = true }: P
             <li key={`${item.type}-${item.href}`}>
               <a
                 href={item.href}
-                className="block rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))] px-3 py-2 hover:border-cyan-300/40 hover:bg-cyan-300/10"
+                className="block rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/72 px-3 py-2 transition hover:-translate-y-px hover:border-cyan-300/40 hover:bg-cyan-300/10"
               >
-                <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">{item.type}</p>
+                <p className="text-xs font-semibold uppercase tracking-[0.12em] text-cyan-100/90">{item.type}</p>
                 <p className="mt-1 text-sm font-semibold text-[rgb(var(--fg))]">{item.title}</p>
                 <p className="mt-1 text-sm text-[rgb(var(--muted))]">{item.description}</p>
               </a>
