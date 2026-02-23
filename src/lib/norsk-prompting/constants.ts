@@ -15,6 +15,8 @@ export const domainOptions: Array<{ value: PromptDomain; label: string }> = [
   { value: "historisk", label: "Historisk" },
   { value: "redaksjonell", label: "Redaksjonell" },
   { value: "design-system", label: "Design-system" },
+  { value: "surreal_absurd", label: "Surrealistisk / Absurd" },
+  { value: "animated", label: "Animert" },
 ];
 
 export const styleOptions: Array<{ value: PromptStyle; label: string }> = [
@@ -41,6 +43,8 @@ export const domainLabel: Record<PromptDomain, string> = {
   historisk: "historisk rekonstruksjon",
   redaksjonell: "redaksjonell produksjon",
   "design-system": "design-system og UX",
+  surreal_absurd: "surrealistisk og absurd visuell retning",
+  animated: "animasjonsproduksjon",
 };
 
 export const styleLabel: Record<PromptStyle, string> = {

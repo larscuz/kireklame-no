@@ -65,6 +65,12 @@ export type PromptGuidance = {
   firstLast: GuidanceDecision;
 };
 
+type DomainPack = {
+  styleTokens: string[];
+  controlPoints: string[];
+  preferredTermSlugs: string[];
+};
+
 const domainToGlossary: Record<PromptDomain, GlossaryDomain[]> = {
   "film-vfx": ["film", "vfx", "photo", "ai"],
   arkitektur: ["arch", "photo", "ai", "design"],
@@ -74,6 +80,86 @@ const domainToGlossary: Record<PromptDomain, GlossaryDomain[]> = {
   historisk: ["arch", "photo", "film", "ai"],
   redaksjonell: ["ai", "design", "film"],
   "design-system": ["design", "ai", "photo"],
+  surreal_absurd: ["design", "ai", "film", "photo"],
+  animated: ["film", "vfx", "design", "ai"],
+};
+
+const domainPacks: Partial<Record<PromptDomain, DomainPack>> = {
+  surreal_absurd: {
+    styleTokens: [
+      "surrealistisk logikk",
+      "absurd kontrast",
+      "drømmeaktig",
+      "uventede sammenstillinger",
+      "symbolsk objektbruk",
+      "forstyrret skala",
+      "umotivert, men konsistent regel",
+      "hyperreal detaljer + ulogisk helhet",
+      "poetisk dissonans",
+      "metaforisk scene",
+    ],
+    controlPoints: [
+      "Definer én surreal kjerne-uregel og lås den gjennom hele leveransen.",
+      "Alt utenfor kjerne-uregelen følger normal fysikk og kausalitet.",
+      "Bevar identitet og objekt-permanens uten magisk forsvinning.",
+      "Tillat skalaendring kun på eksplisitte elementer, lås resten av scenen.",
+      "Hold lys og kamera realistisk selv om motivlogikken er absurd.",
+      "Ved tekst i bilde/video: TEKSTLÅS er absolutt, ingen ekstra ord.",
+      "Alle absurde elementer må støtte budskap eller motiv, ikke tilfeldig støy.",
+    ],
+    preferredTermSlugs: [
+      "drommelogikk-ai",
+      "metaforisk-rekvisitt-design",
+      "skala-dissonans-design",
+      "visuell-paradoks-ai",
+      "symbolsk-komposisjon-design",
+      "uventet-materialitet-design",
+      "umotivert-samsvar-ai",
+      "kontrollert-ulogikk-ai",
+      "poetisk-dissonans-design",
+      "liminalt-rom-design",
+      "defamiliarisering-design",
+      "narrativ-friksjon-film",
+    ],
+  },
+  animated: {
+    styleTokens: [
+      "animasjonsstil",
+      "keyframes / nøkkelposering",
+      "ren silhuett",
+      "overdrevet lesbarhet",
+      "stiliserte materialer",
+      "kontrollert shading",
+      "linjeart / cel shading",
+      "klar fargepalett",
+      "karakterdesign-konsistens",
+      "bevegelseskurver (ease in/out)",
+    ],
+    controlPoints: [
+      "Velg animasjonstype eksplisitt: 2D flat, 2D cutout, 3D stylized eller stop-motion look.",
+      "Definer motion grammar med timing, easing og valgfri squash & stretch.",
+      "Lås karaktermodell: proporsjoner, ansiktstrekk, fargepalett og klær.",
+      "Lås linjetykkelse og linjeuttrykk når 2D brukes.",
+      "Lås shader/cel-look når 3D stylized brukes.",
+      "Unngå fotorealisme når animert uttrykk er valgt.",
+      "Ved tekst i bilde/video: TEKSTLÅS + ingen deformasjon av typografi.",
+      "For video: bruk kontinuitetslås og unngå morphing av bakgrunn.",
+    ],
+    preferredTermSlugs: [
+      "cel-shading-vfx",
+      "linjeart-design",
+      "nokkelposering-film",
+      "inbetweening-film",
+      "squash-stretch-film",
+      "ease-in-ease-out-film",
+      "bevegelseskurver-film",
+      "rigg-character-rig-vfx",
+      "silhuettlesbarhet-design",
+      "stiliserte-materialer-vfx",
+      "flat-farge-design",
+      "animert-timing-film",
+    ],
+  },
 };
 
 const sectionOrder: Array<{ id: string; title: string }> = [
@@ -478,15 +564,17 @@ function chooseRules(input: BuildPromptInput, templateRuleIds: string[]): NorskP
   return target;
 }
 
-function chooseTerms(input: BuildPromptInput, count = 8): GlossaryTerm[] {
+function chooseTerms(input: BuildPromptInput, domainPack: DomainPack | null, count = 8): GlossaryTerm[] {
   const domains = domainToGlossary[input.domain];
   const source = input.input.toLowerCase();
+  const preferredSlugs = new Set(domainPack?.preferredTermSlugs ?? []);
 
   const candidates = glossaryTerms.filter((term) => domains.includes(term.domain));
   const weighted = candidates
     .map((term) => {
       const inInput = source.includes(term.term_no.toLowerCase()) || source.includes(term.term_en.toLowerCase());
-      const score = inInput ? 10 : term.promptImpact.length % 7;
+      const preferred = preferredSlugs.has(term.slug);
+      const score = (inInput ? 10 : term.promptImpact.length % 7) + (preferred ? 20 : 0);
       return { term, score };
     })
     .sort((a, b) => b.score - a.score || a.term.term_no.localeCompare(b.term.term_no, "nb-NO"));
@@ -494,7 +582,7 @@ function chooseTerms(input: BuildPromptInput, count = 8): GlossaryTerm[] {
   return weighted.slice(0, count).map((entry) => entry.term);
 }
 
-function buildConstraintList(input: BuildPromptInput, rules: NorskPromptingRule[]): string[] {
+function buildConstraintList(input: BuildPromptInput, rules: NorskPromptingRule[], domainPack: DomainPack | null): string[] {
   const hard = [
     "Ikke legg til eller fjern nøkkelobjekter uten eksplisitt instruks.",
     "Ingen magisk transformasjon eller uforklarte hopp i geometri.",
@@ -524,6 +612,10 @@ function buildConstraintList(input: BuildPromptInput, rules: NorskPromptingRule[
 
   if (input.outputType === "video" && input.useFirstLast) {
     hard.push("First/Last er låst: start- og sluttramme skal være kompatible med logisk, fysisk overgang.");
+  }
+
+  if (domainPack?.controlPoints?.length) {
+    hard.push(...domainPack.controlPoints);
   }
 
   for (const rule of rules) {
@@ -558,6 +650,20 @@ function describeLength(length: PromptLength): string {
   return "balansert med tydelig operasjonelle punkter";
 }
 
+function buildDomainStyleLine(input: BuildPromptInput, templateInstructions: string, domainPack: DomainPack | null): string {
+  const styleLine = [`Stil: ${styleLabel[input.style]}.`];
+
+  if (domainPack?.styleTokens?.length) {
+    styleLine.push(`Domeneordvalg: ${domainPack.styleTokens.join(", ")}.`);
+  }
+
+  if (templateInstructions) {
+    styleLine.push(templateInstructions);
+  }
+
+  return styleLine.join(" ").trim();
+}
+
 export function buildPrompt(rawInput: BuildPromptInput): BuildPromptResult {
   const input = normalizeInput(rawInput);
   const sentences = splitSentences(input.input);
@@ -565,10 +671,11 @@ export function buildPrompt(rawInput: BuildPromptInput): BuildPromptResult {
   const action = sentences[1] || "Beskriv en fysisk plausibel handling med tydelig årsak og effekt.";
 
   const template = chooseTemplate(input);
+  const domainPack = domainPacks[input.domain] ?? null;
   const audioMode = detectAudioMode(input.input, template?.title);
   const rules = chooseRules(input, template?.recommendedRules ?? []);
-  const usedTerms = chooseTerms(input, input.length === "lang" ? 10 : 8);
-  const constraints = buildConstraintList(input, rules);
+  const usedTerms = chooseTerms(input, domainPack, input.length === "lang" ? 10 : 8);
+  const constraints = buildConstraintList(input, rules, domainPack);
   const negativeList = buildNegativeList(rules, input.strictness);
   const languageRule = languageRuleBlock(input);
   const textBlock = textPresenceBlock(input);
@@ -605,6 +712,10 @@ export function buildPrompt(rawInput: BuildPromptInput): BuildPromptResult {
     input.consistency >= 70
       ? "Aktiver høy konsistens: objektpermanens, identitetslås og stabil kamerageometri i hele outputen."
       : "Hold grunnleggende konsistens mellom motiv, miljø og lys.";
+  const domainConsistency =
+    domainPack?.controlPoints?.length
+      ? ` Domene-kontroll: ${domainPack.controlPoints.slice(0, 2).join(" ")}`
+      : "";
 
   const blocks: PromptBlock[] = [
     {
@@ -662,12 +773,12 @@ export function buildPrompt(rawInput: BuildPromptInput): BuildPromptResult {
     {
       id: "8",
       title: "Stil / estetikk",
-      content: `Stil: ${styleLabel[input.style]}. ${templateInstructions}`.trim(),
+      content: buildDomainStyleLine(input, templateInstructions, domainPack),
     },
     {
       id: "9",
       title: "Kontinuitet / konsistens",
-      content: consistencyLine,
+      content: `${consistencyLine}${domainConsistency}`.trim(),
     },
     {
       id: "10",

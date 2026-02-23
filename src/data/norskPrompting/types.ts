@@ -8,7 +8,9 @@ export type PromptDomain =
   | "sosiale-medier"
   | "historisk"
   | "redaksjonell"
-  | "design-system";
+  | "design-system"
+  | "surreal_absurd"
+  | "animated";
 
 export type PromptStyle =
   | "noktern"

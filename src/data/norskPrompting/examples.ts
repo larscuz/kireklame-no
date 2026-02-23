@@ -1138,6 +1138,124 @@ Geometrilås og objektpermanens gjelder for hele passet.`,
       ["Objektpermanens", "ai"],
     ],
   },
+  {
+    title: "Surreal testcase: massive briller i kontor",
+    outputType: "image",
+    domain: "surreal_absurd",
+    shortInput: "En mann med massive briller i et kontor.",
+    longOutput: `1) Mål:
+Lag en surreal stillscene med én tydelig absurd regel og ellers fysisk troverdig leveranse.
+
+2) Motiv + handling:
+Mann i kontorklær står ved skrivebord og justerer massive briller med begge hender.
+
+3) Miljø / setting:
+Kontorinteriør med normal geometri, standard møblering og tydelig romdybde.
+
+4) Kamera:
+50mm, øyehøyde, statisk kamera og stabil perspektivakse.
+
+5) Lys:
+Realistisk kontorlys med nøkkellys fra vindu + myk fill fra rommet.
+
+6) Materialer / overflater:
+Brilleglass med fysisk refleks, metallinnfatning med korrekt glans og hud uten plastlook.
+
+7) Komposisjon:
+Mannen i mellomgrunn, skrivebord i forgrunn, bakvegg i bakgrunn med klar lagdeling.
+
+8) Stil / estetikk:
+Surrealistisk/absurd retning med én kjerne-uregel: brillene fungerer som optisk portal, mens resten av scenen følger normal fysikk.
+
+9) Kontinuitet / konsistens:
+Objektpermanens og identitetslås aktiv: mann, briller og kontorgeometri skal ikke drifte.
+
+10) Begrensninger:
+Ingen ekstra absurde elementer utover kjerne-uregelen. Ingen smeltende geometri.
+
+11) Negativ prompting / unngå:
+Unngå tilfeldig drømmestøy, kaotiske perspektivskift og magisk forsvinning av objekter.
+
+12) Output-spesifikasjon:
+Stillbilde i 4:5, høy lesbarhet i ansikt, briller og kontorlinjer.`,
+    whyWorks: [
+      "Testcaset låser én absurd regel i stedet for å gjøre hele scenen tilfeldig.",
+      "Kamera og lys er realistisk forankret, noe som gir høyere kvalitet.",
+      "Objektpermanens sikrer at mann, briller og rom holder seg stabile.",
+    ],
+    ruleIds: [
+      "motiv-for-stil",
+      "fysisk-plausibel-bedre",
+      "video-ingen-magisk-forsvinning",
+      "negativ-kontroll-eksplisitt",
+      "avslutt-med-klare-begrensninger",
+    ],
+    termRefs: [
+      ["Drømmelogikk", "ai"],
+      ["Kontrollert ulogikk", "ai"],
+      ["Skala-dissonans", "design"],
+      ["Objektpermanens", "ai"],
+    ],
+  },
+  {
+    title: "Animert testcase: maskot ved produkt",
+    outputType: "video",
+    domain: "animated",
+    shortInput: "En enkel maskot ved et produkt.",
+    longOutput: `1) Mål:
+Lag en animert produktscene med tydelig karakterkonsistens og lesbar bevegelse.
+
+2) Motiv + handling:
+En enkel maskot presenterer produktet med én håndbevegelse og en kort nikkebevegelse.
+
+3) Miljø / setting:
+Ren studiobakgrunn uten visuell støy, med stabil plassering av maskot og produkt.
+
+4) Kamera:
+Lett dolly-inn i 35mm-ekvivalent, ingen hopp i POV.
+
+5) Lys:
+Kontrollert key/fill med jevn cel-shading og ingen fotorealistisk highlight-adferd.
+
+6) Materialer / overflater:
+Stiliserte materialer med forenklet shading og flat fargepalett.
+
+7) Komposisjon:
+Maskot i venstre tredjedel, produkt i høyre tredjedel, klar silhuettlesbarhet.
+
+8) Stil / estetikk:
+Animasjonstype: 3D stylized med cel shading, tydelig linjeart-uttrykk og produksjonsren palett.
+
+9) Kontinuitet / konsistens:
+Karakterdesign-konsistens låst: proporsjoner, ansiktstrekk, klær og farger holdes identiske.
+
+10) Begrensninger:
+Ingen overgang til fotorealisme. Ingen deformasjon av maskot eller produktgeometri.
+
+11) Negativ prompting / unngå:
+Unngå bakgrunnsmorphing, ansiktsdrift, uleselig typografi og tilfeldig shader-skifte.
+
+12) Output-spesifikasjon:
+Video 9:16, 6 sek, med jevn timing og tydelig start/slutt-kompatibilitet.`,
+    whyWorks: [
+      "Testcaset tvinger fram eksplisitt animasjonstype før stilvalg.",
+      "Karaktermodell og materialuttrykk er låst for å unngå drift.",
+      "Cel/linje-kontroll holder uttrykket animert i hele sekvensen.",
+    ],
+    ruleIds: [
+      "definer-format-eksplisitt",
+      "lås-viktige-elementer-forst",
+      "video-lysforhold-konsistente",
+      "video-skala-konsistent",
+      "negativ-kontroll-eksplisitt",
+    ],
+    termRefs: [
+      ["Cel shading", "vfx"],
+      ["Linjeart", "design"],
+      ["Nøkkelposering", "film"],
+      ["Silhuettlesbarhet", "design"],
+    ],
+  },
 ];
 
 export const promptExamples: PromptExample[] = seeds.map((seed) => ({
