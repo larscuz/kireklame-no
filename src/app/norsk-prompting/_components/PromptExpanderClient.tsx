@@ -186,6 +186,7 @@ export default function PromptExpanderClient() {
     [outputType]
   );
   const isVisualOutput = outputType === "image" || outputType === "video";
+  const updateButtonId = "np-update-prompt-button";
 
   useEffect(() => {
     if (outputType !== "video" && useFirstLast) {
@@ -200,481 +201,539 @@ export default function PromptExpanderClient() {
   }, [outputType, useReferenceImage]);
 
   return (
-    <section className="np-node-surface np-template-card rounded-3xl border border-[rgb(var(--border))] bg-[rgb(var(--card))]/92 p-4 pt-7 shadow-[0_18px_60px_rgba(2,6,23,0.3)] sm:p-6">
-      <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[rgb(var(--muted))]">Prompt-utvider</p>
-      <h1 className="mt-2 text-3xl font-semibold tracking-tight">Kort norsk input → lang pro-prompt</h1>
-      <p className="mt-2 text-sm text-[rgb(var(--muted))]">
-        Generatoren bruker interne regler, maler og termbank. Ingen eksterne LLM-kall.
-      </p>
-
-      <div className="np-pipeline mt-4 text-xs text-[rgb(var(--muted))]">
-        <p className="np-pipeline-node"><strong>1.</strong> Beskriv hensikt kort</p>
-        <p className="np-pipeline-node"><strong>2.</strong> Sett kontrollvalg</p>
-        <p className="np-pipeline-node"><strong>3.</strong> Oppdater og kopier resultat</p>
-      </div>
-
-      <div className="mt-4 flex items-center gap-2">
-        <label className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">
-          Kort beskrivelse / hensikt
-        </label>
-        <InfoHint text="Skriv kort hva du vil lage. Hold det konkret: motiv, handling og kontekst." />
-      </div>
-      <textarea
-        value={input}
-        onChange={(event) => setInput(event.target.value)}
-        className="mt-2 min-h-28 w-full rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))] px-3 py-3 text-sm shadow-inner outline-none focus:border-zinc-300"
-      />
-
-      <div className="mt-4 rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/70 p-3">
-        <div className="flex items-center gap-2">
-          <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">
-            Tekst i bilde/video
+    <section className="np-node-surface rounded-3xl border border-[rgb(var(--border))] bg-[rgb(var(--card))]/92 p-4 pt-7 shadow-[0_18px_60px_rgba(2,6,23,0.3)] sm:p-6">
+      <div className="flex flex-wrap items-end justify-between gap-3">
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[rgb(var(--muted))]">Prompt-utvider</p>
+          <h1 className="mt-2 text-3xl font-semibold tracking-tight">Kort norsk input → lang pro-prompt</h1>
+          <p className="mt-2 text-sm text-[rgb(var(--muted))]">
+            Generatoren bruker interne regler, maler og termbank. Ingen eksterne LLM-kall.
           </p>
-          <InfoHint text="Brukes for tekstoverlegg i visuelle leveranser. Når aktivert blir tekstlåsen lagt inn i prompten." />
         </div>
+        <div className="inline-flex items-center gap-2 rounded-full border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/65 px-3 py-1 text-xs text-[rgb(var(--muted))]">
+          <span className={`h-2 w-2 rounded-full ${hasDraftChanges ? "bg-amber-300" : "bg-emerald-300"}`} />
+          {hasDraftChanges ? "Utkast har endringer" : "Oppdatert"}
+        </div>
+      </div>
 
-        <div className="mt-2 grid gap-3 md:grid-cols-2">
-          <label className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">
-            <span className="mb-1 flex items-center gap-2">
-              Skal visuell leveranse inneholde tekst?
-              <InfoHint text="Sett til Ja hvis bilde/video skal ha synlig tekst. Sett til Nei for å tvinge tekstfri leveranse." />
-            </span>
-            <select
-              value={textInVisual ? "ja" : "nei"}
-              onChange={(event) => setTextInVisual(event.target.value === "ja")}
-              className="mt-1 w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))] px-3 py-2 text-sm normal-case"
+      <div className="mt-4 grid gap-4 lg:grid-cols-12 lg:items-start">
+        <aside className="space-y-3 lg:col-span-5 xl:col-span-4 2xl:col-span-3 lg:sticky lg:top-24 lg:max-h-[calc(100vh-7.5rem)] lg:overflow-auto lg:pr-1">
+          <div
+            className={`rounded-2xl border p-3 ${
+              hasDraftChanges
+                ? "border-amber-300/45 bg-amber-300/10"
+                : "border-[rgb(var(--border))] bg-[rgb(var(--bg))]/55"
+            }`}
+          >
+            <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">
+              Oppdatering
+            </p>
+            <p className="mt-1 text-sm text-[rgb(var(--fg))]/92">
+              {hasDraftChanges
+                ? "Du har endringer som ikke vises i prompten til høyre ennå."
+                : "Prompten til høyre er synkronisert med valgene dine."}
+            </p>
+            <a
+              href={`#${updateButtonId}`}
+              className="mt-2 inline-flex items-center rounded-lg border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/70 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.08em] text-[rgb(var(--muted))] transition hover:border-zinc-300/40 hover:text-zinc-100"
             >
-              <option value="nei">Nei</option>
-              <option value="ja">Ja</option>
-            </select>
-          </label>
-        </div>
+              Gå til oppdater-knapp
+            </a>
+          </div>
+          <div className="rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/65 p-3">
+            <div className="flex items-center gap-2">
+              <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">Kort beskrivelse</p>
+              <InfoHint text="Skriv kort hva du vil lage. Hold det konkret: motiv, handling og kontekst." />
+            </div>
+            <textarea
+              value={input}
+              onChange={(event) => setInput(event.target.value)}
+              className="mt-2 min-h-28 w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))] px-3 py-3 text-sm shadow-inner outline-none focus:border-zinc-300"
+            />
+          </div>
 
-        {!isVisualOutput ? (
-          <p className="mt-2 text-xs text-[rgb(var(--muted))]">
-            Denne seksjonen brukes når outputtype er satt til Bilde eller Video.
-          </p>
-        ) : null}
+          <div className="rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/65 p-3">
+            <div className="mb-2 flex items-center gap-2">
+              <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">Produksjonsvalg</p>
+              <InfoHint text="Disse valgene styrer struktur, terminologi og hvor stramt prompten bygges." />
+            </div>
 
-        {textInVisual ? (
-          <div className="mt-3 space-y-3">
+            <div className="rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))]/75 p-1">
+              <div className="grid grid-cols-3 gap-1">
+                {outputTypeOptions.map((option) => {
+                  const active = outputType === option.value;
+                  return (
+                    <button
+                      key={option.value}
+                      type="button"
+                      onClick={() => setOutputType(option.value)}
+                      className={`rounded-lg px-3 py-2 text-sm font-semibold transition ${
+                        active
+                          ? "border border-zinc-300/40 bg-zinc-300/15 text-zinc-100"
+                          : "border border-transparent text-[rgb(var(--muted))] hover:border-zinc-300/20 hover:text-zinc-100"
+                      }`}
+                    >
+                      {option.label}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div className="mt-3 space-y-3">
+              <label className="block text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">
+                <span className="mb-1 flex items-center gap-2">
+                  Domene
+                  <InfoHint text="Domene styrer ordvalg, kontrollpunkter og fagterminologi i prompten." />
+                </span>
+                <select
+                  value={domain}
+                  onChange={(event) => setDomain(event.target.value as PromptDomain)}
+                  className="mt-1 w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-3 py-2 text-sm"
+                >
+                  {domainOptions.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+              </label>
+
+              <label className="block text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">
+                <span className="mb-1 flex items-center gap-2">
+                  Stil
+                  <InfoHint text="Stil justerer tone og estetisk retning uten å endre den tekniske strukturen." />
+                </span>
+                <select
+                  value={style}
+                  onChange={(event) => setStyle(event.target.value as PromptStyle)}
+                  className="mt-1 w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-3 py-2 text-sm"
+                >
+                  {styleOptions.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+              </label>
+
+              <label className="block text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">
+                <span className="mb-1 flex items-center gap-2">
+                  Lengde
+                  <InfoHint text="Kort gir raskere, enklere prompt. Lang gir mer detaljert produksjonskontroll." />
+                </span>
+                <select
+                  value={length}
+                  onChange={(event) => setLength(event.target.value as PromptLength)}
+                  className="mt-1 w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-3 py-2 text-sm"
+                >
+                  {lengthOptions.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+              </label>
+
+              <label className="block text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">
+                <span className="mb-1 flex items-center gap-2">
+                  Mal (valgfritt)
+                  <InfoHint text="Velg en mal for ferdig rammestruktur. Automatisk velger best match ut fra outputtype og domene." />
+                </span>
+                <select
+                  value={templateId}
+                  onChange={(event) => setTemplateId(event.target.value)}
+                  className="mt-1 w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-3 py-2 text-sm"
+                >
+                  <option value="">Automatisk</option>
+                  {templateOptions.map((template) => (
+                    <option key={template.id} value={template.id}>
+                      {template.title}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            </div>
+          </div>
+
+          <div className="rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/65 p-3">
+            <div className="mb-2 flex items-center gap-2">
+              <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">Tekst i bilde/video</p>
+              <InfoHint text="Brukes for tekstoverlegg i visuelle leveranser. Når aktivert blir tekstlåsen lagt inn i prompten." />
+            </div>
+
             <label className="block text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">
               <span className="mb-1 flex items-center gap-2">
-                Eksakt tekst (påkrevd)
-                <InfoHint text="Skriv nøyaktig teksten som skal vises. Denne låses i prompten uten omskriving." />
+                Skal visuell leveranse inneholde tekst?
+                <InfoHint text="Sett til Ja hvis bilde/video skal ha synlig tekst. Sett til Nei for å tvinge tekstfri leveranse." />
               </span>
+              <select
+                value={textInVisual ? "ja" : "nei"}
+                onChange={(event) => setTextInVisual(event.target.value === "ja")}
+                className="mt-1 w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))] px-3 py-2 text-sm normal-case"
+              >
+                <option value="nei">Nei</option>
+                <option value="ja">Ja</option>
+              </select>
             </label>
-            <textarea
-              value={overlayText}
-              onChange={(event) => setOverlayText(event.target.value)}
-              className="min-h-20 w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-3 py-2 text-sm outline-none focus:border-zinc-300"
-              placeholder="Skriv nøyaktig tekst som skal vises."
-            />
 
-            <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
-              <label className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">
-                <span className="mb-1 flex items-center gap-2">
-                  Språk
-                  <InfoHint text="Språkvalg styrer tekstregel i prompten. Norsk er standard for denne arbeidsflaten." />
+            {!isVisualOutput ? (
+              <p className="mt-2 text-xs text-[rgb(var(--muted))]">
+                Denne seksjonen brukes når outputtype er satt til Bilde eller Video.
+              </p>
+            ) : null}
+
+            {textInVisual ? (
+              <div className="mt-3 space-y-3">
+                <label className="block text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">
+                  <span className="mb-1 flex items-center gap-2">
+                    Eksakt tekst (påkrevd)
+                    <InfoHint text="Skriv nøyaktig teksten som skal vises. Denne låses i prompten uten omskriving." />
+                  </span>
+                  <textarea
+                    value={overlayText}
+                    onChange={(event) => setOverlayText(event.target.value)}
+                    className="mt-1 min-h-20 w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-3 py-2 text-sm outline-none focus:border-zinc-300"
+                    placeholder="Skriv nøyaktig tekst som skal vises."
+                  />
+                </label>
+
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <label className="block text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">
+                    <span className="mb-1 flex items-center gap-2">
+                      Språk
+                      <InfoHint text="Språkvalg styrer tekstregel i prompten. Norsk er standard for denne arbeidsflaten." />
+                    </span>
+                    <select
+                      value={overlayLanguage}
+                      onChange={(event) => setOverlayLanguage(event.target.value)}
+                      className="mt-1 w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-3 py-2 text-sm normal-case"
+                    >
+                      <option value="norsk">Norsk</option>
+                      <option value="engelsk">Engelsk (kun eksplisitt)</option>
+                      <option value="blandet">Blandet (kun eksplisitt)</option>
+                    </select>
+                  </label>
+
+                  <label className="block text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">
+                    <span className="mb-1 flex items-center gap-2">
+                      Case
+                      <InfoHint text="Bestemmer om teksten beholdes som skrevet, tvinges til STORE eller små bokstaver." />
+                    </span>
+                    <select
+                      value={textCase}
+                      onChange={(event) => setTextCase(event.target.value as "behold" | "store" | "små")}
+                      className="mt-1 w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-3 py-2 text-sm normal-case"
+                    >
+                      <option value="behold">Behold som skrevet</option>
+                      <option value="store">STORE BOKSTAVER</option>
+                      <option value="små">små bokstaver</option>
+                    </select>
+                  </label>
+
+                  <label className="block text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">
+                    <span className="mb-1 flex items-center gap-2">
+                      Font-type (valgfritt)
+                      <InfoHint text="Hint til typografi i visuell rendering, for eksempel grotesk, serif eller condensed." />
+                    </span>
+                    <input
+                      value={fontHint}
+                      onChange={(event) => setFontHint(event.target.value)}
+                      className="mt-1 w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-3 py-2 text-sm normal-case outline-none focus:border-zinc-300"
+                      placeholder="Eks: Grotesk sans"
+                    />
+                  </label>
+
+                  <label className="block text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">
+                    <span className="mb-1 flex items-center gap-2">
+                      Plassering (valgfritt)
+                      <InfoHint text="Hint om hvor teksten skal ligge i rammen, f.eks. øvre venstre eller sentrert nederst." />
+                    </span>
+                    <input
+                      value={textPlacement}
+                      onChange={(event) => setTextPlacement(event.target.value)}
+                      className="mt-1 w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-3 py-2 text-sm normal-case outline-none focus:border-zinc-300"
+                      placeholder="Eks: Øvre venstre"
+                    />
+                  </label>
+                </div>
+              </div>
+            ) : (
+              <p className="mt-2 text-xs text-[rgb(var(--muted))]">
+                Utvideren vil legge inn: «Ingen tekst i bildet/videoen.»
+              </p>
+            )}
+          </div>
+
+          <div className="rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/65 p-3">
+            <div className="mb-2 flex items-center gap-2">
+              <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">Referanse og first/last</p>
+              <InfoHint text="Her får du logisk anbefaling basert på caset ditt. Du kan aktivere låsene direkte i prompten." />
+            </div>
+
+            <article className="rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/70 p-3">
+              <div className="flex items-center justify-between gap-2">
+                <p className="text-sm font-semibold">Referansebilde</p>
+                <span className={`rounded-full border px-2 py-0.5 text-[11px] font-semibold uppercase tracking-[0.1em] ${guidanceBadgeClass(guidance.reference.level)}`}>
+                  {guidance.reference.title}
                 </span>
-                <select
-                  value={overlayLanguage}
-                  onChange={(event) => setOverlayLanguage(event.target.value)}
-                  className="mt-1 w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-3 py-2 text-sm normal-case"
-                >
-                  <option value="norsk">Norsk</option>
-                  <option value="engelsk">Engelsk (kun eksplisitt)</option>
-                  <option value="blandet">Blandet (kun eksplisitt)</option>
-                </select>
-              </label>
+              </div>
+              <p className="mt-2 text-xs text-[rgb(var(--muted))]">{guidance.reference.reason}</p>
+              <p className="mt-1 text-xs text-[rgb(var(--muted))]">{guidance.reference.howToUse}</p>
 
-              <label className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">
-                <span className="mb-1 flex items-center gap-2">
-                  Case
-                  <InfoHint text="Bestemmer om teksten beholdes som skrevet, tvinges til STORE eller små bokstaver." />
+              <div className="mt-3 flex items-center gap-2">
+                <label className="inline-flex items-center gap-2 rounded-full border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/60 px-3 py-1 text-sm">
+                  <input
+                    type="checkbox"
+                    checked={useReferenceImage}
+                    onChange={(event) => setUseReferenceImage(event.target.checked)}
+                    disabled={!isVisualOutput}
+                  />
+                  Bruk referansebilde i prompten
+                </label>
+                <InfoHint text="Aktiver når produkt, logo, tekst eller karakter må være stabil mellom varianter." />
+              </div>
+
+              {useReferenceImage ? (
+                <div className="mt-3 space-y-3">
+                  <label className="block text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">
+                    <span className="mb-1 flex items-center gap-2">
+                      Hva skal låses?
+                      <InfoHint text="Velg hva referansen primært skal kontrollere: identitet/logo, geometri eller komposisjon." />
+                    </span>
+                    <select
+                      value={referenceIntent}
+                      onChange={(event) => setReferenceIntent(event.target.value as "identitet-logo" | "produktgeometri" | "komposisjon-stil" | "annet")}
+                      className="mt-1 w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-3 py-2 text-sm normal-case"
+                    >
+                      <option value="identitet-logo">Identitet / logo</option>
+                      <option value="produktgeometri">Produktgeometri</option>
+                      <option value="komposisjon-stil">Komposisjon / stilretning</option>
+                      <option value="annet">Annet</option>
+                    </select>
+                  </label>
+
+                  <label className="block text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">
+                    <span className="mb-1 flex items-center gap-2">
+                      Referansenotat (valgfritt)
+                      <InfoHint text="Skriv kort hva som må bevares fra referansen, f.eks. etikettplassering eller proporsjoner." />
+                    </span>
+                    <textarea
+                      value={referenceNotes}
+                      onChange={(event) => setReferenceNotes(event.target.value)}
+                      className="mt-1 min-h-20 w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-3 py-2 text-sm normal-case outline-none focus:border-zinc-300"
+                      placeholder="Eks: Behold etikett, logo-placering og proporsjoner."
+                    />
+                  </label>
+                </div>
+              ) : null}
+            </article>
+
+            <article className="mt-3 rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/70 p-3">
+              <div className="flex items-center justify-between gap-2">
+                <p className="text-sm font-semibold">First / Last (video)</p>
+                <span className={`rounded-full border px-2 py-0.5 text-[11px] font-semibold uppercase tracking-[0.1em] ${guidanceBadgeClass(guidance.firstLast.level)}`}>
+                  {guidance.firstLast.title}
                 </span>
-                <select
-                  value={textCase}
-                  onChange={(event) => setTextCase(event.target.value as "behold" | "store" | "små")}
-                  className="mt-1 w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-3 py-2 text-sm normal-case"
-                >
-                  <option value="behold">Behold som skrevet</option>
-                  <option value="store">STORE BOKSTAVER</option>
-                  <option value="små">små bokstaver</option>
-                </select>
-              </label>
+              </div>
+              <p className="mt-2 text-xs text-[rgb(var(--muted))]">{guidance.firstLast.reason}</p>
+              <p className="mt-1 text-xs text-[rgb(var(--muted))]">{guidance.firstLast.howToUse}</p>
 
-              <label className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">
-                <span className="mb-1 flex items-center gap-2">
-                  Font-type (valgfritt)
-                  <InfoHint text="Hint til typografi i visuell rendering, for eksempel grotesk, serif eller condensed." />
+              <div className="mt-3 flex items-center gap-2">
+                <label className="inline-flex items-center gap-2 rounded-full border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/60 px-3 py-1 text-sm">
+                  <input
+                    type="checkbox"
+                    checked={useFirstLast}
+                    onChange={(event) => setUseFirstLast(event.target.checked)}
+                    disabled={outputType !== "video"}
+                  />
+                  Bruk first/last-metoden
+                </label>
+                <InfoHint text="Aktiver når video skal være stabil over tid med definert start- og sluttstatus." />
+              </div>
+
+              {outputType !== "video" ? (
+                <p className="mt-2 text-xs text-[rgb(var(--muted))]">
+                  Bytt outputtype til Video for å aktivere first/last-feltene.
+                </p>
+              ) : null}
+
+              {outputType === "video" && useFirstLast ? (
+                <div className="mt-3 space-y-3">
+                  <label className="block text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">
+                    <span className="mb-1 flex items-center gap-2">
+                      First frame
+                      <InfoHint text="Beskriv nøyaktig startbilde: motiv, kamera, lys og geometri." />
+                    </span>
+                    <textarea
+                      value={firstFrame}
+                      onChange={(event) => setFirstFrame(event.target.value)}
+                      className="mt-1 min-h-20 w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-3 py-2 text-sm normal-case outline-none focus:border-zinc-300"
+                      placeholder="Beskriv startbilde: motiv, lys, kamera, geometri."
+                    />
+                  </label>
+
+                  <label className="block text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">
+                    <span className="mb-1 flex items-center gap-2">
+                      Last frame
+                      <InfoHint text="Beskriv nøyaktig sluttbilde. Dette brukes til å låse overgangsbanen i sekvensen." />
+                    </span>
+                    <textarea
+                      value={lastFrame}
+                      onChange={(event) => setLastFrame(event.target.value)}
+                      className="mt-1 min-h-20 w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-3 py-2 text-sm normal-case outline-none focus:border-zinc-300"
+                      placeholder="Beskriv sluttbilde: samme identitet, ny sluttposisjon."
+                    />
+                  </label>
+                </div>
+              ) : null}
+            </article>
+          </div>
+
+          <div className="rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/65 p-3">
+            <div className="mb-2 flex items-center gap-2">
+              <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">Kontrollnivå</p>
+              <InfoHint text="Stramhet reduserer tolkning. Konsistens låser kontinuitet mellom elementer og varianter." />
+            </div>
+            <div className="space-y-3">
+              <label className="block text-sm">
+                <span className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">
+                  <span className="flex items-center gap-2">
+                    Stramhet: {strictness}
+                    <InfoHint text="Høy stramhet gir færre tolkninger og mer eksplisitte constraints i prompten." />
+                  </span>
                 </span>
                 <input
-                  value={fontHint}
-                  onChange={(event) => setFontHint(event.target.value)}
-                  className="mt-1 w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-3 py-2 text-sm normal-case outline-none focus:border-zinc-300"
-                  placeholder="Eks: Grotesk sans"
+                  type="range"
+                  min={0}
+                  max={100}
+                  value={strictness}
+                  onChange={(event) => setStrictness(Number(event.target.value))}
+                  className="mt-2 w-full"
                 />
               </label>
 
-              <label className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">
-                <span className="mb-1 flex items-center gap-2">
-                  Plassering (valgfritt)
-                  <InfoHint text="Hint om hvor teksten skal ligge i rammen, f.eks. øvre venstre eller sentrert nederst." />
+              <label className="block text-sm">
+                <span className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">
+                  <span className="flex items-center gap-2">
+                    Konsistens: {consistency}
+                    <InfoHint text="Høy konsistens prioriterer stabilitet i identitet, geometri, lys og objektplassering." />
+                  </span>
                 </span>
                 <input
-                  value={textPlacement}
-                  onChange={(event) => setTextPlacement(event.target.value)}
-                  className="mt-1 w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-3 py-2 text-sm normal-case outline-none focus:border-zinc-300"
-                  placeholder="Eks: Øvre venstre"
+                  type="range"
+                  min={0}
+                  max={100}
+                  value={consistency}
+                  onChange={(event) => setConsistency(Number(event.target.value))}
+                  className="mt-2 w-full"
                 />
               </label>
             </div>
           </div>
-        ) : (
-          <p className="mt-2 text-xs text-[rgb(var(--muted))]">
-            Utvideren vil legge inn: «Ingen tekst i bildet/videoen.»
-          </p>
-        )}
-      </div>
 
-      <div className="mt-4 rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/50 p-3">
-        <div className="mb-2 flex items-center gap-2">
-          <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">Produksjonsvalg</p>
-          <InfoHint text="Disse valgene styrer struktur, terminologi og hvor stramt prompten bygges." />
-        </div>
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-        <label className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">
-          <span className="mb-1 flex items-center gap-2">
-            Outputtype
-            <InfoHint text="Velg om du bygger prompt for bilde, video eller tekstleveranse." />
-          </span>
-          <select
-            value={outputType}
-            onChange={(event) => setOutputType(event.target.value as PromptOutputType)}
-            className="mt-1 w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-3 py-2 text-sm"
+          <div
+            id="np-update-panel"
+            className={`rounded-2xl border p-3 lg:sticky lg:bottom-0 lg:backdrop-blur ${
+              hasDraftChanges
+                ? "border-amber-300/45 bg-[rgba(120,85,30,0.18)]"
+                : "border-[rgb(var(--border))] bg-[rgb(var(--bg))]/72"
+            }`}
           >
-            {outputTypeOptions.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
-        </label>
-
-        <label className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">
-          <span className="mb-1 flex items-center gap-2">
-            Domene
-            <InfoHint text="Domene styrer ordvalg, kontrollpunkter og fagterminologi i prompten." />
-          </span>
-          <select
-            value={domain}
-            onChange={(event) => setDomain(event.target.value as PromptDomain)}
-            className="mt-1 w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-3 py-2 text-sm"
-          >
-            {domainOptions.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
-        </label>
-
-        <label className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">
-          <span className="mb-1 flex items-center gap-2">
-            Stil
-            <InfoHint text="Stil justerer tone og estetisk retning uten å endre den tekniske strukturen." />
-          </span>
-          <select
-            value={style}
-            onChange={(event) => setStyle(event.target.value as PromptStyle)}
-            className="mt-1 w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-3 py-2 text-sm"
-          >
-            {styleOptions.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
-        </label>
-
-        <label className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">
-          <span className="mb-1 flex items-center gap-2">
-            Lengde
-            <InfoHint text="Kort gir raskere, enklere prompt. Lang gir mer detaljert produksjonskontroll." />
-          </span>
-          <select
-            value={length}
-            onChange={(event) => setLength(event.target.value as PromptLength)}
-            className="mt-1 w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-3 py-2 text-sm"
-          >
-            {lengthOptions.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
-        </label>
-
-        <label className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">
-          <span className="mb-1 flex items-center gap-2">
-            Mal (valgfritt)
-            <InfoHint text="Velg en mal for ferdig rammestruktur. Automatisk velger best match ut fra outputtype og domene." />
-          </span>
-          <select
-            value={templateId}
-            onChange={(event) => setTemplateId(event.target.value)}
-            className="mt-1 w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-3 py-2 text-sm"
-          >
-            <option value="">Automatisk</option>
-            {templateOptions.map((template) => (
-              <option key={template.id} value={template.id}>
-                {template.title}
-              </option>
-            ))}
-          </select>
-        </label>
-        </div>
-      </div>
-
-      <div className="mt-4 rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/50 p-3">
-        <div className="mb-2 flex items-center gap-2">
-          <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">Referanse og first/last</p>
-          <InfoHint text="Her får du logisk anbefaling basert på caset ditt. Du kan aktivere låsene direkte i prompten." />
-        </div>
-
-        <div className="grid gap-3 lg:grid-cols-2">
-          <article className="rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/70 p-3">
-            <div className="flex items-center justify-between gap-2">
-              <p className="text-sm font-semibold">Referansebilde</p>
-              <span className={`rounded-full border px-2 py-0.5 text-[11px] font-semibold uppercase tracking-[0.1em] ${guidanceBadgeClass(guidance.reference.level)}`}>
-                {guidance.reference.title}
-              </span>
-            </div>
-            <p className="mt-2 text-xs text-[rgb(var(--muted))]">{guidance.reference.reason}</p>
-            <p className="mt-1 text-xs text-[rgb(var(--muted))]">{guidance.reference.howToUse}</p>
-
-            <div className="mt-3 flex items-center gap-2">
-              <label className="inline-flex items-center gap-2 rounded-full border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/60 px-3 py-1 text-sm">
-                <input
-                  type="checkbox"
-                  checked={useReferenceImage}
-                  onChange={(event) => setUseReferenceImage(event.target.checked)}
-                  disabled={!isVisualOutput}
-                />
-                Bruk referansebilde i prompten
-              </label>
-              <InfoHint text="Aktiver når produkt, logo, tekst eller karakter må være stabil mellom varianter." />
-            </div>
-
-            {useReferenceImage ? (
-              <div className="mt-3 space-y-3">
-                <label className="block text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">
-                  <span className="mb-1 flex items-center gap-2">
-                    Hva skal låses?
-                    <InfoHint text="Velg hva referansen primært skal kontrollere: identitet/logo, geometri eller komposisjon." />
-                  </span>
-                  <select
-                    value={referenceIntent}
-                    onChange={(event) => setReferenceIntent(event.target.value as "identitet-logo" | "produktgeometri" | "komposisjon-stil" | "annet")}
-                    className="mt-1 w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-3 py-2 text-sm normal-case"
-                  >
-                    <option value="identitet-logo">Identitet / logo</option>
-                    <option value="produktgeometri">Produktgeometri</option>
-                    <option value="komposisjon-stil">Komposisjon / stilretning</option>
-                    <option value="annet">Annet</option>
-                  </select>
+            <div className="space-y-2 text-sm">
+              <div className="inline-flex items-center gap-2">
+                <label className="inline-flex items-center gap-2 rounded-full border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/60 px-3 py-1">
+                  <input type="checkbox" checked={lockRules} onChange={(event) => setLockRules(event.target.checked)} />
+                  Regellås
                 </label>
-                <label className="block text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">
-                  <span className="mb-1 flex items-center gap-2">
-                    Referansenotat (valgfritt)
-                    <InfoHint text="Skriv kort hva som må bevares fra referansen, f.eks. etikettplassering eller proporsjoner." />
-                  </span>
-                  <textarea
-                    value={referenceNotes}
-                    onChange={(event) => setReferenceNotes(event.target.value)}
-                    className="mt-1 min-h-20 w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-3 py-2 text-sm normal-case outline-none focus:border-zinc-300"
-                    placeholder="Eks: Behold etikett, logo-placering og proporsjoner."
-                  />
-                </label>
+                <InfoHint text="Når aktiv vil prompten prioritere regelmotoren sterkere, med tydeligere kontroll- og negativblokker." />
               </div>
-            ) : null}
-          </article>
 
-          <article className="rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/70 p-3">
-            <div className="flex items-center justify-between gap-2">
-              <p className="text-sm font-semibold">First / Last (video)</p>
-              <span className={`rounded-full border px-2 py-0.5 text-[11px] font-semibold uppercase tracking-[0.1em] ${guidanceBadgeClass(guidance.firstLast.level)}`}>
-                {guidance.firstLast.title}
-              </span>
-            </div>
-            <p className="mt-2 text-xs text-[rgb(var(--muted))]">{guidance.firstLast.reason}</p>
-            <p className="mt-1 text-xs text-[rgb(var(--muted))]">{guidance.firstLast.howToUse}</p>
-
-            <div className="mt-3 flex items-center gap-2">
-              <label className="inline-flex items-center gap-2 rounded-full border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/60 px-3 py-1 text-sm">
-                <input
-                  type="checkbox"
-                  checked={useFirstLast}
-                  onChange={(event) => setUseFirstLast(event.target.checked)}
-                  disabled={outputType !== "video"}
+              <div className="inline-flex items-center gap-2">
+                <label className="inline-flex items-center gap-2 rounded-full border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/60 px-3 py-1">
+                  <input type="checkbox" checked={jsonMode} onChange={(event) => setJsonMode(event.target.checked)} />
+                  JSON-format
+                </label>
+                <InfoHint
+                  align="right"
+                  text="JSON-format gir samme innhold i maskinlesbar struktur. Nyttig når prompten skal brukes i automatisering eller scripts."
                 />
-                Bruk first/last-metoden
-              </label>
-              <InfoHint text="Aktiver når video skal være stabil over tid med definert start- og sluttstatus." />
+              </div>
             </div>
 
-            {outputType !== "video" ? (
+            <div className="mt-3">
+              <button
+                id={updateButtonId}
+                type="button"
+                onClick={() => setActiveRequest(draftRequest)}
+                className="inline-flex w-full items-center justify-center rounded-xl border border-amber-200/45 bg-amber-300/16 px-5 py-2.5 text-sm font-semibold text-zinc-100 shadow-[0_10px_24px_rgba(0,0,0,0.25)] transition hover:bg-amber-300/25 disabled:cursor-not-allowed disabled:opacity-50"
+                disabled={!hasDraftChanges}
+              >
+                Oppdater prompt nå
+              </button>
               <p className="mt-2 text-xs text-[rgb(var(--muted))]">
-                Bytt outputtype til Video for å aktivere first/last-feltene.
+                {hasDraftChanges
+                  ? "Du har endringer som ikke er aktivert ennå."
+                  : "Resultatet er oppdatert med gjeldende valg."}
               </p>
-            ) : null}
+            </div>
+          </div>
+        </aside>
 
-            {outputType === "video" && useFirstLast ? (
-              <div className="mt-3 grid gap-3">
-                <label className="block text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">
-                  <span className="mb-1 flex items-center gap-2">
-                    First frame
-                    <InfoHint text="Beskriv nøyaktig startbilde: motiv, kamera, lys og geometri." />
-                  </span>
-                  <textarea
-                    value={firstFrame}
-                    onChange={(event) => setFirstFrame(event.target.value)}
-                    className="mt-1 min-h-20 w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-3 py-2 text-sm normal-case outline-none focus:border-zinc-300"
-                    placeholder="Beskriv startbilde: motiv, lys, kamera, geometri."
-                  />
-                </label>
-                <label className="block text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">
-                  <span className="mb-1 flex items-center gap-2">
-                    Last frame
-                    <InfoHint text="Beskriv nøyaktig sluttbilde. Dette brukes til å låse overgangsbanen i sekvensen." />
-                  </span>
-                  <textarea
-                    value={lastFrame}
-                    onChange={(event) => setLastFrame(event.target.value)}
-                    className="mt-1 min-h-20 w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-3 py-2 text-sm normal-case outline-none focus:border-zinc-300"
-                    placeholder="Beskriv sluttbilde: samme identitet, ny sluttposisjon."
-                  />
-                </label>
-              </div>
-            ) : null}
-          </article>
+        <div className="space-y-3 lg:col-span-7 xl:col-span-8 2xl:col-span-9">
+          <div className="rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/65 p-3">
+            <div className="flex flex-wrap items-center gap-2 text-xs">
+              <span className="rounded-full border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/60 px-2 py-1 uppercase tracking-[0.12em] text-[rgb(var(--muted))]">
+                {outputTypeOptions.find((option) => option.value === outputType)?.label}
+              </span>
+              <span className="rounded-full border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/60 px-2 py-1 uppercase tracking-[0.12em] text-[rgb(var(--muted))]">
+                {domainOptions.find((option) => option.value === domain)?.label}
+              </span>
+              <span className="rounded-full border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/60 px-2 py-1 uppercase tracking-[0.12em] text-[rgb(var(--muted))]">
+                {styleOptions.find((option) => option.value === style)?.label}
+              </span>
+              <span className="rounded-full border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/60 px-2 py-1 uppercase tracking-[0.12em] text-[rgb(var(--muted))]">
+                {lengthOptions.find((option) => option.value === length)?.label}
+              </span>
+            </div>
+          </div>
+
+          <div className="rounded-2xl border border-zinc-300/30 bg-gradient-to-br from-zinc-500/20 via-zinc-500/5 to-amber-400/12 p-4">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <p className="text-sm font-semibold">Generert prompt</p>
+              <CopyTextButton value={result.prompt} label="Kopier prompt" />
+            </div>
+            <pre className="mt-3 max-h-[36rem] overflow-auto whitespace-pre-wrap rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/70 p-3 text-sm text-[rgb(var(--fg))]/90">
+              {result.prompt}
+            </pre>
+          </div>
+
+          <div className="grid gap-3 lg:grid-cols-2">
+            <article className="rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/65 p-3">
+              <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">Regler brukt</p>
+              <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-[rgb(var(--fg))]/85">
+                {result.usedRules.map((rule) => (
+                  <li key={rule.id}>
+                    <p>{rule.name}</p>
+                    <p className="mt-0.5 text-xs text-[rgb(var(--muted))]">{rule.description}</p>
+                  </li>
+                ))}
+              </ul>
+            </article>
+
+            <article className="rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/65 p-3">
+              <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">Termer injisert</p>
+              <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-[rgb(var(--fg))]/85">
+                {result.usedTerms.map((term) => (
+                  <li key={term.slug}>
+                    <p>{term.term_no}</p>
+                    <p className="mt-0.5 text-xs text-[rgb(var(--muted))]">{term.promptImpact}</p>
+                  </li>
+                ))}
+              </ul>
+            </article>
+          </div>
         </div>
-      </div>
-
-      <div className="mt-4 rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/50 p-3">
-        <div className="mb-2 flex items-center gap-2">
-          <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">Kontrollnivå</p>
-          <InfoHint text="Stramhet reduserer tolkning. Konsistens låser kontinuitet mellom elementer og varianter." />
-        </div>
-        <div className="grid gap-3 md:grid-cols-2">
-        <label className="text-sm">
-          <span className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">
-            <span className="flex items-center gap-2">
-              Stramhet: {strictness}
-              <InfoHint text="Høy stramhet gir færre tolkninger og mer eksplisitte constraints i prompten." />
-            </span>
-          </span>
-          <input
-            type="range"
-            min={0}
-            max={100}
-            value={strictness}
-            onChange={(event) => setStrictness(Number(event.target.value))}
-            className="mt-2 w-full"
-          />
-        </label>
-
-        <label className="text-sm">
-          <span className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">
-            <span className="flex items-center gap-2">
-              Konsistens: {consistency}
-              <InfoHint text="Høy konsistens prioriterer stabilitet i identitet, geometri, lys og objektplassering." />
-            </span>
-          </span>
-          <input
-            type="range"
-            min={0}
-            max={100}
-            value={consistency}
-            onChange={(event) => setConsistency(Number(event.target.value))}
-            className="mt-2 w-full"
-          />
-        </label>
-        </div>
-      </div>
-
-      <div className="mt-4 flex flex-wrap gap-2 text-sm">
-        <div className="inline-flex items-center gap-2">
-          <label className="inline-flex items-center gap-2 rounded-full border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/60 px-3 py-1">
-            <input type="checkbox" checked={lockRules} onChange={(event) => setLockRules(event.target.checked)} />
-            Regellås (følg Norsk Prompting-reglene)
-          </label>
-          <InfoHint text="Når aktiv vil prompten prioritere regelmotoren sterkere, med tydeligere kontroll- og negativblokker." />
-        </div>
-        <div className="inline-flex items-center gap-2">
-          <label className="inline-flex items-center gap-2 rounded-full border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/60 px-3 py-1">
-            <input type="checkbox" checked={jsonMode} onChange={(event) => setJsonMode(event.target.checked)} />
-            JSON-format
-          </label>
-          <InfoHint
-            align="right"
-            text="JSON-format gir samme innhold i maskinlesbar struktur. Nyttig når prompten skal brukes i automatisering eller scripts."
-          />
-        </div>
-      </div>
-
-      <div className="mt-4 flex flex-wrap items-center gap-3 rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/50 p-3">
-        <div className="inline-flex items-center gap-2">
-          <button
-            type="button"
-            onClick={() => setActiveRequest(draftRequest)}
-            className="inline-flex w-full items-center justify-center rounded-xl border border-amber-200/45 bg-amber-300/16 px-5 py-2.5 text-sm font-semibold text-zinc-100 shadow-[0_10px_24px_rgba(0,0,0,0.25)] transition hover:bg-amber-300/25 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
-            disabled={!hasDraftChanges}
-          >
-            Oppdater prompt nå
-          </button>
-          <InfoHint text="Trykk denne for å aktivere alle valgene dine i den genererte prompten." />
-        </div>
-        <p className="text-xs text-[rgb(var(--muted))]">
-          {hasDraftChanges
-            ? "Du har endringer som ikke er aktivert ennå."
-            : "Resultatet er oppdatert med gjeldende valg."}
-        </p>
-      </div>
-
-      <div className="mt-5 rounded-2xl border border-zinc-300/30 bg-gradient-to-br from-zinc-500/20 via-zinc-500/5 to-amber-400/12 p-4">
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          <p className="text-sm font-semibold">Generert prompt</p>
-          <CopyTextButton value={result.prompt} label="Kopier prompt" />
-        </div>
-        <pre className="mt-3 max-h-[28rem] overflow-auto whitespace-pre-wrap rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/70 p-3 text-sm text-[rgb(var(--fg))]/90">{result.prompt}</pre>
-      </div>
-
-      <div className="mt-4 grid gap-3 lg:grid-cols-2">
-        <article className="rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/65 p-3">
-          <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">Regler brukt</p>
-          <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-[rgb(var(--fg))]/85">
-            {result.usedRules.map((rule) => (
-              <li key={rule.id}>
-                <p>{rule.name}</p>
-                <p className="mt-0.5 text-xs text-[rgb(var(--muted))]">{rule.description}</p>
-              </li>
-            ))}
-          </ul>
-        </article>
-
-        <article className="rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/65 p-3">
-          <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">Termer injisert</p>
-          <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-[rgb(var(--fg))]/85">
-            {result.usedTerms.map((term) => (
-              <li key={term.slug}>
-                <p>{term.term_no}</p>
-                <p className="mt-0.5 text-xs text-[rgb(var(--muted))]">{term.promptImpact}</p>
-              </li>
-            ))}
-          </ul>
-        </article>
       </div>
     </section>
   );

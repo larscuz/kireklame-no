@@ -141,7 +141,10 @@ export default async function NorskPromptingOrdforradPage({ searchParams }: Prop
                           className="rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/70 px-3 py-2 hover:border-zinc-300/35 hover:bg-zinc-300/10"
                         >
                           <p className="text-sm font-semibold">{term.term_no}</p>
-                          <p className="mt-1 text-xs text-[rgb(var(--muted))]">{term.term_en}</p>
+                          <p className="mt-1 text-xs text-[rgb(var(--muted))]">
+                            {term.promptImpact || term.definition_no || term.term_en}
+                          </p>
+                          <p className="mt-1 text-[11px] text-[rgb(var(--muted))]/80">{term.term_en}</p>
                         </Link>
                       ))}
                   </div>
@@ -164,7 +167,10 @@ export default async function NorskPromptingOrdforradPage({ searchParams }: Prop
                         className="rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/70 px-3 py-2 hover:border-zinc-300/35 hover:bg-zinc-300/10"
                       >
                         <p className="text-sm font-semibold">{term.term_no}</p>
-                        <p className="mt-1 text-xs text-[rgb(var(--muted))]">{term.term_en}</p>
+                        <p className="mt-1 text-xs text-[rgb(var(--muted))]">
+                          {term.promptImpact || term.definition_no || term.term_en}
+                        </p>
+                        <p className="mt-1 text-[11px] text-[rgb(var(--muted))]/80">{term.term_en}</p>
                       </Link>
                     ))}
                   </div>
