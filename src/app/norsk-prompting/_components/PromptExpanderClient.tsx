@@ -1,10 +1,15 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { promptTemplates } from "@/data/norskPrompting/runtime";
 import type { PromptLength, PromptOutputType, PromptStyle, PromptDomain } from "@/data/norskPrompting/types";
-import { buildPrompt, type BuildPromptInput } from "@/lib/norsk-prompting/builder";
+import {
+  buildPrompt,
+  getPromptGuidance,
+  type BuildPromptInput,
+  type GuidanceLevel,
+} from "@/lib/norsk-prompting/builder";
 import { domainOptions, lengthOptions, outputTypeOptions, styleOptions } from "@/lib/norsk-prompting/constants";
 import CopyTextButton from "./CopyTextButton";
 import InfoHint from "./InfoHint";
@@ -34,6 +39,28 @@ function toBool(value: string | null, fallback = false): boolean {
   return value === "1" || value === "true" || value === "ja";
 }
 
+function toReferenceIntent(
+  value: string | null
+): "identitet-logo" | "produktgeometri" | "komposisjon-stil" | "annet" {
+  if (value === "identitet-logo" || value === "produktgeometri" || value === "komposisjon-stil" || value === "annet") {
+    return value;
+  }
+  return "identitet-logo";
+}
+
+function guidanceBadgeClass(level: GuidanceLevel): string {
+  if (level === "anbefalt") {
+    return "border-emerald-300/40 bg-emerald-300/15 text-emerald-100";
+  }
+  if (level === "valgfritt") {
+    return "border-amber-300/40 bg-amber-300/15 text-amber-100";
+  }
+  if (level === "ikke_nodvendig") {
+    return "border-zinc-300/35 bg-zinc-300/10 text-zinc-100";
+  }
+  return "border-[rgb(var(--border))] bg-[rgb(var(--bg))]/60 text-[rgb(var(--muted))]";
+}
+
 function sameRequest(a: BuildPromptInput, b: BuildPromptInput): boolean {
   return (
     a.input === b.input &&
@@ -51,7 +78,13 @@ function sameRequest(a: BuildPromptInput, b: BuildPromptInput): boolean {
     (a.overlayLanguage || "") === (b.overlayLanguage || "") &&
     (a.textCase || "behold") === (b.textCase || "behold") &&
     (a.fontHint || "") === (b.fontHint || "") &&
-    (a.textPlacement || "") === (b.textPlacement || "")
+    (a.textPlacement || "") === (b.textPlacement || "") &&
+    Boolean(a.useReferenceImage) === Boolean(b.useReferenceImage) &&
+    (a.referenceIntent || "identitet-logo") === (b.referenceIntent || "identitet-logo") &&
+    (a.referenceNotes || "") === (b.referenceNotes || "") &&
+    Boolean(a.useFirstLast) === Boolean(b.useFirstLast) &&
+    (a.firstFrame || "") === (b.firstFrame || "") &&
+    (a.lastFrame || "") === (b.lastFrame || "")
   );
 }
 
@@ -81,6 +114,16 @@ export default function PromptExpanderClient() {
   });
   const [fontHint, setFontHint] = useState(searchParams.get("fontHint") || "");
   const [textPlacement, setTextPlacement] = useState(searchParams.get("textPlacement") || "");
+  const [useReferenceImage, setUseReferenceImage] = useState<boolean>(
+    toBool(searchParams.get("useReferenceImage"), false)
+  );
+  const [referenceIntent, setReferenceIntent] = useState<"identitet-logo" | "produktgeometri" | "komposisjon-stil" | "annet">(
+    toReferenceIntent(searchParams.get("referenceIntent"))
+  );
+  const [referenceNotes, setReferenceNotes] = useState(searchParams.get("referenceNotes") || "");
+  const [useFirstLast, setUseFirstLast] = useState<boolean>(toBool(searchParams.get("useFirstLast"), false));
+  const [firstFrame, setFirstFrame] = useState(searchParams.get("firstFrame") || "");
+  const [lastFrame, setLastFrame] = useState(searchParams.get("lastFrame") || "");
 
   const draftRequest = useMemo<BuildPromptInput>(
     () => ({
@@ -100,6 +143,12 @@ export default function PromptExpanderClient() {
       textCase,
       fontHint,
       textPlacement,
+      useReferenceImage,
+      referenceIntent,
+      referenceNotes,
+      useFirstLast,
+      firstFrame,
+      lastFrame,
     }),
     [
       input,
@@ -118,11 +167,18 @@ export default function PromptExpanderClient() {
       textCase,
       fontHint,
       textPlacement,
+      useReferenceImage,
+      referenceIntent,
+      referenceNotes,
+      useFirstLast,
+      firstFrame,
+      lastFrame,
     ]
   );
 
   const [activeRequest, setActiveRequest] = useState<BuildPromptInput>(draftRequest);
   const result = useMemo(() => buildPrompt(activeRequest), [activeRequest]);
+  const guidance = useMemo(() => getPromptGuidance(draftRequest), [draftRequest]);
   const hasDraftChanges = !sameRequest(draftRequest, activeRequest);
 
   const templateOptions = useMemo(
@@ -130,6 +186,18 @@ export default function PromptExpanderClient() {
     [outputType]
   );
   const isVisualOutput = outputType === "image" || outputType === "video";
+
+  useEffect(() => {
+    if (outputType !== "video" && useFirstLast) {
+      setUseFirstLast(false);
+    }
+  }, [outputType, useFirstLast]);
+
+  useEffect(() => {
+    if (outputType === "text" && useReferenceImage) {
+      setUseReferenceImage(false);
+    }
+  }, [outputType, useReferenceImage]);
 
   return (
     <section className="np-node-surface np-template-card rounded-3xl border border-[rgb(var(--border))] bg-[rgb(var(--card))]/92 p-4 pt-7 shadow-[0_18px_60px_rgba(2,6,23,0.3)] sm:p-6">
@@ -167,7 +235,10 @@ export default function PromptExpanderClient() {
 
         <div className="mt-2 grid gap-3 md:grid-cols-2">
           <label className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">
-            Skal visuell leveranse inneholde tekst?
+            <span className="mb-1 flex items-center gap-2">
+              Skal visuell leveranse inneholde tekst?
+              <InfoHint text="Sett til Ja hvis bilde/video skal ha synlig tekst. Sett til Nei for å tvinge tekstfri leveranse." />
+            </span>
             <select
               value={textInVisual ? "ja" : "nei"}
               onChange={(event) => setTextInVisual(event.target.value === "ja")}
@@ -188,7 +259,10 @@ export default function PromptExpanderClient() {
         {textInVisual ? (
           <div className="mt-3 space-y-3">
             <label className="block text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">
-              Eksakt tekst (påkrevd)
+              <span className="mb-1 flex items-center gap-2">
+                Eksakt tekst (påkrevd)
+                <InfoHint text="Skriv nøyaktig teksten som skal vises. Denne låses i prompten uten omskriving." />
+              </span>
             </label>
             <textarea
               value={overlayText}
@@ -199,7 +273,10 @@ export default function PromptExpanderClient() {
 
             <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
               <label className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">
-                Språk
+                <span className="mb-1 flex items-center gap-2">
+                  Språk
+                  <InfoHint text="Språkvalg styrer tekstregel i prompten. Norsk er standard for denne arbeidsflaten." />
+                </span>
                 <select
                   value={overlayLanguage}
                   onChange={(event) => setOverlayLanguage(event.target.value)}
@@ -212,7 +289,10 @@ export default function PromptExpanderClient() {
               </label>
 
               <label className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">
-                Case
+                <span className="mb-1 flex items-center gap-2">
+                  Case
+                  <InfoHint text="Bestemmer om teksten beholdes som skrevet, tvinges til STORE eller små bokstaver." />
+                </span>
                 <select
                   value={textCase}
                   onChange={(event) => setTextCase(event.target.value as "behold" | "store" | "små")}
@@ -225,7 +305,10 @@ export default function PromptExpanderClient() {
               </label>
 
               <label className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">
-                Font-type (valgfritt)
+                <span className="mb-1 flex items-center gap-2">
+                  Font-type (valgfritt)
+                  <InfoHint text="Hint til typografi i visuell rendering, for eksempel grotesk, serif eller condensed." />
+                </span>
                 <input
                   value={fontHint}
                   onChange={(event) => setFontHint(event.target.value)}
@@ -235,7 +318,10 @@ export default function PromptExpanderClient() {
               </label>
 
               <label className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">
-                Plassering (valgfritt)
+                <span className="mb-1 flex items-center gap-2">
+                  Plassering (valgfritt)
+                  <InfoHint text="Hint om hvor teksten skal ligge i rammen, f.eks. øvre venstre eller sentrert nederst." />
+                </span>
                 <input
                   value={textPlacement}
                   onChange={(event) => setTextPlacement(event.target.value)}
@@ -259,7 +345,10 @@ export default function PromptExpanderClient() {
         </div>
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         <label className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">
-          Outputtype
+          <span className="mb-1 flex items-center gap-2">
+            Outputtype
+            <InfoHint text="Velg om du bygger prompt for bilde, video eller tekstleveranse." />
+          </span>
           <select
             value={outputType}
             onChange={(event) => setOutputType(event.target.value as PromptOutputType)}
@@ -274,7 +363,10 @@ export default function PromptExpanderClient() {
         </label>
 
         <label className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">
-          Domene
+          <span className="mb-1 flex items-center gap-2">
+            Domene
+            <InfoHint text="Domene styrer ordvalg, kontrollpunkter og fagterminologi i prompten." />
+          </span>
           <select
             value={domain}
             onChange={(event) => setDomain(event.target.value as PromptDomain)}
@@ -289,7 +381,10 @@ export default function PromptExpanderClient() {
         </label>
 
         <label className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">
-          Stil
+          <span className="mb-1 flex items-center gap-2">
+            Stil
+            <InfoHint text="Stil justerer tone og estetisk retning uten å endre den tekniske strukturen." />
+          </span>
           <select
             value={style}
             onChange={(event) => setStyle(event.target.value as PromptStyle)}
@@ -304,7 +399,10 @@ export default function PromptExpanderClient() {
         </label>
 
         <label className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">
-          Lengde
+          <span className="mb-1 flex items-center gap-2">
+            Lengde
+            <InfoHint text="Kort gir raskere, enklere prompt. Lang gir mer detaljert produksjonskontroll." />
+          </span>
           <select
             value={length}
             onChange={(event) => setLength(event.target.value as PromptLength)}
@@ -319,7 +417,10 @@ export default function PromptExpanderClient() {
         </label>
 
         <label className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">
-          Mal (valgfritt)
+          <span className="mb-1 flex items-center gap-2">
+            Mal (valgfritt)
+            <InfoHint text="Velg en mal for ferdig rammestruktur. Automatisk velger best match ut fra outputtype og domene." />
+          </span>
           <select
             value={templateId}
             onChange={(event) => setTemplateId(event.target.value)}
@@ -338,13 +439,141 @@ export default function PromptExpanderClient() {
 
       <div className="mt-4 rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/50 p-3">
         <div className="mb-2 flex items-center gap-2">
+          <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">Referanse og first/last</p>
+          <InfoHint text="Her får du logisk anbefaling basert på caset ditt. Du kan aktivere låsene direkte i prompten." />
+        </div>
+
+        <div className="grid gap-3 lg:grid-cols-2">
+          <article className="rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/70 p-3">
+            <div className="flex items-center justify-between gap-2">
+              <p className="text-sm font-semibold">Referansebilde</p>
+              <span className={`rounded-full border px-2 py-0.5 text-[11px] font-semibold uppercase tracking-[0.1em] ${guidanceBadgeClass(guidance.reference.level)}`}>
+                {guidance.reference.title}
+              </span>
+            </div>
+            <p className="mt-2 text-xs text-[rgb(var(--muted))]">{guidance.reference.reason}</p>
+            <p className="mt-1 text-xs text-[rgb(var(--muted))]">{guidance.reference.howToUse}</p>
+
+            <div className="mt-3 flex items-center gap-2">
+              <label className="inline-flex items-center gap-2 rounded-full border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/60 px-3 py-1 text-sm">
+                <input
+                  type="checkbox"
+                  checked={useReferenceImage}
+                  onChange={(event) => setUseReferenceImage(event.target.checked)}
+                  disabled={!isVisualOutput}
+                />
+                Bruk referansebilde i prompten
+              </label>
+              <InfoHint text="Aktiver når produkt, logo, tekst eller karakter må være stabil mellom varianter." />
+            </div>
+
+            {useReferenceImage ? (
+              <div className="mt-3 space-y-3">
+                <label className="block text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">
+                  <span className="mb-1 flex items-center gap-2">
+                    Hva skal låses?
+                    <InfoHint text="Velg hva referansen primært skal kontrollere: identitet/logo, geometri eller komposisjon." />
+                  </span>
+                  <select
+                    value={referenceIntent}
+                    onChange={(event) => setReferenceIntent(event.target.value as "identitet-logo" | "produktgeometri" | "komposisjon-stil" | "annet")}
+                    className="mt-1 w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-3 py-2 text-sm normal-case"
+                  >
+                    <option value="identitet-logo">Identitet / logo</option>
+                    <option value="produktgeometri">Produktgeometri</option>
+                    <option value="komposisjon-stil">Komposisjon / stilretning</option>
+                    <option value="annet">Annet</option>
+                  </select>
+                </label>
+                <label className="block text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">
+                  <span className="mb-1 flex items-center gap-2">
+                    Referansenotat (valgfritt)
+                    <InfoHint text="Skriv kort hva som må bevares fra referansen, f.eks. etikettplassering eller proporsjoner." />
+                  </span>
+                  <textarea
+                    value={referenceNotes}
+                    onChange={(event) => setReferenceNotes(event.target.value)}
+                    className="mt-1 min-h-20 w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-3 py-2 text-sm normal-case outline-none focus:border-zinc-300"
+                    placeholder="Eks: Behold etikett, logo-placering og proporsjoner."
+                  />
+                </label>
+              </div>
+            ) : null}
+          </article>
+
+          <article className="rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/70 p-3">
+            <div className="flex items-center justify-between gap-2">
+              <p className="text-sm font-semibold">First / Last (video)</p>
+              <span className={`rounded-full border px-2 py-0.5 text-[11px] font-semibold uppercase tracking-[0.1em] ${guidanceBadgeClass(guidance.firstLast.level)}`}>
+                {guidance.firstLast.title}
+              </span>
+            </div>
+            <p className="mt-2 text-xs text-[rgb(var(--muted))]">{guidance.firstLast.reason}</p>
+            <p className="mt-1 text-xs text-[rgb(var(--muted))]">{guidance.firstLast.howToUse}</p>
+
+            <div className="mt-3 flex items-center gap-2">
+              <label className="inline-flex items-center gap-2 rounded-full border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/60 px-3 py-1 text-sm">
+                <input
+                  type="checkbox"
+                  checked={useFirstLast}
+                  onChange={(event) => setUseFirstLast(event.target.checked)}
+                  disabled={outputType !== "video"}
+                />
+                Bruk first/last-metoden
+              </label>
+              <InfoHint text="Aktiver når video skal være stabil over tid med definert start- og sluttstatus." />
+            </div>
+
+            {outputType !== "video" ? (
+              <p className="mt-2 text-xs text-[rgb(var(--muted))]">
+                Bytt outputtype til Video for å aktivere first/last-feltene.
+              </p>
+            ) : null}
+
+            {outputType === "video" && useFirstLast ? (
+              <div className="mt-3 grid gap-3">
+                <label className="block text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">
+                  <span className="mb-1 flex items-center gap-2">
+                    First frame
+                    <InfoHint text="Beskriv nøyaktig startbilde: motiv, kamera, lys og geometri." />
+                  </span>
+                  <textarea
+                    value={firstFrame}
+                    onChange={(event) => setFirstFrame(event.target.value)}
+                    className="mt-1 min-h-20 w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-3 py-2 text-sm normal-case outline-none focus:border-zinc-300"
+                    placeholder="Beskriv startbilde: motiv, lys, kamera, geometri."
+                  />
+                </label>
+                <label className="block text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">
+                  <span className="mb-1 flex items-center gap-2">
+                    Last frame
+                    <InfoHint text="Beskriv nøyaktig sluttbilde. Dette brukes til å låse overgangsbanen i sekvensen." />
+                  </span>
+                  <textarea
+                    value={lastFrame}
+                    onChange={(event) => setLastFrame(event.target.value)}
+                    className="mt-1 min-h-20 w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-3 py-2 text-sm normal-case outline-none focus:border-zinc-300"
+                    placeholder="Beskriv sluttbilde: samme identitet, ny sluttposisjon."
+                  />
+                </label>
+              </div>
+            ) : null}
+          </article>
+        </div>
+      </div>
+
+      <div className="mt-4 rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/50 p-3">
+        <div className="mb-2 flex items-center gap-2">
           <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">Kontrollnivå</p>
           <InfoHint text="Stramhet reduserer tolkning. Konsistens låser kontinuitet mellom elementer og varianter." />
         </div>
         <div className="grid gap-3 md:grid-cols-2">
         <label className="text-sm">
           <span className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">
-            Stramhet: {strictness}
+            <span className="flex items-center gap-2">
+              Stramhet: {strictness}
+              <InfoHint text="Høy stramhet gir færre tolkninger og mer eksplisitte constraints i prompten." />
+            </span>
           </span>
           <input
             type="range"
@@ -358,7 +587,10 @@ export default function PromptExpanderClient() {
 
         <label className="text-sm">
           <span className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">
-            Konsistens: {consistency}
+            <span className="flex items-center gap-2">
+              Konsistens: {consistency}
+              <InfoHint text="Høy konsistens prioriterer stabilitet i identitet, geometri, lys og objektplassering." />
+            </span>
           </span>
           <input
             type="range"
@@ -373,25 +605,37 @@ export default function PromptExpanderClient() {
       </div>
 
       <div className="mt-4 flex flex-wrap gap-2 text-sm">
-        <label className="inline-flex items-center gap-2 rounded-full border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/60 px-3 py-1">
-          <input type="checkbox" checked={lockRules} onChange={(event) => setLockRules(event.target.checked)} />
-          Regellås (følg Norsk Prompting-reglene)
-        </label>
-        <label className="inline-flex items-center gap-2 rounded-full border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/60 px-3 py-1">
-          <input type="checkbox" checked={jsonMode} onChange={(event) => setJsonMode(event.target.checked)} />
-          JSON-format
-        </label>
+        <div className="inline-flex items-center gap-2">
+          <label className="inline-flex items-center gap-2 rounded-full border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/60 px-3 py-1">
+            <input type="checkbox" checked={lockRules} onChange={(event) => setLockRules(event.target.checked)} />
+            Regellås (følg Norsk Prompting-reglene)
+          </label>
+          <InfoHint text="Når aktiv vil prompten prioritere regelmotoren sterkere, med tydeligere kontroll- og negativblokker." />
+        </div>
+        <div className="inline-flex items-center gap-2">
+          <label className="inline-flex items-center gap-2 rounded-full border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/60 px-3 py-1">
+            <input type="checkbox" checked={jsonMode} onChange={(event) => setJsonMode(event.target.checked)} />
+            JSON-format
+          </label>
+          <InfoHint
+            align="right"
+            text="JSON-format gir samme innhold i maskinlesbar struktur. Nyttig når prompten skal brukes i automatisering eller scripts."
+          />
+        </div>
       </div>
 
       <div className="mt-4 flex flex-wrap items-center gap-3 rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/50 p-3">
-        <button
-          type="button"
-          onClick={() => setActiveRequest(draftRequest)}
-          className="inline-flex w-full items-center justify-center rounded-xl border border-amber-200/45 bg-amber-300/16 px-5 py-2.5 text-sm font-semibold text-zinc-100 shadow-[0_10px_24px_rgba(0,0,0,0.25)] transition hover:bg-amber-300/25 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
-          disabled={!hasDraftChanges}
-        >
-          Oppdater prompt nå
-        </button>
+        <div className="inline-flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => setActiveRequest(draftRequest)}
+            className="inline-flex w-full items-center justify-center rounded-xl border border-amber-200/45 bg-amber-300/16 px-5 py-2.5 text-sm font-semibold text-zinc-100 shadow-[0_10px_24px_rgba(0,0,0,0.25)] transition hover:bg-amber-300/25 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
+            disabled={!hasDraftChanges}
+          >
+            Oppdater prompt nå
+          </button>
+          <InfoHint text="Trykk denne for å aktivere alle valgene dine i den genererte prompten." />
+        </div>
         <p className="text-xs text-[rgb(var(--muted))]">
           {hasDraftChanges
             ? "Du har endringer som ikke er aktivert ennå."

@@ -27,6 +27,12 @@ export type BuildPromptInput = {
   textCase?: "behold" | "store" | "små";
   fontHint?: string;
   textPlacement?: string;
+  useReferenceImage?: boolean;
+  referenceIntent?: "identitet-logo" | "produktgeometri" | "komposisjon-stil" | "annet";
+  referenceNotes?: string;
+  useFirstLast?: boolean;
+  firstFrame?: string;
+  lastFrame?: string;
 };
 
 export type PromptBlock = {
@@ -42,6 +48,21 @@ export type BuildPromptResult = {
   usedTerms: GlossaryTerm[];
   negativeList: string[];
   templateId: string | null;
+  guidance: PromptGuidance;
+};
+
+export type GuidanceLevel = "anbefalt" | "valgfritt" | "ikke_nodvendig" | "ikke_relevant";
+
+export type GuidanceDecision = {
+  level: GuidanceLevel;
+  title: string;
+  reason: string;
+  howToUse: string;
+};
+
+export type PromptGuidance = {
+  reference: GuidanceDecision;
+  firstLast: GuidanceDecision;
 };
 
 const domainToGlossary: Record<PromptDomain, GlossaryDomain[]> = {
@@ -65,13 +86,15 @@ const sectionOrder: Array<{ id: string; title: string }> = [
   { id: "7", title: "Komposisjon" },
   { id: "8", title: "Stil / estetikk" },
   { id: "9", title: "Kontinuitet / konsistens" },
-  { id: "10", title: "Tekst i bilde/video" },
-  { id: "11", title: "Tekstlås (kritisk)" },
-  { id: "12", title: "Språkregel (kritisk)" },
-  { id: "13", title: "Tekstkontinuitet (video)" },
-  { id: "14", title: "Begrensninger" },
-  { id: "15", title: "Negativ prompting / unngå" },
-  { id: "16", title: "Output-spesifikasjon" },
+  { id: "10", title: "Referansebilde-strategi" },
+  { id: "11", title: "First/Last-strategi (video)" },
+  { id: "12", title: "Tekst i bilde/video" },
+  { id: "13", title: "Tekstlås (kritisk)" },
+  { id: "14", title: "Språkregel (kritisk)" },
+  { id: "15", title: "Tekstkontinuitet (video)" },
+  { id: "16", title: "Begrensninger" },
+  { id: "17", title: "Negativ prompting / unngå" },
+  { id: "18", title: "Output-spesifikasjon" },
 ];
 
 function toText(value: unknown): string {
@@ -84,6 +107,13 @@ function clamp(value: number, min: number, max: number): number {
 
 function normalizeInput(input: BuildPromptInput): BuildPromptInput {
   const language = toText(input.overlayLanguage || "norsk") || "norsk";
+  const referenceIntent =
+    input.referenceIntent === "identitet-logo" ||
+    input.referenceIntent === "produktgeometri" ||
+    input.referenceIntent === "komposisjon-stil" ||
+    input.referenceIntent === "annet"
+      ? input.referenceIntent
+      : "identitet-logo";
 
   return {
     ...input,
@@ -96,7 +126,166 @@ function normalizeInput(input: BuildPromptInput): BuildPromptInput {
     textCase: input.textCase === "store" || input.textCase === "små" ? input.textCase : "behold",
     fontHint: toText(input.fontHint),
     textPlacement: toText(input.textPlacement),
+    useReferenceImage: Boolean(input.useReferenceImage),
+    referenceIntent,
+    referenceNotes: toText(input.referenceNotes),
+    useFirstLast: Boolean(input.useFirstLast),
+    firstFrame: toText(input.firstFrame),
+    lastFrame: toText(input.lastFrame),
   };
+}
+
+function containsAny(haystack: string, needles: string[]): boolean {
+  return needles.some((needle) => haystack.includes(needle));
+}
+
+function evaluateReferenceGuidance(input: BuildPromptInput): GuidanceDecision {
+  if (input.outputType === "text") {
+    return {
+      level: "ikke_relevant",
+      title: "Ikke relevant",
+      reason: "Referansebilde brukes for visuelle leveranser, ikke ren tekst.",
+      howToUse: "Ingen tiltak nødvendig for denne outputtypen.",
+    };
+  }
+
+  const source = `${input.input} ${input.overlayText || ""}`.toLowerCase();
+  let score = 0;
+
+  if (input.textInVisual) score += 2;
+  if (input.strictness >= 65) score += 1;
+  if (input.consistency >= 65) score += 1;
+  if (input.domain === "produkt" || input.domain === "arkitektur" || input.domain === "design-system") score += 1;
+  if (containsAny(source, ["logo", "merke", "brand", "etikett", "pakning", "samme", "identisk", "produkt", "karakter", "ansikt"])) score += 2;
+
+  if (score >= 4) {
+    return {
+      level: "anbefalt",
+      title: "Anbefalt",
+      reason: "Caset krever høy stabilitet i identitet, tekst eller produktdetaljer.",
+      howToUse:
+        "Bruk ett tydelig referansebilde, lås hva som ikke skal endres, og skriv eksplisitt at geometri, logo og tekst skal bevares.",
+    };
+  }
+
+  if (score >= 2) {
+    return {
+      level: "valgfritt",
+      title: "Valgfritt, men nyttig",
+      reason: "Leveransen kan fungere uten referanse, men referanse reduserer drift.",
+      howToUse:
+        "Legg ved referanse hvis du ser variasjon i geometri, identitet eller tekst etter første test.",
+    };
+  }
+
+  return {
+    level: "ikke_nodvendig",
+    title: "Ikke nødvendig nå",
+    reason: "Dette ser ut som en utforskende oppgave uten harde låsekrav.",
+    howToUse: "Start uten referanse, og legg den til først hvis du trenger mer stabilitet.",
+  };
+}
+
+function evaluateFirstLastGuidance(input: BuildPromptInput): GuidanceDecision {
+  if (input.outputType !== "video") {
+    return {
+      level: "ikke_relevant",
+      title: "Ikke relevant",
+      reason: "First/Last-metoden brukes i video.",
+      howToUse: "Ingen tiltak nødvendig for stillbilde eller tekst.",
+    };
+  }
+
+  const source = `${input.input} ${input.overlayText || ""}`.toLowerCase();
+  let score = 0;
+
+  if (input.consistency >= 60) score += 1;
+  if (input.strictness >= 60) score += 1;
+  if (input.textInVisual) score += 1;
+  if (containsAny(source, ["overgang", "sekvens", "scene", "beveg", "løper", "fra", "til", "slutt", "start", "kamera"])) score += 1;
+  if (input.domain === "film-vfx" || input.domain === "produkt" || input.domain === "sosiale-medier") score += 1;
+
+  if (score >= 3) {
+    return {
+      level: "anbefalt",
+      title: "Anbefalt",
+      reason: "Caset har bevegelse/kontinuitetskrav som bør låses med start- og sluttramme.",
+      howToUse:
+        "Definer first frame, definer last frame, og beskriv fysisk plausibel overgang mellom dem uten nye objekter.",
+    };
+  }
+
+  if (score >= 2) {
+    return {
+      level: "valgfritt",
+      title: "Valgfritt, men nyttig",
+      reason: "Videoen kan lages uten first/last, men metoden gir ofte mer stabilt resultat.",
+      howToUse:
+        "Aktiver first/last hvis du får geometrihopp, identitetsdrift eller inkonsistent kameralogikk.",
+    };
+  }
+
+  return {
+    level: "ikke_nodvendig",
+    title: "Ikke nødvendig nå",
+    reason: "Oppgaven ser enkel ut og kan testes uten first/last først.",
+    howToUse: "Start enkelt. Legg til first/last i neste iterasjon hvis stabiliteten faller.",
+  };
+}
+
+export function getPromptGuidance(rawInput: BuildPromptInput): PromptGuidance {
+  const input = normalizeInput(rawInput);
+
+  return {
+    reference: evaluateReferenceGuidance(input),
+    firstLast: evaluateFirstLastGuidance(input),
+  };
+}
+
+function referenceStrategyBlock(input: BuildPromptInput, guidance: GuidanceDecision): string {
+  if (input.outputType === "text") {
+    return "Ikke relevant for tekstleveranse.";
+  }
+
+  if (!input.useReferenceImage) {
+    return `Anbefaling: ${guidance.title}. ${guidance.reason} ${guidance.howToUse}`;
+  }
+
+  const intentMap: Record<NonNullable<BuildPromptInput["referenceIntent"]>, string> = {
+    "identitet-logo": "Lås identitet, logo og merkeelementer.",
+    "produktgeometri": "Lås produktgeometri, materialitet og proporsjoner.",
+    "komposisjon-stil": "Lås komposisjon, utsnitt og visuell retning.",
+    annet: "Lås referansen etter spesifisert behov.",
+  };
+
+  const base = [
+    "Referansebilde: AKTIVERT.",
+    intentMap[input.referenceIntent || "identitet-logo"],
+    "Bruk referanse som fast kilde for form, geometri og nøkkeldetaljer.",
+  ];
+
+  if (input.referenceNotes) {
+    base.push(`Referansenotat: ${input.referenceNotes}.`);
+  }
+
+  return base.join(" ");
+}
+
+function firstLastStrategyBlock(input: BuildPromptInput, guidance: GuidanceDecision): string {
+  if (input.outputType !== "video") {
+    return "Ikke relevant for stillbilde/tekst.";
+  }
+
+  if (!input.useFirstLast) {
+    return `Anbefaling: ${guidance.title}. ${guidance.reason} ${guidance.howToUse}`;
+  }
+
+  return [
+    "First/Last-metode: AKTIVERT.",
+    `First frame: ${input.firstFrame || "MÅ FYLLES UT: beskriv startbilde med motiv, lys og kameraposisjon."}`,
+    `Last frame: ${input.lastFrame || "MÅ FYLLES UT: beskriv sluttbilde med samme geometri- og identitetslogikk."}`,
+    "Overgang: fysisk plausibel bevegelse mellom start og slutt, uten nye objekter eller magiske transformasjoner.",
+  ].join(" ");
 }
 
 function splitSentences(text: string): string[] {
@@ -329,6 +518,14 @@ function buildConstraintList(input: BuildPromptInput, rules: NorskPromptingRule[
     hard.push("Bruk kontinuitetslås: samme objektplassering og bevegelsesregler i hele sekvensen.");
   }
 
+  if (input.useReferenceImage) {
+    hard.push("Referansebilde er låst: ingen endring av logo, produktgeometri eller identitetsmarkører.");
+  }
+
+  if (input.outputType === "video" && input.useFirstLast) {
+    hard.push("First/Last er låst: start- og sluttramme skal være kompatible med logisk, fysisk overgang.");
+  }
+
   for (const rule of rules) {
     if (hard.length >= 8) break;
     hard.push(rule.addToPrompt);
@@ -377,6 +574,9 @@ export function buildPrompt(rawInput: BuildPromptInput): BuildPromptResult {
   const textBlock = textPresenceBlock(input);
   const textLock = textLockBlock(input);
   const textContinuity = videoTextContinuityBlock(input);
+  const guidance = getPromptGuidance(input);
+  const referenceStrategy = referenceStrategyBlock(input, guidance.reference);
+  const firstLastStrategy = firstLastStrategyBlock(input, guidance.firstLast);
   const withTextNegatives = input.textInVisual
     ? [
         ...negativeList,
@@ -385,7 +585,17 @@ export function buildPrompt(rawInput: BuildPromptInput): BuildPromptResult {
         "unngå bokstavforvrengning",
       ]
     : [...negativeList, "unngå all tekst i bilde/video"];
-  const uniqueNegativeList = Array.from(new Set(withTextNegatives)).slice(0, 14);
+  const allNegatives = [...withTextNegatives];
+
+  if (input.useReferenceImage) {
+    allNegatives.push("unngå referansedrift i produkt, logo og identitet");
+  }
+
+  if (input.outputType === "video" && input.useFirstLast) {
+    allNegatives.push("unngå brudd mellom first frame og last frame");
+  }
+
+  const uniqueNegativeList = Array.from(new Set(allNegatives)).slice(0, 14);
 
   const templateInstructions = template
     ? template.blocks.map((block) => `${block.title}: ${block.instruction}`).join(" ")
@@ -461,36 +671,46 @@ export function buildPrompt(rawInput: BuildPromptInput): BuildPromptResult {
     },
     {
       id: "10",
+      title: "Referansebilde-strategi",
+      content: referenceStrategy,
+    },
+    {
+      id: "11",
+      title: "First/Last-strategi (video)",
+      content: firstLastStrategy,
+    },
+    {
+      id: "12",
       title: "Tekst i bilde/video",
       content: textBlock,
     },
     {
-      id: "11",
+      id: "13",
       title: "Tekstlås (kritisk)",
       content: textLock,
     },
     {
-      id: "12",
+      id: "14",
       title: "Språkregel (kritisk)",
       content: languageRule,
     },
     {
-      id: "13",
+      id: "15",
       title: "Tekstkontinuitet (video)",
       content: textContinuity,
     },
     {
-      id: "14",
+      id: "16",
       title: "Begrensninger",
       content: constraints.join(" "),
     },
     {
-      id: "15",
+      id: "17",
       title: "Negativ prompting / unngå",
       content: uniqueNegativeList.join("; "),
     },
     {
-      id: "16",
+      id: "18",
       title: "Output-spesifikasjon",
       content: outputSpec(input.outputType),
     },
@@ -519,6 +739,12 @@ export function buildPrompt(rawInput: BuildPromptInput): BuildPromptResult {
           textCase: input.textCase,
           textPlacement: input.textPlacement || null,
           hasOverlayText: Boolean(input.overlayText),
+          useReferenceImage: input.useReferenceImage,
+          referenceIntent: input.referenceIntent,
+          hasReferenceNotes: Boolean(input.referenceNotes),
+          useFirstLast: input.useFirstLast,
+          hasFirstFrame: Boolean(input.firstFrame),
+          hasLastFrame: Boolean(input.lastFrame),
         },
         sections: blocks,
         terminology: usedTerms.map((term) => term.term_no),
@@ -533,6 +759,7 @@ export function buildPrompt(rawInput: BuildPromptInput): BuildPromptResult {
       usedTerms,
       negativeList: uniqueNegativeList,
       templateId: template?.id ?? null,
+      guidance,
     };
   }
 
@@ -543,5 +770,6 @@ export function buildPrompt(rawInput: BuildPromptInput): BuildPromptResult {
     usedTerms,
     negativeList: uniqueNegativeList,
     templateId: template?.id ?? null,
+    guidance,
   };
 }
