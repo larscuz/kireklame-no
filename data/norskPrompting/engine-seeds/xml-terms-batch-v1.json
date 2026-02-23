@@ -1,0 +1,235 @@
+{
+  "meta": {
+    "name": "XML term batch v1",
+    "createdAt": "2026-02-23T18:57:06.579Z",
+    "sourceFiles": [
+      "High_Impact_Prompt_Terms_100.xml",
+      "Prompt_Engine_Terms_300.xml"
+    ],
+    "minQuality": 0.55,
+    "includePlaceholderNo": false,
+    "includeExisting": false
+  },
+  "terms": [
+    {
+      "item_type": "term",
+      "slug": "dyp-fokus-film",
+      "term_no": "Dyp fokus",
+      "term_en": "Deep Focus",
+      "domain": "film",
+      "definition_no": "Bevarer detalj i alle fokusplan, skaper romlig realisme.",
+      "promptImpact": "Bevarer detalj i alle fokusplan, skaper romlig realisme. Kontrollpunkt: Kan redusere subjektseparasjon. Operativ bruk: 24mm lens, deep focus, all planes sharp, cinematic realism",
+      "examples": [
+        "24mm lens, deep focus, all planes sharp, cinematic realism"
+      ],
+      "relatedTerms": [],
+      "aliases": [],
+      "tags": [
+        "source:xml-import",
+        "source_file:high-impact-prompt-terms-100-xml",
+        "source_category:kamera",
+        "policy:text-output-only"
+      ],
+      "metadata": {
+        "source": {
+          "type": "xml",
+          "file": "High_Impact_Prompt_Terms_100.xml"
+        },
+        "import": {
+          "qualityScore": 1,
+          "placeholderNorwegian": false,
+          "categoryRaw": "Kamera"
+        },
+        "taxonomy": {
+          "domain": "film-klipp",
+          "stage": "produksjon",
+          "kanal": "web",
+          "format": "16:9",
+          "mal": "kjennskap",
+          "strenghet": "middels",
+          "brandLock": true,
+          "textLock": true,
+          "productLock": false
+        },
+        "outputPolicy": "text-only",
+        "mediaGeneration": false
+      }
+    },
+    {
+      "item_type": "term",
+      "slug": "grunn-dybdeskarphet-film",
+      "term_no": "Grunn dybdeskarphet",
+      "term_en": "Shallow Depth of Field",
+      "domain": "film",
+      "definition_no": "Reduserer bakgrunnsdetalj, øker subjektseparasjon og tredimensjonalitet.",
+      "promptImpact": "Reduserer bakgrunnsdetalj, øker subjektseparasjon og tredimensjonalitet. Kontrollpunkt: Krever definert fokuspunkt og brennvidde. Operativ bruk: 50mm lens, shallow depth of field, sharp subject, optical bokeh background",
+      "examples": [
+        "50mm lens, shallow depth of field, sharp subject, optical bokeh background"
+      ],
+      "relatedTerms": [],
+      "aliases": [],
+      "tags": [
+        "source:xml-import",
+        "source_file:high-impact-prompt-terms-100-xml",
+        "source_category:kamera",
+        "policy:text-output-only"
+      ],
+      "metadata": {
+        "source": {
+          "type": "xml",
+          "file": "High_Impact_Prompt_Terms_100.xml"
+        },
+        "import": {
+          "qualityScore": 1,
+          "placeholderNorwegian": false,
+          "categoryRaw": "Kamera"
+        },
+        "taxonomy": {
+          "domain": "film-klipp",
+          "stage": "produksjon",
+          "kanal": "web",
+          "format": "16:9",
+          "mal": "kjennskap",
+          "strenghet": "middels",
+          "brandLock": true,
+          "textLock": true,
+          "productLock": false
+        },
+        "outputPolicy": "text-only",
+        "mediaGeneration": false
+      }
+    },
+    {
+      "item_type": "term",
+      "slug": "klar-mork-kontrast-photo",
+      "term_no": "Klar–mørk kontrast",
+      "term_en": "Chiaroscuro",
+      "domain": "photo",
+      "definition_no": "Øker dramatisk kontrast og volum.",
+      "promptImpact": "Øker dramatisk kontrast og volum. Kontrollpunkt: Mister effekt uten definert lysretning. Operativ bruk: High contrast chiaroscuro lighting, controlled shadow detail",
+      "examples": [
+        "High contrast chiaroscuro lighting, controlled shadow detail"
+      ],
+      "relatedTerms": [],
+      "aliases": [],
+      "tags": [
+        "source:xml-import",
+        "source_file:high-impact-prompt-terms-100-xml",
+        "source_category:lys",
+        "policy:text-output-only"
+      ],
+      "metadata": {
+        "source": {
+          "type": "xml",
+          "file": "High_Impact_Prompt_Terms_100.xml"
+        },
+        "import": {
+          "qualityScore": 1,
+          "placeholderNorwegian": false,
+          "categoryRaw": "Lys"
+        },
+        "taxonomy": {
+          "domain": "foto-lys",
+          "stage": "produksjon",
+          "kanal": "web",
+          "format": "16:9",
+          "mal": "kjennskap",
+          "strenghet": "middels",
+          "brandLock": true,
+          "textLock": true,
+          "productLock": false
+        },
+        "outputPolicy": "text-only",
+        "mediaGeneration": false
+      }
+    },
+    {
+      "item_type": "term",
+      "slug": "lavmaelt-lys-photo",
+      "term_no": "Lavmælt lys",
+      "term_en": "Low Key Lighting",
+      "domain": "photo",
+      "definition_no": "Dominerende skygger, dramatisk stemning.",
+      "promptImpact": "Dominerende skygger, dramatisk stemning. Kontrollpunkt: Feil eksponering gir støy. Operativ bruk: Low key lighting, controlled highlights",
+      "examples": [
+        "Low key lighting, controlled highlights"
+      ],
+      "relatedTerms": [],
+      "aliases": [],
+      "tags": [
+        "source:xml-import",
+        "source_file:high-impact-prompt-terms-100-xml",
+        "source_category:lys",
+        "policy:text-output-only"
+      ],
+      "metadata": {
+        "source": {
+          "type": "xml",
+          "file": "High_Impact_Prompt_Terms_100.xml"
+        },
+        "import": {
+          "qualityScore": 1,
+          "placeholderNorwegian": false,
+          "categoryRaw": "Lys"
+        },
+        "taxonomy": {
+          "domain": "foto-lys",
+          "stage": "produksjon",
+          "kanal": "web",
+          "format": "16:9",
+          "mal": "kjennskap",
+          "strenghet": "middels",
+          "brandLock": true,
+          "textLock": true,
+          "productLock": false
+        },
+        "outputPolicy": "text-only",
+        "mediaGeneration": false
+      }
+    },
+    {
+      "item_type": "term",
+      "slug": "telekompresjon-film",
+      "term_no": "Telekompresjon",
+      "term_en": "Telephoto Compression",
+      "domain": "film",
+      "definition_no": "Komprimerer rom, reduserer perspektivdybde.",
+      "promptImpact": "Komprimerer rom, reduserer perspektivdybde. Kontrollpunkt: Krever lang brennvidde. Operativ bruk: 200mm telephoto lens, background compression",
+      "examples": [
+        "200mm telephoto lens, background compression"
+      ],
+      "relatedTerms": [],
+      "aliases": [],
+      "tags": [
+        "source:xml-import",
+        "source_file:high-impact-prompt-terms-100-xml",
+        "source_category:kamera",
+        "policy:text-output-only"
+      ],
+      "metadata": {
+        "source": {
+          "type": "xml",
+          "file": "High_Impact_Prompt_Terms_100.xml"
+        },
+        "import": {
+          "qualityScore": 1,
+          "placeholderNorwegian": false,
+          "categoryRaw": "Kamera"
+        },
+        "taxonomy": {
+          "domain": "film-klipp",
+          "stage": "produksjon",
+          "kanal": "web",
+          "format": "16:9",
+          "mal": "kjennskap",
+          "strenghet": "middels",
+          "brandLock": true,
+          "textLock": true,
+          "productLock": false
+        },
+        "outputPolicy": "text-only",
+        "mediaGeneration": false
+      }
+    }
+  ]
+}

@@ -1,0 +1,268 @@
+{
+  "meta": {
+    "name": "XML term batch v1",
+    "createdAt": "2026-02-23T18:57:06.579Z",
+    "sourceFiles": [
+      "High_Impact_Prompt_Terms_100.xml",
+      "Prompt_Engine_Terms_300.xml"
+    ],
+    "minQuality": 0.55,
+    "includePlaceholderNo": false,
+    "includeExisting": false
+  },
+  "counts": {
+    "parsed": 391,
+    "accepted": 5,
+    "rejected": 386,
+    "duplicatesCollapsed": 0,
+    "skippedExisting": 5
+  },
+  "domains": {
+    "film": 3,
+    "photo": 2
+  },
+  "rejectedByReason": {
+    "already_exists": 5,
+    "generic_high_impact_placeholder": 90,
+    "placeholder_norwegian": 291
+  },
+  "acceptedPreview": [
+    {
+      "slug": "dyp-fokus-film",
+      "term_no": "Dyp fokus",
+      "term_en": "Deep Focus",
+      "domain": "film",
+      "source_file": "High_Impact_Prompt_Terms_100.xml"
+    },
+    {
+      "slug": "grunn-dybdeskarphet-film",
+      "term_no": "Grunn dybdeskarphet",
+      "term_en": "Shallow Depth of Field",
+      "domain": "film",
+      "source_file": "High_Impact_Prompt_Terms_100.xml"
+    },
+    {
+      "slug": "klar-mork-kontrast-photo",
+      "term_no": "Klar–mørk kontrast",
+      "term_en": "Chiaroscuro",
+      "domain": "photo",
+      "source_file": "High_Impact_Prompt_Terms_100.xml"
+    },
+    {
+      "slug": "lavmaelt-lys-photo",
+      "term_no": "Lavmælt lys",
+      "term_en": "Low Key Lighting",
+      "domain": "photo",
+      "source_file": "High_Impact_Prompt_Terms_100.xml"
+    },
+    {
+      "slug": "telekompresjon-film",
+      "term_no": "Telekompresjon",
+      "term_en": "Telephoto Compression",
+      "domain": "film",
+      "source_file": "High_Impact_Prompt_Terms_100.xml"
+    }
+  ],
+  "rejectedPreview": [
+    {
+      "reason": "already_exists",
+      "qualityScore": 1,
+      "english": "Rack Focus",
+      "norwegian": "Fokusskift",
+      "category": "Kamera",
+      "sourceFile": "High_Impact_Prompt_Terms_100.xml"
+    },
+    {
+      "reason": "already_exists",
+      "qualityScore": 1,
+      "english": "Rim Light",
+      "norwegian": "Kantlys",
+      "category": "Lys",
+      "sourceFile": "High_Impact_Prompt_Terms_100.xml"
+    },
+    {
+      "reason": "already_exists",
+      "qualityScore": 1,
+      "english": "Golden Hour",
+      "norwegian": "Gylden time",
+      "category": "Lys",
+      "sourceFile": "High_Impact_Prompt_Terms_100.xml"
+    },
+    {
+      "reason": "already_exists",
+      "qualityScore": 1,
+      "english": "Backlighting",
+      "norwegian": "Motlys",
+      "category": "Lys",
+      "sourceFile": "High_Impact_Prompt_Terms_100.xml"
+    },
+    {
+      "reason": "already_exists",
+      "qualityScore": 1,
+      "english": "Wide Angle Lens",
+      "norwegian": "Vidvinkel",
+      "category": "Kamera",
+      "sourceFile": "High_Impact_Prompt_Terms_100.xml"
+    },
+    {
+      "reason": "generic_high_impact_placeholder",
+      "qualityScore": 0.4,
+      "english": "High Impact Term 11",
+      "norwegian": "Høy effekt begrep 11",
+      "category": "Komposisjon",
+      "sourceFile": "High_Impact_Prompt_Terms_100.xml"
+    },
+    {
+      "reason": "generic_high_impact_placeholder",
+      "qualityScore": 0.4,
+      "english": "High Impact Term 12",
+      "norwegian": "Høy effekt begrep 12",
+      "category": "Komposisjon",
+      "sourceFile": "High_Impact_Prompt_Terms_100.xml"
+    },
+    {
+      "reason": "generic_high_impact_placeholder",
+      "qualityScore": 0.4,
+      "english": "High Impact Term 13",
+      "norwegian": "Høy effekt begrep 13",
+      "category": "Komposisjon",
+      "sourceFile": "High_Impact_Prompt_Terms_100.xml"
+    },
+    {
+      "reason": "generic_high_impact_placeholder",
+      "qualityScore": 0.4,
+      "english": "High Impact Term 14",
+      "norwegian": "Høy effekt begrep 14",
+      "category": "Komposisjon",
+      "sourceFile": "High_Impact_Prompt_Terms_100.xml"
+    },
+    {
+      "reason": "generic_high_impact_placeholder",
+      "qualityScore": 0.4,
+      "english": "High Impact Term 15",
+      "norwegian": "Høy effekt begrep 15",
+      "category": "Komposisjon",
+      "sourceFile": "High_Impact_Prompt_Terms_100.xml"
+    },
+    {
+      "reason": "generic_high_impact_placeholder",
+      "qualityScore": 0.4,
+      "english": "High Impact Term 16",
+      "norwegian": "Høy effekt begrep 16",
+      "category": "Komposisjon",
+      "sourceFile": "High_Impact_Prompt_Terms_100.xml"
+    },
+    {
+      "reason": "generic_high_impact_placeholder",
+      "qualityScore": 0.4,
+      "english": "High Impact Term 17",
+      "norwegian": "Høy effekt begrep 17",
+      "category": "Komposisjon",
+      "sourceFile": "High_Impact_Prompt_Terms_100.xml"
+    },
+    {
+      "reason": "generic_high_impact_placeholder",
+      "qualityScore": 0.4,
+      "english": "High Impact Term 18",
+      "norwegian": "Høy effekt begrep 18",
+      "category": "Komposisjon",
+      "sourceFile": "High_Impact_Prompt_Terms_100.xml"
+    },
+    {
+      "reason": "generic_high_impact_placeholder",
+      "qualityScore": 0.4,
+      "english": "High Impact Term 19",
+      "norwegian": "Høy effekt begrep 19",
+      "category": "Komposisjon",
+      "sourceFile": "High_Impact_Prompt_Terms_100.xml"
+    },
+    {
+      "reason": "generic_high_impact_placeholder",
+      "qualityScore": 0.4,
+      "english": "High Impact Term 20",
+      "norwegian": "Høy effekt begrep 20",
+      "category": "Komposisjon",
+      "sourceFile": "High_Impact_Prompt_Terms_100.xml"
+    },
+    {
+      "reason": "generic_high_impact_placeholder",
+      "qualityScore": 0.4,
+      "english": "High Impact Term 21",
+      "norwegian": "Høy effekt begrep 21",
+      "category": "Komposisjon",
+      "sourceFile": "High_Impact_Prompt_Terms_100.xml"
+    },
+    {
+      "reason": "generic_high_impact_placeholder",
+      "qualityScore": 0.4,
+      "english": "High Impact Term 22",
+      "norwegian": "Høy effekt begrep 22",
+      "category": "Komposisjon",
+      "sourceFile": "High_Impact_Prompt_Terms_100.xml"
+    },
+    {
+      "reason": "generic_high_impact_placeholder",
+      "qualityScore": 0.4,
+      "english": "High Impact Term 23",
+      "norwegian": "Høy effekt begrep 23",
+      "category": "Komposisjon",
+      "sourceFile": "High_Impact_Prompt_Terms_100.xml"
+    },
+    {
+      "reason": "generic_high_impact_placeholder",
+      "qualityScore": 0.4,
+      "english": "High Impact Term 24",
+      "norwegian": "Høy effekt begrep 24",
+      "category": "Komposisjon",
+      "sourceFile": "High_Impact_Prompt_Terms_100.xml"
+    },
+    {
+      "reason": "generic_high_impact_placeholder",
+      "qualityScore": 0.4,
+      "english": "High Impact Term 25",
+      "norwegian": "Høy effekt begrep 25",
+      "category": "Komposisjon",
+      "sourceFile": "High_Impact_Prompt_Terms_100.xml"
+    },
+    {
+      "reason": "generic_high_impact_placeholder",
+      "qualityScore": 0.4,
+      "english": "High Impact Term 26",
+      "norwegian": "Høy effekt begrep 26",
+      "category": "Komposisjon",
+      "sourceFile": "High_Impact_Prompt_Terms_100.xml"
+    },
+    {
+      "reason": "generic_high_impact_placeholder",
+      "qualityScore": 0.4,
+      "english": "High Impact Term 27",
+      "norwegian": "Høy effekt begrep 27",
+      "category": "Komposisjon",
+      "sourceFile": "High_Impact_Prompt_Terms_100.xml"
+    },
+    {
+      "reason": "generic_high_impact_placeholder",
+      "qualityScore": 0.4,
+      "english": "High Impact Term 28",
+      "norwegian": "Høy effekt begrep 28",
+      "category": "Komposisjon",
+      "sourceFile": "High_Impact_Prompt_Terms_100.xml"
+    },
+    {
+      "reason": "generic_high_impact_placeholder",
+      "qualityScore": 0.4,
+      "english": "High Impact Term 29",
+      "norwegian": "Høy effekt begrep 29",
+      "category": "Komposisjon",
+      "sourceFile": "High_Impact_Prompt_Terms_100.xml"
+    },
+    {
+      "reason": "generic_high_impact_placeholder",
+      "qualityScore": 0.4,
+      "english": "High Impact Term 30",
+      "norwegian": "Høy effekt begrep 30",
+      "category": "Komposisjon",
+      "sourceFile": "High_Impact_Prompt_Terms_100.xml"
+    }
+  ]
+}

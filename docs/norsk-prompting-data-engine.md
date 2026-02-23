@@ -38,8 +38,11 @@ Hvis LLM-key mangler, brukes lokal normalisering.
 - `npm run np:ingest -- --file <path> --item-type <rule|term|template|example|negative_preset|representation_switch> --source-tag <tag>`
 - `npm run np:seed:templates -- --count 100`
 - `npm run np:build:reklame-seed` (bygger reklamefaglig seed-batch til JSON)
+- `npm run np:build:xml-terms -- --input <fil.xml> [--input <fil2.xml>]` (bygger kuratert term-batch fra XML)
 - `npm run np:ingest:reklame-seed` (ingester seed-batch med blandede item-typer)
+- `npm run np:ingest:xml-terms` (ingester XML-termbatch)
 - `npm run np:reklame:pipeline` (build + ingest + prosess + eksport)
+- `npm run np:xml-terms:pipeline` (XML-build + ingest + prosess + eksport)
 - `npm run np:process -- --limit 200`
 - `npm run np:export`
 - `npm run np:pipeline` (prosess + eksport)
@@ -76,6 +79,26 @@ Kjør rekkefølge:
 2. `npm run np:ingest:reklame-seed`
 3. `npm run np:process -- --limit 500`
 4. `npm run np:export`
+
+### XML term-import
+
+Bygger filer:
+
+- `/data/norskPrompting/engine-seeds/xml-terms-batch-v1.json`
+- `/data/norskPrompting/engine-seeds/xml-terms-batch-v1.report.json`
+
+Eksempel:
+
+1. `npm run np:build:xml-terms -- --input /Users/<deg>/Downloads/High_Impact_Prompt_Terms_100.xml --input /Users/<deg>/Downloads/Prompt_Engine_Terms_300.xml`
+2. `npm run np:ingest:xml-terms`
+3. `npm run np:process -- --limit 500`
+4. `npm run np:export`
+
+Filterregler i build-script:
+
+- Forkaster generiske placeholder-termer (f.eks. `High Impact Term 11`).
+- Forkaster placeholder-oversettelser (`Norsk oversettelse av ...`) med mindre `--include-placeholder-no` brukes.
+- Dedupliserer på slug og hopper over eksisterende termer i lokal ordliste/generated som standard.
 
 ### Dry-run
 

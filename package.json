@@ -11,8 +11,11 @@
     "np:ingest": "node scripts/np-ingest-batch.mjs",
     "np:seed:templates": "node scripts/np-seed-templates-100.mjs",
     "np:build:reklame-seed": "node scripts/np-build-reklame-seed.mjs",
+    "np:build:xml-terms": "node scripts/np-build-xml-terms.mjs",
     "np:ingest:reklame-seed": "node scripts/np-ingest-batch.mjs --file data/norskPrompting/engine-seeds/reklame-batch-v1.json --source-tag ReklameBatchV1",
+    "np:ingest:xml-terms": "node scripts/np-ingest-batch.mjs --file data/norskPrompting/engine-seeds/xml-terms-batch-v1.json --source-tag XmlTermsV1",
     "np:reklame:pipeline": "node scripts/np-build-reklame-seed.mjs && node scripts/np-ingest-batch.mjs --file data/norskPrompting/engine-seeds/reklame-batch-v1.json --source-tag ReklameBatchV1 && node scripts/np-process-queue.mjs --limit 800 && node scripts/np-export-generated.mjs",
+    "np:xml-terms:pipeline": "node scripts/np-build-xml-terms.mjs && node scripts/np-ingest-batch.mjs --file data/norskPrompting/engine-seeds/xml-terms-batch-v1.json --source-tag XmlTermsV1 && node scripts/np-process-queue.mjs --limit 800 && node scripts/np-export-generated.mjs",
     "np:process": "node scripts/np-process-queue.mjs",
     "np:export": "node scripts/np-export-generated.mjs",
     "np:pipeline": "node scripts/np-process-queue.mjs && node scripts/np-export-generated.mjs"
