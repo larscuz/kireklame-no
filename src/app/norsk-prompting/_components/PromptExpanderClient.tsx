@@ -2,9 +2,9 @@
 
 import { useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { promptTemplates } from "@/data/norskPrompting/templates";
+import { promptTemplates } from "@/data/norskPrompting/runtime";
 import type { PromptLength, PromptOutputType, PromptStyle, PromptDomain } from "@/data/norskPrompting/types";
-import { buildPrompt } from "@/lib/norsk-prompting/builder";
+import { buildPrompt, type BuildPromptInput } from "@/lib/norsk-prompting/builder";
 import { domainOptions, lengthOptions, outputTypeOptions, styleOptions } from "@/lib/norsk-prompting/constants";
 import CopyTextButton from "./CopyTextButton";
 
@@ -28,6 +28,32 @@ function toLength(value: string | null): PromptLength {
   return "medium";
 }
 
+function toBool(value: string | null, fallback = false): boolean {
+  if (value == null) return fallback;
+  return value === "1" || value === "true" || value === "ja";
+}
+
+function sameRequest(a: BuildPromptInput, b: BuildPromptInput): boolean {
+  return (
+    a.input === b.input &&
+    a.outputType === b.outputType &&
+    a.domain === b.domain &&
+    a.style === b.style &&
+    a.length === b.length &&
+    a.strictness === b.strictness &&
+    a.consistency === b.consistency &&
+    a.lockRules === b.lockRules &&
+    Boolean(a.jsonMode) === Boolean(b.jsonMode) &&
+    (a.templateId || "") === (b.templateId || "") &&
+    Boolean(a.textInVisual) === Boolean(b.textInVisual) &&
+    (a.overlayText || "") === (b.overlayText || "") &&
+    (a.overlayLanguage || "") === (b.overlayLanguage || "") &&
+    (a.textCase || "behold") === (b.textCase || "behold") &&
+    (a.fontHint || "") === (b.fontHint || "") &&
+    (a.textPlacement || "") === (b.textPlacement || "")
+  );
+}
+
 export default function PromptExpanderClient() {
   const searchParams = useSearchParams();
   const queryInput = searchParams.get("input");
@@ -44,23 +70,59 @@ export default function PromptExpanderClient() {
   const [lockRules, setLockRules] = useState(true);
   const [jsonMode, setJsonMode] = useState(false);
   const [templateId, setTemplateId] = useState<string>(searchParams.get("template") || "");
+  const [textInVisual, setTextInVisual] = useState<boolean>(toBool(searchParams.get("textInVisual"), false));
+  const [overlayText, setOverlayText] = useState(searchParams.get("overlayText") || "");
+  const [overlayLanguage, setOverlayLanguage] = useState(searchParams.get("overlayLanguage") || "norsk");
+  const [textCase, setTextCase] = useState<"behold" | "store" | "små">(() => {
+    const value = searchParams.get("textCase");
+    if (value === "store" || value === "små") return value;
+    return "behold";
+  });
+  const [fontHint, setFontHint] = useState(searchParams.get("fontHint") || "");
+  const [textPlacement, setTextPlacement] = useState(searchParams.get("textPlacement") || "");
 
-  const result = useMemo(
-    () =>
-      buildPrompt({
-        input,
-        outputType,
-        domain,
-        style,
-        length,
-        strictness,
-        consistency,
-        lockRules,
-        jsonMode,
-        templateId: templateId || undefined,
-      }),
-    [input, outputType, domain, style, length, strictness, consistency, lockRules, jsonMode, templateId]
+  const draftRequest = useMemo<BuildPromptInput>(
+    () => ({
+      input,
+      outputType,
+      domain,
+      style,
+      length,
+      strictness,
+      consistency,
+      lockRules,
+      jsonMode,
+      templateId: templateId || undefined,
+      textInVisual,
+      overlayText,
+      overlayLanguage,
+      textCase,
+      fontHint,
+      textPlacement,
+    }),
+    [
+      input,
+      outputType,
+      domain,
+      style,
+      length,
+      strictness,
+      consistency,
+      lockRules,
+      jsonMode,
+      templateId,
+      textInVisual,
+      overlayText,
+      overlayLanguage,
+      textCase,
+      fontHint,
+      textPlacement,
+    ]
   );
+
+  const [activeRequest, setActiveRequest] = useState<BuildPromptInput>(draftRequest);
+  const result = useMemo(() => buildPrompt(activeRequest), [activeRequest]);
+  const hasDraftChanges = !sameRequest(draftRequest, activeRequest);
 
   const templateOptions = useMemo(
     () => promptTemplates.filter((template) => template.outputType === outputType),
@@ -86,7 +148,7 @@ export default function PromptExpanderClient() {
 
       <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         <label className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">
-          Output-type
+          Outputtype
           <select
             value={outputType}
             onChange={(event) => setOutputType(event.target.value as PromptOutputType)}
@@ -199,8 +261,112 @@ export default function PromptExpanderClient() {
         </label>
         <label className="inline-flex items-center gap-2 rounded-full border border-[rgb(var(--border))] px-3 py-1">
           <input type="checkbox" checked={jsonMode} onChange={(event) => setJsonMode(event.target.checked)} />
-          JSON-output
+          JSON-format
         </label>
+      </div>
+
+      {(outputType === "image" || outputType === "video") && (
+        <div className="mt-4 rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))] p-3">
+          <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">
+            Tekst i bilde/video
+          </p>
+
+          <div className="mt-2 grid gap-3 md:grid-cols-2">
+            <label className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">
+              Skal visuell leveranse inneholde tekst?
+              <select
+                value={textInVisual ? "ja" : "nei"}
+                onChange={(event) => setTextInVisual(event.target.value === "ja")}
+                className="mt-1 w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))] px-3 py-2 text-sm normal-case"
+              >
+                <option value="nei">Nei</option>
+                <option value="ja">Ja</option>
+              </select>
+            </label>
+          </div>
+
+          {textInVisual ? (
+            <div className="mt-3 space-y-3">
+              <label className="block text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">
+                Eksakt tekst (påkrevd)
+              </label>
+              <textarea
+                value={overlayText}
+                onChange={(event) => setOverlayText(event.target.value)}
+                className="min-h-20 w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-3 py-2 text-sm outline-none focus:border-cyan-400"
+                placeholder="Skriv nøyaktig tekst som skal vises."
+              />
+
+              <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
+                <label className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">
+                  Språk
+                  <select
+                    value={overlayLanguage}
+                    onChange={(event) => setOverlayLanguage(event.target.value)}
+                    className="mt-1 w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-3 py-2 text-sm normal-case"
+                  >
+                    <option value="norsk">Norsk</option>
+                    <option value="engelsk">Engelsk (kun eksplisitt)</option>
+                    <option value="blandet">Blandet (kun eksplisitt)</option>
+                  </select>
+                </label>
+
+                <label className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">
+                  Case
+                  <select
+                    value={textCase}
+                    onChange={(event) => setTextCase(event.target.value as "behold" | "store" | "små")}
+                    className="mt-1 w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-3 py-2 text-sm normal-case"
+                  >
+                    <option value="behold">Behold som skrevet</option>
+                    <option value="store">STORE BOKSTAVER</option>
+                    <option value="små">små bokstaver</option>
+                  </select>
+                </label>
+
+                <label className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">
+                  Font-type (valgfritt)
+                  <input
+                    value={fontHint}
+                    onChange={(event) => setFontHint(event.target.value)}
+                    className="mt-1 w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-3 py-2 text-sm normal-case outline-none focus:border-cyan-400"
+                    placeholder="Eks: Grotesk sans"
+                  />
+                </label>
+
+                <label className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">
+                  Plassering (valgfritt)
+                  <input
+                    value={textPlacement}
+                    onChange={(event) => setTextPlacement(event.target.value)}
+                    className="mt-1 w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-3 py-2 text-sm normal-case outline-none focus:border-cyan-400"
+                    placeholder="Eks: Øvre venstre"
+                  />
+                </label>
+              </div>
+            </div>
+          ) : (
+            <p className="mt-2 text-xs text-[rgb(var(--muted))]">
+              Utvideren vil legge inn: «Ingen tekst i bildet/videoen.»
+            </p>
+          )}
+        </div>
+      )}
+
+      <div className="mt-4 flex flex-wrap items-center gap-3">
+        <button
+          type="button"
+          onClick={() => setActiveRequest(draftRequest)}
+          className="rounded-xl border border-cyan-300/45 bg-cyan-400/15 px-4 py-2 text-sm font-semibold text-cyan-100 transition hover:bg-cyan-400/25 disabled:cursor-not-allowed disabled:opacity-50"
+          disabled={!hasDraftChanges}
+        >
+          Oppdater prompt etter valgene
+        </button>
+        <p className="text-xs text-[rgb(var(--muted))]">
+          {hasDraftChanges
+            ? "Du har endringer som ikke er aktivert ennå."
+            : "Resultatet er oppdatert med gjeldende valg."}
+        </p>
       </div>
 
       <div className="mt-5 rounded-2xl border border-cyan-300/25 bg-cyan-500/10 p-4">
@@ -216,7 +382,10 @@ export default function PromptExpanderClient() {
           <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">Regler brukt</p>
           <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-[rgb(var(--fg))]/85">
             {result.usedRules.map((rule) => (
-              <li key={rule.id}>{rule.name}</li>
+              <li key={rule.id}>
+                <p>{rule.name}</p>
+                <p className="mt-0.5 text-xs text-[rgb(var(--muted))]">{rule.description}</p>
+              </li>
             ))}
           </ul>
         </article>
@@ -225,7 +394,10 @@ export default function PromptExpanderClient() {
           <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">Termer injisert</p>
           <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-[rgb(var(--fg))]/85">
             {result.usedTerms.map((term) => (
-              <li key={term.slug}>{term.term_no}</li>
+              <li key={term.slug}>
+                <p>{term.term_no}</p>
+                <p className="mt-0.5 text-xs text-[rgb(var(--muted))]">{term.promptImpact}</p>
+              </li>
             ))}
           </ul>
         </article>

@@ -1,6 +1,4 @@
-import { glossaryTerms } from "@/data/norskPrompting/glossary";
-import { norskPromptingRules } from "@/data/norskPrompting/rules";
-import { promptTemplates } from "@/data/norskPrompting/templates";
+import { glossaryTerms, norskPromptingRules, promptTemplates } from "@/data/norskPrompting/runtime";
 import type {
   GlossaryDomain,
   GlossaryTerm,
@@ -23,6 +21,12 @@ export type BuildPromptInput = {
   lockRules: boolean;
   jsonMode?: boolean;
   templateId?: string;
+  textInVisual?: boolean;
+  overlayText?: string;
+  overlayLanguage?: string;
+  textCase?: "behold" | "store" | "små";
+  fontHint?: string;
+  textPlacement?: string;
 };
 
 export type PromptBlock = {
@@ -55,15 +59,19 @@ const sectionOrder: Array<{ id: string; title: string }> = [
   { id: "1", title: "Mål" },
   { id: "2", title: "Motiv + handling" },
   { id: "3", title: "Miljø / setting" },
-  { id: "4", title: "Kamera" },
-  { id: "5", title: "Lys" },
+  { id: "4", title: "Kamera / stemme" },
+  { id: "5", title: "Lys / struktur" },
   { id: "6", title: "Materialer / overflater" },
   { id: "7", title: "Komposisjon" },
   { id: "8", title: "Stil / estetikk" },
   { id: "9", title: "Kontinuitet / konsistens" },
-  { id: "10", title: "Begrensninger" },
-  { id: "11", title: "Negativ prompting / unngå" },
-  { id: "12", title: "Output-spesifikasjon" },
+  { id: "10", title: "Tekst i bilde/video" },
+  { id: "11", title: "Tekstlås (kritisk)" },
+  { id: "12", title: "Språkregel (kritisk)" },
+  { id: "13", title: "Tekstkontinuitet (video)" },
+  { id: "14", title: "Begrensninger" },
+  { id: "15", title: "Negativ prompting / unngå" },
+  { id: "16", title: "Output-spesifikasjon" },
 ];
 
 function toText(value: unknown): string {
@@ -75,11 +83,19 @@ function clamp(value: number, min: number, max: number): number {
 }
 
 function normalizeInput(input: BuildPromptInput): BuildPromptInput {
+  const language = toText(input.overlayLanguage || "norsk") || "norsk";
+
   return {
     ...input,
     input: toText(input.input),
     strictness: clamp(input.strictness, 0, 100),
     consistency: clamp(input.consistency, 0, 100),
+    textInVisual: Boolean(input.textInVisual),
+    overlayText: toText(input.overlayText),
+    overlayLanguage: language,
+    textCase: input.textCase === "store" || input.textCase === "små" ? input.textCase : "behold",
+    fontHint: toText(input.fontHint),
+    textPlacement: toText(input.textPlacement),
   };
 }
 
@@ -115,6 +131,102 @@ function cameraHint(outputType: PromptOutputType, domain: PromptDomain): string 
   }
 
   return "Fast brennvidde (35–50mm), tydelig utsnitt og fokusplan med bevisst dybdeskarphet.";
+}
+
+function detectAudioMode(inputText: string, templateTitle?: string): "voice" | "music" | "sfx" | null {
+  const source = `${inputText} ${templateTitle || ""}`.toLowerCase();
+
+  if (/(voiceover|dialog|speaker|fortellerstemme|stemme)/.test(source)) return "voice";
+  if (/(musikk|jingle|bpm|ad bed|bumper|track)/.test(source)) return "music";
+  if (/(sfx|lydeffekt|ambience|ambient|foley)/.test(source)) return "sfx";
+
+  return null;
+}
+
+function textPresenceBlock(input: BuildPromptInput): string {
+  if (!input.textInVisual) {
+    if (input.outputType === "image" || input.outputType === "video") {
+      return "Ingen tekst i bildet/videoen.";
+    }
+
+    return "Ingen visuell tekst er spesifisert.";
+  }
+
+  const lines = [
+    "Tekst i visuell leveranse: JA.",
+    `Eksakt tekst: "${input.overlayText || "MÅ FYLLES UT: skriv eksakt tekst her."}"`,
+    `Språk: ${input.overlayLanguage || "norsk"}.`,
+    `Case: ${input.textCase || "behold"}.`,
+  ];
+
+  if (input.fontHint) {
+    lines.push(`Font-type (hint): ${input.fontHint}.`);
+  }
+
+  if (input.textPlacement) {
+    lines.push(`Plassering: ${input.textPlacement}.`);
+  }
+
+  return lines.join(" ");
+}
+
+function textLockBlock(input: BuildPromptInput): string {
+  if (!input.textInVisual) {
+    return "Ingen tekst skal genereres. Ingen bokstaver, ingen skilttekst, ingen automatisk typografi.";
+  }
+
+  const exactText = input.overlayText || "MÅ FYLLES UT: eksakt tekst";
+
+  return [
+    "All tekst i bildet/videoen skal være eksakt som angitt.",
+    "Ingen ekstra ord.",
+    "Ingen oversettelse.",
+    "Ingen alternative formuleringer.",
+    "Ingen stavefeil.",
+    "Ingen endring av bokstaver.",
+    "Ingen tillegg av slagord.",
+    "Ingen automatisk generert tekst.",
+    `Kun og nøyaktig følgende tekst: "${exactText}".`,
+  ].join(" ");
+}
+
+function languageRuleBlock(input: BuildPromptInput): string {
+  const overrideLanguage = (input.overlayLanguage || "norsk").toLowerCase();
+  const hasExplicitOverride = input.textInVisual && overrideLanguage !== "norsk";
+
+  const base = [
+    "Alt innhold skal være på norsk.",
+    "Modellen skal ikke generere engelsk tekst.",
+    "Ingen engelske ord, med mindre de eksplisitt er spesifisert.",
+    "Ikke oversett teksten.",
+    "Ikke legg til engelske slagord.",
+  ];
+
+  if (hasExplicitOverride) {
+    base.push(
+      `Eksplisitt unntak: tekstlåsen spesifiserer språk "${input.overlayLanguage}". Kun denne teksten er tillatt som avvik.`
+    );
+  }
+
+  return base.join(" ");
+}
+
+function videoTextContinuityBlock(input: BuildPromptInput): string {
+  if (input.outputType !== "video") {
+    return "Ikke relevant for stillbilde/ren tekstleveranse.";
+  }
+
+  if (!input.textInVisual) {
+    return "Ingen tekst i video-frames. Hold alle frames fri for tekst.";
+  }
+
+  return [
+    "Teksten skal være identisk i alle frames.",
+    "Ingen bokstavdrift.",
+    "Ingen fontendring.",
+    "Ingen forvrengning.",
+    "Ingen morphing av tekst.",
+  ].join(" ");
 }
 
 function lightHint(style: PromptStyle, strictness: number): string {
@@ -200,6 +312,14 @@ function buildConstraintList(input: BuildPromptInput, rules: NorskPromptingRule[
     "Hold perspektiv, skala og lysforhold konsistent.",
   ];
 
+  if (input.outputType === "image" || input.outputType === "video") {
+    if (input.textInVisual) {
+      hard.push("All synlig tekst skal følge TEKSTLÅS-seksjonen eksakt.");
+    } else {
+      hard.push("Ingen tekst i bildet/videoen.");
+    }
+  }
+
   if (input.strictness >= 70) {
     hard.push("Lås identitet, kostyme og miljøparametere gjennom hele outputen.");
     hard.push("Begrens stilisering; prioriter fysisk plausibilitet over effekter.");
@@ -248,10 +368,24 @@ export function buildPrompt(rawInput: BuildPromptInput): BuildPromptResult {
   const action = sentences[1] || "Beskriv en fysisk plausibel handling med tydelig årsak og effekt.";
 
   const template = chooseTemplate(input);
+  const audioMode = detectAudioMode(input.input, template?.title);
   const rules = chooseRules(input, template?.recommendedRules ?? []);
   const usedTerms = chooseTerms(input, input.length === "lang" ? 10 : 8);
   const constraints = buildConstraintList(input, rules);
   const negativeList = buildNegativeList(rules, input.strictness);
+  const languageRule = languageRuleBlock(input);
+  const textBlock = textPresenceBlock(input);
+  const textLock = textLockBlock(input);
+  const textContinuity = videoTextContinuityBlock(input);
+  const withTextNegatives = input.textInVisual
+    ? [
+        ...negativeList,
+        "unngå ekstra ord i bilde/video",
+        "unngå automatisk oversettelse av tekst",
+        "unngå bokstavforvrengning",
+      ]
+    : [...negativeList, "unngå all tekst i bilde/video"];
+  const uniqueNegativeList = Array.from(new Set(withTextNegatives)).slice(0, 14);
 
   const templateInstructions = template
     ? template.blocks.map((block) => `${block.title}: ${block.instruction}`).join(" ")
@@ -280,13 +414,27 @@ export function buildPrompt(rawInput: BuildPromptInput): BuildPromptResult {
     },
     {
       id: "4",
-      title: "Kamera",
-      content: cameraHint(input.outputType, input.domain),
+      title: "Kamera / stemme",
+      content:
+        audioMode === "voice"
+          ? "Stemme: norsk uttale, tydelig artikulasjon, kontrollert tempo og troverdig kommersiell tone."
+          : audioMode === "music"
+          ? "Stemme: ingen voiceover. Fokuser på musikalsk identitet, energi og jingle-signatur."
+          : audioMode === "sfx"
+          ? "Stemme: ingen voiceover. Fokuser på SFX-kilder, avstand, rom og tydelig hitpoint."
+          : cameraHint(input.outputType, input.domain),
     },
     {
       id: "5",
-      title: "Lys",
-      content: lightHint(input.style, input.strictness),
+      title: "Lys / struktur",
+      content:
+        audioMode === "voice"
+          ? "Struktur: hook 0-2s, nytte 2-7s, CTA 7-10s. Hold språk, tone og tempo konsistent."
+          : audioMode === "music"
+          ? "Struktur: definer BPM, intro-hook, build, dynamikk og miksprioritet. Hold tydelig outro."
+          : audioMode === "sfx"
+          ? "Struktur: ambience-base, SFX-lag, hitpoints og nivåbalanse uten masking av budskap."
+          : lightHint(input.style, input.strictness),
     },
     {
       id: "6",
@@ -313,16 +461,36 @@ export function buildPrompt(rawInput: BuildPromptInput): BuildPromptResult {
     },
     {
       id: "10",
+      title: "Tekst i bilde/video",
+      content: textBlock,
+    },
+    {
+      id: "11",
+      title: "Tekstlås (kritisk)",
+      content: textLock,
+    },
+    {
+      id: "12",
+      title: "Språkregel (kritisk)",
+      content: languageRule,
+    },
+    {
+      id: "13",
+      title: "Tekstkontinuitet (video)",
+      content: textContinuity,
+    },
+    {
+      id: "14",
       title: "Begrensninger",
       content: constraints.join(" "),
     },
     {
-      id: "11",
+      id: "15",
       title: "Negativ prompting / unngå",
-      content: negativeList.join("; "),
+      content: uniqueNegativeList.join("; "),
     },
     {
-      id: "12",
+      id: "16",
       title: "Output-spesifikasjon",
       content: outputSpec(input.outputType),
     },
@@ -345,20 +513,25 @@ export function buildPrompt(rawInput: BuildPromptInput): BuildPromptResult {
             style: input.style,
             strictness: input.strictness,
             consistency: input.consistency,
-            lockRules: input.lockRules,
-          },
-          sections: blocks,
-          terminology: usedTerms.map((term) => term.term_no),
-          rules: rules.map((rule) => rule.id),
-          negativeList,
+          lockRules: input.lockRules,
+          textInVisual: input.textInVisual,
+          overlayLanguage: input.overlayLanguage,
+          textCase: input.textCase,
+          textPlacement: input.textPlacement || null,
+          hasOverlayText: Boolean(input.overlayText),
         },
-        null,
-        2
+        sections: blocks,
+        terminology: usedTerms.map((term) => term.term_no),
+        rules: rules.map((rule) => rule.id),
+        negativeList: uniqueNegativeList,
+      },
+      null,
+      2
       ),
       blocks,
       usedRules: rules,
       usedTerms,
-      negativeList,
+      negativeList: uniqueNegativeList,
       templateId: template?.id ?? null,
     };
   }
@@ -368,7 +541,7 @@ export function buildPrompt(rawInput: BuildPromptInput): BuildPromptResult {
     blocks,
     usedRules: rules,
     usedTerms,
-    negativeList,
+    negativeList: uniqueNegativeList,
     templateId: template?.id ?? null,
   };
 }
