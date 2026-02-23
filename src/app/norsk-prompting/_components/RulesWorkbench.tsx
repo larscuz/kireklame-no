@@ -72,7 +72,7 @@ export default function RulesWorkbench({ rules, governanceRules }: Props) {
 
   return (
     <div className="space-y-4">
-      <section className="np-rule-card rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))]/92 p-4 shadow-[0_12px_36px_rgba(2,6,23,0.2)]">
+      <section className="np-node-surface np-rule-card rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))]/92 p-4 pt-7 shadow-[0_12px_36px_rgba(2,6,23,0.2)]">
         <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[rgb(var(--muted))]">Visning</p>
         <div className="mt-2 flex flex-wrap gap-2">
           <button
@@ -80,7 +80,7 @@ export default function RulesWorkbench({ rules, governanceRules }: Props) {
             onClick={() => setView("operative")}
             className={`rounded-full border px-3 py-1 text-xs font-semibold uppercase tracking-[0.12em] ${
               view === "operative"
-                ? "border-cyan-300/45 bg-cyan-300/15 text-cyan-100"
+                ? "border-zinc-300/35 bg-zinc-300/10 text-zinc-100"
                 : "border-[rgb(var(--border))] text-[rgb(var(--muted))]"
             }`}
           >
@@ -91,7 +91,7 @@ export default function RulesWorkbench({ rules, governanceRules }: Props) {
             onClick={() => setView("system")}
             className={`rounded-full border px-3 py-1 text-xs font-semibold uppercase tracking-[0.12em] ${
               view === "system"
-                ? "border-cyan-300/45 bg-cyan-300/15 text-cyan-100"
+                ? "border-zinc-300/35 bg-zinc-300/10 text-zinc-100"
                 : "border-[rgb(var(--border))] text-[rgb(var(--muted))]"
             }`}
           >
@@ -107,7 +107,7 @@ export default function RulesWorkbench({ rules, governanceRules }: Props) {
                 value={query}
                 onChange={(event) => setQuery(event.target.value)}
                 placeholder="Søk etter regelnavn eller beskrivelse"
-                className="mt-1 w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-3 py-2 text-sm outline-none focus:border-cyan-400"
+                className="mt-1 w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-3 py-2 text-sm outline-none focus:border-zinc-300"
               />
             </label>
 
@@ -116,7 +116,7 @@ export default function RulesWorkbench({ rules, governanceRules }: Props) {
               <select
                 value={category}
                 onChange={(event) => setCategory(event.target.value)}
-                className="mt-1 w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-3 py-2 text-sm outline-none focus:border-cyan-400"
+                className="mt-1 w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-3 py-2 text-sm outline-none focus:border-zinc-300"
               >
                 <option value="all">Alle kategorier</option>
                 {categories.map((item) => (
@@ -132,7 +132,7 @@ export default function RulesWorkbench({ rules, governanceRules }: Props) {
               <select
                 value={appliesTo}
                 onChange={(event) => setAppliesTo(event.target.value as NorskPromptingRule["appliesTo"] | "all")}
-                className="mt-1 w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-3 py-2 text-sm outline-none focus:border-cyan-400"
+                className="mt-1 w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-3 py-2 text-sm outline-none focus:border-zinc-300"
               >
                 <option value="all">Alle</option>
                 <option value="image">Bilde</option>
@@ -149,7 +149,7 @@ export default function RulesWorkbench({ rules, governanceRules }: Props) {
                   onChange={(event) =>
                     setMinSeverity(event.target.value === "all" ? "all" : (Number(event.target.value) as RuleSeverity))
                   }
-                  className="mt-1 w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-3 py-2 text-sm outline-none focus:border-cyan-400"
+                  className="mt-1 w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-3 py-2 text-sm outline-none focus:border-zinc-300"
                 >
                   {severityOptions.map((option) => (
                     <option key={String(option.value)} value={String(option.value)}>
@@ -163,7 +163,7 @@ export default function RulesWorkbench({ rules, governanceRules }: Props) {
                 <select
                   value={sortBy}
                   onChange={(event) => setSortBy(event.target.value as "severity" | "alpha")}
-                  className="mt-1 w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-3 py-2 text-sm outline-none focus:border-cyan-400"
+                  className="mt-1 w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-3 py-2 text-sm outline-none focus:border-zinc-300"
                 >
                   <option value="severity">Alvorlighet</option>
                   <option value="alpha">Alfabetisk</option>
@@ -188,7 +188,7 @@ export default function RulesWorkbench({ rules, governanceRules }: Props) {
             <details
               key={groupName}
               open={needle.length > 0 || groupIndex < 2}
-              className="np-rule-card rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))]/92 p-4"
+              className="np-node-surface np-rule-card rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))]/92 p-4 pt-7"
             >
               <summary className="flex cursor-pointer items-center justify-between gap-3">
                 <span className="text-lg font-semibold tracking-tight">{groupName}</span>
@@ -207,7 +207,7 @@ export default function RulesWorkbench({ rules, governanceRules }: Props) {
                           <p className="mt-1 text-sm text-[rgb(var(--muted))]">{rule.description}</p>
                         </div>
                         <div className="flex flex-wrap gap-2">
-                          <span className="rounded-full border border-cyan-300/35 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-[0.1em] text-cyan-100">
+                          <span className="rounded-full border border-zinc-300/35 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-[0.1em] text-zinc-100">
                             alvor {rule.severity}
                           </span>
                           <span className="rounded-full border border-[rgb(var(--border))] px-2 py-0.5 text-[11px] uppercase tracking-[0.1em] text-[rgb(var(--muted))]">

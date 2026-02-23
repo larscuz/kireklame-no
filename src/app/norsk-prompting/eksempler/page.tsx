@@ -46,14 +46,14 @@ export default function NorskPromptingEksemplerPage() {
         ]),
       ]}
     >
-      <SearchPanel items={searchItems} />
+      <SearchPanel items={searchItems} showResultsOnEmptyQuery={false} />
 
       <div className="grid gap-3 md:grid-cols-2">
         {promptExamples.map((example) => (
           <Link
             key={example.slug}
             href={`/norsk-prompting/eksempler/${example.slug}`}
-            className="rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))]/90 p-4 shadow-[0_10px_30px_rgba(2,6,23,0.18)] transition hover:-translate-y-px hover:border-cyan-300/35"
+            className="np-node-surface rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))]/90 p-4 pt-7 shadow-[0_10px_30px_rgba(2,6,23,0.18)] transition hover:-translate-y-px hover:border-zinc-300/35"
           >
             <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">
               {outputTypeLabel[example.outputType]} · {domainLabel[example.domain]}

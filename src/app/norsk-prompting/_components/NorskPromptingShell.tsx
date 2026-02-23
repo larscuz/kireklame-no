@@ -28,26 +28,32 @@ export default function NorskPromptingShell({
       ))}
 
       <section className="np-hero border-b border-[rgb(var(--border))]">
-        <div className="mx-auto max-w-6xl px-4 py-10 sm:py-12">
-          <div className="np-hero-card rounded-3xl border border-[rgb(var(--border))] p-5 backdrop-blur sm:p-7">
-            <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_18rem] lg:items-end">
+        <div className="mx-auto max-w-6xl px-4 py-5 sm:py-6">
+          <div className="np-hero-card rounded-2xl border border-[rgb(var(--border))] px-4 py-4 backdrop-blur sm:px-5 sm:py-5">
+            <div className="flex items-start justify-between gap-3">
               <div>
                 <div className="flex flex-wrap items-center gap-2">
                   <span className="np-chip text-xs font-semibold uppercase tracking-[0.14em]">Norsk Prompting</span>
                   <span className="np-chip-muted text-xs font-semibold uppercase tracking-[0.14em]">Arbeidsflate</span>
                 </div>
-                <h1 className="mt-3 text-[clamp(2rem,4vw,3.2rem)] font-semibold leading-[1.05] tracking-tight">{title}</h1>
-                <p className="mt-3 max-w-4xl text-base text-[rgb(var(--muted))]">{description}</p>
+                <h1 className="mt-2 text-[clamp(1.7rem,3.2vw,2.45rem)] font-semibold leading-[1.07] tracking-tight">{title}</h1>
               </div>
 
-              <aside className="rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/55 p-3">
-                <p className="text-[11px] font-semibold uppercase tracking-[0.13em] text-cyan-100/90">Arbeidslogikk</p>
-                <ol className="mt-2 space-y-2 text-sm text-[rgb(var(--muted))]">
-                  <li><strong className="text-[rgb(var(--fg))]">1.</strong> Definer mål</li>
-                  <li><strong className="text-[rgb(var(--fg))]">2.</strong> Lås produksjon</li>
-                  <li><strong className="text-[rgb(var(--fg))]">3.</strong> Lever prompt</li>
-                </ol>
-              </aside>
+              <div className="relative shrink-0">
+                <div className="group relative">
+                  <span
+                    tabIndex={0}
+                    className="inline-flex h-7 w-7 cursor-help items-center justify-center rounded-full border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/65 text-sm font-semibold text-[rgb(var(--muted))] outline-none transition hover:border-zinc-300/40 hover:text-zinc-100 focus:border-zinc-300/40 focus:text-zinc-100"
+                    aria-label="Hva kan du gjøre her?"
+                  >
+                    i
+                  </span>
+                  <div className="pointer-events-none absolute right-0 top-9 z-20 hidden w-72 rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/95 p-3 text-xs text-[rgb(var(--muted))] shadow-[0_14px_30px_rgba(0,0,0,0.35)] group-hover:block group-focus-within:block">
+                    <p className="font-semibold uppercase tracking-[0.12em] text-zinc-100/90">Hva kan du gjøre her?</p>
+                    <p className="mt-2 leading-relaxed">{description}</p>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -55,7 +61,7 @@ export default function NorskPromptingShell({
 
       <section className="mx-auto max-w-6xl space-y-4 px-4 py-6 sm:py-8">
         <SectionNav currentPath={currentPath} />
-        {children}
+        <div className="np-node-grid">{children}</div>
       </section>
     </main>
   );

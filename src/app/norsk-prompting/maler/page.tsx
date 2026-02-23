@@ -46,12 +46,12 @@ export default function NorskPromptingMalerPage() {
           {cinematicGenres.map((genre) => (
             <details
               key={genre.id}
-              className="rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))]/90 p-4 shadow-[0_10px_30px_rgba(2,6,23,0.18)]"
+              className="np-node-surface rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))]/90 p-4 pt-7 shadow-[0_10px_30px_rgba(2,6,23,0.18)]"
             >
               <summary className="flex cursor-pointer items-center justify-between gap-3">
                 <span className="text-lg font-semibold tracking-tight">{genre.navn}</span>
                 {genre.representasjonsskift ? (
-                  <span className="rounded-full border border-cyan-300/35 px-2 py-1 text-xs text-cyan-100">
+                  <span className="rounded-full border border-zinc-300/35 px-2 py-1 text-xs text-zinc-100">
                     {genre.representasjonsskift}
                   </span>
                 ) : null}

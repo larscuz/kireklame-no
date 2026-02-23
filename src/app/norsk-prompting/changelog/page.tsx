@@ -50,7 +50,7 @@ export default function NorskPromptingChangelogPage() {
     >
       <div className="space-y-4">
         {changelog.map((entry) => (
-          <article key={entry.date} className="rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))]/90 p-4 shadow-[0_10px_30px_rgba(2,6,23,0.18)]">
+          <article key={entry.date} className="np-node-surface rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))]/90 p-4 pt-7 shadow-[0_10px_30px_rgba(2,6,23,0.18)]">
             <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">{entry.date}</p>
             <h2 className="mt-1 text-xl font-semibold tracking-tight">{entry.title}</h2>
             <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-[rgb(var(--fg))]/85">

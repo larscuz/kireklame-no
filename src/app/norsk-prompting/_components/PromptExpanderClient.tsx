@@ -7,6 +7,7 @@ import type { PromptLength, PromptOutputType, PromptStyle, PromptDomain } from "
 import { buildPrompt, type BuildPromptInput } from "@/lib/norsk-prompting/builder";
 import { domainOptions, lengthOptions, outputTypeOptions, styleOptions } from "@/lib/norsk-prompting/constants";
 import CopyTextButton from "./CopyTextButton";
+import InfoHint from "./InfoHint";
 
 function toOutputType(value: string | null): PromptOutputType {
   if (value === "video" || value === "text") return value;
@@ -128,31 +129,135 @@ export default function PromptExpanderClient() {
     () => promptTemplates.filter((template) => template.outputType === outputType),
     [outputType]
   );
+  const isVisualOutput = outputType === "image" || outputType === "video";
 
   return (
-    <section className="np-template-card rounded-3xl border border-[rgb(var(--border))] bg-[rgb(var(--card))]/92 p-4 shadow-[0_18px_60px_rgba(2,6,23,0.3)] sm:p-6">
+    <section className="np-node-surface np-template-card rounded-3xl border border-[rgb(var(--border))] bg-[rgb(var(--card))]/92 p-4 pt-7 shadow-[0_18px_60px_rgba(2,6,23,0.3)] sm:p-6">
       <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[rgb(var(--muted))]">Prompt-utvider</p>
       <h1 className="mt-2 text-3xl font-semibold tracking-tight">Kort norsk input → lang pro-prompt</h1>
       <p className="mt-2 text-sm text-[rgb(var(--muted))]">
         Generatoren bruker interne regler, maler og termbank. Ingen eksterne LLM-kall.
       </p>
 
-      <div className="mt-4 grid gap-2 rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/60 p-3 text-xs text-[rgb(var(--muted))] sm:grid-cols-3">
-        <p><strong>1.</strong> Beskriv hensikt kort</p>
-        <p><strong>2.</strong> Sett kontrollvalg</p>
-        <p><strong>3.</strong> Oppdater og kopier resultat</p>
+      <div className="np-pipeline mt-4 text-xs text-[rgb(var(--muted))]">
+        <p className="np-pipeline-node"><strong>1.</strong> Beskriv hensikt kort</p>
+        <p className="np-pipeline-node"><strong>2.</strong> Sett kontrollvalg</p>
+        <p className="np-pipeline-node"><strong>3.</strong> Oppdater og kopier resultat</p>
       </div>
 
-      <label className="mt-4 block text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">
-        Kort beskrivelse / hensikt
-      </label>
+      <div className="mt-4 flex items-center gap-2">
+        <label className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">
+          Kort beskrivelse / hensikt
+        </label>
+        <InfoHint text="Skriv kort hva du vil lage. Hold det konkret: motiv, handling og kontekst." />
+      </div>
       <textarea
         value={input}
         onChange={(event) => setInput(event.target.value)}
-        className="mt-2 min-h-28 w-full rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))] px-3 py-3 text-sm shadow-inner outline-none focus:border-cyan-400"
+        className="mt-2 min-h-28 w-full rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))] px-3 py-3 text-sm shadow-inner outline-none focus:border-zinc-300"
       />
 
-      <div className="mt-4 grid gap-3 rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/50 p-3 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="mt-4 rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/70 p-3">
+        <div className="flex items-center gap-2">
+          <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">
+            Tekst i bilde/video
+          </p>
+          <InfoHint text="Brukes for tekstoverlegg i visuelle leveranser. Når aktivert blir tekstlåsen lagt inn i prompten." />
+        </div>
+
+        <div className="mt-2 grid gap-3 md:grid-cols-2">
+          <label className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">
+            Skal visuell leveranse inneholde tekst?
+            <select
+              value={textInVisual ? "ja" : "nei"}
+              onChange={(event) => setTextInVisual(event.target.value === "ja")}
+              className="mt-1 w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))] px-3 py-2 text-sm normal-case"
+            >
+              <option value="nei">Nei</option>
+              <option value="ja">Ja</option>
+            </select>
+          </label>
+        </div>
+
+        {!isVisualOutput ? (
+          <p className="mt-2 text-xs text-[rgb(var(--muted))]">
+            Denne seksjonen brukes når outputtype er satt til Bilde eller Video.
+          </p>
+        ) : null}
+
+        {textInVisual ? (
+          <div className="mt-3 space-y-3">
+            <label className="block text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">
+              Eksakt tekst (påkrevd)
+            </label>
+            <textarea
+              value={overlayText}
+              onChange={(event) => setOverlayText(event.target.value)}
+              className="min-h-20 w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-3 py-2 text-sm outline-none focus:border-zinc-300"
+              placeholder="Skriv nøyaktig tekst som skal vises."
+            />
+
+            <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
+              <label className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">
+                Språk
+                <select
+                  value={overlayLanguage}
+                  onChange={(event) => setOverlayLanguage(event.target.value)}
+                  className="mt-1 w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-3 py-2 text-sm normal-case"
+                >
+                  <option value="norsk">Norsk</option>
+                  <option value="engelsk">Engelsk (kun eksplisitt)</option>
+                  <option value="blandet">Blandet (kun eksplisitt)</option>
+                </select>
+              </label>
+
+              <label className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">
+                Case
+                <select
+                  value={textCase}
+                  onChange={(event) => setTextCase(event.target.value as "behold" | "store" | "små")}
+                  className="mt-1 w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-3 py-2 text-sm normal-case"
+                >
+                  <option value="behold">Behold som skrevet</option>
+                  <option value="store">STORE BOKSTAVER</option>
+                  <option value="små">små bokstaver</option>
+                </select>
+              </label>
+
+              <label className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">
+                Font-type (valgfritt)
+                <input
+                  value={fontHint}
+                  onChange={(event) => setFontHint(event.target.value)}
+                  className="mt-1 w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-3 py-2 text-sm normal-case outline-none focus:border-zinc-300"
+                  placeholder="Eks: Grotesk sans"
+                />
+              </label>
+
+              <label className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">
+                Plassering (valgfritt)
+                <input
+                  value={textPlacement}
+                  onChange={(event) => setTextPlacement(event.target.value)}
+                  className="mt-1 w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-3 py-2 text-sm normal-case outline-none focus:border-zinc-300"
+                  placeholder="Eks: Øvre venstre"
+                />
+              </label>
+            </div>
+          </div>
+        ) : (
+          <p className="mt-2 text-xs text-[rgb(var(--muted))]">
+            Utvideren vil legge inn: «Ingen tekst i bildet/videoen.»
+          </p>
+        )}
+      </div>
+
+      <div className="mt-4 rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/50 p-3">
+        <div className="mb-2 flex items-center gap-2">
+          <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">Produksjonsvalg</p>
+          <InfoHint text="Disse valgene styrer struktur, terminologi og hvor stramt prompten bygges." />
+        </div>
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         <label className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">
           Outputtype
           <select
@@ -228,9 +333,15 @@ export default function PromptExpanderClient() {
             ))}
           </select>
         </label>
+        </div>
       </div>
 
-      <div className="mt-4 grid gap-3 rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/50 p-3 md:grid-cols-2">
+      <div className="mt-4 rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/50 p-3">
+        <div className="mb-2 flex items-center gap-2">
+          <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">Kontrollnivå</p>
+          <InfoHint text="Stramhet reduserer tolkning. Konsistens låser kontinuitet mellom elementer og varianter." />
+        </div>
+        <div className="grid gap-3 md:grid-cols-2">
         <label className="text-sm">
           <span className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">
             Stramhet: {strictness}
@@ -258,6 +369,7 @@ export default function PromptExpanderClient() {
             className="mt-2 w-full"
           />
         </label>
+        </div>
       </div>
 
       <div className="mt-4 flex flex-wrap gap-2 text-sm">
@@ -271,102 +383,14 @@ export default function PromptExpanderClient() {
         </label>
       </div>
 
-      {(outputType === "image" || outputType === "video") && (
-        <div className="mt-4 rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/70 p-3">
-          <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">
-            Tekst i bilde/video
-          </p>
-
-          <div className="mt-2 grid gap-3 md:grid-cols-2">
-            <label className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">
-              Skal visuell leveranse inneholde tekst?
-              <select
-                value={textInVisual ? "ja" : "nei"}
-                onChange={(event) => setTextInVisual(event.target.value === "ja")}
-                className="mt-1 w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))] px-3 py-2 text-sm normal-case"
-              >
-                <option value="nei">Nei</option>
-                <option value="ja">Ja</option>
-              </select>
-            </label>
-          </div>
-
-          {textInVisual ? (
-            <div className="mt-3 space-y-3">
-              <label className="block text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">
-                Eksakt tekst (påkrevd)
-              </label>
-              <textarea
-                value={overlayText}
-                onChange={(event) => setOverlayText(event.target.value)}
-                className="min-h-20 w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-3 py-2 text-sm outline-none focus:border-cyan-400"
-                placeholder="Skriv nøyaktig tekst som skal vises."
-              />
-
-              <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-4">
-                <label className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">
-                  Språk
-                  <select
-                    value={overlayLanguage}
-                    onChange={(event) => setOverlayLanguage(event.target.value)}
-                    className="mt-1 w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-3 py-2 text-sm normal-case"
-                  >
-                    <option value="norsk">Norsk</option>
-                    <option value="engelsk">Engelsk (kun eksplisitt)</option>
-                    <option value="blandet">Blandet (kun eksplisitt)</option>
-                  </select>
-                </label>
-
-                <label className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">
-                  Case
-                  <select
-                    value={textCase}
-                    onChange={(event) => setTextCase(event.target.value as "behold" | "store" | "små")}
-                    className="mt-1 w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-3 py-2 text-sm normal-case"
-                  >
-                    <option value="behold">Behold som skrevet</option>
-                    <option value="store">STORE BOKSTAVER</option>
-                    <option value="små">små bokstaver</option>
-                  </select>
-                </label>
-
-                <label className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">
-                  Font-type (valgfritt)
-                  <input
-                    value={fontHint}
-                    onChange={(event) => setFontHint(event.target.value)}
-                    className="mt-1 w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-3 py-2 text-sm normal-case outline-none focus:border-cyan-400"
-                    placeholder="Eks: Grotesk sans"
-                  />
-                </label>
-
-                <label className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">
-                  Plassering (valgfritt)
-                  <input
-                    value={textPlacement}
-                    onChange={(event) => setTextPlacement(event.target.value)}
-                    className="mt-1 w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-3 py-2 text-sm normal-case outline-none focus:border-cyan-400"
-                    placeholder="Eks: Øvre venstre"
-                  />
-                </label>
-              </div>
-            </div>
-          ) : (
-            <p className="mt-2 text-xs text-[rgb(var(--muted))]">
-              Utvideren vil legge inn: «Ingen tekst i bildet/videoen.»
-            </p>
-          )}
-        </div>
-      )}
-
       <div className="mt-4 flex flex-wrap items-center gap-3 rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/50 p-3">
         <button
           type="button"
           onClick={() => setActiveRequest(draftRequest)}
-          className="rounded-xl border border-cyan-300/45 bg-cyan-400/15 px-4 py-2 text-sm font-semibold text-cyan-100 transition hover:bg-cyan-400/25 disabled:cursor-not-allowed disabled:opacity-50"
+          className="inline-flex w-full items-center justify-center rounded-xl border border-amber-200/45 bg-amber-300/16 px-5 py-2.5 text-sm font-semibold text-zinc-100 shadow-[0_10px_24px_rgba(0,0,0,0.25)] transition hover:bg-amber-300/25 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
           disabled={!hasDraftChanges}
         >
-          Oppdater prompt etter valgene
+          Oppdater prompt nå
         </button>
         <p className="text-xs text-[rgb(var(--muted))]">
           {hasDraftChanges
@@ -375,7 +399,7 @@ export default function PromptExpanderClient() {
         </p>
       </div>
 
-      <div className="mt-5 rounded-2xl border border-cyan-300/25 bg-gradient-to-br from-cyan-500/18 via-cyan-500/5 to-amber-400/12 p-4">
+      <div className="mt-5 rounded-2xl border border-zinc-300/30 bg-gradient-to-br from-zinc-500/20 via-zinc-500/5 to-amber-400/12 p-4">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <p className="text-sm font-semibold">Generert prompt</p>
           <CopyTextButton value={result.prompt} label="Kopier prompt" />

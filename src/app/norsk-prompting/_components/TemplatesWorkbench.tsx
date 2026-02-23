@@ -68,7 +68,7 @@ export default function TemplatesWorkbench({ templates }: Props) {
 
   return (
     <div className="space-y-4">
-      <section className="np-template-card rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))]/92 p-4 shadow-[0_12px_36px_rgba(2,6,23,0.2)]">
+      <section className="np-node-surface np-template-card rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))]/92 p-4 pt-7 shadow-[0_12px_36px_rgba(2,6,23,0.2)]">
         <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[rgb(var(--muted))]">Visning</p>
         <p className="mt-1 text-sm text-[rgb(var(--muted))]">
           Viser {filtered.length} av {templates.length} maler.
@@ -80,7 +80,7 @@ export default function TemplatesWorkbench({ templates }: Props) {
             onClick={() => setView("domain")}
             className={`rounded-full border px-3 py-1 text-xs font-semibold uppercase tracking-[0.12em] ${
               view === "domain"
-                ? "border-cyan-300/45 bg-cyan-300/15 text-cyan-100"
+                ? "border-zinc-300/35 bg-zinc-300/10 text-zinc-100"
                 : "border-[rgb(var(--border))] text-[rgb(var(--muted))]"
             }`}
           >
@@ -91,7 +91,7 @@ export default function TemplatesWorkbench({ templates }: Props) {
             onClick={() => setView("list")}
             className={`rounded-full border px-3 py-1 text-xs font-semibold uppercase tracking-[0.12em] ${
               view === "list"
-                ? "border-cyan-300/45 bg-cyan-300/15 text-cyan-100"
+                ? "border-zinc-300/35 bg-zinc-300/10 text-zinc-100"
                 : "border-[rgb(var(--border))] text-[rgb(var(--muted))]"
             }`}
           >
@@ -106,7 +106,7 @@ export default function TemplatesWorkbench({ templates }: Props) {
               value={query}
               onChange={(event) => setQuery(event.target.value)}
               placeholder="Søk etter malnavn eller brukstilfelle"
-              className="mt-1 w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-3 py-2 text-sm outline-none focus:border-cyan-400"
+              className="mt-1 w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-3 py-2 text-sm outline-none focus:border-zinc-300"
             />
           </label>
 
@@ -115,7 +115,7 @@ export default function TemplatesWorkbench({ templates }: Props) {
             <select
               value={outputType}
               onChange={(event) => setOutputType(event.target.value as PromptTemplate["outputType"] | "all")}
-              className="mt-1 w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-3 py-2 text-sm outline-none focus:border-cyan-400"
+              className="mt-1 w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-3 py-2 text-sm outline-none focus:border-zinc-300"
             >
               <option value="all">Alle</option>
               <option value="image">Bilde</option>
@@ -129,7 +129,7 @@ export default function TemplatesWorkbench({ templates }: Props) {
             <select
               value={domain}
               onChange={(event) => setDomain(event.target.value as PromptTemplate["domain"] | "all")}
-              className="mt-1 w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-3 py-2 text-sm outline-none focus:border-cyan-400"
+              className="mt-1 w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-3 py-2 text-sm outline-none focus:border-zinc-300"
             >
               <option value="all">Alle domener</option>
               {domains.map((value) => (
@@ -145,7 +145,7 @@ export default function TemplatesWorkbench({ templates }: Props) {
             <select
               value={sortBy}
               onChange={(event) => setSortBy(event.target.value as "title" | "ruleCount")}
-              className="mt-1 w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-3 py-2 text-sm outline-none focus:border-cyan-400"
+              className="mt-1 w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-3 py-2 text-sm outline-none focus:border-zinc-300"
             >
               <option value="title">Alfabetisk</option>
               <option value="ruleCount">Flest anbefalte regler</option>
@@ -160,7 +160,7 @@ export default function TemplatesWorkbench({ templates }: Props) {
             <details
               key={groupDomain}
               open={needle.length > 0 || groupIndex < 2}
-              className="np-template-card rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))]/92 p-4"
+              className="np-node-surface np-template-card rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))]/92 p-4 pt-7"
             >
               <summary className="flex cursor-pointer items-center justify-between gap-3">
                 <span className="text-lg font-semibold tracking-tight">{domainLabel[groupDomain]}</span>
@@ -247,7 +247,7 @@ function TemplateCard({ template }: { template: PromptTemplate }) {
           <CopyTextButton value={template.useCase} label="Kopier bruksområde" />
           <Link
             href={toTemplateHref(template.id)}
-            className="inline-flex rounded-full border border-cyan-300/35 bg-cyan-300/15 px-3 py-1 text-xs font-semibold uppercase tracking-[0.12em] text-cyan-100"
+            className="inline-flex rounded-full border border-zinc-300/35 bg-zinc-300/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.12em] text-zinc-100"
           >
             Bruk i utvider
           </Link>

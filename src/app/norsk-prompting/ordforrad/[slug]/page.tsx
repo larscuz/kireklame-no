@@ -84,14 +84,14 @@ export default async function TermPage({ params }: Props) {
       <section className="mx-auto max-w-6xl space-y-4 px-4 py-6 sm:py-8">
         <SectionNav currentPath="/norsk-prompting/ordforrad" />
 
-        <article className="rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))]/90 p-4 shadow-[0_10px_30px_rgba(2,6,23,0.18)]">
+        <article className="np-node-surface rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))]/90 p-4 pt-7 shadow-[0_10px_30px_rgba(2,6,23,0.18)]">
           <p className="text-sm"><strong>Prompteffekt:</strong> {term.promptImpact}</p>
 
           <div className="mt-3 flex flex-wrap gap-2">
             <CopyTextButton value={snippet} label="Kopier prompt-snutt" />
             <Link
               href={`/norsk-prompting/prompt-utvider?input=${encodeURIComponent(`${term.term_no}: ${term.promptImpact}`)}&domain=${term.domain === "arch" ? "arkitektur" : term.domain === "film" ? "film-vfx" : term.domain === "vfx" ? "film-vfx" : term.domain === "ai" ? "redaksjonell" : term.domain === "photo" ? "produkt" : "design-system"}`}
-              className="inline-flex rounded-full border border-cyan-300/35 bg-cyan-300/15 px-3 py-1 text-xs font-semibold uppercase tracking-[0.12em] text-cyan-100"
+              className="inline-flex rounded-full border border-zinc-300/35 bg-zinc-300/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.12em] text-zinc-100"
             >
               Bruk i utvider
             </Link>
@@ -112,7 +112,7 @@ export default async function TermPage({ params }: Props) {
                   <Link
                     key={entry!.slug}
                     href={`/norsk-prompting/ordforrad/${entry!.slug}`}
-                    className="rounded-full border border-[rgb(var(--border))] px-3 py-1 text-xs text-[rgb(var(--muted))] hover:border-cyan-300/35"
+                    className="rounded-full border border-[rgb(var(--border))] px-3 py-1 text-xs text-[rgb(var(--muted))] hover:border-zinc-300/35"
                   >
                     {entry!.term_no}
                   </Link>

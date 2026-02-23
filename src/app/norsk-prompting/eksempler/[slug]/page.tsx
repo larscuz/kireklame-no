@@ -88,7 +88,7 @@ export default async function ExampleDetailPage({ params }: Props) {
       <section className="mx-auto max-w-6xl space-y-4 px-4 py-6 sm:py-8">
         <SectionNav currentPath="/norsk-prompting/eksempler" />
 
-        <article className="rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))]/90 p-4 shadow-[0_10px_30px_rgba(2,6,23,0.18)]">
+        <article className="np-node-surface rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))]/90 p-4 pt-7 shadow-[0_10px_30px_rgba(2,6,23,0.18)]">
           <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">Kort input</p>
           <p className="mt-2 text-sm">{example.shortInput}</p>
 
@@ -96,7 +96,7 @@ export default async function ExampleDetailPage({ params }: Props) {
             <CopyTextButton value={example.longOutput} label="Kopier langt resultat" />
             <Link
               href={`/norsk-prompting/prompt-utvider?input=${encodeURIComponent(example.shortInput)}&outputType=${example.outputType}&domain=${example.domain}`}
-              className="inline-flex rounded-full border border-cyan-300/35 bg-cyan-300/15 px-3 py-1 text-xs font-semibold uppercase tracking-[0.12em] text-cyan-100"
+              className="inline-flex rounded-full border border-zinc-300/35 bg-zinc-300/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.12em] text-zinc-100"
             >
               Kjør i utvider
             </Link>
@@ -109,7 +109,7 @@ export default async function ExampleDetailPage({ params }: Props) {
         </article>
 
         <div className="grid gap-4 lg:grid-cols-2">
-          <article className="rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))]/90 p-4">
+          <article className="np-node-surface rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))]/90 p-4 pt-7">
             <h2 className="text-lg font-semibold">Hvorfor dette fungerer</h2>
             <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-[rgb(var(--fg))]/85">
               {example.whyWorks.map((point, index) => (
@@ -118,7 +118,7 @@ export default async function ExampleDetailPage({ params }: Props) {
             </ul>
           </article>
 
-          <article className="rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))]/90 p-4">
+          <article className="np-node-surface rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))]/90 p-4 pt-7">
             <h2 className="text-lg font-semibold">Regler brukt</h2>
             <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-[rgb(var(--fg))]/85">
               {usedRules.map((rule) => (

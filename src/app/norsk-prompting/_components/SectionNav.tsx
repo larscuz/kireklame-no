@@ -1,7 +1,6 @@
 import Link from "next/link";
 
 const links = [
-  { href: "/norsk-prompting", label: "Oversikt" },
   { href: "/norsk-prompting/prompt-utvider", label: "Prompt-utvider" },
   { href: "/norsk-prompting/regler", label: "Regler" },
   { href: "/norsk-prompting/ordforrad", label: "Ordforråd" },
@@ -22,19 +21,19 @@ export default function SectionNav({ currentPath }: Props) {
           const active = currentPath === link.href || (link.href !== "/norsk-prompting" && currentPath.startsWith(link.href));
 
           return (
-            <li key={link.href}>
+            <li key={link.href} className="np-nav-item">
               <Link
                 href={link.href}
                 className={`inline-flex items-center gap-2 rounded-xl px-3 py-2 text-sm transition ${
                   active
-                    ? "border border-cyan-300/45 bg-cyan-300/15 font-semibold text-cyan-100 shadow-[inset_0_0_0_1px_rgba(125,211,252,0.25)]"
+                    ? "border border-zinc-300/35 bg-zinc-300/10 font-semibold text-zinc-100 shadow-[inset_0_0_0_1px_rgba(212,212,216,0.25)]"
                     : "border border-transparent text-[rgb(var(--fg))] hover:border-[rgb(var(--border))] hover:bg-black/5 dark:hover:bg-white/5"
                 }`}
               >
                 <span
                   className={`inline-flex h-5 min-w-5 items-center justify-center rounded-full border px-1 text-[10px] font-semibold ${
                     active
-                      ? "border-cyan-300/45 bg-cyan-300/20 text-cyan-100"
+                      ? "border-zinc-300/35 bg-zinc-300/14 text-zinc-100"
                       : "border-[rgb(var(--border))] text-[rgb(var(--muted))]"
                   }`}
                 >

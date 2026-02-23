@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import InfoHint from "./InfoHint";
 
 type SearchItem = {
   type: "ordforråd" | "mal" | "eksempel";
@@ -33,16 +34,19 @@ export default function SearchPanel({ items, showResultsOnEmptyQuery = true }: P
   }, [items, needle, showResultsOnEmptyQuery]);
 
   return (
-    <section className="np-template-card rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))]/92 p-4 shadow-[0_10px_35px_rgba(2,6,23,0.24)]">
-      <label htmlFor="norsk-prompting-search" className="text-xs font-semibold uppercase tracking-[0.14em] text-[rgb(var(--muted))]">
-        Søk i ordforråd, maler og eksempler
-      </label>
+    <section className="np-node-surface np-template-card rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))]/92 p-4 pt-7 shadow-[0_10px_26px_rgba(2,6,23,0.2)]">
+      <div className="flex items-center gap-2">
+        <label htmlFor="norsk-prompting-search" className="text-xs font-semibold uppercase tracking-[0.14em] text-[rgb(var(--muted))]">
+          Søk i ordforråd, maler og eksempler
+        </label>
+        <InfoHint text="Søk filtrerer i innholdet for denne siden. Skriv begrep, brukstilfelle eller eksempelnavn." />
+      </div>
       <input
         id="norsk-prompting-search"
         value={query}
         onChange={(event) => setQuery(event.target.value)}
         placeholder="Søk etter begrep, brukstilfelle eller eksempel"
-        className="mt-2 w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))] px-3 py-2 text-sm outline-none focus:border-cyan-400"
+        className="mt-2 w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/88 px-3 py-2 text-sm outline-none focus:border-zinc-300"
       />
 
       {shouldShowResults ? (
@@ -51,9 +55,9 @@ export default function SearchPanel({ items, showResultsOnEmptyQuery = true }: P
             <li key={`${item.type}-${item.href}`}>
               <a
                 href={item.href}
-                className="block rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/72 px-3 py-2 transition hover:-translate-y-px hover:border-cyan-300/40 hover:bg-cyan-300/10"
+                className="block rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/68 px-3 py-2 transition hover:-translate-y-px hover:border-zinc-300/40 hover:bg-zinc-300/08"
               >
-                <p className="text-xs font-semibold uppercase tracking-[0.12em] text-cyan-100/90">{item.type}</p>
+                <p className="text-xs font-semibold uppercase tracking-[0.12em] text-zinc-100/90">{item.type}</p>
                 <p className="mt-1 text-sm font-semibold text-[rgb(var(--fg))]">{item.title}</p>
                 <p className="mt-1 text-sm text-[rgb(var(--muted))]">{item.description}</p>
               </a>
