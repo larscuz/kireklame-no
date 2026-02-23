@@ -1,7 +1,11 @@
 import Link from "next/link";
-import { promptExamples } from "@/data/norskPrompting/examples";
-import { glossaryTerms } from "@/data/norskPrompting/glossary";
-import { promptTemplates } from "@/data/norskPrompting/templates";
+import {
+  glossaryTerms,
+  norskPromptingRules,
+  promptExamples,
+  promptTemplates,
+  runtimeCounts,
+} from "@/data/norskPrompting/runtime";
 import SearchPanel from "./_components/SearchPanel";
 import NorskPromptingShell from "./_components/NorskPromptingShell";
 import { siteMeta } from "@/lib/seo";
@@ -57,12 +61,17 @@ export default function NorskPromptingHubPage() {
       <section className="grid gap-4 lg:grid-cols-3">
         <article className="rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] p-4">
           <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">Bibliotek</p>
-          <p className="mt-2 text-2xl font-semibold">{glossaryTerms.length} termer</p>
+          <p className="mt-2 text-2xl font-semibold">{runtimeCounts.glossaryRegistered} termer</p>
+          {runtimeCounts.glossaryDisplayed !== runtimeCounts.glossaryRegistered ? (
+            <p className="mt-1 text-xs text-[rgb(var(--muted))]">
+              Viser {runtimeCounts.glossaryDisplayed} unike termer i listen.
+            </p>
+          ) : null}
           <p className="mt-1 text-sm text-[rgb(var(--muted))]">Film, VFX, arkitektur, lys/foto, AI-begreper og designspråk.</p>
         </article>
         <article className="rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] p-4">
           <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">Regeldatabase</p>
-          <p className="mt-2 text-2xl font-semibold">40 regler</p>
+          <p className="mt-2 text-2xl font-semibold">{norskPromptingRules.length} regler</p>
           <p className="mt-1 text-sm text-[rgb(var(--muted))]">Maskinlesbare regler for konsistens, fysikk, kamera og produksjonslogikk.</p>
         </article>
         <article className="rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] p-4">
@@ -84,13 +93,13 @@ export default function NorskPromptingHubPage() {
         <Link href="/norsk-prompting/regler" className="rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] p-4 hover:border-cyan-300/25">
           <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">Rammeverk</p>
           <h2 className="mt-2 text-xl font-semibold">Regler</h2>
-          <p className="mt-2 text-sm text-[rgb(var(--muted))]">Se hvilke regler som injiseres i output og hvorfor de finnes.</p>
+          <p className="mt-2 text-sm text-[rgb(var(--muted))]">Se hvilke regler som injiseres i resultatet og hvorfor de finnes.</p>
         </Link>
 
         <Link href="/norsk-prompting/eksempler" className="rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] p-4 hover:border-cyan-300/25">
           <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">Casebibliotek</p>
           <h2 className="mt-2 text-xl font-semibold">Eksempler</h2>
-          <p className="mt-2 text-sm text-[rgb(var(--muted))]">Kort input → lang output med forklaring, regler og termer brukt.</p>
+          <p className="mt-2 text-sm text-[rgb(var(--muted))]">Kort input → langt resultat med forklaring, regler og termer brukt.</p>
         </Link>
       </section>
     </NorskPromptingShell>

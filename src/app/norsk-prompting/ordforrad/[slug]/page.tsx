@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { glossaryTerms } from "@/data/norskPrompting/glossary";
+import { glossaryTerms } from "@/data/norskPrompting/runtime";
 import CopyTextButton from "../../_components/CopyTextButton";
 import SectionNav from "../../_components/SectionNav";
 import { siteMeta } from "@/lib/seo";
@@ -83,7 +83,7 @@ export default async function TermPage({ params }: Props) {
         <SectionNav currentPath="/norsk-prompting/ordforrad" />
 
         <article className="rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] p-4">
-          <p className="text-sm"><strong>Prompt-impact:</strong> {term.promptImpact}</p>
+          <p className="text-sm"><strong>Prompteffekt:</strong> {term.promptImpact}</p>
 
           <div className="mt-3 flex flex-wrap gap-2">
             <CopyTextButton value={snippet} label="Kopier prompt-snutt" />

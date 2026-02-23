@@ -12,7 +12,7 @@ export const metadata = siteMeta({
 
 export default function PromptUtviderPage() {
   const description =
-    "Skriv en kort norsk hensikt. Velg output-type, domene og stil. Norsk Prompting bygger en forutsigbar prompt med samme seksjonsstruktur hver gang.";
+    "Skriv en kort norsk hensikt. Velg outputtype, domene og stil. Norsk Prompting bygger en forutsigbar prompt med samme seksjonsstruktur hver gang.";
 
   return (
     <NorskPromptingShell

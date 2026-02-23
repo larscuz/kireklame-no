@@ -1,13 +1,13 @@
 import Link from "next/link";
 
 const links = [
-  { href: "/norsk-prompting", label: "Hub" },
+  { href: "/norsk-prompting", label: "Oversikt" },
   { href: "/norsk-prompting/prompt-utvider", label: "Prompt-utvider" },
   { href: "/norsk-prompting/regler", label: "Regler" },
   { href: "/norsk-prompting/ordforrad", label: "Ordforråd" },
   { href: "/norsk-prompting/maler", label: "Maler" },
   { href: "/norsk-prompting/eksempler", label: "Eksempler" },
-  { href: "/norsk-prompting/changelog", label: "Changelog" },
+  { href: "/norsk-prompting/changelog", label: "Endringslogg" },
 ];
 
 type Props = {

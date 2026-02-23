@@ -1,19 +1,24 @@
 import Link from "next/link";
-import { promptExamples } from "@/data/norskPrompting/examples";
+import { promptExamples } from "@/data/norskPrompting/runtime";
 import NorskPromptingShell from "../_components/NorskPromptingShell";
 import SearchPanel from "../_components/SearchPanel";
 import { siteMeta } from "@/lib/seo";
+import { domainLabel, outputTypeOptions } from "@/lib/norsk-prompting/constants";
 import { absoluteUrl, buildArticleJsonLd, buildBreadcrumbJsonLd } from "@/lib/norsk-prompting/seo";
 
 export const metadata = siteMeta({
   title: "Eksempler | Norsk Prompting",
   description:
-    "Eksempelbibliotek med kort norsk input, lang output, regelsett og term-injeksjon for profesjonell prompting.",
+    "Eksempelbibliotek med kort norsk input, langt resultat, regelsett og term-injeksjon for profesjonell prompting.",
   path: "/norsk-prompting/eksempler",
 });
 
 export default function NorskPromptingEksemplerPage() {
-  const description = "Casebibliotek: kort input → lang output med forklaring på hvorfor prompten fungerer.";
+  const outputTypeLabel = Object.fromEntries(
+    outputTypeOptions.map((option) => [option.value, option.label])
+  );
+
+  const description = "Casebibliotek: kort input → langt resultat med forklaring på hvorfor prompten fungerer.";
 
   const searchItems = promptExamples.map((example) => ({
     type: "eksempel" as const,
@@ -50,7 +55,9 @@ export default function NorskPromptingEksemplerPage() {
             href={`/norsk-prompting/eksempler/${example.slug}`}
             className="rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] p-4 hover:border-cyan-300/35"
           >
-            <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">{example.outputType} · {example.domain}</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">
+              {outputTypeLabel[example.outputType]} · {domainLabel[example.domain]}
+            </p>
             <h2 className="mt-2 text-lg font-semibold tracking-tight">{example.title}</h2>
             <p className="mt-2 text-sm text-[rgb(var(--muted))]">{example.shortInput}</p>
           </Link>

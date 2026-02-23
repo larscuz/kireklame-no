@@ -1,9 +1,12 @@
+import { cinematicGenres } from "@/data/norskPrompting/cinematicGenres";
+import { glossaryTerms, norskPromptingRules, promptExamples } from "@/data/norskPrompting/runtime";
+import { norskPromptingGovernanceRules } from "@/data/norskPrompting/governanceRules";
 import NorskPromptingShell from "../_components/NorskPromptingShell";
 import { siteMeta } from "@/lib/seo";
 import { absoluteUrl, buildArticleJsonLd, buildBreadcrumbJsonLd } from "@/lib/norsk-prompting/seo";
 
 export const metadata = siteMeta({
-  title: "Changelog | Norsk Prompting",
+  title: "Endringslogg | Norsk Prompting",
   description: "Løpende endringslogg for regler, termer, maler og eksempelbibliotek i Norsk Prompting.",
   path: "/norsk-prompting/changelog",
 });
@@ -14,9 +17,11 @@ const changelog = [
     title: "Lansering av Norsk Prompting",
     details: [
       "Ny hub med prompt-utvider, regler, maler, ordforråd og eksempelbibliotek.",
-      "Regeldatabase med 40 maskinlesbare regler.",
-      "Ordbase med 120 fagtermer på norsk og engelsk.",
-      "Eksempelbibliotek med 20 case og forklaringer.",
+      `Regeldatabase med ${norskPromptingRules.length} maskinlesbare regler.`,
+      `Governance-lag med ${norskPromptingGovernanceRules.length} systemregel for semantisk dataintegritet.`,
+      `Ordbase med ${glossaryTerms.length} fagtermer.`,
+      `Eksempelbibliotek med ${promptExamples.length} case (kort input -> langt resultat).`,
+      `Sjangerdatabase med ${cinematicGenres.length} kinematiske rammer og representasjonsskift.`,
     ],
   },
 ];
@@ -27,11 +32,11 @@ export default function NorskPromptingChangelogPage() {
   return (
     <NorskPromptingShell
       currentPath="/norsk-prompting/changelog"
-      title="Changelog"
+      title="Endringslogg"
       description={description}
       jsonLd={[
         buildArticleJsonLd({
-          headline: "Norsk Prompting changelog",
+          headline: "Norsk Prompting endringslogg",
           description,
           path: "/norsk-prompting/changelog",
           dateModified: "2026-02-23",
@@ -39,7 +44,7 @@ export default function NorskPromptingChangelogPage() {
         buildBreadcrumbJsonLd([
           { name: "Forside", item: absoluteUrl("/") },
           { name: "Norsk Prompting", item: absoluteUrl("/norsk-prompting") },
-          { name: "Changelog", item: absoluteUrl("/norsk-prompting/changelog") },
+          { name: "Endringslogg", item: absoluteUrl("/norsk-prompting/changelog") },
         ]),
       ]}
     >

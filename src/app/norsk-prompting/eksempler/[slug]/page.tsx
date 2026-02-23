@@ -1,8 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { promptExamples } from "@/data/norskPrompting/examples";
-import { glossaryTerms } from "@/data/norskPrompting/glossary";
-import { rulesById } from "@/data/norskPrompting/rules";
+import { glossaryTerms, promptExamples, rulesById } from "@/data/norskPrompting/runtime";
 import SectionNav from "../../_components/SectionNav";
 import CopyTextButton from "../../_components/CopyTextButton";
 import { siteMeta } from "@/lib/seo";
@@ -93,7 +91,7 @@ export default async function ExampleDetailPage({ params }: Props) {
           <p className="mt-2 text-sm">{example.shortInput}</p>
 
           <div className="mt-4 flex flex-wrap gap-2">
-            <CopyTextButton value={example.longOutput} label="Kopier lang output" />
+            <CopyTextButton value={example.longOutput} label="Kopier langt resultat" />
             <Link
               href={`/norsk-prompting/prompt-utvider?input=${encodeURIComponent(example.shortInput)}&outputType=${example.outputType}&domain=${example.domain}`}
               className="inline-flex rounded-full border border-cyan-300/35 bg-cyan-300/15 px-3 py-1 text-xs font-semibold uppercase tracking-[0.12em] text-cyan-100"
@@ -102,7 +100,7 @@ export default async function ExampleDetailPage({ params }: Props) {
             </Link>
           </div>
 
-          <p className="mt-4 text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">Lang output</p>
+          <p className="mt-4 text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">Langt resultat</p>
           <pre className="mt-2 whitespace-pre-wrap rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))] p-3 text-sm text-[rgb(var(--fg))]/90">
             {example.longOutput}
           </pre>

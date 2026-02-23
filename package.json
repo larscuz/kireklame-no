@@ -7,7 +7,15 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "np:ingest": "node scripts/np-ingest-batch.mjs",
+    "np:seed:templates": "node scripts/np-seed-templates-100.mjs",
+    "np:build:reklame-seed": "node scripts/np-build-reklame-seed.mjs",
+    "np:ingest:reklame-seed": "node scripts/np-ingest-batch.mjs --file data/norskPrompting/engine-seeds/reklame-batch-v1.json --source-tag ReklameBatchV1",
+    "np:reklame:pipeline": "node scripts/np-build-reklame-seed.mjs && node scripts/np-ingest-batch.mjs --file data/norskPrompting/engine-seeds/reklame-batch-v1.json --source-tag ReklameBatchV1 && node scripts/np-process-queue.mjs --limit 800 && node scripts/np-export-generated.mjs",
+    "np:process": "node scripts/np-process-queue.mjs",
+    "np:export": "node scripts/np-export-generated.mjs",
+    "np:pipeline": "node scripts/np-process-queue.mjs && node scripts/np-export-generated.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.5.2",

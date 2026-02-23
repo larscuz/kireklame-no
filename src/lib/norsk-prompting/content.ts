@@ -1,13 +1,14 @@
-import { promptExamples } from "@/data/norskPrompting/examples";
-import { glossaryTerms } from "@/data/norskPrompting/glossary";
-import { norskPromptingRules } from "@/data/norskPrompting/rules";
-import { promptTemplates } from "@/data/norskPrompting/templates";
+import { cinematicGenres } from "@/data/norskPrompting/cinematicGenres";
+import { norskPromptingGovernanceRules } from "@/data/norskPrompting/governanceRules";
+import { glossaryTerms, norskPromptingRules, promptExamples, promptTemplates } from "@/data/norskPrompting/runtime";
 
 export const norskPromptingContent = {
   rules: norskPromptingRules,
   glossary: glossaryTerms,
   templates: promptTemplates,
   examples: promptExamples,
+  cinematicGenres,
+  governanceRules: norskPromptingGovernanceRules,
 };
 
 export function getGlossaryTerm(slug: string) {

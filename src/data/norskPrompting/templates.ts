@@ -8,15 +8,20 @@ export const promptTemplates: PromptTemplate[] = [
   {
     id: "reklamefilm-15s",
     title: "Reklamefilm 15 sek",
-    useCase: "Kampanjevideo med tydelig hook, benefit og CTA.",
+    useCase: "Kampanjevideo med tydelig åpning, nytte og handling.",
     outputType: "video",
     domain: "film-vfx",
     blocks: blocks([
-      ["hook", "Hook 0-3s", "Definer visuelt problem eller trigger i første sekund."],
-      ["benefit", "Benefit 3-10s", "Vis produkt eller løsning i konkret handling."],
-      ["cta", "CTA 10-15s", "Avslutt med tydelig handling og visuell forankring."],
+      ["hook", "Åpning 0-3s", "Definer visuelt problem eller trigger i første sekund."],
+      ["benefit", "Nytte 3-10s", "Vis produkt eller løsning i konkret handling."],
+      ["cta", "Handling 10-15s", "Avslutt med tydelig oppfordring og visuell forankring."],
     ]),
-    recommendedRules: ["kontinuitet-first-last", "kamera-bevegelsesregel", "produksjon-fremdrift", "konsistens-identitetslas"],
+    recommendedRules: [
+      "motiv-for-stil",
+      "las-identitet-kontinuitet",
+      "spesifiser-linse-brennvidde",
+      "avslutt-med-klare-begrensninger",
+    ],
   },
   {
     id: "produkt-demo",
@@ -29,7 +34,12 @@ export const promptTemplates: PromptTemplate[] = [
       ["interaction", "Interaksjon", "Vis håndgrep, materialrespons og UI-respons."],
       ["proof", "Bevis", "Legg inn konkret effekt eller resultat."],
     ]),
-    recommendedRules: ["realisme-materialrespons", "fysikk-kollisjon", "kamera-dybdeskarphet", "produksjon-qa-sjekk"],
+    recommendedRules: [
+      "beskriv-materialitet",
+      "definer-dybdeskarphet",
+      "bevar-tekst-logo",
+      "avslutt-med-klare-begrensninger",
+    ],
   },
   {
     id: "arkitektur-visualisering",
@@ -42,7 +52,12 @@ export const promptTemplates: PromptTemplate[] = [
       ["material", "Materialitet", "Lås materialvalg og overflaterespons."],
       ["human", "Menneskelig skala", "Legg inn skalaobjekter uten å stjele fokus."],
     ]),
-    recommendedRules: ["realisme-materialrespons", "konsistens-scenelas", "komposisjon-lagdeling", "lys-fargetemperatur"],
+    recommendedRules: [
+      "beskriv-materialitet",
+      "presiser-ortografisk-perspektiv",
+      "presiser-skala-og-proporsjon",
+      "definer-lysretning-kvalitet",
+    ],
   },
   {
     id: "historisk-scene",
@@ -55,7 +70,12 @@ export const promptTemplates: PromptTemplate[] = [
       ["wardrobe", "Kostyme og rekvisitt", "Beskriv tidsriktige klær og materialer."],
       ["atmosphere", "Lys og miljø", "Definer realistisk lyskilde for epoken."],
     ]),
-    recommendedRules: ["historisk-epokekontroll", "historisk-materialpalett", "realisme-fysisk-lys", "produksjon-ingen-magi"],
+    recommendedRules: [
+      "beskriv-materialitet",
+      "definer-lysretning-kvalitet",
+      "unnga-magisk-objektendring",
+      "avslutt-med-klare-begrensninger",
+    ],
   },
   {
     id: "dokumentar-stil",
@@ -65,10 +85,15 @@ export const promptTemplates: PromptTemplate[] = [
     domain: "dokumentar",
     blocks: blocks([
       ["observation", "Observasjon", "Beskriv hva kamera observerer uten iscenesatt overdrivelse."],
-      ["movement", "Kameraadferd", "Velg håndholdt eller locked-off med begrunnelse."],
+      ["movement", "Kameraadferd", "Velg håndholdt eller fastlåst kamera med begrunnelse."],
       ["sound", "Lydhint", "Definer miljølyd i stedet for episk musikk."],
     ]),
-    recommendedRules: ["kamera-pov", "kamera-bevegelsesregel", "realisme-tyngdekraft", "konsistens-fargepalett"],
+    recommendedRules: [
+      "spesifiser-linse-brennvidde",
+      "presiser-kamerahoyde",
+      "las-identitet-kontinuitet",
+      "unnga-tilfeldig-stilfilter",
+    ],
   },
   {
     id: "sosiale-medier-variant",
@@ -81,12 +106,17 @@ export const promptTemplates: PromptTemplate[] = [
       ["format", "Format", "Lås 9:16 og sentralt fokusområde."],
       ["variant", "Variantstrategi", "Definer hva som endres mellom A/B/C."],
     ]),
-    recommendedRules: ["produksjon-versjonering", "tekst-lesbar-hierarki", "komposisjon-fokuspunkt", "konsistens-seedstrategi"],
+    recommendedRules: [
+      "bevar-tekst-logo",
+      "beskriv-romlig-hierarki",
+      "presiser-stillbilde-eller-bevegelse",
+      "avslutt-med-klare-begrensninger",
+    ],
   },
   {
     id: "vfx-breakdown",
-    title: "VFX breakdown",
-    useCase: "Beskrive plate, compositing og postarbeid i promptform.",
+    title: "VFX-nedbrytning",
+    useCase: "Beskriv plate, komposittarbeid og postprosess i promptform.",
     outputType: "text",
     domain: "film-vfx",
     blocks: blocks([
@@ -94,12 +124,17 @@ export const promptTemplates: PromptTemplate[] = [
       ["integration", "Integrasjon", "Beskriv hvordan CG-elementer skal integreres."],
       ["delivery", "Leveranse", "Spesifiser pass, QA og eksportformat."],
     ]),
-    recommendedRules: ["tekst-klar-rolle", "tekst-terminologikontroll", "produksjon-briefformat", "produksjon-qa-sjekk"],
+    recommendedRules: [
+      "spesifiser-teknisk-eller-estetisk",
+      "bruk-representasjonsskift-bevisst",
+      "unnga-stilisering-ved-teknisk-presisjon",
+      "avslutt-med-klare-begrensninger",
+    ],
   },
   {
     id: "produkt-foto-packshot",
-    title: "Produktfoto / packshot",
-    useCase: "Presis packshot med materialtrohet og lyskontroll.",
+    title: "Produktfoto / pakkskudd",
+    useCase: "Presist pakkskudd med materialtrohet og lyskontroll.",
     outputType: "image",
     domain: "produkt",
     blocks: blocks([
@@ -107,7 +142,12 @@ export const promptTemplates: PromptTemplate[] = [
       ["light", "Lyssetting", "Beskriv key/fill/rim og reflekskontroll."],
       ["surface", "Overflate", "Lås glans, tekstur og kantdefinisjon."],
     ]),
-    recommendedRules: ["realisme-materialrespons", "lys-primarkilde", "lys-kontrastkontroll", "komposisjon-fokuspunkt"],
+    recommendedRules: [
+      "beskriv-materialitet",
+      "definer-lysretning-kvalitet",
+      "definer-dybdeskarphet",
+      "avslutt-med-klare-begrensninger",
+    ],
   },
   {
     id: "arkitekt-konkurranse",
@@ -120,7 +160,12 @@ export const promptTemplates: PromptTemplate[] = [
       ["program", "Program", "Forklar funksjonell bruk og bevegelse i rommet."],
       ["climate", "Klima", "Knytt lys, vær og materialvalg til kontekst."],
     ]),
-    recommendedRules: ["realisme-fysisk-lys", "realisme-objektproporsjon", "komposisjon-ledende-linjer", "konsistens-scenelas"],
+    recommendedRules: [
+      "beskriv-materialitet",
+      "definer-lysretning-kvalitet",
+      "presiser-skala-og-proporsjon",
+      "beskriv-romlig-hierarki",
+    ],
   },
   {
     id: "redaksjonell-forklaring",
@@ -133,7 +178,12 @@ export const promptTemplates: PromptTemplate[] = [
       ["mechanism", "Mekanisme", "Forklar hvordan fenomenet faktisk fungerer."],
       ["practice", "Praktisk bruk", "Avslutt med konkret handling eller sjekkliste."],
     ]),
-    recommendedRules: ["tekst-klar-rolle", "tekst-terminologikontroll", "produksjon-briefformat", "produksjon-qa-sjekk"],
+    recommendedRules: [
+      "motiv-for-stil",
+      "unnga-vage-stilord",
+      "spesifiser-teknisk-eller-estetisk",
+      "avslutt-med-klare-begrensninger",
+    ],
   },
 ];
 

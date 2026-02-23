@@ -25,11 +25,32 @@ const seeds: Seed[] = [
     promptImpact: "Bevarer målforhold mellom flater og gjør romforståelse tydelig i tekniske visualiseringer.",
   },
   {
+    term_no: "Arkitektonisk elevasjon",
+    term_en: "Architectural elevation",
+    domain: "arch",
+    definition_no: "Ortografisk fasadevisning der vertikale og horisontale målforhold holdes presise.",
+    promptImpact: "Låser fasadegeometri og hindrer perspektivdrift i tekniske leveranser.",
+  },
+  {
     term_no: "Eksplodert visning",
     term_en: "Exploded view",
     domain: "design",
     definition_no: "Komponenter separeres i lag for å vise oppbygging og sammenheng mellom deler.",
     promptImpact: "Synliggjør struktur og monteringslogikk i komplekse produkter og systemer.",
+  },
+  {
+    term_no: "Explodert aksjonometri",
+    term_en: "Exploded axonometric",
+    domain: "arch",
+    definition_no: "Aksonometrisk visning der bygningsdeler trekkes fra hverandre for å vise lag, konstruksjon og sammenheng.",
+    promptImpact: "Gjør romlig lagdeling og byggelogikk tydelig uten å miste målbarhet.",
+  },
+  {
+    term_no: "Assembly-Forward",
+    term_en: "Assembly-forward",
+    domain: "vfx",
+    definition_no: "Produksjonsstrategi der lag og pass settes opp for sammensetting tidlig, slik at endringer håndteres i kompositt i stedet for re-render.",
+    promptImpact: "Gir mer robust pipeline ved iterasjon, med færre kostbare endringer sent i løpet.",
   },
   {
     term_no: "Perspektivkompresjon",
