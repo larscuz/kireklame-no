@@ -241,21 +241,9 @@ export default function PromptExpanderClient() {
             </a>
           </div>
           <div className="rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/65 p-3">
-            <div className="flex items-center gap-2">
-              <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">Kort beskrivelse</p>
-              <InfoHint text="Skriv kort hva du vil lage. Hold det konkret: motiv, handling og kontekst." />
-            </div>
-            <textarea
-              value={input}
-              onChange={(event) => setInput(event.target.value)}
-              className="mt-2 min-h-28 w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))] px-3 py-3 text-sm shadow-inner outline-none focus:border-zinc-300"
-            />
-          </div>
-
-          <div className="rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/65 p-3">
             <div className="mb-2 flex items-center gap-2">
-              <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">Produksjonsvalg</p>
-              <InfoHint text="Disse valgene styrer struktur, terminologi og hvor stramt prompten bygges." />
+              <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">Outputtype</p>
+              <InfoHint text="Velg Bilde, Video eller Tekst først. Det påvirker hvordan du bør skrive kort beskrivelse." />
             </div>
 
             <div className="rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))]/75 p-1">
@@ -279,8 +267,26 @@ export default function PromptExpanderClient() {
                 })}
               </div>
             </div>
+          </div>
+          <div className="rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/65 p-3">
+            <div className="flex items-center gap-2">
+              <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">Kort beskrivelse</p>
+              <InfoHint text="Skriv kort hva du vil lage. Hold det konkret: motiv, handling og kontekst." />
+            </div>
+            <textarea
+              value={input}
+              onChange={(event) => setInput(event.target.value)}
+              className="mt-2 min-h-28 w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))] px-3 py-3 text-sm shadow-inner outline-none focus:border-zinc-300"
+            />
+          </div>
 
-            <div className="mt-3 space-y-3">
+          <div className="rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/65 p-3">
+            <div className="mb-2 flex items-center gap-2">
+              <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">Produksjonsvalg</p>
+              <InfoHint text="Disse valgene styrer struktur, terminologi og hvor stramt prompten bygges." />
+            </div>
+
+            <div className="space-y-3">
               <label className="block text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">
                 <span className="mb-1 flex items-center gap-2">
                   Domene
