@@ -752,16 +752,10 @@ function outputSpec(outputType: PromptOutputType): string {
 }
 
 function chooseTemplate(input: BuildPromptInput) {
-  if (input.templateId) {
-    const byId = promptTemplates.find((template) => template.id === input.templateId);
-    if (byId) return byId;
-  }
+  if (!input.templateId) return null;
 
-  return (
-    promptTemplates.find(
-      (template) => template.outputType === input.outputType && template.domain === input.domain
-    ) ?? promptTemplates.find((template) => template.outputType === input.outputType) ?? null
-  );
+  const byId = promptTemplates.find((template) => template.id === input.templateId);
+  return byId ?? null;
 }
 
 function chooseRules(input: BuildPromptInput, templateRuleIds: string[]): NorskPromptingRule[] {

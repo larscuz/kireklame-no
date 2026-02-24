@@ -97,7 +97,7 @@ Eksempel:
 Filterregler i build-script:
 
 - Forkaster generiske placeholder-termer (f.eks. `High Impact Term 11`).
-- Forkaster placeholder-oversettelser (`Norsk oversettelse av ...`) med mindre `--include-placeholder-no` brukes.
+- Erstatter placeholder-oversettelser (`Norsk oversettelse av ...`) med auto-oversatt norsk term; hvis ukjent brukes `(ION) Ikke oversatt til norsk`.
 - Dedupliserer på slug og hopper over eksisterende termer i lokal ordliste/generated som standard.
 
 ### Dry-run

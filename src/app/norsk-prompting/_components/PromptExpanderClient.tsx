@@ -2,7 +2,6 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { promptTemplates } from "@/data/norskPrompting/runtime";
 import type { PromptLength, PromptOutputType, PromptStyle, PromptDomain } from "@/data/norskPrompting/types";
 import {
   buildPrompt,
@@ -103,7 +102,7 @@ export default function PromptExpanderClient() {
   const [consistency, setConsistency] = useState(82);
   const [lockRules, setLockRules] = useState(true);
   const [jsonMode, setJsonMode] = useState(false);
-  const [templateId, setTemplateId] = useState<string>(searchParams.get("template") || "");
+  const templateId = searchParams.get("template") || "";
   const [textInVisual, setTextInVisual] = useState<boolean>(toBool(searchParams.get("textInVisual"), false));
   const [overlayText, setOverlayText] = useState(searchParams.get("overlayText") || "");
   const [overlayLanguage, setOverlayLanguage] = useState(searchParams.get("overlayLanguage") || "norsk");
@@ -181,10 +180,6 @@ export default function PromptExpanderClient() {
   const guidance = useMemo(() => getPromptGuidance(draftRequest), [draftRequest]);
   const hasDraftChanges = !sameRequest(draftRequest, activeRequest);
 
-  const templateOptions = useMemo(
-    () => promptTemplates.filter((template) => template.outputType === outputType),
-    [outputType]
-  );
   const isVisualOutput = outputType === "image" || outputType === "video";
   const updateButtonId = "np-update-prompt-button";
 
@@ -340,26 +335,12 @@ export default function PromptExpanderClient() {
                   ))}
                 </select>
               </label>
-
-              <label className="block text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">
-                <span className="mb-1 flex items-center gap-2">
-                  Mal (valgfritt)
-                  <InfoHint text="Velg en mal for ferdig rammestruktur. Automatisk velger best match ut fra outputtype og domene." />
-                </span>
-                <select
-                  value={templateId}
-                  onChange={(event) => setTemplateId(event.target.value)}
-                  className="mt-1 w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-3 py-2 text-sm"
-                >
-                  <option value="">Automatisk</option>
-                  {templateOptions.map((template) => (
-                    <option key={template.id} value={template.id}>
-                      {template.title}
-                    </option>
-                  ))}
-                </select>
-              </label>
             </div>
+            {templateId ? (
+              <p className="mt-3 text-xs text-[rgb(var(--muted))]">
+                Mal fra bibliotek er aktiv via lenke. For vanlig bruk velger utvideren automatisk struktur.
+              </p>
+            ) : null}
           </div>
 
           <div className="rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/65 p-3">

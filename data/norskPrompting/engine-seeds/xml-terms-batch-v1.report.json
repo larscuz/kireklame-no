@@ -1,7 +1,7 @@
 {
   "meta": {
     "name": "XML term batch v1",
-    "createdAt": "2026-02-23T18:57:06.579Z",
+    "createdAt": "2026-02-24T02:46:19.703Z",
     "sourceFiles": [
       "High_Impact_Prompt_Terms_100.xml",
       "Prompt_Engine_Terms_300.xml"
@@ -12,55 +12,199 @@
   },
   "counts": {
     "parsed": 391,
-    "accepted": 5,
-    "rejected": 386,
-    "duplicatesCollapsed": 0,
-    "skippedExisting": 5
+    "accepted": 278,
+    "rejected": 110,
+    "duplicatesCollapsed": 3,
+    "skippedExisting": 20,
+    "translatedExact": 273,
+    "translatedION": 0,
+    "translatedProvidedOrKept": 5
   },
   "domains": {
-    "film": 3,
-    "photo": 2
+    "film": 113,
+    "vfx": 57,
+    "design": 57,
+    "photo": 51
   },
   "rejectedByReason": {
-    "already_exists": 5,
-    "generic_high_impact_placeholder": 90,
-    "placeholder_norwegian": 291
+    "already_exists": 20,
+    "generic_high_impact_placeholder": 90
   },
   "acceptedPreview": [
     {
-      "slug": "dyp-fokus-film",
-      "term_no": "Dyp fokus",
-      "term_en": "Deep Focus",
+      "slug": "50mm-linse-film",
+      "term_no": "50mm linse",
+      "term_en": "50mm Lens",
       "domain": "film",
-      "source_file": "High_Impact_Prompt_Terms_100.xml"
+      "source_file": "Prompt_Engine_Terms_300.xml"
     },
     {
-      "slug": "grunn-dybdeskarphet-film",
-      "term_no": "Grunn dybdeskarphet",
-      "term_en": "Shallow Depth of Field",
+      "slug": "85mm-portrettlinse-film",
+      "term_no": "85mm portrettlinse",
+      "term_en": "85mm Portrait Lens",
       "domain": "film",
-      "source_file": "High_Impact_Prompt_Terms_100.xml"
+      "source_file": "Prompt_Engine_Terms_300.xml"
     },
     {
-      "slug": "klar-mork-kontrast-photo",
-      "term_no": "Klar–mørk kontrast",
-      "term_en": "Chiaroscuro",
+      "slug": "aces-arbeidsflyt-vfx",
+      "term_no": "ACES-arbeidsflyt",
+      "term_en": "ACES Workflow",
+      "domain": "vfx",
+      "source_file": "Prompt_Engine_Terms_300.xml"
+    },
+    {
+      "slug": "adr-film",
+      "term_no": "ADR",
+      "term_en": "ADR",
+      "domain": "film",
+      "source_file": "Prompt_Engine_Terms_300.xml"
+    },
+    {
+      "slug": "ambient-occlusion-vfx",
+      "term_no": "Ambient occlusion",
+      "term_en": "Ambient Occlusion",
+      "domain": "vfx",
+      "source_file": "Prompt_Engine_Terms_300.xml"
+    },
+    {
+      "slug": "analoge-farger-design",
+      "term_no": "Analoge farger",
+      "term_en": "Analogous Colors",
+      "domain": "design",
+      "source_file": "Prompt_Engine_Terms_300.xml"
+    },
+    {
+      "slug": "asymmetrisk-innramming-film",
+      "term_no": "Asymmetrisk innramming",
+      "term_en": "Asymmetrical Framing",
+      "domain": "film",
+      "source_file": "Prompt_Engine_Terms_300.xml"
+    },
+    {
+      "slug": "atmosfaerisk-lyd-film",
+      "term_no": "Atmosfærisk lyd",
+      "term_en": "Atmospheric Sound",
+      "domain": "film",
+      "source_file": "Prompt_Engine_Terms_300.xml"
+    },
+    {
+      "slug": "atmosfaerisk-perspektiv-design",
+      "term_no": "Atmosfærisk perspektiv",
+      "term_en": "Atmospheric Perspective",
+      "domain": "design",
+      "source_file": "Prompt_Engine_Terms_300.xml"
+    },
+    {
+      "slug": "autofokus-film",
+      "term_no": "Autofokus",
+      "term_en": "Auto Focus",
+      "domain": "film",
+      "source_file": "Prompt_Engine_Terms_300.xml"
+    },
+    {
+      "slug": "bakgrunnsmusikk-film",
+      "term_no": "Bakgrunnsmusikk",
+      "term_en": "Background Score",
+      "domain": "film",
+      "source_file": "Prompt_Engine_Terms_300.xml"
+    },
+    {
+      "slug": "bakgrunnsuskarphet-design",
+      "term_no": "Bakgrunnsuskarphet",
+      "term_en": "Background Blur",
+      "domain": "design",
+      "source_file": "Prompt_Engine_Terms_300.xml"
+    },
+    {
+      "slug": "bakre-kantglod-photo",
+      "term_no": "Bakre kantglød",
+      "term_en": "Back Rim Glow",
       "domain": "photo",
-      "source_file": "High_Impact_Prompt_Terms_100.xml"
+      "source_file": "Prompt_Engine_Terms_300.xml"
     },
     {
-      "slug": "lavmaelt-lys-photo",
-      "term_no": "Lavmælt lys",
-      "term_en": "Low Key Lighting",
-      "domain": "photo",
-      "source_file": "High_Impact_Prompt_Terms_100.xml"
+      "slug": "balansert-eksponering-design",
+      "term_no": "Balansert eksponering",
+      "term_en": "Balanced Exposure",
+      "domain": "design",
+      "source_file": "Prompt_Engine_Terms_300.xml"
     },
     {
-      "slug": "telekompresjon-film",
-      "term_no": "Telekompresjon",
-      "term_en": "Telephoto Compression",
+      "slug": "bevegelsesuskarphet-vfx",
+      "term_no": "Bevegelsesuskarphet",
+      "term_en": "Motion Blur",
+      "domain": "vfx",
+      "source_file": "Prompt_Engine_Terms_300.xml"
+    },
+    {
+      "slug": "bevisst-uskarphet-design",
+      "term_no": "Bevisst uskarphet",
+      "term_en": "Intentional Blur",
+      "domain": "design",
+      "source_file": "Prompt_Engine_Terms_300.xml"
+    },
+    {
+      "slug": "binaural-opptak-film",
+      "term_no": "Binaural opptak",
+      "term_en": "Binaural Recording",
       "domain": "film",
-      "source_file": "High_Impact_Prompt_Terms_100.xml"
+      "source_file": "Prompt_Engine_Terms_300.xml"
+    },
+    {
+      "slug": "bitdybde-vfx",
+      "term_no": "Bitdybde",
+      "term_en": "Bit Depth",
+      "domain": "vfx",
+      "source_file": "Prompt_Engine_Terms_300.xml"
+    },
+    {
+      "slug": "blandet-fargetemperatur-photo",
+      "term_no": "Blandet fargetemperatur",
+      "term_en": "Mixed Color Temperature",
+      "domain": "photo",
+      "source_file": "Prompt_Engine_Terms_300.xml"
+    },
+    {
+      "slug": "blank-overflate-vfx",
+      "term_no": "Blank overflate",
+      "term_en": "Glossy Surface",
+      "domain": "vfx",
+      "source_file": "Prompt_Engine_Terms_300.xml"
+    },
+    {
+      "slug": "blikkspor-design",
+      "term_no": "Blikkspor",
+      "term_en": "Eye Trace",
+      "domain": "design",
+      "source_file": "Prompt_Engine_Terms_300.xml"
+    },
+    {
+      "slug": "blatime-photo",
+      "term_no": "Blåtime",
+      "term_en": "Blue Hour",
+      "domain": "photo",
+      "source_file": "Prompt_Engine_Terms_300.xml"
+    },
+    {
+      "slug": "dagslysbalanse-photo",
+      "term_no": "Dagslysbalanse",
+      "term_en": "Daylight Balance",
+      "domain": "photo",
+      "source_file": "Prompt_Engine_Terms_300.xml"
+    },
+    {
+      "slug": "delay-film",
+      "term_no": "Delay",
+      "term_en": "Delay",
+      "domain": "film",
+      "source_file": "Prompt_Engine_Terms_300.xml"
+    },
+    {
+      "slug": "dempet-palett-design",
+      "term_no": "Dempet palett",
+      "term_en": "Muted Palette",
+      "domain": "design",
+      "source_file": "Prompt_Engine_Terms_300.xml"
     }
   ],
   "rejectedPreview": [
