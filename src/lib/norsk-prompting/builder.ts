@@ -780,12 +780,61 @@ function chooseRules(input: BuildPromptInput, templateRuleIds: string[]): NorskP
   return target;
 }
 
+const videoTermHints = [
+  "video",
+  "frame",
+  "frames",
+  "fps",
+  "sekvens",
+  "klipp",
+  "j-cut",
+  "l-cut",
+  "shot-reverse-shot",
+  "lydbro",
+  "voiceover",
+  "voice-over",
+  "romtone",
+  "start-slutt",
+  "first-last",
+  "first/last",
+  "tempo",
+  "temporal",
+  "match-cut",
+  "taletempo",
+  "pauselengde",
+  "on-beat",
+  "intro-hook",
+  "bevegelseskurver",
+  "inbetweening",
+  "squash",
+  "stretch",
+];
+
+function isVideoSpecificTerm(term: GlossaryTerm): boolean {
+  const haystack = [
+    term.slug,
+    term.term_no,
+    term.term_en,
+    term.definition_no,
+    term.promptImpact,
+    ...term.examples,
+  ]
+    .join(" ")
+    .toLowerCase();
+
+  return videoTermHints.some((hint) => haystack.includes(hint));
+}
+
 function chooseTerms(input: BuildPromptInput, domainPack: DomainPack | null, count = 8): GlossaryTerm[] {
   const domains = domainToGlossary[input.domain];
   const source = input.input.toLowerCase();
   const preferredSlugs = new Set(domainPack?.preferredTermSlugs ?? []);
 
-  const candidates = glossaryTerms.filter((term) => domains.includes(term.domain));
+  const candidates = glossaryTerms.filter((term) => {
+    if (!domains.includes(term.domain)) return false;
+    if (input.outputType === "image" && isVideoSpecificTerm(term)) return false;
+    return true;
+  });
   const weighted = candidates
     .map((term) => {
       const inInput = source.includes(term.term_no.toLowerCase()) || source.includes(term.term_en.toLowerCase());
