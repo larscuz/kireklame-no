@@ -1,6 +1,39 @@
 import { buildFingerprints, hammingDistanceHex64, nearSimilarityFromHamming } from "./fingerprint.mjs";
 import { diceCoefficient, jaccard, tokenizeSet } from "./text-normalize.mjs";
 
+function normalizedKey(value) {
+  return String(value || "")
+    .trim()
+    .toLowerCase();
+}
+
+function toUnixMs(value) {
+  const ts = Date.parse(String(value || ""));
+  return Number.isFinite(ts) ? ts : 0;
+}
+
+function findTermSlugMatch(candidate, existingItems) {
+  const candidateSlug = normalizedKey(candidate?.slug || candidate?.contentJson?.slug);
+  if (!candidateSlug) return null;
+
+  const matches = existingItems.filter((item) => {
+    const rowSlug = normalizedKey(item?.slug);
+    const contentSlug = normalizedKey(item?.content_json?.slug);
+    return rowSlug === candidateSlug || contentSlug === candidateSlug;
+  });
+
+  if (!matches.length) return null;
+
+  const directRowSlug = matches.find((item) => normalizedKey(item?.slug) === candidateSlug);
+  if (directRowSlug) return directRowSlug;
+
+  return matches.sort((left, right) => {
+    const rightTs = toUnixMs(right?.updated_at || right?.created_at);
+    const leftTs = toUnixMs(left?.updated_at || left?.created_at);
+    return rightTs - leftTs;
+  })[0];
+}
+
 function toComparableText(item) {
   const content = item.content_json || {};
   const tagsText = `${(content.tags || []).join(" ")}`;
@@ -146,6 +179,25 @@ function cosineSimilarity(vecA, vecB) {
 
 export function evaluateDedupe({ candidate, existingItems, existingFingerprints, candidateEmbedding = null }) {
   const candidateFp = buildFingerprints(candidate.normalizedText);
+
+  if (candidate?.itemType === "term") {
+    const slugMatch = findTermSlugMatch(candidate, existingItems);
+    if (slugMatch) {
+      return {
+        decision: "merge",
+        overlapScore: 0.99,
+        rationale: "Term med identisk slug funnet. Oppdater eksisterende term i stedet for å opprette ny.",
+        candidateItemId: slugMatch.id,
+        mergeMode: "slug_match",
+        candidateFingerprint: candidateFp,
+        bestMatch: {
+          item: slugMatch,
+          score: 0.99,
+          details: { slugMatch: true },
+        },
+      };
+    }
+  }
 
   let exactMatchItem = null;
   for (const item of existingItems) {

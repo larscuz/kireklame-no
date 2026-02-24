@@ -18,7 +18,8 @@ export const rulesGeneratedRaw = [
       "brandLock:ja",
       "textLock:ja",
       "productLock:ja",
-      "pakke:anti-ai-look"
+      "pakke:anti-ai-look",
+      "policy:text-output-only"
     ],
     "category": "Anti-AI-look",
     "metadata": {
@@ -32,7 +33,9 @@ export const rulesGeneratedRaw = [
         "brandLock": true,
         "strenghet": "høy",
         "productLock": true
-      }
+      },
+      "outputPolicy": "text-only",
+      "mediaGeneration": false
     },
     "severity": 4,
     "appliesTo": "all",
@@ -53,7 +56,8 @@ export const rulesGeneratedRaw = [
       "brandLock:ja",
       "textLock:ja",
       "productLock:ja",
-      "pakke:anti-ai-look"
+      "pakke:anti-ai-look",
+      "policy:text-output-only"
     ],
     "category": "Anti-AI-look",
     "metadata": {
@@ -67,7 +71,9 @@ export const rulesGeneratedRaw = [
         "brandLock": true,
         "strenghet": "høy",
         "productLock": true
-      }
+      },
+      "outputPolicy": "text-only",
+      "mediaGeneration": false
     },
     "severity": 4,
     "appliesTo": "all",
@@ -88,7 +94,8 @@ export const rulesGeneratedRaw = [
       "brandLock:ja",
       "textLock:ja",
       "productLock:ja",
-      "pakke:anti-ai-look"
+      "pakke:anti-ai-look",
+      "policy:text-output-only"
     ],
     "category": "Anti-AI-look",
     "metadata": {
@@ -102,7 +109,9 @@ export const rulesGeneratedRaw = [
         "brandLock": true,
         "strenghet": "høy",
         "productLock": true
-      }
+      },
+      "outputPolicy": "text-only",
+      "mediaGeneration": false
     },
     "severity": 4,
     "appliesTo": "all",
@@ -123,7 +132,8 @@ export const rulesGeneratedRaw = [
       "brandLock:ja",
       "textLock:ja",
       "productLock:ja",
-      "pakke:anti-ai-look"
+      "pakke:anti-ai-look",
+      "policy:text-output-only"
     ],
     "category": "Anti-AI-look",
     "metadata": {
@@ -137,7 +147,9 @@ export const rulesGeneratedRaw = [
         "brandLock": true,
         "strenghet": "høy",
         "productLock": true
-      }
+      },
+      "outputPolicy": "text-only",
+      "mediaGeneration": false
     },
     "severity": 4,
     "appliesTo": "all",
@@ -158,7 +170,8 @@ export const rulesGeneratedRaw = [
       "brandLock:ja",
       "textLock:ja",
       "productLock:ja",
-      "pakke:anti-ai-look"
+      "pakke:anti-ai-look",
+      "policy:text-output-only"
     ],
     "category": "Anti-AI-look",
     "metadata": {
@@ -172,7 +185,9 @@ export const rulesGeneratedRaw = [
         "brandLock": true,
         "strenghet": "høy",
         "productLock": true
-      }
+      },
+      "outputPolicy": "text-only",
+      "mediaGeneration": false
     },
     "severity": 4,
     "appliesTo": "all",
@@ -193,7 +208,8 @@ export const rulesGeneratedRaw = [
       "brandLock:ja",
       "textLock:ja",
       "productLock:ja",
-      "pakke:anti-ai-look"
+      "pakke:anti-ai-look",
+      "policy:text-output-only"
     ],
     "category": "Anti-AI-look",
     "metadata": {
@@ -207,7 +223,9 @@ export const rulesGeneratedRaw = [
         "brandLock": true,
         "strenghet": "høy",
         "productLock": true
-      }
+      },
+      "outputPolicy": "text-only",
+      "mediaGeneration": false
     },
     "severity": 4,
     "appliesTo": "all",
@@ -228,7 +246,8 @@ export const rulesGeneratedRaw = [
       "brandLock:ja",
       "textLock:ja",
       "productLock:ja",
-      "pakke:anti-ai-look"
+      "pakke:anti-ai-look",
+      "policy:text-output-only"
     ],
     "category": "Anti-AI-look",
     "metadata": {
@@ -242,7 +261,9 @@ export const rulesGeneratedRaw = [
         "brandLock": true,
         "strenghet": "høy",
         "productLock": true
-      }
+      },
+      "outputPolicy": "text-only",
+      "mediaGeneration": false
     },
     "severity": 4,
     "appliesTo": "all",
@@ -263,7 +284,8 @@ export const rulesGeneratedRaw = [
       "brandLock:ja",
       "textLock:ja",
       "productLock:ja",
-      "pakke:anti-ai-look"
+      "pakke:anti-ai-look",
+      "policy:text-output-only"
     ],
     "category": "Anti-AI-look",
     "metadata": {
@@ -277,7 +299,9 @@ export const rulesGeneratedRaw = [
         "brandLock": true,
         "strenghet": "høy",
         "productLock": true
-      }
+      },
+      "outputPolicy": "text-only",
+      "mediaGeneration": false
     },
     "severity": 4,
     "appliesTo": "all",
@@ -298,7 +322,8 @@ export const rulesGeneratedRaw = [
       "brandLock:ja",
       "textLock:ja",
       "productLock:ja",
-      "pakke:anti-ai-look"
+      "pakke:anti-ai-look",
+      "policy:text-output-only"
     ],
     "category": "Anti-AI-look",
     "metadata": {
@@ -312,7 +337,9 @@ export const rulesGeneratedRaw = [
         "brandLock": true,
         "strenghet": "høy",
         "productLock": true
-      }
+      },
+      "outputPolicy": "text-only",
+      "mediaGeneration": false
     },
     "severity": 4,
     "appliesTo": "video",
@@ -333,7 +360,8 @@ export const rulesGeneratedRaw = [
       "brandLock:ja",
       "textLock:ja",
       "productLock:ja",
-      "pakke:anti-ai-look"
+      "pakke:anti-ai-look",
+      "policy:text-output-only"
     ],
     "category": "Anti-AI-look",
     "metadata": {
@@ -347,7 +375,9 @@ export const rulesGeneratedRaw = [
         "brandLock": true,
         "strenghet": "høy",
         "productLock": true
-      }
+      },
+      "outputPolicy": "text-only",
+      "mediaGeneration": false
     },
     "severity": 4,
     "appliesTo": "video",
@@ -368,7 +398,8 @@ export const rulesGeneratedRaw = [
       "brandLock:ja",
       "textLock:ja",
       "productLock:ja",
-      "pakke:anti-ai-look"
+      "pakke:anti-ai-look",
+      "policy:text-output-only"
     ],
     "category": "Anti-AI-look",
     "metadata": {
@@ -382,7 +413,9 @@ export const rulesGeneratedRaw = [
         "brandLock": true,
         "strenghet": "høy",
         "productLock": true
-      }
+      },
+      "outputPolicy": "text-only",
+      "mediaGeneration": false
     },
     "severity": 4,
     "appliesTo": "video",
@@ -403,7 +436,8 @@ export const rulesGeneratedRaw = [
       "brandLock:ja",
       "textLock:ja",
       "productLock:ja",
-      "pakke:anti-ai-look"
+      "pakke:anti-ai-look",
+      "policy:text-output-only"
     ],
     "category": "Anti-AI-look",
     "metadata": {
@@ -417,7 +451,9 @@ export const rulesGeneratedRaw = [
         "brandLock": true,
         "strenghet": "høy",
         "productLock": true
-      }
+      },
+      "outputPolicy": "text-only",
+      "mediaGeneration": false
     },
     "severity": 4,
     "appliesTo": "video",
@@ -438,7 +474,8 @@ export const rulesGeneratedRaw = [
       "brandLock:ja",
       "textLock:ja",
       "productLock:ja",
-      "pakke:anti-ai-look"
+      "pakke:anti-ai-look",
+      "policy:text-output-only"
     ],
     "category": "Anti-AI-look",
     "metadata": {
@@ -452,7 +489,9 @@ export const rulesGeneratedRaw = [
         "brandLock": true,
         "strenghet": "høy",
         "productLock": true
-      }
+      },
+      "outputPolicy": "text-only",
+      "mediaGeneration": false
     },
     "severity": 4,
     "appliesTo": "video",
@@ -473,7 +512,8 @@ export const rulesGeneratedRaw = [
       "brandLock:ja",
       "textLock:ja",
       "productLock:ja",
-      "pakke:anti-ai-look"
+      "pakke:anti-ai-look",
+      "policy:text-output-only"
     ],
     "category": "Anti-AI-look",
     "metadata": {
@@ -487,7 +527,9 @@ export const rulesGeneratedRaw = [
         "brandLock": true,
         "strenghet": "høy",
         "productLock": true
-      }
+      },
+      "outputPolicy": "text-only",
+      "mediaGeneration": false
     },
     "severity": 4,
     "appliesTo": "video",
@@ -508,7 +550,8 @@ export const rulesGeneratedRaw = [
       "brandLock:ja",
       "textLock:ja",
       "productLock:ja",
-      "pakke:anti-ai-look"
+      "pakke:anti-ai-look",
+      "policy:text-output-only"
     ],
     "category": "Anti-AI-look",
     "metadata": {
@@ -522,7 +565,9 @@ export const rulesGeneratedRaw = [
         "brandLock": true,
         "strenghet": "høy",
         "productLock": true
-      }
+      },
+      "outputPolicy": "text-only",
+      "mediaGeneration": false
     },
     "severity": 4,
     "appliesTo": "video",
@@ -581,7 +626,8 @@ export const rulesGeneratedRaw = [
       "brandLock:ja",
       "textLock:ja",
       "productLock:ja",
-      "pakke:debugger"
+      "pakke:debugger",
+      "policy:text-output-only"
     ],
     "category": "Debugger",
     "metadata": {
@@ -595,7 +641,9 @@ export const rulesGeneratedRaw = [
         "brandLock": true,
         "strenghet": "høy",
         "productLock": true
-      }
+      },
+      "outputPolicy": "text-only",
+      "mediaGeneration": false
     },
     "severity": 4,
     "appliesTo": "all",
@@ -654,7 +702,8 @@ export const rulesGeneratedRaw = [
       "brandLock:ja",
       "textLock:ja",
       "productLock:ja",
-      "pakke:debugger"
+      "pakke:debugger",
+      "policy:text-output-only"
     ],
     "category": "Debugger",
     "metadata": {
@@ -668,7 +717,9 @@ export const rulesGeneratedRaw = [
         "brandLock": true,
         "strenghet": "høy",
         "productLock": true
-      }
+      },
+      "outputPolicy": "text-only",
+      "mediaGeneration": false
     },
     "severity": 4,
     "appliesTo": "all",
@@ -689,7 +740,8 @@ export const rulesGeneratedRaw = [
       "brandLock:ja",
       "textLock:ja",
       "productLock:ja",
-      "pakke:debugger"
+      "pakke:debugger",
+      "policy:text-output-only"
     ],
     "category": "Debugger",
     "metadata": {
@@ -703,7 +755,9 @@ export const rulesGeneratedRaw = [
         "brandLock": true,
         "strenghet": "høy",
         "productLock": true
-      }
+      },
+      "outputPolicy": "text-only",
+      "mediaGeneration": false
     },
     "severity": 4,
     "appliesTo": "all",
@@ -724,7 +778,8 @@ export const rulesGeneratedRaw = [
       "brandLock:ja",
       "textLock:ja",
       "productLock:ja",
-      "pakke:debugger"
+      "pakke:debugger",
+      "policy:text-output-only"
     ],
     "category": "Debugger",
     "metadata": {
@@ -738,7 +793,9 @@ export const rulesGeneratedRaw = [
         "brandLock": true,
         "strenghet": "høy",
         "productLock": true
-      }
+      },
+      "outputPolicy": "text-only",
+      "mediaGeneration": false
     },
     "severity": 4,
     "appliesTo": "all",
@@ -759,7 +816,8 @@ export const rulesGeneratedRaw = [
       "brandLock:ja",
       "textLock:ja",
       "productLock:ja",
-      "pakke:debugger"
+      "pakke:debugger",
+      "policy:text-output-only"
     ],
     "category": "Debugger",
     "metadata": {
@@ -773,7 +831,9 @@ export const rulesGeneratedRaw = [
         "brandLock": true,
         "strenghet": "høy",
         "productLock": true
-      }
+      },
+      "outputPolicy": "text-only",
+      "mediaGeneration": false
     },
     "severity": 4,
     "appliesTo": "all",
@@ -794,7 +854,8 @@ export const rulesGeneratedRaw = [
       "brandLock:ja",
       "textLock:ja",
       "productLock:ja",
-      "pakke:debugger"
+      "pakke:debugger",
+      "policy:text-output-only"
     ],
     "category": "Debugger",
     "metadata": {
@@ -808,7 +869,9 @@ export const rulesGeneratedRaw = [
         "brandLock": true,
         "strenghet": "høy",
         "productLock": true
-      }
+      },
+      "outputPolicy": "text-only",
+      "mediaGeneration": false
     },
     "severity": 4,
     "appliesTo": "all",
@@ -829,7 +892,8 @@ export const rulesGeneratedRaw = [
       "brandLock:ja",
       "textLock:ja",
       "productLock:ja",
-      "pakke:debugger"
+      "pakke:debugger",
+      "policy:text-output-only"
     ],
     "category": "Debugger",
     "metadata": {
@@ -843,7 +907,9 @@ export const rulesGeneratedRaw = [
         "brandLock": true,
         "strenghet": "høy",
         "productLock": true
-      }
+      },
+      "outputPolicy": "text-only",
+      "mediaGeneration": false
     },
     "severity": 4,
     "appliesTo": "all",
@@ -864,7 +930,8 @@ export const rulesGeneratedRaw = [
       "brandLock:ja",
       "textLock:ja",
       "productLock:ja",
-      "pakke:debugger"
+      "pakke:debugger",
+      "policy:text-output-only"
     ],
     "category": "Debugger",
     "metadata": {
@@ -878,7 +945,9 @@ export const rulesGeneratedRaw = [
         "brandLock": true,
         "strenghet": "høy",
         "productLock": true
-      }
+      },
+      "outputPolicy": "text-only",
+      "mediaGeneration": false
     },
     "severity": 4,
     "appliesTo": "all",
@@ -899,7 +968,8 @@ export const rulesGeneratedRaw = [
       "brandLock:ja",
       "textLock:ja",
       "productLock:ja",
-      "pakke:debugger"
+      "pakke:debugger",
+      "policy:text-output-only"
     ],
     "category": "Debugger",
     "metadata": {
@@ -913,7 +983,9 @@ export const rulesGeneratedRaw = [
         "brandLock": true,
         "strenghet": "høy",
         "productLock": true
-      }
+      },
+      "outputPolicy": "text-only",
+      "mediaGeneration": false
     },
     "severity": 4,
     "appliesTo": "all",
@@ -934,7 +1006,8 @@ export const rulesGeneratedRaw = [
       "brandLock:ja",
       "textLock:ja",
       "productLock:ja",
-      "pakke:debugger"
+      "pakke:debugger",
+      "policy:text-output-only"
     ],
     "category": "Debugger",
     "metadata": {
@@ -948,7 +1021,9 @@ export const rulesGeneratedRaw = [
         "brandLock": true,
         "strenghet": "høy",
         "productLock": true
-      }
+      },
+      "outputPolicy": "text-only",
+      "mediaGeneration": false
     },
     "severity": 4,
     "appliesTo": "all",
@@ -1235,7 +1310,8 @@ export const rulesGeneratedRaw = [
       "brandLock:ja",
       "textLock:ja",
       "productLock:ja",
-      "pakke:reklame-standard"
+      "pakke:reklame-standard",
+      "policy:text-output-only"
     ],
     "category": "Reklame Standard",
     "metadata": {
@@ -1249,7 +1325,9 @@ export const rulesGeneratedRaw = [
         "brandLock": true,
         "strenghet": "høy",
         "productLock": true
-      }
+      },
+      "outputPolicy": "text-only",
+      "mediaGeneration": false
     },
     "severity": 4,
     "appliesTo": "all",
@@ -1346,7 +1424,8 @@ export const rulesGeneratedRaw = [
       "brandLock:ja",
       "textLock:ja",
       "productLock:ja",
-      "pakke:reklame-standard"
+      "pakke:reklame-standard",
+      "policy:text-output-only"
     ],
     "category": "Reklame Standard",
     "metadata": {
@@ -1360,7 +1439,9 @@ export const rulesGeneratedRaw = [
         "brandLock": true,
         "strenghet": "høy",
         "productLock": true
-      }
+      },
+      "outputPolicy": "text-only",
+      "mediaGeneration": false
     },
     "severity": 4,
     "appliesTo": "all",
@@ -1495,7 +1576,8 @@ export const rulesGeneratedRaw = [
       "brandLock:ja",
       "textLock:ja",
       "productLock:ja",
-      "pakke:reklame-standard"
+      "pakke:reklame-standard",
+      "policy:text-output-only"
     ],
     "category": "Reklame Standard",
     "metadata": {
@@ -1509,7 +1591,9 @@ export const rulesGeneratedRaw = [
         "brandLock": true,
         "strenghet": "høy",
         "productLock": true
-      }
+      },
+      "outputPolicy": "text-only",
+      "mediaGeneration": false
     },
     "severity": 4,
     "appliesTo": "all",
@@ -1606,7 +1690,8 @@ export const rulesGeneratedRaw = [
       "brandLock:ja",
       "textLock:ja",
       "productLock:ja",
-      "pakke:reklame-standard"
+      "pakke:reklame-standard",
+      "policy:text-output-only"
     ],
     "category": "Reklame Standard",
     "metadata": {
@@ -1620,7 +1705,9 @@ export const rulesGeneratedRaw = [
         "brandLock": true,
         "strenghet": "høy",
         "productLock": true
-      }
+      },
+      "outputPolicy": "text-only",
+      "mediaGeneration": false
     },
     "severity": 4,
     "appliesTo": "all",
@@ -1679,7 +1766,8 @@ export const rulesGeneratedRaw = [
       "brandLock:ja",
       "textLock:ja",
       "productLock:ja",
-      "pakke:reklame-standard"
+      "pakke:reklame-standard",
+      "policy:text-output-only"
     ],
     "category": "Reklame Standard",
     "metadata": {
@@ -1693,7 +1781,9 @@ export const rulesGeneratedRaw = [
         "brandLock": true,
         "strenghet": "høy",
         "productLock": true
-      }
+      },
+      "outputPolicy": "text-only",
+      "mediaGeneration": false
     },
     "severity": 4,
     "appliesTo": "all",
@@ -1752,7 +1842,8 @@ export const rulesGeneratedRaw = [
       "brandLock:ja",
       "textLock:ja",
       "productLock:ja",
-      "pakke:reklame-standard"
+      "pakke:reklame-standard",
+      "policy:text-output-only"
     ],
     "category": "Reklame Standard",
     "metadata": {
@@ -1766,7 +1857,9 @@ export const rulesGeneratedRaw = [
         "brandLock": true,
         "strenghet": "høy",
         "productLock": true
-      }
+      },
+      "outputPolicy": "text-only",
+      "mediaGeneration": false
     },
     "severity": 4,
     "appliesTo": "all",
@@ -1825,7 +1918,8 @@ export const rulesGeneratedRaw = [
       "brandLock:ja",
       "textLock:ja",
       "productLock:ja",
-      "pakke:reklame-standard"
+      "pakke:reklame-standard",
+      "policy:text-output-only"
     ],
     "category": "Reklame Standard",
     "metadata": {
@@ -1839,7 +1933,9 @@ export const rulesGeneratedRaw = [
         "brandLock": true,
         "strenghet": "høy",
         "productLock": true
-      }
+      },
+      "outputPolicy": "text-only",
+      "mediaGeneration": false
     },
     "severity": 5,
     "appliesTo": "video",
@@ -1898,7 +1994,8 @@ export const rulesGeneratedRaw = [
       "brandLock:ja",
       "textLock:ja",
       "productLock:ja",
-      "pakke:reklame-standard"
+      "pakke:reklame-standard",
+      "policy:text-output-only"
     ],
     "category": "Reklame Standard",
     "metadata": {
@@ -1912,7 +2009,9 @@ export const rulesGeneratedRaw = [
         "brandLock": true,
         "strenghet": "høy",
         "productLock": true
-      }
+      },
+      "outputPolicy": "text-only",
+      "mediaGeneration": false
     },
     "severity": 5,
     "appliesTo": "video",
@@ -1971,7 +2070,8 @@ export const rulesGeneratedRaw = [
       "brandLock:ja",
       "textLock:ja",
       "productLock:ja",
-      "pakke:reklame-standard"
+      "pakke:reklame-standard",
+      "policy:text-output-only"
     ],
     "category": "Reklame Standard",
     "metadata": {
@@ -1985,7 +2085,9 @@ export const rulesGeneratedRaw = [
         "brandLock": true,
         "strenghet": "høy",
         "productLock": true
-      }
+      },
+      "outputPolicy": "text-only",
+      "mediaGeneration": false
     },
     "severity": 4,
     "appliesTo": "all",
@@ -2006,7 +2108,8 @@ export const rulesGeneratedRaw = [
       "brandLock:ja",
       "textLock:ja",
       "productLock:ja",
-      "pakke:reklame-standard"
+      "pakke:reklame-standard",
+      "policy:text-output-only"
     ],
     "category": "Reklame Standard",
     "metadata": {
@@ -2020,7 +2123,9 @@ export const rulesGeneratedRaw = [
         "brandLock": true,
         "strenghet": "høy",
         "productLock": true
-      }
+      },
+      "outputPolicy": "text-only",
+      "mediaGeneration": false
     },
     "severity": 4,
     "appliesTo": "all",
@@ -2041,7 +2146,8 @@ export const rulesGeneratedRaw = [
       "brandLock:ja",
       "textLock:ja",
       "productLock:ja",
-      "pakke:reklame-standard"
+      "pakke:reklame-standard",
+      "policy:text-output-only"
     ],
     "category": "Reklame Standard",
     "metadata": {
@@ -2055,7 +2161,9 @@ export const rulesGeneratedRaw = [
         "brandLock": true,
         "strenghet": "høy",
         "productLock": true
-      }
+      },
+      "outputPolicy": "text-only",
+      "mediaGeneration": false
     },
     "severity": 4,
     "appliesTo": "all",
@@ -2076,7 +2184,8 @@ export const rulesGeneratedRaw = [
       "brandLock:ja",
       "textLock:ja",
       "productLock:ja",
-      "pakke:reklame-standard"
+      "pakke:reklame-standard",
+      "policy:text-output-only"
     ],
     "category": "Reklame Standard",
     "metadata": {
@@ -2090,7 +2199,9 @@ export const rulesGeneratedRaw = [
         "brandLock": true,
         "strenghet": "høy",
         "productLock": true
-      }
+      },
+      "outputPolicy": "text-only",
+      "mediaGeneration": false
     },
     "severity": 4,
     "appliesTo": "all",

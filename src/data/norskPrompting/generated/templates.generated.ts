@@ -17,7 +17,8 @@ export const templatesGeneratedRaw = [
       "brandLock:ja",
       "textLock:ja",
       "productLock:ja",
-      "kategori:brand-identitet"
+      "kategori:brand-identitet",
+      "policy:text-output-only"
     ],
     "title": "Brand og identitet 01 (web 1:1)",
     "blocks": [
@@ -96,6 +97,22 @@ export const templatesGeneratedRaw = [
         "strenghet": "middels",
         "productLock": true
       },
+      "outputPolicy": "text-only",
+      "mediaGeneration": false,
+      "productionHints": {
+        "image": {
+          "lockLevel": "mid",
+          "referenceType": "brand_asset",
+          "requiresReference": true
+        }
+      },
+      "uniqueCombination": "web|1:1|kjennskap|middels|brand:true|text:true|product:true",
+      "platformSuggestions": [
+        "Kopier tekstprompten og bruk den i valgt produksjonsverktøy.",
+        "Forslag: Midjourney",
+        "Forslag: Firefly",
+        "Forslag: Freepik AI"
+      ],
       "recommendedNegativePreset": "preset-d-reklame-kvalitet"
     },
     "outputType": "image",
@@ -118,7 +135,8 @@ export const templatesGeneratedRaw = [
       "brandLock:ja",
       "textLock:ja",
       "productLock:ja",
-      "kategori:brand-identitet"
+      "kategori:brand-identitet",
+      "policy:text-output-only"
     ],
     "title": "Brand og identitet 02 (print 16:9)",
     "blocks": [
@@ -197,6 +215,22 @@ export const templatesGeneratedRaw = [
         "strenghet": "høy",
         "productLock": true
       },
+      "outputPolicy": "text-only",
+      "mediaGeneration": false,
+      "productionHints": {
+        "image": {
+          "lockLevel": "high",
+          "referenceType": "brand_asset",
+          "requiresReference": true
+        }
+      },
+      "uniqueCombination": "print|16:9|kjennskap|høy|brand:true|text:true|product:true",
+      "platformSuggestions": [
+        "Kopier tekstprompten og bruk den i valgt produksjonsverktøy.",
+        "Forslag: Midjourney",
+        "Forslag: Firefly",
+        "Forslag: Freepik AI"
+      ],
       "recommendedNegativePreset": "preset-d-reklame-kvalitet"
     },
     "outputType": "image",
@@ -219,7 +253,8 @@ export const templatesGeneratedRaw = [
       "brandLock:ja",
       "textLock:ja",
       "productLock:ja",
-      "kategori:brand-identitet"
+      "kategori:brand-identitet",
+      "policy:text-output-only"
     ],
     "title": "Brand og identitet 03 (DOOH banner)",
     "blocks": [
@@ -298,6 +333,22 @@ export const templatesGeneratedRaw = [
         "strenghet": "middels",
         "productLock": true
       },
+      "outputPolicy": "text-only",
+      "mediaGeneration": false,
+      "productionHints": {
+        "image": {
+          "lockLevel": "mid",
+          "referenceType": "brand_asset",
+          "requiresReference": true
+        }
+      },
+      "uniqueCombination": "DOOH|banner|kjennskap|middels|brand:true|text:true|product:true",
+      "platformSuggestions": [
+        "Kopier tekstprompten og bruk den i valgt produksjonsverktøy.",
+        "Forslag: Midjourney",
+        "Forslag: Firefly",
+        "Forslag: Freepik AI"
+      ],
       "recommendedNegativePreset": "preset-d-reklame-kvalitet"
     },
     "outputType": "image",
@@ -320,7 +371,8 @@ export const templatesGeneratedRaw = [
       "brandLock:ja",
       "textLock:ja",
       "productLock:ja",
-      "kategori:brand-identitet"
+      "kategori:brand-identitet",
+      "policy:text-output-only"
     ],
     "title": "Brand og identitet 04 (web 1:1)",
     "blocks": [
@@ -399,6 +451,22 @@ export const templatesGeneratedRaw = [
         "strenghet": "høy",
         "productLock": true
       },
+      "outputPolicy": "text-only",
+      "mediaGeneration": false,
+      "productionHints": {
+        "image": {
+          "lockLevel": "high",
+          "referenceType": "brand_asset",
+          "requiresReference": true
+        }
+      },
+      "uniqueCombination": "web|1:1|kjennskap|høy|brand:true|text:true|product:true",
+      "platformSuggestions": [
+        "Kopier tekstprompten og bruk den i valgt produksjonsverktøy.",
+        "Forslag: Midjourney",
+        "Forslag: Firefly",
+        "Forslag: Freepik AI"
+      ],
       "recommendedNegativePreset": "preset-d-reklame-kvalitet"
     },
     "outputType": "image",
@@ -421,7 +489,8 @@ export const templatesGeneratedRaw = [
       "brandLock:ja",
       "textLock:ja",
       "productLock:ja",
-      "kategori:brand-identitet"
+      "kategori:brand-identitet",
+      "policy:text-output-only"
     ],
     "title": "Brand og identitet 05 (print 16:9)",
     "blocks": [
@@ -500,6 +569,21 @@ export const templatesGeneratedRaw = [
         "strenghet": "middels",
         "productLock": true
       },
+      "outputPolicy": "text-only",
+      "mediaGeneration": false,
+      "productionHints": {
+        "image": {
+          "lockLevel": "mid",
+          "referenceType": "brand_asset",
+          "requiresReference": true
+        }
+      },
+      "platformSuggestions": [
+        "Kopier tekstprompten og bruk den i valgt produksjonsverktøy.",
+        "Forslag: Midjourney",
+        "Forslag: Firefly",
+        "Forslag: Freepik AI"
+      ],
       "recommendedNegativePreset": "preset-d-reklame-kvalitet"
     },
     "outputType": "image",
@@ -522,7 +606,8 @@ export const templatesGeneratedRaw = [
       "brandLock:ja",
       "textLock:ja",
       "productLock:ja",
-      "kategori:brand-identitet"
+      "kategori:brand-identitet",
+      "policy:text-output-only"
     ],
     "title": "Brand og identitet 06 (DOOH banner)",
     "blocks": [
@@ -601,6 +686,22 @@ export const templatesGeneratedRaw = [
         "strenghet": "høy",
         "productLock": true
       },
+      "outputPolicy": "text-only",
+      "mediaGeneration": false,
+      "productionHints": {
+        "image": {
+          "lockLevel": "high",
+          "referenceType": "brand_asset",
+          "requiresReference": true
+        }
+      },
+      "uniqueCombination": "DOOH|banner|kjennskap|høy|brand:true|text:true|product:true",
+      "platformSuggestions": [
+        "Kopier tekstprompten og bruk den i valgt produksjonsverktøy.",
+        "Forslag: Midjourney",
+        "Forslag: Firefly",
+        "Forslag: Freepik AI"
+      ],
       "recommendedNegativePreset": "preset-d-reklame-kvalitet"
     },
     "outputType": "image",
@@ -1027,7 +1128,8 @@ export const templatesGeneratedRaw = [
       "brandLock:ja",
       "textLock:ja",
       "productLock:ja",
-      "kategori:brand-identitet"
+      "kategori:brand-identitet",
+      "policy:text-output-only"
     ],
     "title": "Brand og identitet 11 (print 16:9)",
     "blocks": [
@@ -1106,6 +1208,21 @@ export const templatesGeneratedRaw = [
         "strenghet": "middels",
         "productLock": true
       },
+      "outputPolicy": "text-only",
+      "mediaGeneration": false,
+      "productionHints": {
+        "image": {
+          "lockLevel": "mid",
+          "referenceType": "brand_asset",
+          "requiresReference": true
+        }
+      },
+      "platformSuggestions": [
+        "Kopier tekstprompten og bruk den i valgt produksjonsverktøy.",
+        "Forslag: Midjourney",
+        "Forslag: Firefly",
+        "Forslag: Freepik AI"
+      ],
       "recommendedNegativePreset": "preset-d-reklame-kvalitet"
     },
     "outputType": "image",
@@ -1532,7 +1649,8 @@ export const templatesGeneratedRaw = [
       "brandLock:ja",
       "textLock:ja",
       "productLock:ja",
-      "kategori:brand-identitet"
+      "kategori:brand-identitet",
+      "policy:text-output-only"
     ],
     "title": "Brand og identitet 16 (web 1:1)",
     "blocks": [
@@ -1611,6 +1729,22 @@ export const templatesGeneratedRaw = [
         "strenghet": "høy",
         "productLock": true
       },
+      "outputPolicy": "text-only",
+      "mediaGeneration": false,
+      "productionHints": {
+        "image": {
+          "lockLevel": "high",
+          "referenceType": "brand_asset",
+          "requiresReference": true
+        }
+      },
+      "uniqueCombination": "web|1:1|kjennskap|høy|brand:true|text:true|product:true",
+      "platformSuggestions": [
+        "Kopier tekstprompten og bruk den i valgt produksjonsverktøy.",
+        "Forslag: Midjourney",
+        "Forslag: Firefly",
+        "Forslag: Freepik AI"
+      ],
       "recommendedNegativePreset": "preset-d-reklame-kvalitet"
     },
     "outputType": "image",
@@ -1633,7 +1767,8 @@ export const templatesGeneratedRaw = [
       "brandLock:ja",
       "textLock:ja",
       "productLock:ja",
-      "kategori:brand-identitet"
+      "kategori:brand-identitet",
+      "policy:text-output-only"
     ],
     "title": "Brand og identitet 17 (print 16:9)",
     "blocks": [
@@ -1712,6 +1847,21 @@ export const templatesGeneratedRaw = [
         "strenghet": "middels",
         "productLock": true
       },
+      "outputPolicy": "text-only",
+      "mediaGeneration": false,
+      "productionHints": {
+        "image": {
+          "lockLevel": "mid",
+          "referenceType": "brand_asset",
+          "requiresReference": true
+        }
+      },
+      "platformSuggestions": [
+        "Kopier tekstprompten og bruk den i valgt produksjonsverktøy.",
+        "Forslag: Midjourney",
+        "Forslag: Firefly",
+        "Forslag: Freepik AI"
+      ],
       "recommendedNegativePreset": "preset-d-reklame-kvalitet"
     },
     "outputType": "image",
@@ -1734,7 +1884,8 @@ export const templatesGeneratedRaw = [
       "brandLock:ja",
       "textLock:ja",
       "productLock:ja",
-      "kategori:brand-identitet"
+      "kategori:brand-identitet",
+      "policy:text-output-only"
     ],
     "title": "Brand og identitet 18 (DOOH banner)",
     "blocks": [
@@ -1813,6 +1964,22 @@ export const templatesGeneratedRaw = [
         "strenghet": "høy",
         "productLock": true
       },
+      "outputPolicy": "text-only",
+      "mediaGeneration": false,
+      "productionHints": {
+        "image": {
+          "lockLevel": "high",
+          "referenceType": "brand_asset",
+          "requiresReference": true
+        }
+      },
+      "uniqueCombination": "DOOH|banner|kjennskap|høy|brand:true|text:true|product:true",
+      "platformSuggestions": [
+        "Kopier tekstprompten og bruk den i valgt produksjonsverktøy.",
+        "Forslag: Midjourney",
+        "Forslag: Firefly",
+        "Forslag: Freepik AI"
+      ],
       "recommendedNegativePreset": "preset-d-reklame-kvalitet"
     },
     "outputType": "image",
@@ -1835,7 +2002,8 @@ export const templatesGeneratedRaw = [
       "brandLock:ja",
       "textLock:ja",
       "productLock:ja",
-      "kategori:brand-identitet"
+      "kategori:brand-identitet",
+      "policy:text-output-only"
     ],
     "title": "Brand og identitet 19 (web 1:1)",
     "blocks": [
@@ -1914,6 +2082,22 @@ export const templatesGeneratedRaw = [
         "strenghet": "middels",
         "productLock": true
       },
+      "outputPolicy": "text-only",
+      "mediaGeneration": false,
+      "productionHints": {
+        "image": {
+          "lockLevel": "mid",
+          "referenceType": "brand_asset",
+          "requiresReference": true
+        }
+      },
+      "uniqueCombination": "web|1:1|kjennskap|middels|brand:true|text:true|product:true",
+      "platformSuggestions": [
+        "Kopier tekstprompten og bruk den i valgt produksjonsverktøy.",
+        "Forslag: Midjourney",
+        "Forslag: Firefly",
+        "Forslag: Freepik AI"
+      ],
       "recommendedNegativePreset": "preset-d-reklame-kvalitet"
     },
     "outputType": "image",
@@ -1936,7 +2120,8 @@ export const templatesGeneratedRaw = [
       "brandLock:ja",
       "textLock:ja",
       "productLock:ja",
-      "kategori:brand-identitet"
+      "kategori:brand-identitet",
+      "policy:text-output-only"
     ],
     "title": "Brand og identitet 20 (print 16:9)",
     "blocks": [
@@ -2015,6 +2200,22 @@ export const templatesGeneratedRaw = [
         "strenghet": "høy",
         "productLock": true
       },
+      "outputPolicy": "text-only",
+      "mediaGeneration": false,
+      "productionHints": {
+        "image": {
+          "lockLevel": "high",
+          "referenceType": "brand_asset",
+          "requiresReference": true
+        }
+      },
+      "uniqueCombination": "print|16:9|kjennskap|høy|brand:true|text:true|product:true",
+      "platformSuggestions": [
+        "Kopier tekstprompten og bruk den i valgt produksjonsverktøy.",
+        "Forslag: Midjourney",
+        "Forslag: Firefly",
+        "Forslag: Freepik AI"
+      ],
       "recommendedNegativePreset": "preset-d-reklame-kvalitet"
     },
     "outputType": "image",
@@ -2037,7 +2238,8 @@ export const templatesGeneratedRaw = [
       "brandLock:ja",
       "textLock:ja",
       "productLock:ja",
-      "kategori:dooh-plakat"
+      "kategori:dooh-plakat",
+      "policy:text-output-only"
     ],
     "title": "DOOH og plakat 01 (DOOH 16:9)",
     "blocks": [
@@ -2116,6 +2318,22 @@ export const templatesGeneratedRaw = [
         "strenghet": "middels",
         "productLock": true
       },
+      "outputPolicy": "text-only",
+      "mediaGeneration": false,
+      "productionHints": {
+        "image": {
+          "lockLevel": "mid",
+          "referenceType": "brand_asset",
+          "requiresReference": true
+        }
+      },
+      "uniqueCombination": "DOOH|16:9|kjennskap|middels|brand:true|text:true|product:true",
+      "platformSuggestions": [
+        "Kopier tekstprompten og bruk den i valgt produksjonsverktøy.",
+        "Forslag: Midjourney",
+        "Forslag: Firefly",
+        "Forslag: Freepik AI"
+      ],
       "recommendedNegativePreset": "preset-d-reklame-kvalitet"
     },
     "outputType": "image",
@@ -2138,7 +2356,8 @@ export const templatesGeneratedRaw = [
       "brandLock:ja",
       "textLock:ja",
       "productLock:ja",
-      "kategori:dooh-plakat"
+      "kategori:dooh-plakat",
+      "policy:text-output-only"
     ],
     "title": "DOOH og plakat 02 (print 4:5)",
     "blocks": [
@@ -2217,6 +2436,22 @@ export const templatesGeneratedRaw = [
         "strenghet": "høy",
         "productLock": true
       },
+      "outputPolicy": "text-only",
+      "mediaGeneration": false,
+      "productionHints": {
+        "image": {
+          "lockLevel": "high",
+          "referenceType": "brand_asset",
+          "requiresReference": true
+        }
+      },
+      "uniqueCombination": "print|4:5|konvertering|høy|brand:true|text:true|product:true",
+      "platformSuggestions": [
+        "Kopier tekstprompten og bruk den i valgt produksjonsverktøy.",
+        "Forslag: Midjourney",
+        "Forslag: Firefly",
+        "Forslag: Freepik AI"
+      ],
       "recommendedNegativePreset": "preset-d-reklame-kvalitet"
     },
     "outputType": "image",
@@ -2239,7 +2474,8 @@ export const templatesGeneratedRaw = [
       "brandLock:ja",
       "textLock:ja",
       "productLock:ja",
-      "kategori:dooh-plakat"
+      "kategori:dooh-plakat",
+      "policy:text-output-only"
     ],
     "title": "DOOH og plakat 03 (DOOH banner)",
     "blocks": [
@@ -2318,6 +2554,21 @@ export const templatesGeneratedRaw = [
         "strenghet": "middels",
         "productLock": true
       },
+      "outputPolicy": "text-only",
+      "mediaGeneration": false,
+      "productionHints": {
+        "image": {
+          "lockLevel": "mid",
+          "referenceType": "brand_asset",
+          "requiresReference": true
+        }
+      },
+      "platformSuggestions": [
+        "Kopier tekstprompten og bruk den i valgt produksjonsverktøy.",
+        "Forslag: Midjourney",
+        "Forslag: Firefly",
+        "Forslag: Freepik AI"
+      ],
       "recommendedNegativePreset": "preset-d-reklame-kvalitet"
     },
     "outputType": "image",
@@ -2340,7 +2591,8 @@ export const templatesGeneratedRaw = [
       "brandLock:ja",
       "textLock:ja",
       "productLock:ja",
-      "kategori:dooh-plakat"
+      "kategori:dooh-plakat",
+      "policy:text-output-only"
     ],
     "title": "DOOH og plakat 04 (print 16:9)",
     "blocks": [
@@ -2419,6 +2671,22 @@ export const templatesGeneratedRaw = [
         "strenghet": "høy",
         "productLock": true
       },
+      "outputPolicy": "text-only",
+      "mediaGeneration": false,
+      "productionHints": {
+        "image": {
+          "lockLevel": "high",
+          "referenceType": "brand_asset",
+          "requiresReference": true
+        }
+      },
+      "uniqueCombination": "print|16:9|konvertering|høy|brand:true|text:true|product:true",
+      "platformSuggestions": [
+        "Kopier tekstprompten og bruk den i valgt produksjonsverktøy.",
+        "Forslag: Midjourney",
+        "Forslag: Firefly",
+        "Forslag: Freepik AI"
+      ],
       "recommendedNegativePreset": "preset-d-reklame-kvalitet"
     },
     "outputType": "image",
@@ -2441,7 +2709,8 @@ export const templatesGeneratedRaw = [
       "brandLock:ja",
       "textLock:ja",
       "productLock:ja",
-      "kategori:dooh-plakat"
+      "kategori:dooh-plakat",
+      "policy:text-output-only"
     ],
     "title": "DOOH og plakat 05 (DOOH 4:5)",
     "blocks": [
@@ -2520,6 +2789,21 @@ export const templatesGeneratedRaw = [
         "strenghet": "middels",
         "productLock": true
       },
+      "outputPolicy": "text-only",
+      "mediaGeneration": false,
+      "productionHints": {
+        "image": {
+          "lockLevel": "mid",
+          "referenceType": "brand_asset",
+          "requiresReference": true
+        }
+      },
+      "platformSuggestions": [
+        "Kopier tekstprompten og bruk den i valgt produksjonsverktøy.",
+        "Forslag: Midjourney",
+        "Forslag: Firefly",
+        "Forslag: Freepik AI"
+      ],
       "recommendedNegativePreset": "preset-d-reklame-kvalitet"
     },
     "outputType": "image",
@@ -2542,7 +2826,8 @@ export const templatesGeneratedRaw = [
       "brandLock:ja",
       "textLock:ja",
       "productLock:ja",
-      "kategori:dooh-plakat"
+      "kategori:dooh-plakat",
+      "policy:text-output-only"
     ],
     "title": "DOOH og plakat 06 (print banner)",
     "blocks": [
@@ -2621,6 +2906,22 @@ export const templatesGeneratedRaw = [
         "strenghet": "høy",
         "productLock": true
       },
+      "outputPolicy": "text-only",
+      "mediaGeneration": false,
+      "productionHints": {
+        "image": {
+          "lockLevel": "high",
+          "referenceType": "brand_asset",
+          "requiresReference": true
+        }
+      },
+      "uniqueCombination": "print|banner|konvertering|høy|brand:true|text:true|product:true",
+      "platformSuggestions": [
+        "Kopier tekstprompten og bruk den i valgt produksjonsverktøy.",
+        "Forslag: Midjourney",
+        "Forslag: Firefly",
+        "Forslag: Freepik AI"
+      ],
       "recommendedNegativePreset": "preset-d-reklame-kvalitet"
     },
     "outputType": "image",
@@ -2845,7 +3146,8 @@ export const templatesGeneratedRaw = [
       "brandLock:ja",
       "textLock:ja",
       "productLock:ja",
-      "kategori:dooh-plakat"
+      "kategori:dooh-plakat",
+      "policy:text-output-only"
     ],
     "title": "DOOH og plakat 09 (DOOH banner)",
     "blocks": [
@@ -2924,6 +3226,21 @@ export const templatesGeneratedRaw = [
         "strenghet": "middels",
         "productLock": true
       },
+      "outputPolicy": "text-only",
+      "mediaGeneration": false,
+      "productionHints": {
+        "image": {
+          "lockLevel": "mid",
+          "referenceType": "brand_asset",
+          "requiresReference": true
+        }
+      },
+      "platformSuggestions": [
+        "Kopier tekstprompten og bruk den i valgt produksjonsverktøy.",
+        "Forslag: Midjourney",
+        "Forslag: Firefly",
+        "Forslag: Freepik AI"
+      ],
       "recommendedNegativePreset": "preset-d-reklame-kvalitet"
     },
     "outputType": "image",
@@ -3047,7 +3364,8 @@ export const templatesGeneratedRaw = [
       "brandLock:ja",
       "textLock:ja",
       "productLock:ja",
-      "kategori:dooh-plakat"
+      "kategori:dooh-plakat",
+      "policy:text-output-only"
     ],
     "title": "DOOH og plakat 11 (DOOH 4:5)",
     "blocks": [
@@ -3126,6 +3444,21 @@ export const templatesGeneratedRaw = [
         "strenghet": "middels",
         "productLock": true
       },
+      "outputPolicy": "text-only",
+      "mediaGeneration": false,
+      "productionHints": {
+        "image": {
+          "lockLevel": "mid",
+          "referenceType": "brand_asset",
+          "requiresReference": true
+        }
+      },
+      "platformSuggestions": [
+        "Kopier tekstprompten og bruk den i valgt produksjonsverktøy.",
+        "Forslag: Midjourney",
+        "Forslag: Firefly",
+        "Forslag: Freepik AI"
+      ],
       "recommendedNegativePreset": "preset-d-reklame-kvalitet"
     },
     "outputType": "image",
@@ -3451,7 +3784,8 @@ export const templatesGeneratedRaw = [
       "brandLock:ja",
       "textLock:ja",
       "productLock:ja",
-      "kategori:dooh-plakat"
+      "kategori:dooh-plakat",
+      "policy:text-output-only"
     ],
     "title": "DOOH og plakat 15 (DOOH banner)",
     "blocks": [
@@ -3530,6 +3864,21 @@ export const templatesGeneratedRaw = [
         "strenghet": "middels",
         "productLock": true
       },
+      "outputPolicy": "text-only",
+      "mediaGeneration": false,
+      "productionHints": {
+        "image": {
+          "lockLevel": "mid",
+          "referenceType": "brand_asset",
+          "requiresReference": true
+        }
+      },
+      "platformSuggestions": [
+        "Kopier tekstprompten og bruk den i valgt produksjonsverktøy.",
+        "Forslag: Midjourney",
+        "Forslag: Firefly",
+        "Forslag: Freepik AI"
+      ],
       "recommendedNegativePreset": "preset-d-reklame-kvalitet"
     },
     "outputType": "image",
@@ -3653,7 +4002,8 @@ export const templatesGeneratedRaw = [
       "brandLock:ja",
       "textLock:ja",
       "productLock:ja",
-      "kategori:dooh-plakat"
+      "kategori:dooh-plakat",
+      "policy:text-output-only"
     ],
     "title": "DOOH og plakat 17 (DOOH 4:5)",
     "blocks": [
@@ -3732,6 +4082,21 @@ export const templatesGeneratedRaw = [
         "strenghet": "middels",
         "productLock": true
       },
+      "outputPolicy": "text-only",
+      "mediaGeneration": false,
+      "productionHints": {
+        "image": {
+          "lockLevel": "mid",
+          "referenceType": "brand_asset",
+          "requiresReference": true
+        }
+      },
+      "platformSuggestions": [
+        "Kopier tekstprompten og bruk den i valgt produksjonsverktøy.",
+        "Forslag: Midjourney",
+        "Forslag: Firefly",
+        "Forslag: Freepik AI"
+      ],
       "recommendedNegativePreset": "preset-d-reklame-kvalitet"
     },
     "outputType": "image",
@@ -4057,7 +4422,8 @@ export const templatesGeneratedRaw = [
       "brandLock:ja",
       "textLock:ja",
       "productLock:ja",
-      "kategori:produkt-still"
+      "kategori:produkt-still",
+      "policy:text-output-only"
     ],
     "title": "Produktreklame still 01 (web 1:1)",
     "blocks": [
@@ -4136,6 +4502,22 @@ export const templatesGeneratedRaw = [
         "strenghet": "middels",
         "productLock": true
       },
+      "outputPolicy": "text-only",
+      "mediaGeneration": false,
+      "productionHints": {
+        "image": {
+          "lockLevel": "mid",
+          "referenceType": "brand_asset",
+          "requiresReference": true
+        }
+      },
+      "uniqueCombination": "web|1:1|kjennskap|middels|brand:true|text:true|product:true",
+      "platformSuggestions": [
+        "Kopier tekstprompten og bruk den i valgt produksjonsverktøy.",
+        "Forslag: Midjourney",
+        "Forslag: Firefly",
+        "Forslag: Freepik AI"
+      ],
       "recommendedNegativePreset": "preset-b-anti-ai-look"
     },
     "outputType": "image",
@@ -4158,7 +4540,8 @@ export const templatesGeneratedRaw = [
       "brandLock:ja",
       "textLock:ja",
       "productLock:ja",
-      "kategori:produkt-still"
+      "kategori:produkt-still",
+      "policy:text-output-only"
     ],
     "title": "Produktreklame still 02 (print 4:5)",
     "blocks": [
@@ -4237,6 +4620,22 @@ export const templatesGeneratedRaw = [
         "strenghet": "høy",
         "productLock": true
       },
+      "outputPolicy": "text-only",
+      "mediaGeneration": false,
+      "productionHints": {
+        "image": {
+          "lockLevel": "high",
+          "referenceType": "brand_asset",
+          "requiresReference": true
+        }
+      },
+      "uniqueCombination": "print|4:5|konvertering|høy|brand:true|text:true|product:true",
+      "platformSuggestions": [
+        "Kopier tekstprompten og bruk den i valgt produksjonsverktøy.",
+        "Forslag: Midjourney",
+        "Forslag: Firefly",
+        "Forslag: Freepik AI"
+      ],
       "recommendedNegativePreset": "preset-b-anti-ai-look"
     },
     "outputType": "image",
@@ -4259,7 +4658,8 @@ export const templatesGeneratedRaw = [
       "brandLock:ja",
       "textLock:ja",
       "productLock:ja",
-      "kategori:produkt-still"
+      "kategori:produkt-still",
+      "policy:text-output-only"
     ],
     "title": "Produktreklame still 03 (DOOH 16:9)",
     "blocks": [
@@ -4338,6 +4738,22 @@ export const templatesGeneratedRaw = [
         "strenghet": "middels",
         "productLock": true
       },
+      "outputPolicy": "text-only",
+      "mediaGeneration": false,
+      "productionHints": {
+        "image": {
+          "lockLevel": "mid",
+          "referenceType": "brand_asset",
+          "requiresReference": true
+        }
+      },
+      "uniqueCombination": "DOOH|16:9|kjennskap|middels|brand:true|text:true|product:true",
+      "platformSuggestions": [
+        "Kopier tekstprompten og bruk den i valgt produksjonsverktøy.",
+        "Forslag: Midjourney",
+        "Forslag: Firefly",
+        "Forslag: Freepik AI"
+      ],
       "recommendedNegativePreset": "preset-b-anti-ai-look"
     },
     "outputType": "image",
@@ -4360,7 +4776,8 @@ export const templatesGeneratedRaw = [
       "brandLock:ja",
       "textLock:ja",
       "productLock:ja",
-      "kategori:produkt-still"
+      "kategori:produkt-still",
+      "policy:text-output-only"
     ],
     "title": "Produktreklame still 04 (SoMe banner)",
     "blocks": [
@@ -4439,6 +4856,22 @@ export const templatesGeneratedRaw = [
         "strenghet": "høy",
         "productLock": true
       },
+      "outputPolicy": "text-only",
+      "mediaGeneration": false,
+      "productionHints": {
+        "image": {
+          "lockLevel": "high",
+          "referenceType": "brand_asset",
+          "requiresReference": true
+        }
+      },
+      "uniqueCombination": "SoMe|banner|konvertering|høy|brand:true|text:true|product:true",
+      "platformSuggestions": [
+        "Kopier tekstprompten og bruk den i valgt produksjonsverktøy.",
+        "Forslag: Midjourney",
+        "Forslag: Firefly",
+        "Forslag: Freepik AI"
+      ],
       "recommendedNegativePreset": "preset-b-anti-ai-look"
     },
     "outputType": "image",
@@ -4461,7 +4894,8 @@ export const templatesGeneratedRaw = [
       "brandLock:ja",
       "textLock:ja",
       "productLock:ja",
-      "kategori:produkt-still"
+      "kategori:produkt-still",
+      "policy:text-output-only"
     ],
     "title": "Produktreklame still 05 (web 1:1)",
     "blocks": [
@@ -4540,6 +4974,22 @@ export const templatesGeneratedRaw = [
         "strenghet": "middels",
         "productLock": true
       },
+      "outputPolicy": "text-only",
+      "mediaGeneration": false,
+      "productionHints": {
+        "image": {
+          "lockLevel": "mid",
+          "referenceType": "brand_asset",
+          "requiresReference": true
+        }
+      },
+      "uniqueCombination": "web|1:1|kjennskap|middels|brand:true|text:true|product:true",
+      "platformSuggestions": [
+        "Kopier tekstprompten og bruk den i valgt produksjonsverktøy.",
+        "Forslag: Midjourney",
+        "Forslag: Firefly",
+        "Forslag: Freepik AI"
+      ],
       "recommendedNegativePreset": "preset-b-anti-ai-look"
     },
     "outputType": "image",
@@ -4562,7 +5012,8 @@ export const templatesGeneratedRaw = [
       "brandLock:ja",
       "textLock:ja",
       "productLock:ja",
-      "kategori:produkt-still"
+      "kategori:produkt-still",
+      "policy:text-output-only"
     ],
     "title": "Produktreklame still 06 (print 4:5)",
     "blocks": [
@@ -4641,6 +5092,22 @@ export const templatesGeneratedRaw = [
         "strenghet": "høy",
         "productLock": true
       },
+      "outputPolicy": "text-only",
+      "mediaGeneration": false,
+      "productionHints": {
+        "image": {
+          "lockLevel": "high",
+          "referenceType": "brand_asset",
+          "requiresReference": true
+        }
+      },
+      "uniqueCombination": "print|4:5|konvertering|høy|brand:true|text:true|product:true",
+      "platformSuggestions": [
+        "Kopier tekstprompten og bruk den i valgt produksjonsverktøy.",
+        "Forslag: Midjourney",
+        "Forslag: Firefly",
+        "Forslag: Freepik AI"
+      ],
       "recommendedNegativePreset": "preset-b-anti-ai-look"
     },
     "outputType": "image",
@@ -4663,7 +5130,8 @@ export const templatesGeneratedRaw = [
       "brandLock:ja",
       "textLock:ja",
       "productLock:ja",
-      "kategori:produkt-still"
+      "kategori:produkt-still",
+      "policy:text-output-only"
     ],
     "title": "Produktreklame still 07 (DOOH 16:9)",
     "blocks": [
@@ -4742,6 +5210,22 @@ export const templatesGeneratedRaw = [
         "strenghet": "middels",
         "productLock": true
       },
+      "outputPolicy": "text-only",
+      "mediaGeneration": false,
+      "productionHints": {
+        "image": {
+          "lockLevel": "mid",
+          "referenceType": "brand_asset",
+          "requiresReference": true
+        }
+      },
+      "uniqueCombination": "DOOH|16:9|kjennskap|middels|brand:true|text:true|product:true",
+      "platformSuggestions": [
+        "Kopier tekstprompten og bruk den i valgt produksjonsverktøy.",
+        "Forslag: Midjourney",
+        "Forslag: Firefly",
+        "Forslag: Freepik AI"
+      ],
       "recommendedNegativePreset": "preset-b-anti-ai-look"
     },
     "outputType": "image",
@@ -4764,7 +5248,8 @@ export const templatesGeneratedRaw = [
       "brandLock:ja",
       "textLock:ja",
       "productLock:ja",
-      "kategori:produkt-still"
+      "kategori:produkt-still",
+      "policy:text-output-only"
     ],
     "title": "Produktreklame still 08 (SoMe banner)",
     "blocks": [
@@ -4843,6 +5328,22 @@ export const templatesGeneratedRaw = [
         "strenghet": "høy",
         "productLock": true
       },
+      "outputPolicy": "text-only",
+      "mediaGeneration": false,
+      "productionHints": {
+        "image": {
+          "lockLevel": "high",
+          "referenceType": "brand_asset",
+          "requiresReference": true
+        }
+      },
+      "uniqueCombination": "SoMe|banner|konvertering|høy|brand:true|text:true|product:true",
+      "platformSuggestions": [
+        "Kopier tekstprompten og bruk den i valgt produksjonsverktøy.",
+        "Forslag: Midjourney",
+        "Forslag: Firefly",
+        "Forslag: Freepik AI"
+      ],
       "recommendedNegativePreset": "preset-b-anti-ai-look"
     },
     "outputType": "image",
@@ -4865,7 +5366,8 @@ export const templatesGeneratedRaw = [
       "brandLock:ja",
       "textLock:ja",
       "productLock:ja",
-      "kategori:produkt-still"
+      "kategori:produkt-still",
+      "policy:text-output-only"
     ],
     "title": "Produktreklame still 09 (web 1:1)",
     "blocks": [
@@ -4944,6 +5446,21 @@ export const templatesGeneratedRaw = [
         "strenghet": "middels",
         "productLock": true
       },
+      "outputPolicy": "text-only",
+      "mediaGeneration": false,
+      "productionHints": {
+        "image": {
+          "lockLevel": "mid",
+          "referenceType": "brand_asset",
+          "requiresReference": true
+        }
+      },
+      "platformSuggestions": [
+        "Kopier tekstprompten og bruk den i valgt produksjonsverktøy.",
+        "Forslag: Midjourney",
+        "Forslag: Firefly",
+        "Forslag: Freepik AI"
+      ],
       "recommendedNegativePreset": "preset-b-anti-ai-look"
     },
     "outputType": "image",
@@ -4966,7 +5483,8 @@ export const templatesGeneratedRaw = [
       "brandLock:ja",
       "textLock:ja",
       "productLock:ja",
-      "kategori:produkt-still"
+      "kategori:produkt-still",
+      "policy:text-output-only"
     ],
     "title": "Produktreklame still 10 (print 4:5)",
     "blocks": [
@@ -5045,6 +5563,21 @@ export const templatesGeneratedRaw = [
         "strenghet": "høy",
         "productLock": true
       },
+      "outputPolicy": "text-only",
+      "mediaGeneration": false,
+      "productionHints": {
+        "image": {
+          "lockLevel": "high",
+          "referenceType": "brand_asset",
+          "requiresReference": true
+        }
+      },
+      "platformSuggestions": [
+        "Kopier tekstprompten og bruk den i valgt produksjonsverktøy.",
+        "Forslag: Midjourney",
+        "Forslag: Firefly",
+        "Forslag: Freepik AI"
+      ],
       "recommendedNegativePreset": "preset-b-anti-ai-look"
     },
     "outputType": "image",
@@ -5067,7 +5600,8 @@ export const templatesGeneratedRaw = [
       "brandLock:ja",
       "textLock:ja",
       "productLock:ja",
-      "kategori:produkt-still"
+      "kategori:produkt-still",
+      "policy:text-output-only"
     ],
     "title": "Produktreklame still 11 (DOOH 16:9)",
     "blocks": [
@@ -5146,6 +5680,21 @@ export const templatesGeneratedRaw = [
         "strenghet": "middels",
         "productLock": true
       },
+      "outputPolicy": "text-only",
+      "mediaGeneration": false,
+      "productionHints": {
+        "image": {
+          "lockLevel": "mid",
+          "referenceType": "brand_asset",
+          "requiresReference": true
+        }
+      },
+      "platformSuggestions": [
+        "Kopier tekstprompten og bruk den i valgt produksjonsverktøy.",
+        "Forslag: Midjourney",
+        "Forslag: Firefly",
+        "Forslag: Freepik AI"
+      ],
       "recommendedNegativePreset": "preset-b-anti-ai-look"
     },
     "outputType": "image",
@@ -5168,7 +5717,8 @@ export const templatesGeneratedRaw = [
       "brandLock:ja",
       "textLock:ja",
       "productLock:ja",
-      "kategori:produkt-still"
+      "kategori:produkt-still",
+      "policy:text-output-only"
     ],
     "title": "Produktreklame still 12 (SoMe banner)",
     "blocks": [
@@ -5247,6 +5797,21 @@ export const templatesGeneratedRaw = [
         "strenghet": "høy",
         "productLock": true
       },
+      "outputPolicy": "text-only",
+      "mediaGeneration": false,
+      "productionHints": {
+        "image": {
+          "lockLevel": "high",
+          "referenceType": "brand_asset",
+          "requiresReference": true
+        }
+      },
+      "platformSuggestions": [
+        "Kopier tekstprompten og bruk den i valgt produksjonsverktøy.",
+        "Forslag: Midjourney",
+        "Forslag: Firefly",
+        "Forslag: Freepik AI"
+      ],
       "recommendedNegativePreset": "preset-b-anti-ai-look"
     },
     "outputType": "image",
@@ -6683,7 +7248,8 @@ export const templatesGeneratedRaw = [
       "brandLock:ja",
       "textLock:ja",
       "productLock:ja",
-      "kategori:produkt-video"
+      "kategori:produkt-video",
+      "policy:text-output-only"
     ],
     "title": "Produktreklame video 07 (SoMe 9:16)",
     "blocks": [
@@ -6762,6 +7328,28 @@ export const templatesGeneratedRaw = [
         "strenghet": "høy",
         "productLock": true
       },
+      "outputPolicy": "text-only",
+      "mediaGeneration": false,
+      "productionHints": {
+        "video": {
+          "continuityLock": true,
+          "durationSeconds": 10,
+          "temporalAwareness": true,
+          "recommendsFirstLast": true
+        },
+        "character": {
+          "identityLock": true,
+          "wardrobeLock": true,
+          "recommendsCharacterPack": true
+        }
+      },
+      "uniqueCombination": "SoMe|9:16|engasjement|høy|brand:true|text:true|product:true",
+      "platformSuggestions": [
+        "Kopier tekstprompten og bruk den i valgt produksjonsverktøy.",
+        "Forslag: Runway",
+        "Forslag: Veo",
+        "Forslag: Kling"
+      ],
       "recommendedNegativePreset": "preset-c-video-kontinuitet"
     },
     "outputType": "video",
@@ -6784,7 +7372,8 @@ export const templatesGeneratedRaw = [
       "brandLock:ja",
       "textLock:ja",
       "productLock:ja",
-      "kategori:produkt-video"
+      "kategori:produkt-video",
+      "policy:text-output-only"
     ],
     "title": "Produktreklame video 08 (TV 16:9)",
     "blocks": [
@@ -6863,6 +7452,28 @@ export const templatesGeneratedRaw = [
         "strenghet": "høy",
         "productLock": true
       },
+      "outputPolicy": "text-only",
+      "mediaGeneration": false,
+      "productionHints": {
+        "video": {
+          "continuityLock": true,
+          "durationSeconds": 10,
+          "temporalAwareness": true,
+          "recommendsFirstLast": true
+        },
+        "character": {
+          "identityLock": true,
+          "wardrobeLock": true,
+          "recommendsCharacterPack": true
+        }
+      },
+      "uniqueCombination": "TV|16:9|konvertering|høy|brand:true|text:true|product:true",
+      "platformSuggestions": [
+        "Kopier tekstprompten og bruk den i valgt produksjonsverktøy.",
+        "Forslag: Runway",
+        "Forslag: Veo",
+        "Forslag: Kling"
+      ],
       "recommendedNegativePreset": "preset-c-video-kontinuitet"
     },
     "outputType": "video",
@@ -6885,7 +7496,8 @@ export const templatesGeneratedRaw = [
       "brandLock:ja",
       "textLock:ja",
       "productLock:ja",
-      "kategori:produkt-video"
+      "kategori:produkt-video",
+      "policy:text-output-only"
     ],
     "title": "Produktreklame video 09 (web 1:1)",
     "blocks": [
@@ -6964,6 +7576,28 @@ export const templatesGeneratedRaw = [
         "strenghet": "høy",
         "productLock": true
       },
+      "outputPolicy": "text-only",
+      "mediaGeneration": false,
+      "productionHints": {
+        "video": {
+          "continuityLock": true,
+          "durationSeconds": 10,
+          "temporalAwareness": true,
+          "recommendsFirstLast": true
+        },
+        "character": {
+          "identityLock": true,
+          "wardrobeLock": true,
+          "recommendsCharacterPack": true
+        }
+      },
+      "uniqueCombination": "web|1:1|engasjement|høy|brand:true|text:true|product:true",
+      "platformSuggestions": [
+        "Kopier tekstprompten og bruk den i valgt produksjonsverktøy.",
+        "Forslag: Runway",
+        "Forslag: Veo",
+        "Forslag: Kling"
+      ],
       "recommendedNegativePreset": "preset-c-video-kontinuitet"
     },
     "outputType": "video",
@@ -6986,7 +7620,8 @@ export const templatesGeneratedRaw = [
       "brandLock:ja",
       "textLock:ja",
       "productLock:ja",
-      "kategori:produkt-video"
+      "kategori:produkt-video",
+      "policy:text-output-only"
     ],
     "title": "Produktreklame video 10 (SoMe 9:16)",
     "blocks": [
@@ -7065,6 +7700,28 @@ export const templatesGeneratedRaw = [
         "strenghet": "høy",
         "productLock": true
       },
+      "outputPolicy": "text-only",
+      "mediaGeneration": false,
+      "productionHints": {
+        "video": {
+          "continuityLock": true,
+          "durationSeconds": 10,
+          "temporalAwareness": true,
+          "recommendsFirstLast": true
+        },
+        "character": {
+          "identityLock": true,
+          "wardrobeLock": true,
+          "recommendsCharacterPack": true
+        }
+      },
+      "uniqueCombination": "SoMe|9:16|konvertering|høy|brand:true|text:true|product:true",
+      "platformSuggestions": [
+        "Kopier tekstprompten og bruk den i valgt produksjonsverktøy.",
+        "Forslag: Runway",
+        "Forslag: Veo",
+        "Forslag: Kling"
+      ],
       "recommendedNegativePreset": "preset-c-video-kontinuitet"
     },
     "outputType": "video",
@@ -7087,7 +7744,8 @@ export const templatesGeneratedRaw = [
       "brandLock:ja",
       "textLock:ja",
       "productLock:ja",
-      "kategori:produkt-video"
+      "kategori:produkt-video",
+      "policy:text-output-only"
     ],
     "title": "Produktreklame video 11 (TV 16:9)",
     "blocks": [
@@ -7166,6 +7824,28 @@ export const templatesGeneratedRaw = [
         "strenghet": "høy",
         "productLock": true
       },
+      "outputPolicy": "text-only",
+      "mediaGeneration": false,
+      "productionHints": {
+        "video": {
+          "continuityLock": true,
+          "durationSeconds": 10,
+          "temporalAwareness": true,
+          "recommendsFirstLast": true
+        },
+        "character": {
+          "identityLock": true,
+          "wardrobeLock": true,
+          "recommendsCharacterPack": true
+        }
+      },
+      "uniqueCombination": "TV|16:9|engasjement|høy|brand:true|text:true|product:true",
+      "platformSuggestions": [
+        "Kopier tekstprompten og bruk den i valgt produksjonsverktøy.",
+        "Forslag: Runway",
+        "Forslag: Veo",
+        "Forslag: Kling"
+      ],
       "recommendedNegativePreset": "preset-c-video-kontinuitet"
     },
     "outputType": "video",
@@ -7188,7 +7868,8 @@ export const templatesGeneratedRaw = [
       "brandLock:ja",
       "textLock:ja",
       "productLock:ja",
-      "kategori:produkt-video"
+      "kategori:produkt-video",
+      "policy:text-output-only"
     ],
     "title": "Produktreklame video 12 (web 1:1)",
     "blocks": [
@@ -7267,6 +7948,27 @@ export const templatesGeneratedRaw = [
         "strenghet": "høy",
         "productLock": true
       },
+      "outputPolicy": "text-only",
+      "mediaGeneration": false,
+      "productionHints": {
+        "video": {
+          "continuityLock": true,
+          "durationSeconds": 10,
+          "temporalAwareness": true,
+          "recommendsFirstLast": true
+        },
+        "character": {
+          "identityLock": true,
+          "wardrobeLock": true,
+          "recommendsCharacterPack": true
+        }
+      },
+      "platformSuggestions": [
+        "Kopier tekstprompten og bruk den i valgt produksjonsverktøy.",
+        "Forslag: Runway",
+        "Forslag: Veo",
+        "Forslag: Kling"
+      ],
       "recommendedNegativePreset": "preset-c-video-kontinuitet"
     },
     "outputType": "video",
@@ -7794,7 +8496,8 @@ export const templatesGeneratedRaw = [
       "brandLock:ja",
       "textLock:ja",
       "productLock:ja",
-      "kategori:produkt-video"
+      "kategori:produkt-video",
+      "policy:text-output-only"
     ],
     "title": "Produktreklame video 18 (web 1:1)",
     "blocks": [
@@ -7873,6 +8576,28 @@ export const templatesGeneratedRaw = [
         "strenghet": "høy",
         "productLock": true
       },
+      "outputPolicy": "text-only",
+      "mediaGeneration": false,
+      "productionHints": {
+        "video": {
+          "continuityLock": true,
+          "durationSeconds": 10,
+          "temporalAwareness": true,
+          "recommendsFirstLast": true
+        },
+        "character": {
+          "identityLock": true,
+          "wardrobeLock": true,
+          "recommendsCharacterPack": true
+        }
+      },
+      "uniqueCombination": "web|1:1|konvertering|høy|brand:true|text:true|product:true",
+      "platformSuggestions": [
+        "Kopier tekstprompten og bruk den i valgt produksjonsverktøy.",
+        "Forslag: Runway",
+        "Forslag: Veo",
+        "Forslag: Kling"
+      ],
       "recommendedNegativePreset": "preset-c-video-kontinuitet"
     },
     "outputType": "video",
@@ -8097,7 +8822,8 @@ export const templatesGeneratedRaw = [
       "brandLock:ja",
       "textLock:ja",
       "productLock:ja",
-      "pakke:skolepakke-1-0"
+      "pakke:skolepakke-1-0",
+      "policy:text-output-only"
     ],
     "title": "Skolepakke: Produktbrief 9:16",
     "blocks": [
@@ -8177,6 +8903,27 @@ export const templatesGeneratedRaw = [
         "productLock": true
       },
       "skolepakke": true,
+      "outputPolicy": "text-only",
+      "mediaGeneration": false,
+      "productionHints": {
+        "video": {
+          "continuityLock": true,
+          "durationSeconds": 10,
+          "temporalAwareness": true,
+          "recommendsFirstLast": true
+        },
+        "character": {
+          "identityLock": true,
+          "wardrobeLock": true,
+          "recommendsCharacterPack": true
+        }
+      },
+      "platformSuggestions": [
+        "Kopier tekstprompten og bruk den i valgt produksjonsverktøy.",
+        "Forslag: Runway",
+        "Forslag: Veo",
+        "Forslag: Kling"
+      ],
       "recommendedNegativePreset": "preset-d-reklame-kvalitet"
     },
     "outputType": "video",
@@ -8199,7 +8946,8 @@ export const templatesGeneratedRaw = [
       "brandLock:ja",
       "textLock:ja",
       "productLock:ja",
-      "pakke:skolepakke-1-0"
+      "pakke:skolepakke-1-0",
+      "policy:text-output-only"
     ],
     "title": "Skolepakke: Brand lock i kampanjebilde",
     "blocks": [
@@ -8279,6 +9027,21 @@ export const templatesGeneratedRaw = [
         "productLock": true
       },
       "skolepakke": true,
+      "outputPolicy": "text-only",
+      "mediaGeneration": false,
+      "productionHints": {
+        "image": {
+          "lockLevel": "high",
+          "referenceType": "brand_asset",
+          "requiresReference": true
+        }
+      },
+      "platformSuggestions": [
+        "Kopier tekstprompten og bruk den i valgt produksjonsverktøy.",
+        "Forslag: Midjourney",
+        "Forslag: Firefly",
+        "Forslag: Freepik AI"
+      ],
       "recommendedNegativePreset": "preset-d-reklame-kvalitet"
     },
     "outputType": "image",
@@ -8301,7 +9064,8 @@ export const templatesGeneratedRaw = [
       "brandLock:ja",
       "textLock:ja",
       "productLock:ja",
-      "pakke:skolepakke-1-0"
+      "pakke:skolepakke-1-0",
+      "policy:text-output-only"
     ],
     "title": "Skolepakke: DOOH lesbarhet",
     "blocks": [
@@ -8381,6 +9145,21 @@ export const templatesGeneratedRaw = [
         "productLock": true
       },
       "skolepakke": true,
+      "outputPolicy": "text-only",
+      "mediaGeneration": false,
+      "productionHints": {
+        "image": {
+          "lockLevel": "high",
+          "referenceType": "brand_asset",
+          "requiresReference": true
+        }
+      },
+      "platformSuggestions": [
+        "Kopier tekstprompten og bruk den i valgt produksjonsverktøy.",
+        "Forslag: Midjourney",
+        "Forslag: Firefly",
+        "Forslag: Freepik AI"
+      ],
       "recommendedNegativePreset": "preset-d-reklame-kvalitet"
     },
     "outputType": "image",
@@ -8403,7 +9182,8 @@ export const templatesGeneratedRaw = [
       "brandLock:ja",
       "textLock:ja",
       "productLock:ja",
-      "pakke:skolepakke-1-0"
+      "pakke:skolepakke-1-0",
+      "policy:text-output-only"
     ],
     "title": "Skolepakke: Video-kontinuitet 10 sek",
     "blocks": [
@@ -8483,6 +9263,27 @@ export const templatesGeneratedRaw = [
         "productLock": true
       },
       "skolepakke": true,
+      "outputPolicy": "text-only",
+      "mediaGeneration": false,
+      "productionHints": {
+        "video": {
+          "continuityLock": true,
+          "durationSeconds": 10,
+          "temporalAwareness": true,
+          "recommendsFirstLast": true
+        },
+        "character": {
+          "identityLock": true,
+          "wardrobeLock": true,
+          "recommendsCharacterPack": true
+        }
+      },
+      "platformSuggestions": [
+        "Kopier tekstprompten og bruk den i valgt produksjonsverktøy.",
+        "Forslag: Runway",
+        "Forslag: Veo",
+        "Forslag: Kling"
+      ],
       "recommendedNegativePreset": "preset-d-reklame-kvalitet"
     },
     "outputType": "video",
@@ -8505,7 +9306,8 @@ export const templatesGeneratedRaw = [
       "brandLock:ja",
       "textLock:ja",
       "productLock:ja",
-      "pakke:skolepakke-1-0"
+      "pakke:skolepakke-1-0",
+      "policy:text-output-only"
     ],
     "title": "Skolepakke: Copy med friksjonsfri CTA",
     "blocks": [
@@ -8585,6 +9387,15 @@ export const templatesGeneratedRaw = [
         "productLock": true
       },
       "skolepakke": true,
+      "outputPolicy": "text-only",
+      "mediaGeneration": false,
+      "productionHints": {},
+      "platformSuggestions": [
+        "Kopier tekstprompten og bruk den i valgt produksjonsverktøy.",
+        "Forslag: ChatGPT",
+        "Forslag: Claude",
+        "Forslag: Gemini"
+      ],
       "recommendedNegativePreset": "preset-d-reklame-kvalitet"
     },
     "outputType": "text",
@@ -8607,7 +9418,8 @@ export const templatesGeneratedRaw = [
       "brandLock:ja",
       "textLock:ja",
       "productLock:ja",
-      "pakke:skolepakke-1-0"
+      "pakke:skolepakke-1-0",
+      "policy:text-output-only"
     ],
     "title": "Skolepakke: Vurderingsrubrikk",
     "blocks": [
@@ -8687,6 +9499,15 @@ export const templatesGeneratedRaw = [
         "productLock": true
       },
       "skolepakke": true,
+      "outputPolicy": "text-only",
+      "mediaGeneration": false,
+      "productionHints": {},
+      "platformSuggestions": [
+        "Kopier tekstprompten og bruk den i valgt produksjonsverktøy.",
+        "Forslag: ChatGPT",
+        "Forslag: Claude",
+        "Forslag: Gemini"
+      ],
       "recommendedNegativePreset": "preset-d-reklame-kvalitet"
     },
     "outputType": "text",
@@ -8709,7 +9530,8 @@ export const templatesGeneratedRaw = [
       "brandLock:ja",
       "textLock:ja",
       "productLock:ja",
-      "kategori:some-hook"
+      "kategori:some-hook",
+      "policy:text-output-only"
     ],
     "title": "SoMe hook 01 (SoMe 9:16)",
     "blocks": [
@@ -8788,6 +9610,28 @@ export const templatesGeneratedRaw = [
         "strenghet": "høy",
         "productLock": true
       },
+      "outputPolicy": "text-only",
+      "mediaGeneration": false,
+      "productionHints": {
+        "video": {
+          "continuityLock": true,
+          "durationSeconds": 10,
+          "temporalAwareness": true,
+          "recommendsFirstLast": true
+        },
+        "character": {
+          "identityLock": true,
+          "wardrobeLock": true,
+          "recommendsCharacterPack": true
+        }
+      },
+      "uniqueCombination": "SoMe|9:16|engasjement|høy|brand:true|text:true|product:true",
+      "platformSuggestions": [
+        "Kopier tekstprompten og bruk den i valgt produksjonsverktøy.",
+        "Forslag: Runway",
+        "Forslag: Veo",
+        "Forslag: Kling"
+      ],
       "recommendedNegativePreset": "preset-c-video-kontinuitet"
     },
     "outputType": "video",
@@ -8810,7 +9654,8 @@ export const templatesGeneratedRaw = [
       "brandLock:ja",
       "textLock:ja",
       "productLock:ja",
-      "kategori:some-hook"
+      "kategori:some-hook",
+      "policy:text-output-only"
     ],
     "title": "SoMe hook 02 (web 1:1)",
     "blocks": [
@@ -8889,6 +9734,28 @@ export const templatesGeneratedRaw = [
         "strenghet": "høy",
         "productLock": true
       },
+      "outputPolicy": "text-only",
+      "mediaGeneration": false,
+      "productionHints": {
+        "video": {
+          "continuityLock": true,
+          "durationSeconds": 10,
+          "temporalAwareness": true,
+          "recommendsFirstLast": true
+        },
+        "character": {
+          "identityLock": true,
+          "wardrobeLock": true,
+          "recommendsCharacterPack": true
+        }
+      },
+      "uniqueCombination": "web|1:1|konvertering|høy|brand:true|text:true|product:true",
+      "platformSuggestions": [
+        "Kopier tekstprompten og bruk den i valgt produksjonsverktøy.",
+        "Forslag: Runway",
+        "Forslag: Veo",
+        "Forslag: Kling"
+      ],
       "recommendedNegativePreset": "preset-c-video-kontinuitet"
     },
     "outputType": "video",
@@ -8911,7 +9778,8 @@ export const templatesGeneratedRaw = [
       "brandLock:ja",
       "textLock:ja",
       "productLock:ja",
-      "kategori:some-hook"
+      "kategori:some-hook",
+      "policy:text-output-only"
     ],
     "title": "SoMe hook 03 (SoMe 4:5)",
     "blocks": [
@@ -8990,6 +9858,27 @@ export const templatesGeneratedRaw = [
         "strenghet": "høy",
         "productLock": true
       },
+      "outputPolicy": "text-only",
+      "mediaGeneration": false,
+      "productionHints": {
+        "video": {
+          "continuityLock": true,
+          "durationSeconds": 10,
+          "temporalAwareness": true,
+          "recommendsFirstLast": true
+        },
+        "character": {
+          "identityLock": true,
+          "wardrobeLock": true,
+          "recommendsCharacterPack": true
+        }
+      },
+      "platformSuggestions": [
+        "Kopier tekstprompten og bruk den i valgt produksjonsverktøy.",
+        "Forslag: Runway",
+        "Forslag: Veo",
+        "Forslag: Kling"
+      ],
       "recommendedNegativePreset": "preset-c-video-kontinuitet"
     },
     "outputType": "video",
@@ -9012,7 +9901,8 @@ export const templatesGeneratedRaw = [
       "brandLock:ja",
       "textLock:ja",
       "productLock:ja",
-      "kategori:some-hook"
+      "kategori:some-hook",
+      "policy:text-output-only"
     ],
     "title": "SoMe hook 04 (web 9:16)",
     "blocks": [
@@ -9091,6 +9981,28 @@ export const templatesGeneratedRaw = [
         "strenghet": "høy",
         "productLock": true
       },
+      "outputPolicy": "text-only",
+      "mediaGeneration": false,
+      "productionHints": {
+        "video": {
+          "continuityLock": true,
+          "durationSeconds": 10,
+          "temporalAwareness": true,
+          "recommendsFirstLast": true
+        },
+        "character": {
+          "identityLock": true,
+          "wardrobeLock": true,
+          "recommendsCharacterPack": true
+        }
+      },
+      "uniqueCombination": "web|9:16|konvertering|høy|brand:true|text:true|product:true",
+      "platformSuggestions": [
+        "Kopier tekstprompten og bruk den i valgt produksjonsverktøy.",
+        "Forslag: Runway",
+        "Forslag: Veo",
+        "Forslag: Kling"
+      ],
       "recommendedNegativePreset": "preset-c-video-kontinuitet"
     },
     "outputType": "video",
@@ -9113,7 +10025,8 @@ export const templatesGeneratedRaw = [
       "brandLock:ja",
       "textLock:ja",
       "productLock:ja",
-      "kategori:some-hook"
+      "kategori:some-hook",
+      "policy:text-output-only"
     ],
     "title": "SoMe hook 05 (SoMe 1:1)",
     "blocks": [
@@ -9192,6 +10105,28 @@ export const templatesGeneratedRaw = [
         "strenghet": "høy",
         "productLock": true
       },
+      "outputPolicy": "text-only",
+      "mediaGeneration": false,
+      "productionHints": {
+        "video": {
+          "continuityLock": true,
+          "durationSeconds": 10,
+          "temporalAwareness": true,
+          "recommendsFirstLast": true
+        },
+        "character": {
+          "identityLock": true,
+          "wardrobeLock": true,
+          "recommendsCharacterPack": true
+        }
+      },
+      "uniqueCombination": "SoMe|1:1|engasjement|høy|brand:true|text:true|product:true",
+      "platformSuggestions": [
+        "Kopier tekstprompten og bruk den i valgt produksjonsverktøy.",
+        "Forslag: Runway",
+        "Forslag: Veo",
+        "Forslag: Kling"
+      ],
       "recommendedNegativePreset": "preset-c-video-kontinuitet"
     },
     "outputType": "video",
@@ -9214,7 +10149,8 @@ export const templatesGeneratedRaw = [
       "brandLock:ja",
       "textLock:ja",
       "productLock:ja",
-      "kategori:some-hook"
+      "kategori:some-hook",
+      "policy:text-output-only"
     ],
     "title": "SoMe hook 06 (web 4:5)",
     "blocks": [
@@ -9293,6 +10229,28 @@ export const templatesGeneratedRaw = [
         "strenghet": "høy",
         "productLock": true
       },
+      "outputPolicy": "text-only",
+      "mediaGeneration": false,
+      "productionHints": {
+        "video": {
+          "continuityLock": true,
+          "durationSeconds": 10,
+          "temporalAwareness": true,
+          "recommendsFirstLast": true
+        },
+        "character": {
+          "identityLock": true,
+          "wardrobeLock": true,
+          "recommendsCharacterPack": true
+        }
+      },
+      "uniqueCombination": "web|4:5|konvertering|høy|brand:true|text:true|product:true",
+      "platformSuggestions": [
+        "Kopier tekstprompten og bruk den i valgt produksjonsverktøy.",
+        "Forslag: Runway",
+        "Forslag: Veo",
+        "Forslag: Kling"
+      ],
       "recommendedNegativePreset": "preset-c-video-kontinuitet"
     },
     "outputType": "video",
@@ -9517,7 +10475,8 @@ export const templatesGeneratedRaw = [
       "brandLock:ja",
       "textLock:ja",
       "productLock:ja",
-      "kategori:some-hook"
+      "kategori:some-hook",
+      "policy:text-output-only"
     ],
     "title": "SoMe hook 09 (SoMe 4:5)",
     "blocks": [
@@ -9596,6 +10555,27 @@ export const templatesGeneratedRaw = [
         "strenghet": "høy",
         "productLock": true
       },
+      "outputPolicy": "text-only",
+      "mediaGeneration": false,
+      "productionHints": {
+        "video": {
+          "continuityLock": true,
+          "durationSeconds": 10,
+          "temporalAwareness": true,
+          "recommendsFirstLast": true
+        },
+        "character": {
+          "identityLock": true,
+          "wardrobeLock": true,
+          "recommendsCharacterPack": true
+        }
+      },
+      "platformSuggestions": [
+        "Kopier tekstprompten og bruk den i valgt produksjonsverktøy.",
+        "Forslag: Runway",
+        "Forslag: Veo",
+        "Forslag: Kling"
+      ],
       "recommendedNegativePreset": "preset-c-video-kontinuitet"
     },
     "outputType": "video",
@@ -10123,7 +11103,8 @@ export const templatesGeneratedRaw = [
       "brandLock:ja",
       "textLock:ja",
       "productLock:ja",
-      "kategori:some-hook"
+      "kategori:some-hook",
+      "policy:text-output-only"
     ],
     "title": "SoMe hook 15 (SoMe 4:5)",
     "blocks": [
@@ -10202,6 +11183,27 @@ export const templatesGeneratedRaw = [
         "strenghet": "høy",
         "productLock": true
       },
+      "outputPolicy": "text-only",
+      "mediaGeneration": false,
+      "productionHints": {
+        "video": {
+          "continuityLock": true,
+          "durationSeconds": 10,
+          "temporalAwareness": true,
+          "recommendsFirstLast": true
+        },
+        "character": {
+          "identityLock": true,
+          "wardrobeLock": true,
+          "recommendsCharacterPack": true
+        }
+      },
+      "platformSuggestions": [
+        "Kopier tekstprompten og bruk den i valgt produksjonsverktøy.",
+        "Forslag: Runway",
+        "Forslag: Veo",
+        "Forslag: Kling"
+      ],
       "recommendedNegativePreset": "preset-c-video-kontinuitet"
     },
     "outputType": "video",
@@ -10426,7 +11428,8 @@ export const templatesGeneratedRaw = [
       "brandLock:ja",
       "textLock:ja",
       "productLock:ja",
-      "kategori:some-hook"
+      "kategori:some-hook",
+      "policy:text-output-only"
     ],
     "title": "SoMe hook 18 (web 4:5)",
     "blocks": [
@@ -10505,6 +11508,27 @@ export const templatesGeneratedRaw = [
         "strenghet": "høy",
         "productLock": true
       },
+      "outputPolicy": "text-only",
+      "mediaGeneration": false,
+      "productionHints": {
+        "video": {
+          "continuityLock": true,
+          "durationSeconds": 10,
+          "temporalAwareness": true,
+          "recommendsFirstLast": true
+        },
+        "character": {
+          "identityLock": true,
+          "wardrobeLock": true,
+          "recommendsCharacterPack": true
+        }
+      },
+      "platformSuggestions": [
+        "Kopier tekstprompten og bruk den i valgt produksjonsverktøy.",
+        "Forslag: Runway",
+        "Forslag: Veo",
+        "Forslag: Kling"
+      ],
       "recommendedNegativePreset": "preset-c-video-kontinuitet"
     },
     "outputType": "video",
@@ -10527,7 +11551,8 @@ export const templatesGeneratedRaw = [
       "brandLock:ja",
       "textLock:ja",
       "productLock:ja",
-      "kategori:some-hook"
+      "kategori:some-hook",
+      "policy:text-output-only"
     ],
     "title": "SoMe hook 19 (SoMe 9:16)",
     "blocks": [
@@ -10606,6 +11631,27 @@ export const templatesGeneratedRaw = [
         "strenghet": "høy",
         "productLock": true
       },
+      "outputPolicy": "text-only",
+      "mediaGeneration": false,
+      "productionHints": {
+        "video": {
+          "continuityLock": true,
+          "durationSeconds": 10,
+          "temporalAwareness": true,
+          "recommendsFirstLast": true
+        },
+        "character": {
+          "identityLock": true,
+          "wardrobeLock": true,
+          "recommendsCharacterPack": true
+        }
+      },
+      "platformSuggestions": [
+        "Kopier tekstprompten og bruk den i valgt produksjonsverktøy.",
+        "Forslag: Runway",
+        "Forslag: Veo",
+        "Forslag: Kling"
+      ],
       "recommendedNegativePreset": "preset-c-video-kontinuitet"
     },
     "outputType": "video",

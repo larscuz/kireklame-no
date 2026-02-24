@@ -95,6 +95,25 @@ function preferMorePreciseText(existingText, incomingText) {
   return existing;
 }
 
+function isRewriteSource(sourceTag) {
+  return /rewrite/i.test(String(sourceTag || ""));
+}
+
+function mergeTermText(existingText, incomingText, sourceTag) {
+  const existing = normalizeLine(existingText);
+  const incoming = normalizeLine(incomingText);
+
+  if (!existing) return incoming;
+  if (!incoming) return existing;
+
+  // Rewrite-batcher er redaksjonelle oppdateringer og skal kunne overstyre term-felt direkte.
+  if (isRewriteSource(sourceTag)) {
+    return incoming;
+  }
+
+  return preferMorePreciseText(existing, incoming);
+}
+
 function diffObject(before, after) {
   const keys = new Set([...Object.keys(before || {}), ...Object.keys(after || {})]);
   const changed = {};
@@ -128,12 +147,13 @@ function mergeRule(existing, incoming) {
   };
 }
 
-function mergeTerm(existing, incoming) {
+function mergeTerm(existing, incoming, options = {}) {
+  const sourceTag = options.sourceTag || "";
   return {
     ...existing,
-    term_en: preferMorePreciseText(existing.term_en, incoming.term_en),
-    definition_no: preferMorePreciseText(existing.definition_no, incoming.definition_no),
-    promptImpact: preferMorePreciseText(existing.promptImpact, incoming.promptImpact),
+    term_en: mergeTermText(existing.term_en, incoming.term_en, sourceTag),
+    definition_no: mergeTermText(existing.definition_no, incoming.definition_no, sourceTag),
+    promptImpact: mergeTermText(existing.promptImpact, incoming.promptImpact, sourceTag),
     examples: normalizeList([...(existing.examples || []), ...(incoming.examples || [])]),
     relatedTerms: normalizeList([...(existing.relatedTerms || []), ...(incoming.relatedTerms || [])]),
     aliases: normalizeList([
@@ -276,14 +296,14 @@ function mergeRepresentationSwitch(existing, incoming) {
   };
 }
 
-export function mergeContentByType(itemType, existingContent, incomingContent) {
+export function mergeContentByType(itemType, existingContent, incomingContent, options = {}) {
   const existing = existingContent && typeof existingContent === "object" ? existingContent : {};
   const incoming = incomingContent && typeof incomingContent === "object" ? incomingContent : {};
 
   let merged = incoming;
 
   if (itemType === "rule") merged = mergeRule(existing, incoming);
-  else if (itemType === "term") merged = mergeTerm(existing, incoming);
+  else if (itemType === "term") merged = mergeTerm(existing, incoming, options);
   else if (itemType === "template") merged = mergeTemplate(existing, incoming);
   else if (itemType === "example") merged = mergeExample(existing, incoming);
   else if (itemType === "negative_preset") merged = mergeNegativePreset(existing, incoming);

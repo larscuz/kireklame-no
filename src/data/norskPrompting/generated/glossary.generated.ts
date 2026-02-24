@@ -43,9 +43,9 @@ export const glossaryGeneratedRaw = [
       "outputPolicy": "text-only",
       "mediaGeneration": false
     },
-    "promptImpact": "180-gradersregelen reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "promptImpact": "Forhindrer romlig forvirring i video; holder karakterers retning og blikk konsistent.",
     "relatedTerms": [],
-    "definition_no": "180-gradersregelen er et fagbegrep som styrer kvalitet og kontroll i reklameprompten."
+    "definition_no": "Regel som holder kamera på én side av handlingsaksen for å bevare romlig orientering."
   },
   {
     "slug": "aktiv-stemme-design",
@@ -85,9 +85,9 @@ export const glossaryGeneratedRaw = [
       "outputPolicy": "text-only",
       "mediaGeneration": false
     },
-    "promptImpact": "Aktiv stemme reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "relatedTerms": [],
-    "definition_no": "Aktiv stemme er et fagbegrep som styrer kvalitet og kontroll i reklameprompten."
+    "definition_no": "Presist fagbegrep innen design med spesifikk strukturell funksjon."
   },
   {
     "slug": "ambience-bed-vfx",
@@ -131,9 +131,9 @@ export const glossaryGeneratedRaw = [
       "outputPolicy": "text-only",
       "mediaGeneration": false
     },
-    "promptImpact": "Ambience-bed reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "relatedTerms": [],
-    "definition_no": "Ambience-bed er et fagbegrep som styrer kvalitet og kontroll i reklameprompten."
+    "definition_no": "Presist fagbegrep innen vfx med spesifikk strukturell funksjon."
   },
   {
     "slug": "arkitektonisk-elevasjon-arch",
@@ -173,9 +173,9 @@ export const glossaryGeneratedRaw = [
       "outputPolicy": "text-only",
       "mediaGeneration": false
     },
-    "promptImpact": "Arkitektonisk elevasjon reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "relatedTerms": [],
-    "definition_no": "Arkitektonisk elevasjon er et fagbegrep som styrer kvalitet og kontroll i reklameprompten."
+    "definition_no": "Presist fagbegrep innen arch med spesifikk strukturell funksjon."
   },
   {
     "slug": "assembly-forward-arch",
@@ -240,9 +240,9 @@ export const glossaryGeneratedRaw = [
       "outputPolicy": "text-only",
       "mediaGeneration": false
     },
-    "promptImpact": "Assembly-forward reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "relatedTerms": [],
-    "definition_no": "Assembly-forward er et fagbegrep som styrer kvalitet og kontroll i reklameprompten."
+    "definition_no": "Presist fagbegrep innen arch med spesifikk strukturell funksjon."
   },
   {
     "slug": "blokkeringsprinsipp-film",
@@ -289,9 +289,9 @@ export const glossaryGeneratedRaw = [
       "outputPolicy": "text-only",
       "mediaGeneration": false
     },
-    "promptImpact": "Blokkeringsprinsipp reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "relatedTerms": [],
-    "definition_no": "Blokkeringsprinsipp er et fagbegrep som styrer kvalitet og kontroll i reklameprompten."
+    "definition_no": "Presist fagbegrep innen film med spesifikk strukturell funksjon."
   },
   {
     "slug": "brodtekst-design",
@@ -341,9 +341,9 @@ export const glossaryGeneratedRaw = [
       "outputPolicy": "text-only",
       "mediaGeneration": false
     },
-    "promptImpact": "Brødtekst reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "relatedTerms": [],
-    "definition_no": "Brødtekst er et fagbegrep som styrer kvalitet og kontroll i reklameprompten."
+    "definition_no": "Presist fagbegrep innen design med spesifikk strukturell funksjon."
   },
   {
     "slug": "budskaphierarki-design",
@@ -387,9 +387,9 @@ export const glossaryGeneratedRaw = [
       "outputPolicy": "text-only",
       "mediaGeneration": false
     },
-    "promptImpact": "Budskaphierarki reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "promptImpact": "Styrer hva som leses først; øker klarhet.",
     "relatedTerms": [],
-    "definition_no": "Budskaphierarki er et fagbegrep som styrer kvalitet og kontroll i reklameprompten."
+    "definition_no": "Prioritering av elementer etter visuell betydning."
   },
   {
     "slug": "budskapsprioritet-design",
@@ -436,9 +436,9 @@ export const glossaryGeneratedRaw = [
       "outputPolicy": "text-only",
       "mediaGeneration": false
     },
-    "promptImpact": "Budskapsprioritet reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "promptImpact": "Tvinger modellen til å prioritere én hovedidé.",
     "relatedTerms": [],
-    "definition_no": "Budskapsprioritet er et fagbegrep som styrer kvalitet og kontroll i reklameprompten."
+    "definition_no": "Kjernemelding som kommunikasjonen skal formidle."
   },
   {
     "slug": "call-to-action-design",
@@ -478,9 +478,9 @@ export const glossaryGeneratedRaw = [
       "outputPolicy": "text-only",
       "mediaGeneration": false
     },
-    "promptImpact": "Call to action reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "relatedTerms": [],
-    "definition_no": "Call to action er et fagbegrep som styrer kvalitet og kontroll i reklameprompten."
+    "definition_no": "Presist fagbegrep innen design med spesifikk strukturell funksjon."
   },
   {
     "slug": "claim-styring-design",
@@ -520,9 +520,9 @@ export const glossaryGeneratedRaw = [
       "outputPolicy": "text-only",
       "mediaGeneration": false
     },
-    "promptImpact": "Claim-styring reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "relatedTerms": [],
-    "definition_no": "Claim-styring er et fagbegrep som styrer kvalitet og kontroll i reklameprompten."
+    "definition_no": "Presist fagbegrep innen design med spesifikk strukturell funksjon."
   },
   {
     "slug": "crash-zoom-film",
@@ -562,9 +562,9 @@ export const glossaryGeneratedRaw = [
       "outputPolicy": "text-only",
       "mediaGeneration": false
     },
-    "promptImpact": "Crash zoom reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "relatedTerms": [],
-    "definition_no": "Crash zoom er et fagbegrep som styrer kvalitet og kontroll i reklameprompten."
+    "definition_no": "Presist fagbegrep innen film med spesifikk strukturell funksjon."
   },
   {
     "slug": "det-gyldne-snitt-design",
@@ -794,9 +794,9 @@ export const glossaryGeneratedRaw = [
       "outputPolicy": "text-only",
       "mediaGeneration": false
     },
-    "promptImpact": "Detaljnivå LOD reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "relatedTerms": [],
-    "definition_no": "Detaljnivå LOD er et fagbegrep som styrer kvalitet og kontroll i reklameprompten."
+    "definition_no": "Presist fagbegrep innen arch med spesifikk strukturell funksjon."
   },
   {
     "slug": "differensiering-design",
@@ -843,9 +843,9 @@ export const glossaryGeneratedRaw = [
       "outputPolicy": "text-only",
       "mediaGeneration": false
     },
-    "promptImpact": "Differensiering reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "relatedTerms": [],
-    "definition_no": "Differensiering er et fagbegrep som styrer kvalitet og kontroll i reklameprompten."
+    "definition_no": "Presist fagbegrep innen design med spesifikk strukturell funksjon."
   },
   {
     "slug": "diffus-refleksjon-photo",
@@ -885,9 +885,9 @@ export const glossaryGeneratedRaw = [
       "outputPolicy": "text-only",
       "mediaGeneration": false
     },
-    "promptImpact": "Diffus refleksjon reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "promptImpact": "Mykner overflater; hindrer plastaktig speilglans.",
     "relatedTerms": [],
-    "definition_no": "Diffus refleksjon er et fagbegrep som styrer kvalitet og kontroll i reklameprompten."
+    "definition_no": "Myk, spredt lysrefleksjon uten skarpe speilglans."
   },
   {
     "slug": "distinktive-merkevareelementer-design",
@@ -927,9 +927,9 @@ export const glossaryGeneratedRaw = [
       "outputPolicy": "text-only",
       "mediaGeneration": false
     },
-    "promptImpact": "Distinktive merkevareelementer reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "relatedTerms": [],
-    "definition_no": "Distinktive merkevareelementer er et fagbegrep som styrer kvalitet og kontroll i reklameprompten."
+    "definition_no": "Presist fagbegrep innen design med spesifikk strukturell funksjon."
   },
   {
     "slug": "dolly-ut-film",
@@ -973,9 +973,9 @@ export const glossaryGeneratedRaw = [
       "outputPolicy": "text-only",
       "mediaGeneration": false
     },
-    "promptImpact": "Dolly-ut reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "promptImpact": "Gir lineær romlig bevegelse; øker realisme og dybdefølelse.",
     "relatedTerms": [],
-    "definition_no": "Dolly-ut er et fagbegrep som styrer kvalitet og kontroll i reklameprompten."
+    "definition_no": "Fysisk kamerabevegelse frem eller tilbake på skinne."
   },
   {
     "slug": "dooh-leseavstand-design",
@@ -1025,9 +1025,9 @@ export const glossaryGeneratedRaw = [
       "outputPolicy": "text-only",
       "mediaGeneration": false
     },
-    "promptImpact": "DOOH-leseavstand reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "relatedTerms": [],
-    "definition_no": "DOOH-leseavstand er et fagbegrep som styrer kvalitet og kontroll i reklameprompten."
+    "definition_no": "Presist fagbegrep innen design med spesifikk strukturell funksjon."
   },
   {
     "slug": "drop-vfx",
@@ -1077,9 +1077,9 @@ export const glossaryGeneratedRaw = [
       "outputPolicy": "text-only",
       "mediaGeneration": false
     },
-    "promptImpact": "Drop reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "relatedTerms": [],
-    "definition_no": "Drop er et fagbegrep som styrer kvalitet og kontroll i reklameprompten."
+    "definition_no": "Presist fagbegrep innen vfx med spesifikk strukturell funksjon."
   },
   {
     "slug": "dynamisk-range-vfx",
@@ -1119,9 +1119,9 @@ export const glossaryGeneratedRaw = [
       "outputPolicy": "text-only",
       "mediaGeneration": false
     },
-    "promptImpact": "Dynamisk range reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "promptImpact": "Utvider lys–mørk-spenn; øker realisme.",
     "relatedTerms": [],
-    "definition_no": "Dynamisk range er et fagbegrep som styrer kvalitet og kontroll i reklameprompten."
+    "definition_no": "Spennet mellom mørkeste og lyseste punkt."
   },
   {
     "slug": "dyp-fokus-film",
@@ -1206,9 +1206,9 @@ export const glossaryGeneratedRaw = [
       "outputPolicy": "text-only",
       "mediaGeneration": false
     },
-    "promptImpact": "Eksponeringslås reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "relatedTerms": [],
-    "definition_no": "Eksponeringslås er et fagbegrep som styrer kvalitet og kontroll i reklameprompten."
+    "definition_no": "Presist fagbegrep innen photo med spesifikk strukturell funksjon."
   },
   {
     "slug": "establishing-shot-film",
@@ -1248,9 +1248,9 @@ export const glossaryGeneratedRaw = [
       "outputPolicy": "text-only",
       "mediaGeneration": false
     },
-    "promptImpact": "Establishing shot reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "promptImpact": "Genererer bred romlig kontekst før detalj; stabiliserer sceneoppsett.",
     "relatedTerms": [],
-    "definition_no": "Establishing shot er et fagbegrep som styrer kvalitet og kontroll i reklameprompten."
+    "definition_no": "Åpningsbilde som etablerer sted og romlig kontekst."
   },
   {
     "slug": "explodert-aksjonometri-arch",
@@ -1290,9 +1290,9 @@ export const glossaryGeneratedRaw = [
       "outputPolicy": "text-only",
       "mediaGeneration": false
     },
-    "promptImpact": "Explodert aksjonometri reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "promptImpact": "Viser 3D-struktur uten perspektivforvrengning.",
     "relatedTerms": [],
-    "definition_no": "Explodert aksjonometri er et fagbegrep som styrer kvalitet og kontroll i reklameprompten."
+    "definition_no": "3D-visning uten perspektivkonvergens."
   },
   {
     "slug": "eye-path-design",
@@ -1332,9 +1332,9 @@ export const glossaryGeneratedRaw = [
       "outputPolicy": "text-only",
       "mediaGeneration": false
     },
-    "promptImpact": "Eye-path reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "relatedTerms": [],
-    "definition_no": "Eye-path er et fagbegrep som styrer kvalitet og kontroll i reklameprompten."
+    "definition_no": "Presist fagbegrep innen design med spesifikk strukturell funksjon."
   },
   {
     "slug": "fargekontrast-aa-design",
@@ -1374,9 +1374,9 @@ export const glossaryGeneratedRaw = [
       "outputPolicy": "text-only",
       "mediaGeneration": false
     },
-    "promptImpact": "Fargekontrast AA reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "relatedTerms": [],
-    "definition_no": "Fargekontrast AA er et fagbegrep som styrer kvalitet og kontroll i reklameprompten."
+    "definition_no": "Presist fagbegrep innen design med spesifikk strukturell funksjon."
   },
   {
     "slug": "fargetemperatur-photo",
@@ -1416,9 +1416,9 @@ export const glossaryGeneratedRaw = [
       "outputPolicy": "text-only",
       "mediaGeneration": false
     },
-    "promptImpact": "Fargetemperatur reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "promptImpact": "Kontrollerer stemning via Kelvin; hindrer tilfeldig fargestikk.",
     "relatedTerms": [],
-    "definition_no": "Fargetemperatur er et fagbegrep som styrer kvalitet og kontroll i reklameprompten."
+    "definition_no": "Lysfargens varme eller kulde målt i Kelvin."
   },
   {
     "slug": "fill-lys-photo",
@@ -1471,9 +1471,9 @@ export const glossaryGeneratedRaw = [
         "productLock": false
       }
     },
-    "promptImpact": "Fill-lys reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "promptImpact": "Reduserer skyggekontrast uten å fjerne form.",
     "relatedTerms": [],
-    "definition_no": "Fill-lys er et fagbegrep som styrer kvalitet og kontroll i reklameprompten."
+    "definition_no": "Sekundær lyskilde som demper skygger."
   },
   {
     "slug": "fokalpunkt-design",
@@ -1523,9 +1523,9 @@ export const glossaryGeneratedRaw = [
       "outputPolicy": "text-only",
       "mediaGeneration": false
     },
-    "promptImpact": "Fokalpunkt reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "relatedTerms": [],
-    "definition_no": "Fokalpunkt er et fagbegrep som styrer kvalitet og kontroll i reklameprompten."
+    "definition_no": "Presist fagbegrep innen design med spesifikk strukturell funksjon."
   },
   {
     "slug": "fold-hierarki-design",
@@ -1569,9 +1569,9 @@ export const glossaryGeneratedRaw = [
       "outputPolicy": "text-only",
       "mediaGeneration": false
     },
-    "promptImpact": "Fold-hierarki reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "promptImpact": "Styrer hva som leses først; øker klarhet.",
     "relatedTerms": [],
-    "definition_no": "Fold-hierarki er et fagbegrep som styrer kvalitet og kontroll i reklameprompten."
+    "definition_no": "Prioritering av elementer etter visuell betydning."
   },
   {
     "slug": "friksjonsfri-cta-design",
@@ -1611,9 +1611,9 @@ export const glossaryGeneratedRaw = [
       "outputPolicy": "text-only",
       "mediaGeneration": false
     },
-    "promptImpact": "Friksjonsfri CTA reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "promptImpact": "Tydeliggjør handlingspunkt; øker konverteringsfokus.",
     "relatedTerms": [],
-    "definition_no": "Friksjonsfri CTA er et fagbegrep som styrer kvalitet og kontroll i reklameprompten."
+    "definition_no": "Tydelig handlingsoppfordring."
   },
   {
     "slug": "funksjonell-flyt-arch",
@@ -1653,9 +1653,9 @@ export const glossaryGeneratedRaw = [
       "outputPolicy": "text-only",
       "mediaGeneration": false
     },
-    "promptImpact": "Funksjonell flyt reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "relatedTerms": [],
-    "definition_no": "Funksjonell flyt er et fagbegrep som styrer kvalitet og kontroll i reklameprompten."
+    "definition_no": "Presist fagbegrep innen arch med spesifikk strukturell funksjon."
   },
   {
     "slug": "funksjonelt-bevis-design",
@@ -1699,9 +1699,9 @@ export const glossaryGeneratedRaw = [
       "outputPolicy": "text-only",
       "mediaGeneration": false
     },
-    "promptImpact": "Funksjonelt bevis reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "relatedTerms": [],
-    "definition_no": "Funksjonelt bevis er et fagbegrep som styrer kvalitet og kontroll i reklameprompten."
+    "definition_no": "Presist fagbegrep innen design med spesifikk strukturell funksjon."
   },
   {
     "slug": "grid-system-design",
@@ -1741,9 +1741,9 @@ export const glossaryGeneratedRaw = [
       "outputPolicy": "text-only",
       "mediaGeneration": false
     },
-    "promptImpact": "Grid-system reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "promptImpact": "Tvinger strukturert layout; reduserer tilfeldig plassering.",
     "relatedTerms": [],
-    "definition_no": "Grid-system er et fagbegrep som styrer kvalitet og kontroll i reklameprompten."
+    "definition_no": "Struktur av kolonner og rader som organiserer layout."
   },
   {
     "slug": "grunn-dybdeskarphet-film",
@@ -1828,9 +1828,9 @@ export const glossaryGeneratedRaw = [
       "outputPolicy": "text-only",
       "mediaGeneration": false
     },
-    "promptImpact": "Handheld mikro-jitter reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "promptImpact": "Legger inn mikro-ustabilitet; øker dokumentarisk realisme.",
     "relatedTerms": [],
-    "definition_no": "Handheld mikro-jitter er et fagbegrep som styrer kvalitet og kontroll i reklameprompten."
+    "definition_no": "Håndholdt kamera med små, uperfekte bevegelser."
   },
   {
     "slug": "harde-skygger-photo",
@@ -2105,9 +2105,9 @@ export const glossaryGeneratedRaw = [
       "outputPolicy": "text-only",
       "mediaGeneration": false
     },
-    "promptImpact": "Hardt topplys reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "relatedTerms": [],
-    "definition_no": "Hardt topplys er et fagbegrep som styrer kvalitet og kontroll i reklameprompten."
+    "definition_no": "Presist fagbegrep innen photo med spesifikk strukturell funksjon."
   },
   {
     "slug": "highlight-roll-off-photo",
@@ -2147,9 +2147,9 @@ export const glossaryGeneratedRaw = [
       "outputPolicy": "text-only",
       "mediaGeneration": false
     },
-    "promptImpact": "Highlight roll-off reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "promptImpact": "Hindrer utbrente høylys; gir filmisk toneovergang.",
     "relatedTerms": [],
-    "definition_no": "Highlight roll-off er et fagbegrep som styrer kvalitet og kontroll i reklameprompten."
+    "definition_no": "Hvordan høylys gradvis tones ned uten brå klipp."
   },
   {
     "slug": "hook-frame-design",
@@ -2189,9 +2189,9 @@ export const glossaryGeneratedRaw = [
       "outputPolicy": "text-only",
       "mediaGeneration": false
     },
-    "promptImpact": "Hook-frame reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "promptImpact": "Fanger oppmerksomhet i første sekund; øker stopp-effekt.",
     "relatedTerms": [],
-    "definition_no": "Hook-frame er et fagbegrep som styrer kvalitet og kontroll i reklameprompten."
+    "definition_no": "Element som fanger oppmerksomhet umiddelbart."
   },
   {
     "slug": "hook-innen-2-sek-vfx",
@@ -2231,9 +2231,9 @@ export const glossaryGeneratedRaw = [
       "outputPolicy": "text-only",
       "mediaGeneration": false
     },
-    "promptImpact": "Hook innen 2 sek reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "promptImpact": "Fanger oppmerksomhet i første sekund; øker stopp-effekt.",
     "relatedTerms": [],
-    "definition_no": "Hook innen 2 sek er et fagbegrep som styrer kvalitet og kontroll i reklameprompten."
+    "definition_no": "Element som fanger oppmerksomhet umiddelbart."
   },
   {
     "slug": "hoylysbevaring-photo",
@@ -2273,9 +2273,9 @@ export const glossaryGeneratedRaw = [
       "outputPolicy": "text-only",
       "mediaGeneration": false
     },
-    "promptImpact": "Høylysbevaring reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "relatedTerms": [],
-    "definition_no": "Høylysbevaring er et fagbegrep som styrer kvalitet og kontroll i reklameprompten."
+    "definition_no": "Presist fagbegrep innen photo med spesifikk strukturell funksjon."
   },
   {
     "slug": "hvitbalanse-photo",
@@ -2315,9 +2315,9 @@ export const glossaryGeneratedRaw = [
       "outputPolicy": "text-only",
       "mediaGeneration": false
     },
-    "promptImpact": "Hvitbalanse reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "promptImpact": "Sikrer nøytral fargegjengivelse; reduserer grønn/blå AI-forskyvning.",
     "relatedTerms": [],
-    "definition_no": "Hvitbalanse er et fagbegrep som styrer kvalitet og kontroll i reklameprompten."
+    "definition_no": "Justering som gjør hvitt nøytralt under gitt lys."
   },
   {
     "slug": "identitetsdrift-film",
@@ -2357,9 +2357,9 @@ export const glossaryGeneratedRaw = [
       "outputPolicy": "text-only",
       "mediaGeneration": false
     },
-    "promptImpact": "Identitetsdrift reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "relatedTerms": [],
-    "definition_no": "Identitetsdrift er et fagbegrep som styrer kvalitet og kontroll i reklameprompten."
+    "definition_no": "Presist fagbegrep innen film med spesifikk strukturell funksjon."
   },
   {
     "slug": "innsikt-design",
@@ -2406,9 +2406,9 @@ export const glossaryGeneratedRaw = [
       "outputPolicy": "text-only",
       "mediaGeneration": false
     },
-    "promptImpact": "Innsikt reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "relatedTerms": [],
-    "definition_no": "Innsikt er et fagbegrep som styrer kvalitet og kontroll i reklameprompten."
+    "definition_no": "Presist fagbegrep innen design med spesifikk strukturell funksjon."
   },
   {
     "slug": "intro-hook-vfx",
@@ -2461,9 +2461,9 @@ export const glossaryGeneratedRaw = [
       "outputPolicy": "text-only",
       "mediaGeneration": false
     },
-    "promptImpact": "Intro-hook reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "promptImpact": "Fanger oppmerksomhet i første sekund; øker stopp-effekt.",
     "relatedTerms": [],
-    "definition_no": "Intro-hook er et fagbegrep som styrer kvalitet og kontroll i reklameprompten."
+    "definition_no": "Element som fanger oppmerksomhet umiddelbart."
   },
   {
     "slug": "j-cut-film",
@@ -2503,9 +2503,9 @@ export const glossaryGeneratedRaw = [
       "outputPolicy": "text-only",
       "mediaGeneration": false
     },
-    "promptImpact": "J-cut reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "promptImpact": "Skaper sømløs overgang ved å overlappe lyd og bilde.",
     "relatedTerms": [],
-    "definition_no": "J-cut er et fagbegrep som styrer kvalitet og kontroll i reklameprompten."
+    "definition_no": "Neste scenes lyd starter før bildet klipper."
   },
   {
     "slug": "kantlys-photo",
@@ -2545,9 +2545,9 @@ export const glossaryGeneratedRaw = [
       "outputPolicy": "text-only",
       "mediaGeneration": false
     },
-    "promptImpact": "Kantlys reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "promptImpact": "Skiller subjekt fra bakgrunn; øker tredimensjonalitet.",
     "relatedTerms": [],
-    "definition_no": "Kantlys er et fagbegrep som styrer kvalitet og kontroll i reklameprompten."
+    "definition_no": "Baklys som markerer kontur mot bakgrunn."
   },
   {
     "slug": "kjernebudskap-design",
@@ -2591,9 +2591,9 @@ export const glossaryGeneratedRaw = [
       "outputPolicy": "text-only",
       "mediaGeneration": false
     },
-    "promptImpact": "Kjernebudskap reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "promptImpact": "Tvinger modellen til å prioritere én hovedidé.",
     "relatedTerms": [],
-    "definition_no": "Kjernebudskap er et fagbegrep som styrer kvalitet og kontroll i reklameprompten."
+    "definition_no": "Kjernemelding som kommunikasjonen skal formidle."
   },
   {
     "slug": "kjopsutloser-design",
@@ -2633,9 +2633,9 @@ export const glossaryGeneratedRaw = [
       "outputPolicy": "text-only",
       "mediaGeneration": false
     },
-    "promptImpact": "Kjøpsutløser reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "relatedTerms": [],
-    "definition_no": "Kjøpsutløser er et fagbegrep som styrer kvalitet og kontroll i reklameprompten."
+    "definition_no": "Presist fagbegrep innen design med spesifikk strukturell funksjon."
   },
   {
     "slug": "klar-mork-kontrast-photo",
@@ -2720,9 +2720,9 @@ export const glossaryGeneratedRaw = [
       "outputPolicy": "text-only",
       "mediaGeneration": false
     },
-    "promptImpact": "Klippelogikk reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "relatedTerms": [],
-    "definition_no": "Klippelogikk er et fagbegrep som styrer kvalitet og kontroll i reklameprompten."
+    "definition_no": "Presist fagbegrep innen film med spesifikk strukturell funksjon."
   },
   {
     "slug": "kognitiv-letthet-design",
@@ -2762,9 +2762,9 @@ export const glossaryGeneratedRaw = [
       "outputPolicy": "text-only",
       "mediaGeneration": false
     },
-    "promptImpact": "Kognitiv letthet reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "relatedTerms": [],
-    "definition_no": "Kognitiv letthet er et fagbegrep som styrer kvalitet og kontroll i reklameprompten."
+    "definition_no": "Presist fagbegrep innen design med spesifikk strukturell funksjon."
   },
   {
     "slug": "kommunikasjonsmal-design",
@@ -2804,9 +2804,9 @@ export const glossaryGeneratedRaw = [
       "outputPolicy": "text-only",
       "mediaGeneration": false
     },
-    "promptImpact": "Kommunikasjonsmål reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "relatedTerms": [],
-    "definition_no": "Kommunikasjonsmål er et fagbegrep som styrer kvalitet og kontroll i reklameprompten."
+    "definition_no": "Presist fagbegrep innen design med spesifikk strukturell funksjon."
   },
   {
     "slug": "kontrastforhold-design",
@@ -2850,9 +2850,9 @@ export const glossaryGeneratedRaw = [
       "outputPolicy": "text-only",
       "mediaGeneration": false
     },
-    "promptImpact": "Kontrastforhold reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "relatedTerms": [],
-    "definition_no": "Kontrastforhold er et fagbegrep som styrer kvalitet og kontroll i reklameprompten."
+    "definition_no": "Presist fagbegrep innen design med spesifikk strukturell funksjon."
   },
   {
     "slug": "kontrastkurve-photo",
@@ -2899,9 +2899,9 @@ export const glossaryGeneratedRaw = [
       "outputPolicy": "text-only",
       "mediaGeneration": false
     },
-    "promptImpact": "Kontrastkurve reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "promptImpact": "Former global kontrast; påvirker dramatikk og realisme.",
     "relatedTerms": [],
-    "definition_no": "Kontrastkurve er et fagbegrep som styrer kvalitet og kontroll i reklameprompten."
+    "definition_no": "Justering av lys–mørk-forhold over hele toneområdet."
   },
   {
     "slug": "konverteringsbarriere-design",
@@ -2948,9 +2948,9 @@ export const glossaryGeneratedRaw = [
       "outputPolicy": "text-only",
       "mediaGeneration": false
     },
-    "promptImpact": "Konverteringsbarriere reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "relatedTerms": [],
-    "definition_no": "Konverteringsbarriere er et fagbegrep som styrer kvalitet og kontroll i reklameprompten."
+    "definition_no": "Presist fagbegrep innen design med spesifikk strukturell funksjon."
   },
   {
     "slug": "l-cut-film",
@@ -2994,9 +2994,9 @@ export const glossaryGeneratedRaw = [
       "outputPolicy": "text-only",
       "mediaGeneration": false
     },
-    "promptImpact": "L-cut reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "promptImpact": "Bevarer emosjonell kontinuitet over klipp.",
     "relatedTerms": [],
-    "definition_no": "L-cut er et fagbegrep som styrer kvalitet og kontroll i reklameprompten."
+    "definition_no": "Lyden fra forrige scene fortsetter over nytt bilde."
   },
   {
     "slug": "lavmaelt-lys-photo",
@@ -3081,9 +3081,9 @@ export const glossaryGeneratedRaw = [
       "outputPolicy": "text-only",
       "mediaGeneration": false
     },
-    "promptImpact": "Lesbarhetsnivå reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "relatedTerms": [],
-    "definition_no": "Lesbarhetsnivå er et fagbegrep som styrer kvalitet og kontroll i reklameprompten."
+    "definition_no": "Presist fagbegrep innen design med spesifikk strukturell funksjon."
   },
   {
     "slug": "locked-off-kamera-film",
@@ -3123,9 +3123,9 @@ export const glossaryGeneratedRaw = [
       "outputPolicy": "text-only",
       "mediaGeneration": false
     },
-    "promptImpact": "Locked-off kamera reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "promptImpact": "Reduserer bevegelsesstøy; gir stabilt og kontrollert uttrykk.",
     "relatedTerms": [],
-    "definition_no": "Locked-off kamera er et fagbegrep som styrer kvalitet og kontroll i reklameprompten."
+    "definition_no": "Helt statisk kamera uten bevegelse."
   },
   {
     "slug": "loftepresisjon-design",
@@ -3165,9 +3165,9 @@ export const glossaryGeneratedRaw = [
       "outputPolicy": "text-only",
       "mediaGeneration": false
     },
-    "promptImpact": "Løftepresisjon reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "relatedTerms": [],
-    "definition_no": "Løftepresisjon er et fagbegrep som styrer kvalitet og kontroll i reklameprompten."
+    "definition_no": "Presist fagbegrep innen design med spesifikk strukturell funksjon."
   },
   {
     "slug": "logo-clearspace-design",
@@ -3207,9 +3207,9 @@ export const glossaryGeneratedRaw = [
       "outputPolicy": "text-only",
       "mediaGeneration": false
     },
-    "promptImpact": "Logo-clearspace reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "relatedTerms": [],
-    "definition_no": "Logo-clearspace er et fagbegrep som styrer kvalitet og kontroll i reklameprompten."
+    "definition_no": "Presist fagbegrep innen design med spesifikk strukturell funksjon."
   },
   {
     "slug": "malbar-geometri-arch",
@@ -3249,9 +3249,9 @@ export const glossaryGeneratedRaw = [
       "outputPolicy": "text-only",
       "mediaGeneration": false
     },
-    "promptImpact": "Målbar geometri reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "promptImpact": "Tvinger presise proporsjoner og rette vinkler.",
     "relatedTerms": [],
-    "definition_no": "Målbar geometri er et fagbegrep som styrer kvalitet og kontroll i reklameprompten."
+    "definition_no": "Målbar form og proporsjon."
   },
   {
     "slug": "malgruppe-design",
@@ -3295,9 +3295,9 @@ export const glossaryGeneratedRaw = [
       "outputPolicy": "text-only",
       "mediaGeneration": false
     },
-    "promptImpact": "Målgruppe reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "relatedTerms": [],
-    "definition_no": "Målgruppe er et fagbegrep som styrer kvalitet og kontroll i reklameprompten."
+    "definition_no": "Presist fagbegrep innen design med spesifikk strukturell funksjon."
   },
   {
     "slug": "match-cut-film",
@@ -3344,9 +3344,9 @@ export const glossaryGeneratedRaw = [
       "outputPolicy": "text-only",
       "mediaGeneration": false
     },
-    "promptImpact": "Match cut reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "promptImpact": "Binder to bilder sammen via visuell likhet; øker flyt.",
     "relatedTerms": [],
-    "definition_no": "Match cut er et fagbegrep som styrer kvalitet og kontroll i reklameprompten."
+    "definition_no": "Klipp som kobler to bilder via form- eller bevegelseslikhet."
   },
   {
     "slug": "mental-tilgjengelighet-design",
@@ -3386,9 +3386,9 @@ export const glossaryGeneratedRaw = [
       "outputPolicy": "text-only",
       "mediaGeneration": false
     },
-    "promptImpact": "Mental tilgjengelighet reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "relatedTerms": [],
-    "definition_no": "Mental tilgjengelighet er et fagbegrep som styrer kvalitet og kontroll i reklameprompten."
+    "definition_no": "Presist fagbegrep innen design med spesifikk strukturell funksjon."
   },
   {
     "slug": "merkefarge-dominans-design",
@@ -3432,9 +3432,9 @@ export const glossaryGeneratedRaw = [
       "outputPolicy": "text-only",
       "mediaGeneration": false
     },
-    "promptImpact": "Merkefarge-dominans reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "relatedTerms": [],
-    "definition_no": "Merkefarge-dominans er et fagbegrep som styrer kvalitet og kontroll i reklameprompten."
+    "definition_no": "Presist fagbegrep innen design med spesifikk strukturell funksjon."
   },
   {
     "slug": "merkesalience-design",
@@ -3478,9 +3478,9 @@ export const glossaryGeneratedRaw = [
       "outputPolicy": "text-only",
       "mediaGeneration": false
     },
-    "promptImpact": "Merkesalience reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "relatedTerms": [],
-    "definition_no": "Merkesalience er et fagbegrep som styrer kvalitet og kontroll i reklameprompten."
+    "definition_no": "Presist fagbegrep innen design med spesifikk strukturell funksjon."
   },
   {
     "slug": "mikrokontrast-for-tekst-design",
@@ -3520,9 +3520,9 @@ export const glossaryGeneratedRaw = [
       "outputPolicy": "text-only",
       "mediaGeneration": false
     },
-    "promptImpact": "Mikrokontrast for tekst reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "relatedTerms": [],
-    "definition_no": "Mikrokontrast for tekst er et fagbegrep som styrer kvalitet og kontroll i reklameprompten."
+    "definition_no": "Presist fagbegrep innen design med spesifikk strukturell funksjon."
   },
   {
     "slug": "mikrokopi-design",
@@ -3562,9 +3562,9 @@ export const glossaryGeneratedRaw = [
       "outputPolicy": "text-only",
       "mediaGeneration": false
     },
-    "promptImpact": "Mikrokopi reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "relatedTerms": [],
-    "definition_no": "Mikrokopi er et fagbegrep som styrer kvalitet og kontroll i reklameprompten."
+    "definition_no": "Presist fagbegrep innen design med spesifikk strukturell funksjon."
   },
   {
     "slug": "mikromalgruppe-design",
@@ -3604,9 +3604,9 @@ export const glossaryGeneratedRaw = [
       "outputPolicy": "text-only",
       "mediaGeneration": false
     },
-    "promptImpact": "Mikromålgruppe reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "relatedTerms": [],
-    "definition_no": "Mikromålgruppe er et fagbegrep som styrer kvalitet og kontroll i reklameprompten."
+    "definition_no": "Presist fagbegrep innen design med spesifikk strukturell funksjon."
   },
   {
     "slug": "modulrytme-arch",
@@ -3646,9 +3646,9 @@ export const glossaryGeneratedRaw = [
       "outputPolicy": "text-only",
       "mediaGeneration": false
     },
-    "promptImpact": "Modulrytme reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "promptImpact": "Skaper repeterende struktur og rytme.",
     "relatedTerms": [],
-    "definition_no": "Modulrytme er et fagbegrep som styrer kvalitet og kontroll i reklameprompten."
+    "definition_no": "Repeterende enhet som skaper rytme og struktur."
   },
   {
     "slug": "modulskala-design",
@@ -3698,9 +3698,9 @@ export const glossaryGeneratedRaw = [
       "outputPolicy": "text-only",
       "mediaGeneration": false
     },
-    "promptImpact": "Modulskala reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "promptImpact": "Skaper repeterende struktur og rytme.",
     "relatedTerms": [],
-    "definition_no": "Modulskala er et fagbegrep som styrer kvalitet og kontroll i reklameprompten."
+    "definition_no": "Repeterende enhet som skaper rytme og struktur."
   },
   {
     "slug": "mykt-sidelys-photo",
@@ -3740,9 +3740,9 @@ export const glossaryGeneratedRaw = [
       "outputPolicy": "text-only",
       "mediaGeneration": false
     },
-    "promptImpact": "Mykt sidelys reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "relatedTerms": [],
-    "definition_no": "Mykt sidelys er et fagbegrep som styrer kvalitet og kontroll i reklameprompten."
+    "definition_no": "Presist fagbegrep innen photo med spesifikk strukturell funksjon."
   },
   {
     "slug": "narrativ-kjerne-design",
@@ -3782,9 +3782,9 @@ export const glossaryGeneratedRaw = [
       "outputPolicy": "text-only",
       "mediaGeneration": false
     },
-    "promptImpact": "Narrativ kjerne reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "relatedTerms": [],
-    "definition_no": "Narrativ kjerne er et fagbegrep som styrer kvalitet og kontroll i reklameprompten."
+    "definition_no": "Presist fagbegrep innen design med spesifikk strukturell funksjon."
   },
   {
     "slug": "nokkellys-photo",
@@ -3834,9 +3834,9 @@ export const glossaryGeneratedRaw = [
       "outputPolicy": "text-only",
       "mediaGeneration": false
     },
-    "promptImpact": "Nøkkellys reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "promptImpact": "Definerer hovedretning for lys og skygge.",
     "relatedTerms": [],
-    "definition_no": "Nøkkellys er et fagbegrep som styrer kvalitet og kontroll i reklameprompten."
+    "definition_no": "Hovedlyskilde som former motivet."
   },
   {
     "slug": "on-beat-levering-vfx",
@@ -3876,9 +3876,9 @@ export const glossaryGeneratedRaw = [
       "outputPolicy": "text-only",
       "mediaGeneration": false
     },
-    "promptImpact": "On-beat levering reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "relatedTerms": [],
-    "definition_no": "On-beat levering er et fagbegrep som styrer kvalitet og kontroll i reklameprompten."
+    "definition_no": "Presist fagbegrep innen vfx med spesifikk strukturell funksjon."
   },
   {
     "slug": "on-screen-tekst-design",
@@ -3918,9 +3918,9 @@ export const glossaryGeneratedRaw = [
       "outputPolicy": "text-only",
       "mediaGeneration": false
     },
-    "promptImpact": "On-screen tekst reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "relatedTerms": [],
-    "definition_no": "On-screen tekst er et fagbegrep som styrer kvalitet og kontroll i reklameprompten."
+    "definition_no": "Presist fagbegrep innen design med spesifikk strukturell funksjon."
   },
   {
     "slug": "ortografisk-fasade-arch",
@@ -3960,9 +3960,9 @@ export const glossaryGeneratedRaw = [
       "outputPolicy": "text-only",
       "mediaGeneration": false
     },
-    "promptImpact": "Ortografisk fasade reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "promptImpact": "Eliminerer perspektiv; gir teknisk presisjon.",
     "relatedTerms": [],
-    "definition_no": "Ortografisk fasade er et fagbegrep som styrer kvalitet og kontroll i reklameprompten."
+    "definition_no": "Fasadevisning uten perspektivforvrengning."
   },
   {
     "slug": "overskrift-design",
@@ -4012,9 +4012,9 @@ export const glossaryGeneratedRaw = [
       "outputPolicy": "text-only",
       "mediaGeneration": false
     },
-    "promptImpact": "Overskrift reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "relatedTerms": [],
-    "definition_no": "Overskrift er et fagbegrep som styrer kvalitet og kontroll i reklameprompten."
+    "definition_no": "Presist fagbegrep innen design med spesifikk strukturell funksjon."
   },
   {
     "slug": "pauselengde-vfx",
@@ -4064,9 +4064,9 @@ export const glossaryGeneratedRaw = [
       "outputPolicy": "text-only",
       "mediaGeneration": false
     },
-    "promptImpact": "Pauselengde reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "relatedTerms": [],
-    "definition_no": "Pauselengde er et fagbegrep som styrer kvalitet og kontroll i reklameprompten."
+    "definition_no": "Presist fagbegrep innen vfx med spesifikk strukturell funksjon."
   },
   {
     "slug": "plan-geometri-arch",
@@ -4113,9 +4113,9 @@ export const glossaryGeneratedRaw = [
       "outputPolicy": "text-only",
       "mediaGeneration": false
     },
-    "promptImpact": "Plan-geometri reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "promptImpact": "Tvinger presise proporsjoner og rette vinkler.",
     "relatedTerms": [],
-    "definition_no": "Plan-geometri er et fagbegrep som styrer kvalitet og kontroll i reklameprompten."
+    "definition_no": "Målbar form og proporsjon."
   },
   {
     "slug": "posisjonering-design",
@@ -4162,9 +4162,9 @@ export const glossaryGeneratedRaw = [
       "outputPolicy": "text-only",
       "mediaGeneration": false
     },
-    "promptImpact": "Posisjonering reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "promptImpact": "Former tonalitet og visuell retning etter ønsket marked.",
     "relatedTerms": [],
-    "definition_no": "Posisjonering er et fagbegrep som styrer kvalitet og kontroll i reklameprompten."
+    "definition_no": "Definert plass i marked eller bevissthet."
   },
   {
     "slug": "proof-point-design",
@@ -4204,9 +4204,9 @@ export const glossaryGeneratedRaw = [
       "outputPolicy": "text-only",
       "mediaGeneration": false
     },
-    "promptImpact": "Proof point reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "relatedTerms": [],
-    "definition_no": "Proof point er et fagbegrep som styrer kvalitet og kontroll i reklameprompten."
+    "definition_no": "Presist fagbegrep innen design med spesifikk strukturell funksjon."
   },
   {
     "slug": "rack-focus-film",
@@ -4246,9 +4246,9 @@ export const glossaryGeneratedRaw = [
       "outputPolicy": "text-only",
       "mediaGeneration": false
     },
-    "promptImpact": "Rack focus reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "promptImpact": "Tvinger modellen til å skifte fokusplan; øker dybde og narrativ styring.",
     "relatedTerms": [],
-    "definition_no": "Rack focus er et fagbegrep som styrer kvalitet og kontroll i reklameprompten."
+    "definition_no": "Kontrollert fokusforflytning mellom to plan i samme shot."
   },
   {
     "slug": "responsivt-hierarki-design",
@@ -4288,9 +4288,9 @@ export const glossaryGeneratedRaw = [
       "outputPolicy": "text-only",
       "mediaGeneration": false
     },
-    "promptImpact": "Responsivt hierarki reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "promptImpact": "Styrer hva som leses først; øker klarhet.",
     "relatedTerms": [],
-    "definition_no": "Responsivt hierarki er et fagbegrep som styrer kvalitet og kontroll i reklameprompten."
+    "definition_no": "Prioritering av elementer etter visuell betydning."
   },
   {
     "slug": "romakse-film",
@@ -4343,9 +4343,9 @@ export const glossaryGeneratedRaw = [
       "outputPolicy": "text-only",
       "mediaGeneration": false
     },
-    "promptImpact": "Romakse reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "relatedTerms": [],
-    "definition_no": "Romakse er et fagbegrep som styrer kvalitet og kontroll i reklameprompten."
+    "definition_no": "Presist fagbegrep innen film med spesifikk strukturell funksjon."
   },
   {
     "slug": "romtone-film",
@@ -4693,9 +4693,9 @@ export const glossaryGeneratedRaw = [
       "outputPolicy": "text-only",
       "mediaGeneration": false
     },
-    "promptImpact": "Setningslengdekontroll reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "relatedTerms": [],
-    "definition_no": "Setningslengdekontroll er et fagbegrep som styrer kvalitet og kontroll i reklameprompten."
+    "definition_no": "Presist fagbegrep innen design med spesifikk strukturell funksjon."
   },
   {
     "slug": "safe-area-design",
@@ -4735,9 +4735,9 @@ export const glossaryGeneratedRaw = [
       "outputPolicy": "text-only",
       "mediaGeneration": false
     },
-    "promptImpact": "Safe area reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "promptImpact": "Hindrer at viktig innhold kuttes i ulike formater.",
     "relatedTerms": [],
-    "definition_no": "Safe area er et fagbegrep som styrer kvalitet og kontroll i reklameprompten."
+    "definition_no": "Område innenfor skjermmarginer som alltid er synlig."
   },
   {
     "slug": "semantisk-presisjon-design",
@@ -4777,9 +4777,9 @@ export const glossaryGeneratedRaw = [
       "outputPolicy": "text-only",
       "mediaGeneration": false
     },
-    "promptImpact": "Semantisk presisjon reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "relatedTerms": [],
-    "definition_no": "Semantisk presisjon er et fagbegrep som styrer kvalitet og kontroll i reklameprompten."
+    "definition_no": "Presist fagbegrep innen design med spesifikk strukturell funksjon."
   },
   {
     "slug": "shot-reverse-shot-film",
@@ -4823,9 +4823,9 @@ export const glossaryGeneratedRaw = [
       "outputPolicy": "text-only",
       "mediaGeneration": false
     },
-    "promptImpact": "Shot-reverse-shot reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "promptImpact": "Styrer blikkretning og dialogrytme presist.",
     "relatedTerms": [],
-    "definition_no": "Shot-reverse-shot er et fagbegrep som styrer kvalitet og kontroll i reklameprompten."
+    "definition_no": "Kryssklipping mellom to blikkretninger i dialog."
   },
   {
     "slug": "skyggekvalitet-photo",
@@ -4869,9 +4869,9 @@ export const glossaryGeneratedRaw = [
       "outputPolicy": "text-only",
       "mediaGeneration": false
     },
-    "promptImpact": "Skyggekvalitet reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "relatedTerms": [],
-    "definition_no": "Skyggekvalitet er et fagbegrep som styrer kvalitet og kontroll i reklameprompten."
+    "definition_no": "Presist fagbegrep innen photo med spesifikk strukturell funksjon."
   },
   {
     "slug": "specular-kontroll-photo",
@@ -4911,9 +4911,9 @@ export const glossaryGeneratedRaw = [
       "outputPolicy": "text-only",
       "mediaGeneration": false
     },
-    "promptImpact": "Specular kontroll reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "promptImpact": "Kontrollerer glans; hindrer overdrevet AI-shine.",
     "relatedTerms": [],
-    "definition_no": "Specular kontroll er et fagbegrep som styrer kvalitet og kontroll i reklameprompten."
+    "definition_no": "Kontroll av skarpe, speilende refleksjoner."
   },
   {
     "slug": "spisset-nytte-design",
@@ -4953,9 +4953,9 @@ export const glossaryGeneratedRaw = [
       "outputPolicy": "text-only",
       "mediaGeneration": false
     },
-    "promptImpact": "Spisset nytte reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "relatedTerms": [],
-    "definition_no": "Spisset nytte er et fagbegrep som styrer kvalitet og kontroll i reklameprompten."
+    "definition_no": "Presist fagbegrep innen design med spesifikk strukturell funksjon."
   },
   {
     "slug": "spraklig-okonomi-design",
@@ -4995,9 +4995,9 @@ export const glossaryGeneratedRaw = [
       "outputPolicy": "text-only",
       "mediaGeneration": false
     },
-    "promptImpact": "Språklig økonomi reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "relatedTerms": [],
-    "definition_no": "Språklig økonomi er et fagbegrep som styrer kvalitet og kontroll i reklameprompten."
+    "definition_no": "Presist fagbegrep innen design med spesifikk strukturell funksjon."
   },
   {
     "slug": "sprakregister-design",
@@ -5037,9 +5037,9 @@ export const glossaryGeneratedRaw = [
       "outputPolicy": "text-only",
       "mediaGeneration": false
     },
-    "promptImpact": "Språkregister reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "relatedTerms": [],
-    "definition_no": "Språkregister er et fagbegrep som styrer kvalitet og kontroll i reklameprompten."
+    "definition_no": "Presist fagbegrep innen design med spesifikk strukturell funksjon."
   },
   {
     "slug": "start-slutt-kompatibilitet-film",
@@ -5079,9 +5079,9 @@ export const glossaryGeneratedRaw = [
       "outputPolicy": "text-only",
       "mediaGeneration": false
     },
-    "promptImpact": "Start/slutt-kompatibilitet reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "relatedTerms": [],
-    "definition_no": "Start/slutt-kompatibilitet er et fagbegrep som styrer kvalitet og kontroll i reklameprompten."
+    "definition_no": "Presist fagbegrep innen film med spesifikk strukturell funksjon."
   },
   {
     "slug": "stoygulv-vfx",
@@ -5121,9 +5121,9 @@ export const glossaryGeneratedRaw = [
       "outputPolicy": "text-only",
       "mediaGeneration": false
     },
-    "promptImpact": "Støygulv reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "promptImpact": "Hindrer overdrevet digital støy eller komprimeringsartefakter.",
     "relatedTerms": [],
-    "definition_no": "Støygulv er et fagbegrep som styrer kvalitet og kontroll i reklameprompten."
+    "definition_no": "Laveste nivå av bakgrunnsstøy i signal."
   },
   {
     "slug": "subsurface-scattering-photo",
@@ -5163,9 +5163,9 @@ export const glossaryGeneratedRaw = [
       "outputPolicy": "text-only",
       "mediaGeneration": false
     },
-    "promptImpact": "Subsurface scattering reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "promptImpact": "Gir hud og organiske materialer realistisk lysgjennomgang.",
     "relatedTerms": [],
-    "definition_no": "Subsurface scattering er et fagbegrep som styrer kvalitet og kontroll i reklameprompten."
+    "definition_no": "Lys som trenger inn i materiale før det reflekteres."
   },
   {
     "slug": "taletempo-vfx",
@@ -5227,9 +5227,9 @@ export const glossaryGeneratedRaw = [
       "outputPolicy": "text-only",
       "mediaGeneration": false
     },
-    "promptImpact": "Taletempo reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "promptImpact": "Styrer klippefrekvens og opplevd energi.",
     "relatedTerms": [],
-    "definition_no": "Taletempo er et fagbegrep som styrer kvalitet og kontroll i reklameprompten."
+    "definition_no": "Hastighet på klipp eller narrativ fremdrift."
   },
   {
     "slug": "teknisk-snitt-arch",
@@ -5269,9 +5269,9 @@ export const glossaryGeneratedRaw = [
       "outputPolicy": "text-only",
       "mediaGeneration": false
     },
-    "promptImpact": "Teknisk snitt reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "promptImpact": "Avslører konstruksjon og lagdeling.",
     "relatedTerms": [],
-    "definition_no": "Teknisk snitt er et fagbegrep som styrer kvalitet og kontroll i reklameprompten."
+    "definition_no": "Vertikalt snitt som viser konstruksjon."
   },
   {
     "slug": "teksthierarki-design",
@@ -5315,9 +5315,9 @@ export const glossaryGeneratedRaw = [
       "outputPolicy": "text-only",
       "mediaGeneration": false
     },
-    "promptImpact": "Teksthierarki reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "promptImpact": "Styrer hva som leses først; øker klarhet.",
     "relatedTerms": [],
-    "definition_no": "Teksthierarki er et fagbegrep som styrer kvalitet og kontroll i reklameprompten."
+    "definition_no": "Prioritering av elementer etter visuell betydning."
   },
   {
     "slug": "teksturlesbarhet-photo",
@@ -5361,9 +5361,9 @@ export const glossaryGeneratedRaw = [
       "outputPolicy": "text-only",
       "mediaGeneration": false
     },
-    "promptImpact": "Teksturlesbarhet reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "relatedTerms": [],
-    "definition_no": "Teksturlesbarhet er et fagbegrep som styrer kvalitet og kontroll i reklameprompten."
+    "definition_no": "Presist fagbegrep innen photo med spesifikk strukturell funksjon."
   },
   {
     "slug": "telekompresjon-film",
@@ -5452,9 +5452,9 @@ export const glossaryGeneratedRaw = [
       "outputPolicy": "text-only",
       "mediaGeneration": false
     },
-    "promptImpact": "Tempo reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "promptImpact": "Styrer klippefrekvens og opplevd energi.",
     "relatedTerms": [],
-    "definition_no": "Tempo er et fagbegrep som styrer kvalitet og kontroll i reklameprompten."
+    "definition_no": "Hastighet på klipp eller narrativ fremdrift."
   },
   {
     "slug": "temporal-konsistens-film",
@@ -5494,9 +5494,9 @@ export const glossaryGeneratedRaw = [
       "outputPolicy": "text-only",
       "mediaGeneration": false
     },
-    "promptImpact": "Temporal konsistens reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "promptImpact": "Hindrer objektdrift og ansiktsendring mellom frames.",
     "relatedTerms": [],
-    "definition_no": "Temporal konsistens er et fagbegrep som styrer kvalitet og kontroll i reklameprompten."
+    "definition_no": "Konsistent utseende og objekter over tid i video."
   },
   {
     "slug": "tilt-film",
@@ -5536,9 +5536,9 @@ export const glossaryGeneratedRaw = [
       "outputPolicy": "text-only",
       "mediaGeneration": false
     },
-    "promptImpact": "Tilt reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "promptImpact": "Legger til vertikal kamerabevegelse uten å endre posisjon.",
     "relatedTerms": [],
-    "definition_no": "Tilt er et fagbegrep som styrer kvalitet og kontroll i reklameprompten."
+    "definition_no": "Vertikal kamerabevegelse rundt fast akse."
   },
   {
     "slug": "tonalitet-design",
@@ -5578,9 +5578,9 @@ export const glossaryGeneratedRaw = [
       "outputPolicy": "text-only",
       "mediaGeneration": false
     },
-    "promptImpact": "Tonalitet reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "relatedTerms": [],
-    "definition_no": "Tonalitet er et fagbegrep som styrer kvalitet og kontroll i reklameprompten."
+    "definition_no": "Presist fagbegrep innen design med spesifikk strukturell funksjon."
   },
   {
     "slug": "typografisk-skala-design",
@@ -5620,9 +5620,9 @@ export const glossaryGeneratedRaw = [
       "outputPolicy": "text-only",
       "mediaGeneration": false
     },
-    "promptImpact": "Typografisk skala reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "promptImpact": "Gir konsistente størrelsesforhold; øker profesjonell struktur.",
     "relatedTerms": [],
-    "definition_no": "Typografisk skala er et fagbegrep som styrer kvalitet og kontroll i reklameprompten."
+    "definition_no": "Fast system for relative skriftstørrelser."
   },
   {
     "slug": "underrubrik-design",
@@ -5662,9 +5662,9 @@ export const glossaryGeneratedRaw = [
       "outputPolicy": "text-only",
       "mediaGeneration": false
     },
-    "promptImpact": "Underrubrik reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "relatedTerms": [],
-    "definition_no": "Underrubrik er et fagbegrep som styrer kvalitet og kontroll i reklameprompten."
+    "definition_no": "Presist fagbegrep innen design med spesifikk strukturell funksjon."
   },
   {
     "slug": "verbal-identitet-design",
@@ -5704,9 +5704,9 @@ export const glossaryGeneratedRaw = [
       "outputPolicy": "text-only",
       "mediaGeneration": false
     },
-    "promptImpact": "Verbal identitet reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "relatedTerms": [],
-    "definition_no": "Verbal identitet er et fagbegrep som styrer kvalitet og kontroll i reklameprompten."
+    "definition_no": "Presist fagbegrep innen design med spesifikk strukturell funksjon."
   },
   {
     "slug": "verdiforslag-design",
@@ -5747,9 +5747,9 @@ export const glossaryGeneratedRaw = [
         "productLock": false
       }
     },
-    "promptImpact": "Verdiforslag reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "promptImpact": "Konkretiserer nytte; reduserer vag kommunikasjon.",
     "relatedTerms": [],
-    "definition_no": "Verdiforslag er et fagbegrep som styrer kvalitet og kontroll i reklameprompten."
+    "definition_no": "Konkret formulert verdi for målgruppen."
   },
   {
     "slug": "visuell-vekt-design",
@@ -5793,9 +5793,9 @@ export const glossaryGeneratedRaw = [
       "outputPolicy": "text-only",
       "mediaGeneration": false
     },
-    "promptImpact": "Visuell vekt reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "relatedTerms": [],
-    "definition_no": "Visuell vekt er et fagbegrep som styrer kvalitet og kontroll i reklameprompten."
+    "definition_no": "Presist fagbegrep innen design med spesifikk strukturell funksjon."
   },
   {
     "slug": "voice-over-linje-design",
@@ -5835,9 +5835,9 @@ export const glossaryGeneratedRaw = [
       "outputPolicy": "text-only",
       "mediaGeneration": false
     },
-    "promptImpact": "Voice-over linje reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "relatedTerms": [],
-    "definition_no": "Voice-over linje er et fagbegrep som styrer kvalitet og kontroll i reklameprompten."
+    "definition_no": "Presist fagbegrep innen design med spesifikk strukturell funksjon."
   },
   {
     "slug": "voiceover-tone-vfx",
@@ -5884,9 +5884,9 @@ export const glossaryGeneratedRaw = [
       "outputPolicy": "text-only",
       "mediaGeneration": false
     },
-    "promptImpact": "Voiceover-tone reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "relatedTerms": [],
-    "definition_no": "Voiceover-tone er et fagbegrep som styrer kvalitet og kontroll i reklameprompten."
+    "definition_no": "Presist fagbegrep innen vfx med spesifikk strukturell funksjon."
   },
   {
     "slug": "volumetrisk-lys-photo",
@@ -5926,9 +5926,9 @@ export const glossaryGeneratedRaw = [
       "outputPolicy": "text-only",
       "mediaGeneration": false
     },
-    "promptImpact": "Volumetrisk lys reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "promptImpact": "Gir synlig dybde gjennom lysstråler; øker romfølelse.",
     "relatedTerms": [],
-    "definition_no": "Volumetrisk lys er et fagbegrep som styrer kvalitet og kontroll i reklameprompten."
+    "definition_no": "Synlig lys i luft gjennom partikler eller tåke."
   },
   {
     "slug": "whitespace-kontroll-design",
@@ -5968,9 +5968,9 @@ export const glossaryGeneratedRaw = [
       "outputPolicy": "text-only",
       "mediaGeneration": false
     },
-    "promptImpact": "Whitespace-kontroll reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "promptImpact": "Reduserer visuell støy; øker lesbarhet.",
     "relatedTerms": [],
-    "definition_no": "Whitespace-kontroll er et fagbegrep som styrer kvalitet og kontroll i reklameprompten."
+    "definition_no": "Bevisst bruk av tomrom for å styre fokus."
   }
 ];
 
@@ -5980,8 +5980,8 @@ export const glossaryGenerated: GlossaryTerm[] = [
     "term_no": "180-gradersregelen",
     "term_en": "180-gradersregelen",
     "domain": "film",
-    "definition_no": "180-gradersregelen er et fagbegrep som styrer kvalitet og kontroll i reklameprompten.",
-    "promptImpact": "180-gradersregelen reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "definition_no": "Regel som holder kamera på én side av handlingsaksen for å bevare romlig orientering.",
+    "promptImpact": "Forhindrer romlig forvirring i video; holder karakterers retning og blikk konsistent.",
     "examples": [
       "Før: \"Lag 180-gradersregelen.\"",
       "Etter: \"Definer 180-gradersregelen med tydelig funksjon i budskaphierarkiet.\""
@@ -5993,8 +5993,8 @@ export const glossaryGenerated: GlossaryTerm[] = [
     "term_no": "Aktiv stemme",
     "term_en": "Aktiv stemme",
     "domain": "design",
-    "definition_no": "Aktiv stemme er et fagbegrep som styrer kvalitet og kontroll i reklameprompten.",
-    "promptImpact": "Aktiv stemme reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "definition_no": "Presist fagbegrep innen design med spesifikk strukturell funksjon.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "examples": [
       "Før: \"Lag aktiv stemme.\"",
       "Etter: \"Definer aktiv stemme med tydelig funksjon i budskaphierarkiet.\""
@@ -6006,8 +6006,8 @@ export const glossaryGenerated: GlossaryTerm[] = [
     "term_no": "Ambience-bed",
     "term_en": "Ambience-bed",
     "domain": "vfx",
-    "definition_no": "Ambience-bed er et fagbegrep som styrer kvalitet og kontroll i reklameprompten.",
-    "promptImpact": "Ambience-bed reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "definition_no": "Presist fagbegrep innen vfx med spesifikk strukturell funksjon.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "examples": [
       "Før: \"Lag ambience-bed.\"",
       "Etter: \"Definer ambience-bed med tydelig funksjon i budskaphierarkiet.\"",
@@ -6021,8 +6021,8 @@ export const glossaryGenerated: GlossaryTerm[] = [
     "term_no": "Arkitektonisk elevasjon",
     "term_en": "Arkitektonisk elevasjon",
     "domain": "arch",
-    "definition_no": "Arkitektonisk elevasjon er et fagbegrep som styrer kvalitet og kontroll i reklameprompten.",
-    "promptImpact": "Arkitektonisk elevasjon reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "definition_no": "Presist fagbegrep innen arch med spesifikk strukturell funksjon.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "examples": [
       "Før: \"Lag arkitektonisk elevasjon.\"",
       "Etter: \"Definer arkitektonisk elevasjon med tydelig funksjon i budskaphierarkiet.\""
@@ -6034,8 +6034,8 @@ export const glossaryGenerated: GlossaryTerm[] = [
     "term_no": "Assembly-forward",
     "term_en": "Assembly-forward",
     "domain": "arch",
-    "definition_no": "Assembly-forward er et fagbegrep som styrer kvalitet og kontroll i reklameprompten.",
-    "promptImpact": "Assembly-forward reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "definition_no": "Presist fagbegrep innen arch med spesifikk strukturell funksjon.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "examples": [
       "Før: \"Lag assembly-forward.\"",
       "Etter: \"Definer assembly-forward med tydelig funksjon i budskaphierarkiet.\"",
@@ -6063,8 +6063,8 @@ export const glossaryGenerated: GlossaryTerm[] = [
     "term_no": "Blokkeringsprinsipp",
     "term_en": "Blokkeringsprinsipp",
     "domain": "film",
-    "definition_no": "Blokkeringsprinsipp er et fagbegrep som styrer kvalitet og kontroll i reklameprompten.",
-    "promptImpact": "Blokkeringsprinsipp reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "definition_no": "Presist fagbegrep innen film med spesifikk strukturell funksjon.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "examples": [
       "Før: \"Lag blokkeringsprinsipp.\"",
       "Etter: \"Definer blokkeringsprinsipp med tydelig funksjon i budskaphierarkiet.\"",
@@ -6080,8 +6080,8 @@ export const glossaryGenerated: GlossaryTerm[] = [
     "term_no": "Brødtekst",
     "term_en": "Brødtekst",
     "domain": "design",
-    "definition_no": "Brødtekst er et fagbegrep som styrer kvalitet og kontroll i reklameprompten.",
-    "promptImpact": "Brødtekst reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "definition_no": "Presist fagbegrep innen design med spesifikk strukturell funksjon.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "examples": [
       "Før: \"Lag brødtekst.\"",
       "Etter: \"Definer brødtekst med tydelig funksjon i budskaphierarkiet.\"",
@@ -6099,8 +6099,8 @@ export const glossaryGenerated: GlossaryTerm[] = [
     "term_no": "Budskaphierarki",
     "term_en": "Budskaphierarki",
     "domain": "design",
-    "definition_no": "Budskaphierarki er et fagbegrep som styrer kvalitet og kontroll i reklameprompten.",
-    "promptImpact": "Budskaphierarki reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "definition_no": "Prioritering av elementer etter visuell betydning.",
+    "promptImpact": "Styrer hva som leses først; øker klarhet.",
     "examples": [
       "Før: \"Lag budskaphierarki.\"",
       "Etter: \"Definer budskaphierarki med tydelig funksjon i budskaphierarkiet.\"",
@@ -6114,8 +6114,8 @@ export const glossaryGenerated: GlossaryTerm[] = [
     "term_no": "Budskapsprioritet",
     "term_en": "Budskapsprioritet",
     "domain": "design",
-    "definition_no": "Budskapsprioritet er et fagbegrep som styrer kvalitet og kontroll i reklameprompten.",
-    "promptImpact": "Budskapsprioritet reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "definition_no": "Kjernemelding som kommunikasjonen skal formidle.",
+    "promptImpact": "Tvinger modellen til å prioritere én hovedidé.",
     "examples": [
       "Før: \"Lag budskapsprioritet.\"",
       "Etter: \"Definer budskapsprioritet med tydelig funksjon i budskaphierarkiet.\"",
@@ -6131,8 +6131,8 @@ export const glossaryGenerated: GlossaryTerm[] = [
     "term_no": "Call to action",
     "term_en": "Call to action",
     "domain": "design",
-    "definition_no": "Call to action er et fagbegrep som styrer kvalitet og kontroll i reklameprompten.",
-    "promptImpact": "Call to action reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "definition_no": "Presist fagbegrep innen design med spesifikk strukturell funksjon.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "examples": [
       "Før: \"Lag call to action.\"",
       "Etter: \"Definer call to action med tydelig funksjon i budskaphierarkiet.\""
@@ -6144,8 +6144,8 @@ export const glossaryGenerated: GlossaryTerm[] = [
     "term_no": "Claim-styring",
     "term_en": "Claim-styring",
     "domain": "design",
-    "definition_no": "Claim-styring er et fagbegrep som styrer kvalitet og kontroll i reklameprompten.",
-    "promptImpact": "Claim-styring reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "definition_no": "Presist fagbegrep innen design med spesifikk strukturell funksjon.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "examples": [
       "Før: \"Lag claim-styring.\"",
       "Etter: \"Definer claim-styring med tydelig funksjon i budskaphierarkiet.\""
@@ -6157,8 +6157,8 @@ export const glossaryGenerated: GlossaryTerm[] = [
     "term_no": "Crash zoom",
     "term_en": "Crash zoom",
     "domain": "film",
-    "definition_no": "Crash zoom er et fagbegrep som styrer kvalitet og kontroll i reklameprompten.",
-    "promptImpact": "Crash zoom reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "definition_no": "Presist fagbegrep innen film med spesifikk strukturell funksjon.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "examples": [
       "Før: \"Lag crash zoom.\"",
       "Etter: \"Definer crash zoom med tydelig funksjon i budskaphierarkiet.\""
@@ -6253,8 +6253,8 @@ export const glossaryGenerated: GlossaryTerm[] = [
     "term_no": "Detaljnivå LOD",
     "term_en": "Detaljnivå LOD",
     "domain": "arch",
-    "definition_no": "Detaljnivå LOD er et fagbegrep som styrer kvalitet og kontroll i reklameprompten.",
-    "promptImpact": "Detaljnivå LOD reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "definition_no": "Presist fagbegrep innen arch med spesifikk strukturell funksjon.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "examples": [
       "Før: \"Lag detaljnivå lod.\"",
       "Etter: \"Definer detaljnivå lod med tydelig funksjon i budskaphierarkiet.\""
@@ -6266,8 +6266,8 @@ export const glossaryGenerated: GlossaryTerm[] = [
     "term_no": "Differensiering",
     "term_en": "Differensiering",
     "domain": "design",
-    "definition_no": "Differensiering er et fagbegrep som styrer kvalitet og kontroll i reklameprompten.",
-    "promptImpact": "Differensiering reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "definition_no": "Presist fagbegrep innen design med spesifikk strukturell funksjon.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "examples": [
       "Før: \"Lag differensiering.\"",
       "Etter: \"Definer differensiering med tydelig funksjon i budskaphierarkiet.\"",
@@ -6283,8 +6283,8 @@ export const glossaryGenerated: GlossaryTerm[] = [
     "term_no": "Diffus refleksjon",
     "term_en": "Diffus refleksjon",
     "domain": "photo",
-    "definition_no": "Diffus refleksjon er et fagbegrep som styrer kvalitet og kontroll i reklameprompten.",
-    "promptImpact": "Diffus refleksjon reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "definition_no": "Myk, spredt lysrefleksjon uten skarpe speilglans.",
+    "promptImpact": "Mykner overflater; hindrer plastaktig speilglans.",
     "examples": [
       "Før: \"Lag diffus refleksjon.\"",
       "Etter: \"Definer diffus refleksjon med tydelig funksjon i budskaphierarkiet.\""
@@ -6296,8 +6296,8 @@ export const glossaryGenerated: GlossaryTerm[] = [
     "term_no": "Distinktive merkevareelementer",
     "term_en": "Distinktive merkevareelementer",
     "domain": "design",
-    "definition_no": "Distinktive merkevareelementer er et fagbegrep som styrer kvalitet og kontroll i reklameprompten.",
-    "promptImpact": "Distinktive merkevareelementer reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "definition_no": "Presist fagbegrep innen design med spesifikk strukturell funksjon.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "examples": [
       "Før: \"Lag distinktive merkevareelementer.\"",
       "Etter: \"Definer distinktive merkevareelementer med tydelig funksjon i budskaphierarkiet.\""
@@ -6309,8 +6309,8 @@ export const glossaryGenerated: GlossaryTerm[] = [
     "term_no": "Dolly-ut",
     "term_en": "Dolly-ut",
     "domain": "film",
-    "definition_no": "Dolly-ut er et fagbegrep som styrer kvalitet og kontroll i reklameprompten.",
-    "promptImpact": "Dolly-ut reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "definition_no": "Fysisk kamerabevegelse frem eller tilbake på skinne.",
+    "promptImpact": "Gir lineær romlig bevegelse; øker realisme og dybdefølelse.",
     "examples": [
       "Før: \"Lag dolly-ut.\"",
       "Etter: \"Definer dolly-ut med tydelig funksjon i budskaphierarkiet.\"",
@@ -6324,8 +6324,8 @@ export const glossaryGenerated: GlossaryTerm[] = [
     "term_no": "DOOH-leseavstand",
     "term_en": "DOOH-leseavstand",
     "domain": "design",
-    "definition_no": "DOOH-leseavstand er et fagbegrep som styrer kvalitet og kontroll i reklameprompten.",
-    "promptImpact": "DOOH-leseavstand reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "definition_no": "Presist fagbegrep innen design med spesifikk strukturell funksjon.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "examples": [
       "Før: \"Lag dooh-leseavstand.\"",
       "Etter: \"Definer dooh-leseavstand med tydelig funksjon i budskaphierarkiet.\"",
@@ -6343,8 +6343,8 @@ export const glossaryGenerated: GlossaryTerm[] = [
     "term_no": "Drop",
     "term_en": "Drop",
     "domain": "vfx",
-    "definition_no": "Drop er et fagbegrep som styrer kvalitet og kontroll i reklameprompten.",
-    "promptImpact": "Drop reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "definition_no": "Presist fagbegrep innen vfx med spesifikk strukturell funksjon.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "examples": [
       "Før: \"Lag drop.\"",
       "Etter: \"Definer drop med tydelig funksjon i budskaphierarkiet.\"",
@@ -6362,8 +6362,8 @@ export const glossaryGenerated: GlossaryTerm[] = [
     "term_no": "Dynamisk range",
     "term_en": "Dynamisk range",
     "domain": "vfx",
-    "definition_no": "Dynamisk range er et fagbegrep som styrer kvalitet og kontroll i reklameprompten.",
-    "promptImpact": "Dynamisk range reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "definition_no": "Spennet mellom mørkeste og lyseste punkt.",
+    "promptImpact": "Utvider lys–mørk-spenn; øker realisme.",
     "examples": [
       "Før: \"Lag dynamisk range.\"",
       "Etter: \"Definer dynamisk range med tydelig funksjon i budskaphierarkiet.\""
@@ -6387,8 +6387,8 @@ export const glossaryGenerated: GlossaryTerm[] = [
     "term_no": "Eksponeringslås",
     "term_en": "Eksponeringslås",
     "domain": "photo",
-    "definition_no": "Eksponeringslås er et fagbegrep som styrer kvalitet og kontroll i reklameprompten.",
-    "promptImpact": "Eksponeringslås reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "definition_no": "Presist fagbegrep innen photo med spesifikk strukturell funksjon.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "examples": [
       "Før: \"Lag eksponeringslås.\"",
       "Etter: \"Definer eksponeringslås med tydelig funksjon i budskaphierarkiet.\""
@@ -6400,8 +6400,8 @@ export const glossaryGenerated: GlossaryTerm[] = [
     "term_no": "Establishing shot",
     "term_en": "Establishing shot",
     "domain": "film",
-    "definition_no": "Establishing shot er et fagbegrep som styrer kvalitet og kontroll i reklameprompten.",
-    "promptImpact": "Establishing shot reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "definition_no": "Åpningsbilde som etablerer sted og romlig kontekst.",
+    "promptImpact": "Genererer bred romlig kontekst før detalj; stabiliserer sceneoppsett.",
     "examples": [
       "Før: \"Lag establishing shot.\"",
       "Etter: \"Definer establishing shot med tydelig funksjon i budskaphierarkiet.\""
@@ -6413,8 +6413,8 @@ export const glossaryGenerated: GlossaryTerm[] = [
     "term_no": "Explodert aksjonometri",
     "term_en": "Explodert aksjonometri",
     "domain": "arch",
-    "definition_no": "Explodert aksjonometri er et fagbegrep som styrer kvalitet og kontroll i reklameprompten.",
-    "promptImpact": "Explodert aksjonometri reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "definition_no": "3D-visning uten perspektivkonvergens.",
+    "promptImpact": "Viser 3D-struktur uten perspektivforvrengning.",
     "examples": [
       "Før: \"Lag explodert aksjonometri.\"",
       "Etter: \"Definer explodert aksjonometri med tydelig funksjon i budskaphierarkiet.\""
@@ -6426,8 +6426,8 @@ export const glossaryGenerated: GlossaryTerm[] = [
     "term_no": "Eye-path",
     "term_en": "Eye-path",
     "domain": "design",
-    "definition_no": "Eye-path er et fagbegrep som styrer kvalitet og kontroll i reklameprompten.",
-    "promptImpact": "Eye-path reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "definition_no": "Presist fagbegrep innen design med spesifikk strukturell funksjon.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "examples": [
       "Før: \"Lag eye-path.\"",
       "Etter: \"Definer eye-path med tydelig funksjon i budskaphierarkiet.\""
@@ -6439,8 +6439,8 @@ export const glossaryGenerated: GlossaryTerm[] = [
     "term_no": "Fargekontrast AA",
     "term_en": "Fargekontrast AA",
     "domain": "design",
-    "definition_no": "Fargekontrast AA er et fagbegrep som styrer kvalitet og kontroll i reklameprompten.",
-    "promptImpact": "Fargekontrast AA reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "definition_no": "Presist fagbegrep innen design med spesifikk strukturell funksjon.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "examples": [
       "Før: \"Lag fargekontrast aa.\"",
       "Etter: \"Definer fargekontrast aa med tydelig funksjon i budskaphierarkiet.\""
@@ -6452,8 +6452,8 @@ export const glossaryGenerated: GlossaryTerm[] = [
     "term_no": "Fargetemperatur",
     "term_en": "Fargetemperatur",
     "domain": "photo",
-    "definition_no": "Fargetemperatur er et fagbegrep som styrer kvalitet og kontroll i reklameprompten.",
-    "promptImpact": "Fargetemperatur reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "definition_no": "Lysfargens varme eller kulde målt i Kelvin.",
+    "promptImpact": "Kontrollerer stemning via Kelvin; hindrer tilfeldig fargestikk.",
     "examples": [
       "Før: \"Lag fargetemperatur.\"",
       "Etter: \"Definer fargetemperatur med tydelig funksjon i budskaphierarkiet.\""
@@ -6465,8 +6465,8 @@ export const glossaryGenerated: GlossaryTerm[] = [
     "term_no": "Fill-lys",
     "term_en": "Fill-lys",
     "domain": "photo",
-    "definition_no": "Fill-lys er et fagbegrep som styrer kvalitet og kontroll i reklameprompten.",
-    "promptImpact": "Fill-lys reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "definition_no": "Sekundær lyskilde som demper skygger.",
+    "promptImpact": "Reduserer skyggekontrast uten å fjerne form.",
     "examples": [
       "Før: \"Lag fill-lys.\"",
       "Etter: \"Definer fill-lys med tydelig funksjon i budskaphierarkiet.\"",
@@ -6488,8 +6488,8 @@ export const glossaryGenerated: GlossaryTerm[] = [
     "term_no": "Fokalpunkt",
     "term_en": "Fokalpunkt",
     "domain": "design",
-    "definition_no": "Fokalpunkt er et fagbegrep som styrer kvalitet og kontroll i reklameprompten.",
-    "promptImpact": "Fokalpunkt reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "definition_no": "Presist fagbegrep innen design med spesifikk strukturell funksjon.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "examples": [
       "Før: \"Lag fokalpunkt.\"",
       "Etter: \"Definer fokalpunkt med tydelig funksjon i budskaphierarkiet.\"",
@@ -6507,8 +6507,8 @@ export const glossaryGenerated: GlossaryTerm[] = [
     "term_no": "Fold-hierarki",
     "term_en": "Fold-hierarki",
     "domain": "design",
-    "definition_no": "Fold-hierarki er et fagbegrep som styrer kvalitet og kontroll i reklameprompten.",
-    "promptImpact": "Fold-hierarki reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "definition_no": "Prioritering av elementer etter visuell betydning.",
+    "promptImpact": "Styrer hva som leses først; øker klarhet.",
     "examples": [
       "Før: \"Lag fold-hierarki.\"",
       "Etter: \"Definer fold-hierarki med tydelig funksjon i budskaphierarkiet.\"",
@@ -6522,8 +6522,8 @@ export const glossaryGenerated: GlossaryTerm[] = [
     "term_no": "Friksjonsfri CTA",
     "term_en": "Friksjonsfri CTA",
     "domain": "design",
-    "definition_no": "Friksjonsfri CTA er et fagbegrep som styrer kvalitet og kontroll i reklameprompten.",
-    "promptImpact": "Friksjonsfri CTA reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "definition_no": "Tydelig handlingsoppfordring.",
+    "promptImpact": "Tydeliggjør handlingspunkt; øker konverteringsfokus.",
     "examples": [
       "Før: \"Lag friksjonsfri cta.\"",
       "Etter: \"Definer friksjonsfri cta med tydelig funksjon i budskaphierarkiet.\""
@@ -6535,8 +6535,8 @@ export const glossaryGenerated: GlossaryTerm[] = [
     "term_no": "Funksjonell flyt",
     "term_en": "Funksjonell flyt",
     "domain": "arch",
-    "definition_no": "Funksjonell flyt er et fagbegrep som styrer kvalitet og kontroll i reklameprompten.",
-    "promptImpact": "Funksjonell flyt reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "definition_no": "Presist fagbegrep innen arch med spesifikk strukturell funksjon.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "examples": [
       "Før: \"Lag funksjonell flyt.\"",
       "Etter: \"Definer funksjonell flyt med tydelig funksjon i budskaphierarkiet.\""
@@ -6548,8 +6548,8 @@ export const glossaryGenerated: GlossaryTerm[] = [
     "term_no": "Funksjonelt bevis",
     "term_en": "Funksjonelt bevis",
     "domain": "design",
-    "definition_no": "Funksjonelt bevis er et fagbegrep som styrer kvalitet og kontroll i reklameprompten.",
-    "promptImpact": "Funksjonelt bevis reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "definition_no": "Presist fagbegrep innen design med spesifikk strukturell funksjon.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "examples": [
       "Før: \"Lag funksjonelt bevis.\"",
       "Etter: \"Definer funksjonelt bevis med tydelig funksjon i budskaphierarkiet.\"",
@@ -6563,8 +6563,8 @@ export const glossaryGenerated: GlossaryTerm[] = [
     "term_no": "Grid-system",
     "term_en": "Grid-system",
     "domain": "design",
-    "definition_no": "Grid-system er et fagbegrep som styrer kvalitet og kontroll i reklameprompten.",
-    "promptImpact": "Grid-system reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "definition_no": "Struktur av kolonner og rader som organiserer layout.",
+    "promptImpact": "Tvinger strukturert layout; reduserer tilfeldig plassering.",
     "examples": [
       "Før: \"Lag grid-system.\"",
       "Etter: \"Definer grid-system med tydelig funksjon i budskaphierarkiet.\""
@@ -6588,8 +6588,8 @@ export const glossaryGenerated: GlossaryTerm[] = [
     "term_no": "Handheld mikro-jitter",
     "term_en": "Handheld mikro-jitter",
     "domain": "film",
-    "definition_no": "Handheld mikro-jitter er et fagbegrep som styrer kvalitet og kontroll i reklameprompten.",
-    "promptImpact": "Handheld mikro-jitter reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "definition_no": "Håndholdt kamera med små, uperfekte bevegelser.",
+    "promptImpact": "Legger inn mikro-ustabilitet; øker dokumentarisk realisme.",
     "examples": [
       "Før: \"Lag handheld mikro-jitter.\"",
       "Etter: \"Definer handheld mikro-jitter med tydelig funksjon i budskaphierarkiet.\""
@@ -6707,8 +6707,8 @@ export const glossaryGenerated: GlossaryTerm[] = [
     "term_no": "Hardt topplys",
     "term_en": "Hardt topplys",
     "domain": "photo",
-    "definition_no": "Hardt topplys er et fagbegrep som styrer kvalitet og kontroll i reklameprompten.",
-    "promptImpact": "Hardt topplys reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "definition_no": "Presist fagbegrep innen photo med spesifikk strukturell funksjon.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "examples": [
       "Før: \"Lag hardt topplys.\"",
       "Etter: \"Definer hardt topplys med tydelig funksjon i budskaphierarkiet.\""
@@ -6720,8 +6720,8 @@ export const glossaryGenerated: GlossaryTerm[] = [
     "term_no": "Highlight roll-off",
     "term_en": "Highlight roll-off",
     "domain": "photo",
-    "definition_no": "Highlight roll-off er et fagbegrep som styrer kvalitet og kontroll i reklameprompten.",
-    "promptImpact": "Highlight roll-off reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "definition_no": "Hvordan høylys gradvis tones ned uten brå klipp.",
+    "promptImpact": "Hindrer utbrente høylys; gir filmisk toneovergang.",
     "examples": [
       "Før: \"Lag highlight roll-off.\"",
       "Etter: \"Definer highlight roll-off med tydelig funksjon i budskaphierarkiet.\""
@@ -6733,8 +6733,8 @@ export const glossaryGenerated: GlossaryTerm[] = [
     "term_no": "Hook-frame",
     "term_en": "Hook-frame",
     "domain": "design",
-    "definition_no": "Hook-frame er et fagbegrep som styrer kvalitet og kontroll i reklameprompten.",
-    "promptImpact": "Hook-frame reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "definition_no": "Element som fanger oppmerksomhet umiddelbart.",
+    "promptImpact": "Fanger oppmerksomhet i første sekund; øker stopp-effekt.",
     "examples": [
       "Før: \"Lag hook-frame.\"",
       "Etter: \"Definer hook-frame med tydelig funksjon i budskaphierarkiet.\""
@@ -6746,8 +6746,8 @@ export const glossaryGenerated: GlossaryTerm[] = [
     "term_no": "Hook innen 2 sek",
     "term_en": "Hook innen 2 sek",
     "domain": "vfx",
-    "definition_no": "Hook innen 2 sek er et fagbegrep som styrer kvalitet og kontroll i reklameprompten.",
-    "promptImpact": "Hook innen 2 sek reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "definition_no": "Element som fanger oppmerksomhet umiddelbart.",
+    "promptImpact": "Fanger oppmerksomhet i første sekund; øker stopp-effekt.",
     "examples": [
       "Før: \"Lag hook innen 2 sek.\"",
       "Etter: \"Definer hook innen 2 sek med tydelig funksjon i budskaphierarkiet.\""
@@ -6759,8 +6759,8 @@ export const glossaryGenerated: GlossaryTerm[] = [
     "term_no": "Høylysbevaring",
     "term_en": "Høylysbevaring",
     "domain": "photo",
-    "definition_no": "Høylysbevaring er et fagbegrep som styrer kvalitet og kontroll i reklameprompten.",
-    "promptImpact": "Høylysbevaring reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "definition_no": "Presist fagbegrep innen photo med spesifikk strukturell funksjon.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "examples": [
       "Før: \"Lag høylysbevaring.\"",
       "Etter: \"Definer høylysbevaring med tydelig funksjon i budskaphierarkiet.\""
@@ -6772,8 +6772,8 @@ export const glossaryGenerated: GlossaryTerm[] = [
     "term_no": "Hvitbalanse",
     "term_en": "Hvitbalanse",
     "domain": "photo",
-    "definition_no": "Hvitbalanse er et fagbegrep som styrer kvalitet og kontroll i reklameprompten.",
-    "promptImpact": "Hvitbalanse reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "definition_no": "Justering som gjør hvitt nøytralt under gitt lys.",
+    "promptImpact": "Sikrer nøytral fargegjengivelse; reduserer grønn/blå AI-forskyvning.",
     "examples": [
       "Før: \"Lag hvitbalanse.\"",
       "Etter: \"Definer hvitbalanse med tydelig funksjon i budskaphierarkiet.\""
@@ -6785,8 +6785,8 @@ export const glossaryGenerated: GlossaryTerm[] = [
     "term_no": "Identitetsdrift",
     "term_en": "Identitetsdrift",
     "domain": "film",
-    "definition_no": "Identitetsdrift er et fagbegrep som styrer kvalitet og kontroll i reklameprompten.",
-    "promptImpact": "Identitetsdrift reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "definition_no": "Presist fagbegrep innen film med spesifikk strukturell funksjon.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "examples": [
       "Før: \"Lag identitetsdrift.\"",
       "Etter: \"Definer identitetsdrift med tydelig funksjon i budskaphierarkiet.\""
@@ -6798,8 +6798,8 @@ export const glossaryGenerated: GlossaryTerm[] = [
     "term_no": "Innsikt",
     "term_en": "Innsikt",
     "domain": "design",
-    "definition_no": "Innsikt er et fagbegrep som styrer kvalitet og kontroll i reklameprompten.",
-    "promptImpact": "Innsikt reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "definition_no": "Presist fagbegrep innen design med spesifikk strukturell funksjon.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "examples": [
       "Før: \"Lag innsikt.\"",
       "Etter: \"Definer innsikt med tydelig funksjon i budskaphierarkiet.\"",
@@ -6815,8 +6815,8 @@ export const glossaryGenerated: GlossaryTerm[] = [
     "term_no": "Intro-hook",
     "term_en": "Intro-hook",
     "domain": "vfx",
-    "definition_no": "Intro-hook er et fagbegrep som styrer kvalitet og kontroll i reklameprompten.",
-    "promptImpact": "Intro-hook reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "definition_no": "Element som fanger oppmerksomhet umiddelbart.",
+    "promptImpact": "Fanger oppmerksomhet i første sekund; øker stopp-effekt.",
     "examples": [
       "Før: \"Lag intro-hook.\"",
       "Etter: \"Definer intro-hook med tydelig funksjon i budskaphierarkiet.\"",
@@ -6836,8 +6836,8 @@ export const glossaryGenerated: GlossaryTerm[] = [
     "term_no": "J-cut",
     "term_en": "J-cut",
     "domain": "film",
-    "definition_no": "J-cut er et fagbegrep som styrer kvalitet og kontroll i reklameprompten.",
-    "promptImpact": "J-cut reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "definition_no": "Neste scenes lyd starter før bildet klipper.",
+    "promptImpact": "Skaper sømløs overgang ved å overlappe lyd og bilde.",
     "examples": [
       "Før: \"Lag j-cut.\"",
       "Etter: \"Definer j-cut med tydelig funksjon i budskaphierarkiet.\""
@@ -6849,8 +6849,8 @@ export const glossaryGenerated: GlossaryTerm[] = [
     "term_no": "Kantlys",
     "term_en": "Kantlys",
     "domain": "photo",
-    "definition_no": "Kantlys er et fagbegrep som styrer kvalitet og kontroll i reklameprompten.",
-    "promptImpact": "Kantlys reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "definition_no": "Baklys som markerer kontur mot bakgrunn.",
+    "promptImpact": "Skiller subjekt fra bakgrunn; øker tredimensjonalitet.",
     "examples": [
       "Før: \"Lag kantlys.\"",
       "Etter: \"Definer kantlys med tydelig funksjon i budskaphierarkiet.\""
@@ -6862,8 +6862,8 @@ export const glossaryGenerated: GlossaryTerm[] = [
     "term_no": "Kjernebudskap",
     "term_en": "Kjernebudskap",
     "domain": "design",
-    "definition_no": "Kjernebudskap er et fagbegrep som styrer kvalitet og kontroll i reklameprompten.",
-    "promptImpact": "Kjernebudskap reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "definition_no": "Kjernemelding som kommunikasjonen skal formidle.",
+    "promptImpact": "Tvinger modellen til å prioritere én hovedidé.",
     "examples": [
       "Før: \"Lag kjernebudskap.\"",
       "Etter: \"Definer kjernebudskap med tydelig funksjon i budskaphierarkiet.\"",
@@ -6877,8 +6877,8 @@ export const glossaryGenerated: GlossaryTerm[] = [
     "term_no": "Kjøpsutløser",
     "term_en": "Kjøpsutløser",
     "domain": "design",
-    "definition_no": "Kjøpsutløser er et fagbegrep som styrer kvalitet og kontroll i reklameprompten.",
-    "promptImpact": "Kjøpsutløser reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "definition_no": "Presist fagbegrep innen design med spesifikk strukturell funksjon.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "examples": [
       "Før: \"Lag kjøpsutløser.\"",
       "Etter: \"Definer kjøpsutløser med tydelig funksjon i budskaphierarkiet.\""
@@ -6902,8 +6902,8 @@ export const glossaryGenerated: GlossaryTerm[] = [
     "term_no": "Klippelogikk",
     "term_en": "Klippelogikk",
     "domain": "film",
-    "definition_no": "Klippelogikk er et fagbegrep som styrer kvalitet og kontroll i reklameprompten.",
-    "promptImpact": "Klippelogikk reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "definition_no": "Presist fagbegrep innen film med spesifikk strukturell funksjon.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "examples": [
       "Før: \"Lag klippelogikk.\"",
       "Etter: \"Definer klippelogikk med tydelig funksjon i budskaphierarkiet.\""
@@ -6915,8 +6915,8 @@ export const glossaryGenerated: GlossaryTerm[] = [
     "term_no": "Kognitiv letthet",
     "term_en": "Kognitiv letthet",
     "domain": "design",
-    "definition_no": "Kognitiv letthet er et fagbegrep som styrer kvalitet og kontroll i reklameprompten.",
-    "promptImpact": "Kognitiv letthet reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "definition_no": "Presist fagbegrep innen design med spesifikk strukturell funksjon.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "examples": [
       "Før: \"Lag kognitiv letthet.\"",
       "Etter: \"Definer kognitiv letthet med tydelig funksjon i budskaphierarkiet.\""
@@ -6928,8 +6928,8 @@ export const glossaryGenerated: GlossaryTerm[] = [
     "term_no": "Kommunikasjonsmål",
     "term_en": "Kommunikasjonsmål",
     "domain": "design",
-    "definition_no": "Kommunikasjonsmål er et fagbegrep som styrer kvalitet og kontroll i reklameprompten.",
-    "promptImpact": "Kommunikasjonsmål reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "definition_no": "Presist fagbegrep innen design med spesifikk strukturell funksjon.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "examples": [
       "Før: \"Lag kommunikasjonsmål.\"",
       "Etter: \"Definer kommunikasjonsmål med tydelig funksjon i budskaphierarkiet.\""
@@ -6941,8 +6941,8 @@ export const glossaryGenerated: GlossaryTerm[] = [
     "term_no": "Kontrastforhold",
     "term_en": "Kontrastforhold",
     "domain": "design",
-    "definition_no": "Kontrastforhold er et fagbegrep som styrer kvalitet og kontroll i reklameprompten.",
-    "promptImpact": "Kontrastforhold reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "definition_no": "Presist fagbegrep innen design med spesifikk strukturell funksjon.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "examples": [
       "Før: \"Lag kontrastforhold.\"",
       "Etter: \"Definer kontrastforhold med tydelig funksjon i budskaphierarkiet.\"",
@@ -6956,8 +6956,8 @@ export const glossaryGenerated: GlossaryTerm[] = [
     "term_no": "Kontrastkurve",
     "term_en": "Kontrastkurve",
     "domain": "photo",
-    "definition_no": "Kontrastkurve er et fagbegrep som styrer kvalitet og kontroll i reklameprompten.",
-    "promptImpact": "Kontrastkurve reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "definition_no": "Justering av lys–mørk-forhold over hele toneområdet.",
+    "promptImpact": "Former global kontrast; påvirker dramatikk og realisme.",
     "examples": [
       "Før: \"Lag kontrastkurve.\"",
       "Etter: \"Definer kontrastkurve med tydelig funksjon i budskaphierarkiet.\"",
@@ -6973,8 +6973,8 @@ export const glossaryGenerated: GlossaryTerm[] = [
     "term_no": "Konverteringsbarriere",
     "term_en": "Konverteringsbarriere",
     "domain": "design",
-    "definition_no": "Konverteringsbarriere er et fagbegrep som styrer kvalitet og kontroll i reklameprompten.",
-    "promptImpact": "Konverteringsbarriere reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "definition_no": "Presist fagbegrep innen design med spesifikk strukturell funksjon.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "examples": [
       "Før: \"Lag konverteringsbarriere.\"",
       "Etter: \"Definer konverteringsbarriere med tydelig funksjon i budskaphierarkiet.\"",
@@ -6990,8 +6990,8 @@ export const glossaryGenerated: GlossaryTerm[] = [
     "term_no": "L-cut",
     "term_en": "L-cut",
     "domain": "film",
-    "definition_no": "L-cut er et fagbegrep som styrer kvalitet og kontroll i reklameprompten.",
-    "promptImpact": "L-cut reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "definition_no": "Lyden fra forrige scene fortsetter over nytt bilde.",
+    "promptImpact": "Bevarer emosjonell kontinuitet over klipp.",
     "examples": [
       "Før: \"Lag l-cut.\"",
       "Etter: \"Definer l-cut med tydelig funksjon i budskaphierarkiet.\"",
@@ -7017,8 +7017,8 @@ export const glossaryGenerated: GlossaryTerm[] = [
     "term_no": "Lesbarhetsnivå",
     "term_en": "Lesbarhetsnivå",
     "domain": "design",
-    "definition_no": "Lesbarhetsnivå er et fagbegrep som styrer kvalitet og kontroll i reklameprompten.",
-    "promptImpact": "Lesbarhetsnivå reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "definition_no": "Presist fagbegrep innen design med spesifikk strukturell funksjon.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "examples": [
       "Før: \"Lag lesbarhetsnivå.\"",
       "Etter: \"Definer lesbarhetsnivå med tydelig funksjon i budskaphierarkiet.\""
@@ -7030,8 +7030,8 @@ export const glossaryGenerated: GlossaryTerm[] = [
     "term_no": "Locked-off kamera",
     "term_en": "Locked-off kamera",
     "domain": "film",
-    "definition_no": "Locked-off kamera er et fagbegrep som styrer kvalitet og kontroll i reklameprompten.",
-    "promptImpact": "Locked-off kamera reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "definition_no": "Helt statisk kamera uten bevegelse.",
+    "promptImpact": "Reduserer bevegelsesstøy; gir stabilt og kontrollert uttrykk.",
     "examples": [
       "Før: \"Lag locked-off kamera.\"",
       "Etter: \"Definer locked-off kamera med tydelig funksjon i budskaphierarkiet.\""
@@ -7043,8 +7043,8 @@ export const glossaryGenerated: GlossaryTerm[] = [
     "term_no": "Løftepresisjon",
     "term_en": "Løftepresisjon",
     "domain": "design",
-    "definition_no": "Løftepresisjon er et fagbegrep som styrer kvalitet og kontroll i reklameprompten.",
-    "promptImpact": "Løftepresisjon reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "definition_no": "Presist fagbegrep innen design med spesifikk strukturell funksjon.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "examples": [
       "Før: \"Lag løftepresisjon.\"",
       "Etter: \"Definer løftepresisjon med tydelig funksjon i budskaphierarkiet.\""
@@ -7056,8 +7056,8 @@ export const glossaryGenerated: GlossaryTerm[] = [
     "term_no": "Logo-clearspace",
     "term_en": "Logo-clearspace",
     "domain": "design",
-    "definition_no": "Logo-clearspace er et fagbegrep som styrer kvalitet og kontroll i reklameprompten.",
-    "promptImpact": "Logo-clearspace reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "definition_no": "Presist fagbegrep innen design med spesifikk strukturell funksjon.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "examples": [
       "Før: \"Lag logo-clearspace.\"",
       "Etter: \"Definer logo-clearspace med tydelig funksjon i budskaphierarkiet.\""
@@ -7069,8 +7069,8 @@ export const glossaryGenerated: GlossaryTerm[] = [
     "term_no": "Målbar geometri",
     "term_en": "Målbar geometri",
     "domain": "arch",
-    "definition_no": "Målbar geometri er et fagbegrep som styrer kvalitet og kontroll i reklameprompten.",
-    "promptImpact": "Målbar geometri reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "definition_no": "Målbar form og proporsjon.",
+    "promptImpact": "Tvinger presise proporsjoner og rette vinkler.",
     "examples": [
       "Før: \"Lag målbar geometri.\"",
       "Etter: \"Definer målbar geometri med tydelig funksjon i budskaphierarkiet.\""
@@ -7082,8 +7082,8 @@ export const glossaryGenerated: GlossaryTerm[] = [
     "term_no": "Målgruppe",
     "term_en": "Målgruppe",
     "domain": "design",
-    "definition_no": "Målgruppe er et fagbegrep som styrer kvalitet og kontroll i reklameprompten.",
-    "promptImpact": "Målgruppe reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "definition_no": "Presist fagbegrep innen design med spesifikk strukturell funksjon.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "examples": [
       "Før: \"Lag målgruppe.\"",
       "Etter: \"Definer målgruppe med tydelig funksjon i budskaphierarkiet.\"",
@@ -7097,8 +7097,8 @@ export const glossaryGenerated: GlossaryTerm[] = [
     "term_no": "Match cut",
     "term_en": "Match cut",
     "domain": "film",
-    "definition_no": "Match cut er et fagbegrep som styrer kvalitet og kontroll i reklameprompten.",
-    "promptImpact": "Match cut reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "definition_no": "Klipp som kobler to bilder via form- eller bevegelseslikhet.",
+    "promptImpact": "Binder to bilder sammen via visuell likhet; øker flyt.",
     "examples": [
       "Før: \"Lag match cut.\"",
       "Etter: \"Definer match cut med tydelig funksjon i budskaphierarkiet.\"",
@@ -7114,8 +7114,8 @@ export const glossaryGenerated: GlossaryTerm[] = [
     "term_no": "Mental tilgjengelighet",
     "term_en": "Mental tilgjengelighet",
     "domain": "design",
-    "definition_no": "Mental tilgjengelighet er et fagbegrep som styrer kvalitet og kontroll i reklameprompten.",
-    "promptImpact": "Mental tilgjengelighet reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "definition_no": "Presist fagbegrep innen design med spesifikk strukturell funksjon.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "examples": [
       "Før: \"Lag mental tilgjengelighet.\"",
       "Etter: \"Definer mental tilgjengelighet med tydelig funksjon i budskaphierarkiet.\""
@@ -7127,8 +7127,8 @@ export const glossaryGenerated: GlossaryTerm[] = [
     "term_no": "Merkefarge-dominans",
     "term_en": "Merkefarge-dominans",
     "domain": "design",
-    "definition_no": "Merkefarge-dominans er et fagbegrep som styrer kvalitet og kontroll i reklameprompten.",
-    "promptImpact": "Merkefarge-dominans reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "definition_no": "Presist fagbegrep innen design med spesifikk strukturell funksjon.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "examples": [
       "Før: \"Lag merkefarge-dominans.\"",
       "Etter: \"Definer merkefarge-dominans med tydelig funksjon i budskaphierarkiet.\"",
@@ -7142,8 +7142,8 @@ export const glossaryGenerated: GlossaryTerm[] = [
     "term_no": "Merkesalience",
     "term_en": "Merkesalience",
     "domain": "design",
-    "definition_no": "Merkesalience er et fagbegrep som styrer kvalitet og kontroll i reklameprompten.",
-    "promptImpact": "Merkesalience reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "definition_no": "Presist fagbegrep innen design med spesifikk strukturell funksjon.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "examples": [
       "Før: \"Lag merkesalience.\"",
       "Etter: \"Definer merkesalience med tydelig funksjon i budskaphierarkiet.\"",
@@ -7157,8 +7157,8 @@ export const glossaryGenerated: GlossaryTerm[] = [
     "term_no": "Mikrokontrast for tekst",
     "term_en": "Mikrokontrast for tekst",
     "domain": "design",
-    "definition_no": "Mikrokontrast for tekst er et fagbegrep som styrer kvalitet og kontroll i reklameprompten.",
-    "promptImpact": "Mikrokontrast for tekst reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "definition_no": "Presist fagbegrep innen design med spesifikk strukturell funksjon.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "examples": [
       "Før: \"Lag mikrokontrast for tekst.\"",
       "Etter: \"Definer mikrokontrast for tekst med tydelig funksjon i budskaphierarkiet.\""
@@ -7170,8 +7170,8 @@ export const glossaryGenerated: GlossaryTerm[] = [
     "term_no": "Mikrokopi",
     "term_en": "Mikrokopi",
     "domain": "design",
-    "definition_no": "Mikrokopi er et fagbegrep som styrer kvalitet og kontroll i reklameprompten.",
-    "promptImpact": "Mikrokopi reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "definition_no": "Presist fagbegrep innen design med spesifikk strukturell funksjon.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "examples": [
       "Før: \"Lag mikrokopi.\"",
       "Etter: \"Definer mikrokopi med tydelig funksjon i budskaphierarkiet.\""
@@ -7183,8 +7183,8 @@ export const glossaryGenerated: GlossaryTerm[] = [
     "term_no": "Mikromålgruppe",
     "term_en": "Mikromålgruppe",
     "domain": "design",
-    "definition_no": "Mikromålgruppe er et fagbegrep som styrer kvalitet og kontroll i reklameprompten.",
-    "promptImpact": "Mikromålgruppe reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "definition_no": "Presist fagbegrep innen design med spesifikk strukturell funksjon.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "examples": [
       "Før: \"Lag mikromålgruppe.\"",
       "Etter: \"Definer mikromålgruppe med tydelig funksjon i budskaphierarkiet.\""
@@ -7196,8 +7196,8 @@ export const glossaryGenerated: GlossaryTerm[] = [
     "term_no": "Modulrytme",
     "term_en": "Modulrytme",
     "domain": "arch",
-    "definition_no": "Modulrytme er et fagbegrep som styrer kvalitet og kontroll i reklameprompten.",
-    "promptImpact": "Modulrytme reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "definition_no": "Repeterende enhet som skaper rytme og struktur.",
+    "promptImpact": "Skaper repeterende struktur og rytme.",
     "examples": [
       "Før: \"Lag modulrytme.\"",
       "Etter: \"Definer modulrytme med tydelig funksjon i budskaphierarkiet.\""
@@ -7209,8 +7209,8 @@ export const glossaryGenerated: GlossaryTerm[] = [
     "term_no": "Modulskala",
     "term_en": "Modulskala",
     "domain": "design",
-    "definition_no": "Modulskala er et fagbegrep som styrer kvalitet og kontroll i reklameprompten.",
-    "promptImpact": "Modulskala reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "definition_no": "Repeterende enhet som skaper rytme og struktur.",
+    "promptImpact": "Skaper repeterende struktur og rytme.",
     "examples": [
       "Før: \"Lag modulskala.\"",
       "Etter: \"Definer modulskala med tydelig funksjon i budskaphierarkiet.\"",
@@ -7228,8 +7228,8 @@ export const glossaryGenerated: GlossaryTerm[] = [
     "term_no": "Mykt sidelys",
     "term_en": "Mykt sidelys",
     "domain": "photo",
-    "definition_no": "Mykt sidelys er et fagbegrep som styrer kvalitet og kontroll i reklameprompten.",
-    "promptImpact": "Mykt sidelys reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "definition_no": "Presist fagbegrep innen photo med spesifikk strukturell funksjon.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "examples": [
       "Før: \"Lag mykt sidelys.\"",
       "Etter: \"Definer mykt sidelys med tydelig funksjon i budskaphierarkiet.\""
@@ -7241,8 +7241,8 @@ export const glossaryGenerated: GlossaryTerm[] = [
     "term_no": "Narrativ kjerne",
     "term_en": "Narrativ kjerne",
     "domain": "design",
-    "definition_no": "Narrativ kjerne er et fagbegrep som styrer kvalitet og kontroll i reklameprompten.",
-    "promptImpact": "Narrativ kjerne reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "definition_no": "Presist fagbegrep innen design med spesifikk strukturell funksjon.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "examples": [
       "Før: \"Lag narrativ kjerne.\"",
       "Etter: \"Definer narrativ kjerne med tydelig funksjon i budskaphierarkiet.\""
@@ -7254,8 +7254,8 @@ export const glossaryGenerated: GlossaryTerm[] = [
     "term_no": "Nøkkellys",
     "term_en": "Nøkkellys",
     "domain": "photo",
-    "definition_no": "Nøkkellys er et fagbegrep som styrer kvalitet og kontroll i reklameprompten.",
-    "promptImpact": "Nøkkellys reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "definition_no": "Hovedlyskilde som former motivet.",
+    "promptImpact": "Definerer hovedretning for lys og skygge.",
     "examples": [
       "Før: \"Lag nøkkellys.\"",
       "Etter: \"Definer nøkkellys med tydelig funksjon i budskaphierarkiet.\"",
@@ -7273,8 +7273,8 @@ export const glossaryGenerated: GlossaryTerm[] = [
     "term_no": "On-beat levering",
     "term_en": "On-beat levering",
     "domain": "vfx",
-    "definition_no": "On-beat levering er et fagbegrep som styrer kvalitet og kontroll i reklameprompten.",
-    "promptImpact": "On-beat levering reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "definition_no": "Presist fagbegrep innen vfx med spesifikk strukturell funksjon.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "examples": [
       "Før: \"Lag on-beat levering.\"",
       "Etter: \"Definer on-beat levering med tydelig funksjon i budskaphierarkiet.\""
@@ -7286,8 +7286,8 @@ export const glossaryGenerated: GlossaryTerm[] = [
     "term_no": "On-screen tekst",
     "term_en": "On-screen tekst",
     "domain": "design",
-    "definition_no": "On-screen tekst er et fagbegrep som styrer kvalitet og kontroll i reklameprompten.",
-    "promptImpact": "On-screen tekst reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "definition_no": "Presist fagbegrep innen design med spesifikk strukturell funksjon.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "examples": [
       "Før: \"Lag on-screen tekst.\"",
       "Etter: \"Definer on-screen tekst med tydelig funksjon i budskaphierarkiet.\""
@@ -7299,8 +7299,8 @@ export const glossaryGenerated: GlossaryTerm[] = [
     "term_no": "Ortografisk fasade",
     "term_en": "Ortografisk fasade",
     "domain": "arch",
-    "definition_no": "Ortografisk fasade er et fagbegrep som styrer kvalitet og kontroll i reklameprompten.",
-    "promptImpact": "Ortografisk fasade reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "definition_no": "Fasadevisning uten perspektivforvrengning.",
+    "promptImpact": "Eliminerer perspektiv; gir teknisk presisjon.",
     "examples": [
       "Før: \"Lag ortografisk fasade.\"",
       "Etter: \"Definer ortografisk fasade med tydelig funksjon i budskaphierarkiet.\""
@@ -7312,8 +7312,8 @@ export const glossaryGenerated: GlossaryTerm[] = [
     "term_no": "Overskrift",
     "term_en": "Overskrift",
     "domain": "design",
-    "definition_no": "Overskrift er et fagbegrep som styrer kvalitet og kontroll i reklameprompten.",
-    "promptImpact": "Overskrift reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "definition_no": "Presist fagbegrep innen design med spesifikk strukturell funksjon.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "examples": [
       "Før: \"Lag overskrift.\"",
       "Etter: \"Definer overskrift med tydelig funksjon i budskaphierarkiet.\"",
@@ -7331,8 +7331,8 @@ export const glossaryGenerated: GlossaryTerm[] = [
     "term_no": "Pauselengde",
     "term_en": "Pauselengde",
     "domain": "vfx",
-    "definition_no": "Pauselengde er et fagbegrep som styrer kvalitet og kontroll i reklameprompten.",
-    "promptImpact": "Pauselengde reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "definition_no": "Presist fagbegrep innen vfx med spesifikk strukturell funksjon.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "examples": [
       "Før: \"Lag pauselengde.\"",
       "Etter: \"Definer pauselengde med tydelig funksjon i budskaphierarkiet.\"",
@@ -7350,8 +7350,8 @@ export const glossaryGenerated: GlossaryTerm[] = [
     "term_no": "Plan-geometri",
     "term_en": "Plan-geometri",
     "domain": "arch",
-    "definition_no": "Plan-geometri er et fagbegrep som styrer kvalitet og kontroll i reklameprompten.",
-    "promptImpact": "Plan-geometri reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "definition_no": "Målbar form og proporsjon.",
+    "promptImpact": "Tvinger presise proporsjoner og rette vinkler.",
     "examples": [
       "Før: \"Lag plan-geometri.\"",
       "Etter: \"Definer plan-geometri med tydelig funksjon i budskaphierarkiet.\"",
@@ -7367,8 +7367,8 @@ export const glossaryGenerated: GlossaryTerm[] = [
     "term_no": "Posisjonering",
     "term_en": "Posisjonering",
     "domain": "design",
-    "definition_no": "Posisjonering er et fagbegrep som styrer kvalitet og kontroll i reklameprompten.",
-    "promptImpact": "Posisjonering reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "definition_no": "Definert plass i marked eller bevissthet.",
+    "promptImpact": "Former tonalitet og visuell retning etter ønsket marked.",
     "examples": [
       "Før: \"Lag posisjonering.\"",
       "Etter: \"Definer posisjonering med tydelig funksjon i budskaphierarkiet.\"",
@@ -7384,8 +7384,8 @@ export const glossaryGenerated: GlossaryTerm[] = [
     "term_no": "Proof point",
     "term_en": "Proof point",
     "domain": "design",
-    "definition_no": "Proof point er et fagbegrep som styrer kvalitet og kontroll i reklameprompten.",
-    "promptImpact": "Proof point reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "definition_no": "Presist fagbegrep innen design med spesifikk strukturell funksjon.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "examples": [
       "Før: \"Lag proof point.\"",
       "Etter: \"Definer proof point med tydelig funksjon i budskaphierarkiet.\""
@@ -7397,8 +7397,8 @@ export const glossaryGenerated: GlossaryTerm[] = [
     "term_no": "Rack focus",
     "term_en": "Rack focus",
     "domain": "film",
-    "definition_no": "Rack focus er et fagbegrep som styrer kvalitet og kontroll i reklameprompten.",
-    "promptImpact": "Rack focus reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "definition_no": "Kontrollert fokusforflytning mellom to plan i samme shot.",
+    "promptImpact": "Tvinger modellen til å skifte fokusplan; øker dybde og narrativ styring.",
     "examples": [
       "Før: \"Lag rack focus.\"",
       "Etter: \"Definer rack focus med tydelig funksjon i budskaphierarkiet.\""
@@ -7410,8 +7410,8 @@ export const glossaryGenerated: GlossaryTerm[] = [
     "term_no": "Responsivt hierarki",
     "term_en": "Responsivt hierarki",
     "domain": "design",
-    "definition_no": "Responsivt hierarki er et fagbegrep som styrer kvalitet og kontroll i reklameprompten.",
-    "promptImpact": "Responsivt hierarki reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "definition_no": "Prioritering av elementer etter visuell betydning.",
+    "promptImpact": "Styrer hva som leses først; øker klarhet.",
     "examples": [
       "Før: \"Lag responsivt hierarki.\"",
       "Etter: \"Definer responsivt hierarki med tydelig funksjon i budskaphierarkiet.\""
@@ -7423,8 +7423,8 @@ export const glossaryGenerated: GlossaryTerm[] = [
     "term_no": "Romakse",
     "term_en": "Romakse",
     "domain": "film",
-    "definition_no": "Romakse er et fagbegrep som styrer kvalitet og kontroll i reklameprompten.",
-    "promptImpact": "Romakse reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "definition_no": "Presist fagbegrep innen film med spesifikk strukturell funksjon.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "examples": [
       "Før: \"Lag romakse.\"",
       "Etter: \"Definer romakse med tydelig funksjon i budskaphierarkiet.\"",
@@ -7572,8 +7572,8 @@ export const glossaryGenerated: GlossaryTerm[] = [
     "term_no": "Rytme",
     "term_en": "Setningslengdekontroll",
     "domain": "design",
-    "definition_no": "Setningslengdekontroll er et fagbegrep som styrer kvalitet og kontroll i reklameprompten.",
-    "promptImpact": "Setningslengdekontroll reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "definition_no": "Presist fagbegrep innen design med spesifikk strukturell funksjon.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "examples": [
       "Før: \"Lag rytme.\"",
       "Etter: \"Definer rytme med tydelig funksjon i budskaphierarkiet.\"",
@@ -7589,8 +7589,8 @@ export const glossaryGenerated: GlossaryTerm[] = [
     "term_no": "Safe area",
     "term_en": "Safe area",
     "domain": "design",
-    "definition_no": "Safe area er et fagbegrep som styrer kvalitet og kontroll i reklameprompten.",
-    "promptImpact": "Safe area reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "definition_no": "Område innenfor skjermmarginer som alltid er synlig.",
+    "promptImpact": "Hindrer at viktig innhold kuttes i ulike formater.",
     "examples": [
       "Før: \"Lag safe area.\"",
       "Etter: \"Definer safe area med tydelig funksjon i budskaphierarkiet.\""
@@ -7602,8 +7602,8 @@ export const glossaryGenerated: GlossaryTerm[] = [
     "term_no": "Semantisk presisjon",
     "term_en": "Semantisk presisjon",
     "domain": "design",
-    "definition_no": "Semantisk presisjon er et fagbegrep som styrer kvalitet og kontroll i reklameprompten.",
-    "promptImpact": "Semantisk presisjon reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "definition_no": "Presist fagbegrep innen design med spesifikk strukturell funksjon.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "examples": [
       "Før: \"Lag semantisk presisjon.\"",
       "Etter: \"Definer semantisk presisjon med tydelig funksjon i budskaphierarkiet.\""
@@ -7615,8 +7615,8 @@ export const glossaryGenerated: GlossaryTerm[] = [
     "term_no": "Shot-reverse-shot",
     "term_en": "Shot-reverse-shot",
     "domain": "film",
-    "definition_no": "Shot-reverse-shot er et fagbegrep som styrer kvalitet og kontroll i reklameprompten.",
-    "promptImpact": "Shot-reverse-shot reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "definition_no": "Kryssklipping mellom to blikkretninger i dialog.",
+    "promptImpact": "Styrer blikkretning og dialogrytme presist.",
     "examples": [
       "Før: \"Lag shot-reverse-shot.\"",
       "Etter: \"Definer shot-reverse-shot med tydelig funksjon i budskaphierarkiet.\"",
@@ -7630,8 +7630,8 @@ export const glossaryGenerated: GlossaryTerm[] = [
     "term_no": "Skyggekvalitet",
     "term_en": "Skyggekvalitet",
     "domain": "photo",
-    "definition_no": "Skyggekvalitet er et fagbegrep som styrer kvalitet og kontroll i reklameprompten.",
-    "promptImpact": "Skyggekvalitet reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "definition_no": "Presist fagbegrep innen photo med spesifikk strukturell funksjon.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "examples": [
       "Før: \"Lag skyggekvalitet.\"",
       "Etter: \"Definer skyggekvalitet med tydelig funksjon i budskaphierarkiet.\"",
@@ -7645,8 +7645,8 @@ export const glossaryGenerated: GlossaryTerm[] = [
     "term_no": "Specular kontroll",
     "term_en": "Specular kontroll",
     "domain": "photo",
-    "definition_no": "Specular kontroll er et fagbegrep som styrer kvalitet og kontroll i reklameprompten.",
-    "promptImpact": "Specular kontroll reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "definition_no": "Kontroll av skarpe, speilende refleksjoner.",
+    "promptImpact": "Kontrollerer glans; hindrer overdrevet AI-shine.",
     "examples": [
       "Før: \"Lag specular kontroll.\"",
       "Etter: \"Definer specular kontroll med tydelig funksjon i budskaphierarkiet.\""
@@ -7658,8 +7658,8 @@ export const glossaryGenerated: GlossaryTerm[] = [
     "term_no": "Spisset nytte",
     "term_en": "Spisset nytte",
     "domain": "design",
-    "definition_no": "Spisset nytte er et fagbegrep som styrer kvalitet og kontroll i reklameprompten.",
-    "promptImpact": "Spisset nytte reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "definition_no": "Presist fagbegrep innen design med spesifikk strukturell funksjon.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "examples": [
       "Før: \"Lag spisset nytte.\"",
       "Etter: \"Definer spisset nytte med tydelig funksjon i budskaphierarkiet.\""
@@ -7671,8 +7671,8 @@ export const glossaryGenerated: GlossaryTerm[] = [
     "term_no": "Språklig økonomi",
     "term_en": "Språklig økonomi",
     "domain": "design",
-    "definition_no": "Språklig økonomi er et fagbegrep som styrer kvalitet og kontroll i reklameprompten.",
-    "promptImpact": "Språklig økonomi reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "definition_no": "Presist fagbegrep innen design med spesifikk strukturell funksjon.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "examples": [
       "Før: \"Lag språklig økonomi.\"",
       "Etter: \"Definer språklig økonomi med tydelig funksjon i budskaphierarkiet.\""
@@ -7684,8 +7684,8 @@ export const glossaryGenerated: GlossaryTerm[] = [
     "term_no": "Språkregister",
     "term_en": "Språkregister",
     "domain": "design",
-    "definition_no": "Språkregister er et fagbegrep som styrer kvalitet og kontroll i reklameprompten.",
-    "promptImpact": "Språkregister reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "definition_no": "Presist fagbegrep innen design med spesifikk strukturell funksjon.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "examples": [
       "Før: \"Lag språkregister.\"",
       "Etter: \"Definer språkregister med tydelig funksjon i budskaphierarkiet.\""
@@ -7697,8 +7697,8 @@ export const glossaryGenerated: GlossaryTerm[] = [
     "term_no": "Start/slutt-kompatibilitet",
     "term_en": "Start/slutt-kompatibilitet",
     "domain": "film",
-    "definition_no": "Start/slutt-kompatibilitet er et fagbegrep som styrer kvalitet og kontroll i reklameprompten.",
-    "promptImpact": "Start/slutt-kompatibilitet reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "definition_no": "Presist fagbegrep innen film med spesifikk strukturell funksjon.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "examples": [
       "Før: \"Lag start/slutt-kompatibilitet.\"",
       "Etter: \"Definer start/slutt-kompatibilitet med tydelig funksjon i budskaphierarkiet.\""
@@ -7710,8 +7710,8 @@ export const glossaryGenerated: GlossaryTerm[] = [
     "term_no": "Støygulv",
     "term_en": "Støygulv",
     "domain": "vfx",
-    "definition_no": "Støygulv er et fagbegrep som styrer kvalitet og kontroll i reklameprompten.",
-    "promptImpact": "Støygulv reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "definition_no": "Laveste nivå av bakgrunnsstøy i signal.",
+    "promptImpact": "Hindrer overdrevet digital støy eller komprimeringsartefakter.",
     "examples": [
       "Før: \"Lag støygulv.\"",
       "Etter: \"Definer støygulv med tydelig funksjon i budskaphierarkiet.\""
@@ -7723,8 +7723,8 @@ export const glossaryGenerated: GlossaryTerm[] = [
     "term_no": "Subsurface scattering",
     "term_en": "Subsurface scattering",
     "domain": "photo",
-    "definition_no": "Subsurface scattering er et fagbegrep som styrer kvalitet og kontroll i reklameprompten.",
-    "promptImpact": "Subsurface scattering reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "definition_no": "Lys som trenger inn i materiale før det reflekteres.",
+    "promptImpact": "Gir hud og organiske materialer realistisk lysgjennomgang.",
     "examples": [
       "Før: \"Lag subsurface scattering.\"",
       "Etter: \"Definer subsurface scattering med tydelig funksjon i budskaphierarkiet.\""
@@ -7736,8 +7736,8 @@ export const glossaryGenerated: GlossaryTerm[] = [
     "term_no": "Taletempo",
     "term_en": "Taletempo",
     "domain": "vfx",
-    "definition_no": "Taletempo er et fagbegrep som styrer kvalitet og kontroll i reklameprompten.",
-    "promptImpact": "Taletempo reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "definition_no": "Hastighet på klipp eller narrativ fremdrift.",
+    "promptImpact": "Styrer klippefrekvens og opplevd energi.",
     "examples": [
       "Før: \"Lag taletempo.\"",
       "Etter: \"Definer taletempo med tydelig funksjon i budskaphierarkiet.\"",
@@ -7763,8 +7763,8 @@ export const glossaryGenerated: GlossaryTerm[] = [
     "term_no": "Teknisk snitt",
     "term_en": "Teknisk snitt",
     "domain": "arch",
-    "definition_no": "Teknisk snitt er et fagbegrep som styrer kvalitet og kontroll i reklameprompten.",
-    "promptImpact": "Teknisk snitt reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "definition_no": "Vertikalt snitt som viser konstruksjon.",
+    "promptImpact": "Avslører konstruksjon og lagdeling.",
     "examples": [
       "Før: \"Lag teknisk snitt.\"",
       "Etter: \"Definer teknisk snitt med tydelig funksjon i budskaphierarkiet.\""
@@ -7776,8 +7776,8 @@ export const glossaryGenerated: GlossaryTerm[] = [
     "term_no": "Teksthierarki",
     "term_en": "Teksthierarki",
     "domain": "design",
-    "definition_no": "Teksthierarki er et fagbegrep som styrer kvalitet og kontroll i reklameprompten.",
-    "promptImpact": "Teksthierarki reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "definition_no": "Prioritering av elementer etter visuell betydning.",
+    "promptImpact": "Styrer hva som leses først; øker klarhet.",
     "examples": [
       "Før: \"Lag teksthierarki.\"",
       "Etter: \"Definer teksthierarki med tydelig funksjon i budskaphierarkiet.\"",
@@ -7791,8 +7791,8 @@ export const glossaryGenerated: GlossaryTerm[] = [
     "term_no": "Teksturlesbarhet",
     "term_en": "Teksturlesbarhet",
     "domain": "photo",
-    "definition_no": "Teksturlesbarhet er et fagbegrep som styrer kvalitet og kontroll i reklameprompten.",
-    "promptImpact": "Teksturlesbarhet reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "definition_no": "Presist fagbegrep innen photo med spesifikk strukturell funksjon.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "examples": [
       "Før: \"Lag teksturlesbarhet.\"",
       "Etter: \"Definer teksturlesbarhet med tydelig funksjon i budskaphierarkiet.\"",
@@ -7818,8 +7818,8 @@ export const glossaryGenerated: GlossaryTerm[] = [
     "term_no": "Tempo",
     "term_en": "Tempo",
     "domain": "film",
-    "definition_no": "Tempo er et fagbegrep som styrer kvalitet og kontroll i reklameprompten.",
-    "promptImpact": "Tempo reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "definition_no": "Hastighet på klipp eller narrativ fremdrift.",
+    "promptImpact": "Styrer klippefrekvens og opplevd energi.",
     "examples": [
       "Før: \"Lag tempo.\"",
       "Etter: \"Definer tempo med tydelig funksjon i budskaphierarkiet.\"",
@@ -7833,8 +7833,8 @@ export const glossaryGenerated: GlossaryTerm[] = [
     "term_no": "Temporal konsistens",
     "term_en": "Temporal konsistens",
     "domain": "film",
-    "definition_no": "Temporal konsistens er et fagbegrep som styrer kvalitet og kontroll i reklameprompten.",
-    "promptImpact": "Temporal konsistens reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "definition_no": "Konsistent utseende og objekter over tid i video.",
+    "promptImpact": "Hindrer objektdrift og ansiktsendring mellom frames.",
     "examples": [
       "Før: \"Lag temporal konsistens.\"",
       "Etter: \"Definer temporal konsistens med tydelig funksjon i budskaphierarkiet.\""
@@ -7846,8 +7846,8 @@ export const glossaryGenerated: GlossaryTerm[] = [
     "term_no": "Tilt",
     "term_en": "Tilt",
     "domain": "film",
-    "definition_no": "Tilt er et fagbegrep som styrer kvalitet og kontroll i reklameprompten.",
-    "promptImpact": "Tilt reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "definition_no": "Vertikal kamerabevegelse rundt fast akse.",
+    "promptImpact": "Legger til vertikal kamerabevegelse uten å endre posisjon.",
     "examples": [
       "Før: \"Lag tilt.\"",
       "Etter: \"Definer tilt med tydelig funksjon i budskaphierarkiet.\""
@@ -7859,8 +7859,8 @@ export const glossaryGenerated: GlossaryTerm[] = [
     "term_no": "Tonalitet",
     "term_en": "Tonalitet",
     "domain": "design",
-    "definition_no": "Tonalitet er et fagbegrep som styrer kvalitet og kontroll i reklameprompten.",
-    "promptImpact": "Tonalitet reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "definition_no": "Presist fagbegrep innen design med spesifikk strukturell funksjon.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "examples": [
       "Før: \"Lag tonalitet.\"",
       "Etter: \"Definer tonalitet med tydelig funksjon i budskaphierarkiet.\""
@@ -7872,8 +7872,8 @@ export const glossaryGenerated: GlossaryTerm[] = [
     "term_no": "Typografisk skala",
     "term_en": "Typografisk skala",
     "domain": "design",
-    "definition_no": "Typografisk skala er et fagbegrep som styrer kvalitet og kontroll i reklameprompten.",
-    "promptImpact": "Typografisk skala reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "definition_no": "Fast system for relative skriftstørrelser.",
+    "promptImpact": "Gir konsistente størrelsesforhold; øker profesjonell struktur.",
     "examples": [
       "Før: \"Lag typografisk skala.\"",
       "Etter: \"Definer typografisk skala med tydelig funksjon i budskaphierarkiet.\""
@@ -7885,8 +7885,8 @@ export const glossaryGenerated: GlossaryTerm[] = [
     "term_no": "Underrubrik",
     "term_en": "Underrubrik",
     "domain": "design",
-    "definition_no": "Underrubrik er et fagbegrep som styrer kvalitet og kontroll i reklameprompten.",
-    "promptImpact": "Underrubrik reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "definition_no": "Presist fagbegrep innen design med spesifikk strukturell funksjon.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "examples": [
       "Før: \"Lag underrubrik.\"",
       "Etter: \"Definer underrubrik med tydelig funksjon i budskaphierarkiet.\""
@@ -7898,8 +7898,8 @@ export const glossaryGenerated: GlossaryTerm[] = [
     "term_no": "Verbal identitet",
     "term_en": "Verbal identitet",
     "domain": "design",
-    "definition_no": "Verbal identitet er et fagbegrep som styrer kvalitet og kontroll i reklameprompten.",
-    "promptImpact": "Verbal identitet reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "definition_no": "Presist fagbegrep innen design med spesifikk strukturell funksjon.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "examples": [
       "Før: \"Lag verbal identitet.\"",
       "Etter: \"Definer verbal identitet med tydelig funksjon i budskaphierarkiet.\""
@@ -7911,8 +7911,8 @@ export const glossaryGenerated: GlossaryTerm[] = [
     "term_no": "Verdiforslag",
     "term_en": "Verdiforslag",
     "domain": "design",
-    "definition_no": "Verdiforslag er et fagbegrep som styrer kvalitet og kontroll i reklameprompten.",
-    "promptImpact": "Verdiforslag reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "definition_no": "Konkret formulert verdi for målgruppen.",
+    "promptImpact": "Konkretiserer nytte; reduserer vag kommunikasjon.",
     "examples": [
       "Før: \"Lag verdiforslag.\"",
       "Etter: \"Definer verdiforslag med tydelig funksjon i budskaphierarkiet.\"",
@@ -7926,8 +7926,8 @@ export const glossaryGenerated: GlossaryTerm[] = [
     "term_no": "Visuell vekt",
     "term_en": "Visuell vekt",
     "domain": "design",
-    "definition_no": "Visuell vekt er et fagbegrep som styrer kvalitet og kontroll i reklameprompten.",
-    "promptImpact": "Visuell vekt reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "definition_no": "Presist fagbegrep innen design med spesifikk strukturell funksjon.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "examples": [
       "Før: \"Lag visuell vekt.\"",
       "Etter: \"Definer visuell vekt med tydelig funksjon i budskaphierarkiet.\"",
@@ -7941,8 +7941,8 @@ export const glossaryGenerated: GlossaryTerm[] = [
     "term_no": "Voice-over linje",
     "term_en": "Voice-over linje",
     "domain": "design",
-    "definition_no": "Voice-over linje er et fagbegrep som styrer kvalitet og kontroll i reklameprompten.",
-    "promptImpact": "Voice-over linje reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "definition_no": "Presist fagbegrep innen design med spesifikk strukturell funksjon.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "examples": [
       "Før: \"Lag voice-over linje.\"",
       "Etter: \"Definer voice-over linje med tydelig funksjon i budskaphierarkiet.\""
@@ -7954,8 +7954,8 @@ export const glossaryGenerated: GlossaryTerm[] = [
     "term_no": "Voiceover-tone",
     "term_en": "Voiceover-tone",
     "domain": "vfx",
-    "definition_no": "Voiceover-tone er et fagbegrep som styrer kvalitet og kontroll i reklameprompten.",
-    "promptImpact": "Voiceover-tone reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "definition_no": "Presist fagbegrep innen vfx med spesifikk strukturell funksjon.",
+    "promptImpact": "Presiserer struktur eller effekt og reduserer tilfeldig modelltolkning.",
     "examples": [
       "Før: \"Lag voiceover-tone.\"",
       "Etter: \"Definer voiceover-tone med tydelig funksjon i budskaphierarkiet.\"",
@@ -7971,8 +7971,8 @@ export const glossaryGenerated: GlossaryTerm[] = [
     "term_no": "Volumetrisk lys",
     "term_en": "Volumetrisk lys",
     "domain": "photo",
-    "definition_no": "Volumetrisk lys er et fagbegrep som styrer kvalitet og kontroll i reklameprompten.",
-    "promptImpact": "Volumetrisk lys reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "definition_no": "Synlig lys i luft gjennom partikler eller tåke.",
+    "promptImpact": "Gir synlig dybde gjennom lysstråler; øker romfølelse.",
     "examples": [
       "Før: \"Lag volumetrisk lys.\"",
       "Etter: \"Definer volumetrisk lys med tydelig funksjon i budskaphierarkiet.\""
@@ -7984,8 +7984,8 @@ export const glossaryGenerated: GlossaryTerm[] = [
     "term_no": "Whitespace-kontroll",
     "term_en": "Whitespace-kontroll",
     "domain": "design",
-    "definition_no": "Whitespace-kontroll er et fagbegrep som styrer kvalitet og kontroll i reklameprompten.",
-    "promptImpact": "Whitespace-kontroll reduserer tolkingsrom og gir mer stabilt, produksjonsklart output.",
+    "definition_no": "Bevisst bruk av tomrom for å styre fokus.",
+    "promptImpact": "Reduserer visuell støy; øker lesbarhet.",
     "examples": [
       "Før: \"Lag whitespace-kontroll.\"",
       "Etter: \"Definer whitespace-kontroll med tydelig funksjon i budskaphierarkiet.\""

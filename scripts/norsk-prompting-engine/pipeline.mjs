@@ -194,7 +194,12 @@ export async function runPipeline(options = {}) {
       }
 
       if (finalDecision === "merge" && existingCandidate) {
-        const merged = mergeContentByType(canonical.itemType, existingCandidate.content_json, enrichment.contentJson);
+        const merged = mergeContentByType(
+          canonical.itemType,
+          existingCandidate.content_json,
+          enrichment.contentJson,
+          { sourceTag: row.source_tag || options.sourceTag || "unknown" }
+        );
 
         if (!dryRun) {
           const updated = await updateItem(db, existingCandidate.id, {

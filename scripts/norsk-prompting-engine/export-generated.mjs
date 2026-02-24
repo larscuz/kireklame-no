@@ -16,18 +16,44 @@ function toJson(value) {
   return JSON.stringify(value, null, 2);
 }
 
-function dedupeByKey(items, keyFn) {
-  const seen = new Set();
-  const out = [];
+function rowTimestamp(row) {
+  const ts = Date.parse(String(row?.updated_at || row?.created_at || ""));
+  return Number.isFinite(ts) ? ts : 0;
+}
+
+function dedupeByKeyPreferNewest(items, keyFn) {
+  const selected = new Map();
 
   for (const item of items) {
     const key = String(keyFn(item) || "").trim();
-    if (!key || seen.has(key)) continue;
-    seen.add(key);
-    out.push(item);
+    if (!key) continue;
+
+    const existing = selected.get(key);
+    if (!existing) {
+      selected.set(key, item);
+      continue;
+    }
+
+    const currentTs = rowTimestamp(item);
+    const existingTs = rowTimestamp(existing);
+
+    if (currentTs > existingTs) {
+      selected.set(key, item);
+      continue;
+    }
+
+    if (currentTs === existingTs) {
+      const currentId = Number(item?.id) || 0;
+      const existingId = Number(existing?.id) || 0;
+      if (currentId > existingId) {
+        selected.set(key, item);
+      }
+    }
   }
 
-  return out;
+  return Array.from(selected.entries())
+    .sort((left, right) => left[0].localeCompare(right[0], "nb"))
+    .map((entry) => entry[1]);
 }
 
 function header(label) {
@@ -122,12 +148,9 @@ function mapRepresentationSwitch(row) {
 }
 
 function renderRulesFile(items) {
-  const rows = dedupeByKey(items.map((row) => mapRule(row)), (entry) => entry.id);
-  const allowed = new Set(rows.map((entry) => entry.id));
-  const rawRows = dedupeByKey(
-    items.map((row) => row.content_json || {}).filter((entry) => allowed.has(String(entry?.id || ""))),
-    (entry) => entry?.id
-  );
+  const selectedRows = dedupeByKeyPreferNewest(items, (row) => mapRule(row).id);
+  const rows = selectedRows.map((row) => mapRule(row));
+  const rawRows = selectedRows.map((row) => row.content_json || {});
   return (
     header("rules.generated.ts") +
     `import type { NorskPromptingRule } from "../types";\n\n` +
@@ -138,12 +161,9 @@ function renderRulesFile(items) {
 }
 
 function renderGlossaryFile(items) {
-  const rows = dedupeByKey(items.map((row) => mapGlossary(row)), (entry) => entry.slug);
-  const allowed = new Set(rows.map((entry) => entry.slug));
-  const rawRows = dedupeByKey(
-    items.map((row) => row.content_json || {}).filter((entry) => allowed.has(String(entry?.slug || ""))),
-    (entry) => entry?.slug
-  );
+  const selectedRows = dedupeByKeyPreferNewest(items, (row) => mapGlossary(row).slug);
+  const rows = selectedRows.map((row) => mapGlossary(row));
+  const rawRows = selectedRows.map((row) => row.content_json || {});
   return (
     header("glossary.generated.ts") +
     `import type { GlossaryTerm } from "../types";\n\n` +
@@ -154,12 +174,9 @@ function renderGlossaryFile(items) {
 }
 
 function renderTemplatesFile(items) {
-  const rows = dedupeByKey(items.map((row) => mapTemplate(row)), (entry) => entry.id);
-  const allowed = new Set(rows.map((entry) => entry.id));
-  const rawRows = dedupeByKey(
-    items.map((row) => row.content_json || {}).filter((entry) => allowed.has(String(entry?.id || ""))),
-    (entry) => entry?.id
-  );
+  const selectedRows = dedupeByKeyPreferNewest(items, (row) => mapTemplate(row).id);
+  const rows = selectedRows.map((row) => mapTemplate(row));
+  const rawRows = selectedRows.map((row) => row.content_json || {});
   return (
     header("templates.generated.ts") +
     `import type { PromptTemplate } from "../types";\n\n` +
@@ -170,12 +187,9 @@ function renderTemplatesFile(items) {
 }
 
 function renderExamplesFile(items) {
-  const rows = dedupeByKey(items.map((row) => mapExample(row)), (entry) => entry.slug);
-  const allowed = new Set(rows.map((entry) => entry.slug));
-  const rawRows = dedupeByKey(
-    items.map((row) => row.content_json || {}).filter((entry) => allowed.has(String(entry?.slug || ""))),
-    (entry) => entry?.slug
-  );
+  const selectedRows = dedupeByKeyPreferNewest(items, (row) => mapExample(row).slug);
+  const rows = selectedRows.map((row) => mapExample(row));
+  const rawRows = selectedRows.map((row) => row.content_json || {});
   return (
     header("examples.generated.ts") +
     `import type { PromptExample } from "../types";\n\n` +
@@ -186,12 +200,9 @@ function renderExamplesFile(items) {
 }
 
 function renderNegativePresetsFile(items) {
-  const rows = dedupeByKey(items.map((row) => mapNegativePreset(row)), (entry) => entry.id);
-  const allowed = new Set(rows.map((entry) => entry.id));
-  const rawRows = dedupeByKey(
-    items.map((row) => row.content_json || {}).filter((entry) => allowed.has(String(entry?.id || ""))),
-    (entry) => entry?.id
-  );
+  const selectedRows = dedupeByKeyPreferNewest(items, (row) => mapNegativePreset(row).id);
+  const rows = selectedRows.map((row) => mapNegativePreset(row));
+  const rawRows = selectedRows.map((row) => row.content_json || {});
   return (
     header("negativePresets.generated.ts") +
     `export type NegativePresetGenerated = {\n` +
@@ -207,12 +218,9 @@ function renderNegativePresetsFile(items) {
 }
 
 function renderRepresentationSwitchesFile(items) {
-  const rows = dedupeByKey(items.map((row) => mapRepresentationSwitch(row)), (entry) => entry.id);
-  const allowed = new Set(rows.map((entry) => entry.id));
-  const rawRows = dedupeByKey(
-    items.map((row) => row.content_json || {}).filter((entry) => allowed.has(String(entry?.id || ""))),
-    (entry) => entry?.id
-  );
+  const selectedRows = dedupeByKeyPreferNewest(items, (row) => mapRepresentationSwitch(row).id);
+  const rows = selectedRows.map((row) => mapRepresentationSwitch(row));
+  const rawRows = selectedRows.map((row) => row.content_json || {});
   return (
     header("representationSwitches.generated.ts") +
     `import type { CinematicGenre } from "../types";\n\n` +
@@ -239,37 +247,37 @@ export async function exportGeneratedFiles() {
     {
       path: path.join(GENERATED_DIR, "rules.generated.ts"),
       content: renderRulesFile(rules),
-      count: dedupeByKey(rules.map((row) => mapRule(row)), (entry) => entry.id).length,
+      count: dedupeByKeyPreferNewest(rules, (row) => mapRule(row).id).length,
       key: "rules",
     },
     {
       path: path.join(GENERATED_DIR, "glossary.generated.ts"),
       content: renderGlossaryFile(terms),
-      count: dedupeByKey(terms.map((row) => mapGlossary(row)), (entry) => entry.slug).length,
+      count: dedupeByKeyPreferNewest(terms, (row) => mapGlossary(row).slug).length,
       key: "glossary",
     },
     {
       path: path.join(GENERATED_DIR, "templates.generated.ts"),
       content: renderTemplatesFile(templates),
-      count: dedupeByKey(templates.map((row) => mapTemplate(row)), (entry) => entry.id).length,
+      count: dedupeByKeyPreferNewest(templates, (row) => mapTemplate(row).id).length,
       key: "templates",
     },
     {
       path: path.join(GENERATED_DIR, "examples.generated.ts"),
       content: renderExamplesFile(examples),
-      count: dedupeByKey(examples.map((row) => mapExample(row)), (entry) => entry.slug).length,
+      count: dedupeByKeyPreferNewest(examples, (row) => mapExample(row).slug).length,
       key: "examples",
     },
     {
       path: path.join(GENERATED_DIR, "negativePresets.generated.ts"),
       content: renderNegativePresetsFile(negatives),
-      count: dedupeByKey(negatives.map((row) => mapNegativePreset(row)), (entry) => entry.id).length,
+      count: dedupeByKeyPreferNewest(negatives, (row) => mapNegativePreset(row).id).length,
       key: "negativePresets",
     },
     {
       path: path.join(GENERATED_DIR, "representationSwitches.generated.ts"),
       content: renderRepresentationSwitchesFile(switches),
-      count: dedupeByKey(switches.map((row) => mapRepresentationSwitch(row)), (entry) => entry.id).length,
+      count: dedupeByKeyPreferNewest(switches, (row) => mapRepresentationSwitch(row).id).length,
       key: "representationSwitches",
     },
   ];

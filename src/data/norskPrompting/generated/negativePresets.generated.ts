@@ -154,7 +154,8 @@ export const negativePresetsGeneratedRaw = [
       "brandLock:ja",
       "textLock:ja",
       "productLock:ja",
-      "pakke:negative-presets"
+      "pakke:negative-presets",
+      "policy:text-output-only"
     ],
     "items": [
       "Ingen feilskrift i overskrift eller CTA",
@@ -177,7 +178,9 @@ export const negativePresetsGeneratedRaw = [
         "brandLock": true,
         "strenghet": "høy",
         "productLock": true
-      }
+      },
+      "outputPolicy": "text-only",
+      "mediaGeneration": false
     },
     "description": "For kommersiell kvalitetssikring av tekst, logo og produkt."
   },
