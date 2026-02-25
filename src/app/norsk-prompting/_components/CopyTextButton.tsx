@@ -22,7 +22,7 @@ export default function CopyTextButton({ value, label = "Kopier" }: Props) {
           setCopied(false);
         }
       }}
-      className="inline-flex rounded-full border border-zinc-300/35 bg-zinc-300/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.12em] text-zinc-100 transition hover:bg-zinc-300/20"
+      className="inline-flex items-center rounded-lg border border-zinc-300/35 bg-zinc-300/10 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.11em] text-zinc-100 shadow-[0_8px_18px_rgba(2,6,23,0.2)] transition hover:bg-zinc-300/20"
     >
       {copied ? "Kopiert" : label}
     </button>

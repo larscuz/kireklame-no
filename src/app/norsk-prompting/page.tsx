@@ -20,7 +20,7 @@ export const metadata = siteMeta({
 });
 
 const intro =
-  "Start med Prompt-utvider. Skriv kort hensikt, sett kontrollvalg og få en strukturert pro-prompt på norsk med tydelige begrensninger.";
+  "Erfarne folk i mediebransjen får ofte bedre resultater fordi de kan beskrive ønsket uttrykk presist med riktige fagbegreper. Prompt Hjelper gjør den samme presisjonen tilgjengelig for deg som ikke har den erfaringen ennå, slik at du får mer kontroll, bedre detaljer og en mer produksjonsklar prompt.";
 
 export default function NorskPromptingHubPage() {
   const searchItems = [

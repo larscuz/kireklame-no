@@ -81,7 +81,7 @@ export default async function Topbar() {
             href={localizePath(locale, "/norsk-prompting")}
             className="inline-flex items-center rounded-xl border border-black/15 bg-white px-3 py-2 text-sm font-semibold text-black shadow-soft hover:bg-neutral-100 transition-colors"
           >
-            {locale === "en" ? "Norwegian Prompting" : "Norsk Prompting"}
+            {locale === "en" ? "AI School" : "KI-skole"}
           </Link>
 </nav>
 

@@ -22,12 +22,6 @@ export type BuildPromptInput = {
   lockRules: boolean;
   jsonMode?: boolean;
   templateId?: string;
-  textInVisual?: boolean;
-  overlayText?: string;
-  overlayLanguage?: string;
-  textCase?: "behold" | "store" | "små";
-  fontHint?: string;
-  textPlacement?: string;
   useReferenceImage?: boolean;
   referenceIntent?: "identitet-logo" | "produktgeometri" | "komposisjon-stil" | "annet";
   referenceNotes?: string;
@@ -120,7 +114,7 @@ const domainPacks: Partial<Record<PromptDomain, DomainPack>> = {
       "Hold romakse, blikkretning og lysretning stabil mellom klipp.",
       "Lås subjektidentitet, kostyme og rekvisitt i hele sekvensen.",
       "Ved VFX-innslag: separer matchmove, plate clean-up og grading som eksplisitte steg.",
-      "Ved tekst i bilde/video: TEKSTLÅS er absolutt, ingen ekstra ord.",
+      "Hvis tekst nevnes i ideen, integrer den naturlig med tydelig typografisk hierarki og lesbarhet.",
     ],
     preferredTermSlugs: [
       "shotliste-film",
@@ -147,7 +141,7 @@ const domainPacks: Partial<Record<PromptDomain, DomainPack>> = {
       "Hold linjeføring, vertikaler og perspektiv teknisk konsistent.",
       "Definer materialpalett med ruhet, refleksjon og patina.",
       "Bruk skaleringsreferanse som menneske, møbel eller modulmål.",
-      "Ved tekst i bilde/video: TEKSTLÅS er absolutt, ingen ekstra ord.",
+      "Hvis tekst nevnes i ideen, integrer den naturlig med tydelig typografisk hierarki og lesbarhet.",
     ],
     preferredTermSlugs: [
       "ortografisk-projeksjon-arch",
@@ -175,7 +169,7 @@ const domainPacks: Partial<Record<PromptDomain, DomainPack>> = {
       "Definer én primærlyskilde og hold skyggeretning stabil.",
       "Beskriv materialer med ruhet, glans og reflektivitet eksplisitt.",
       "Hold bakgrunn fri for konkurrerende objekter og tilfeldig støy.",
-      "Ved tekst i bilde/video: TEKSTLÅS er absolutt, ingen ekstra ord.",
+      "Hvis tekst nevnes i ideen, integrer den naturlig med tydelig typografisk hierarki og lesbarhet.",
     ],
     preferredTermSlugs: [
       "produkthero-lys-photo",
@@ -204,7 +198,7 @@ const domainPacks: Partial<Record<PromptDomain, DomainPack>> = {
       "Lås geografi mellom utsnitt med tydelig etableringsreferanse.",
       "Hold fargegradering og kontrast i et troverdig dokumentarisk spenn.",
       "Hvis voiceover brukes: lås tone, tempo og person gjennom hele leveransen.",
-      "Ved tekst i bilde/video: TEKSTLÅS er absolutt, ingen ekstra ord.",
+      "Hvis tekst nevnes i ideen, integrer den naturlig med tydelig typografisk hierarki og lesbarhet.",
     ],
     preferredTermSlugs: [
       "shotliste-film",
@@ -231,7 +225,7 @@ const domainPacks: Partial<Record<PromptDomain, DomainPack>> = {
       "Lås brand-elementer: logo, farger, CTA-ordlyd og tone.",
       "Optimaliser utsnitt for safe zones i 9:16 og 1:1 der relevant.",
       "Hold rytme med tydelig start, midtpunkt og avsluttende handling.",
-      "Ved tekst i bilde/video: TEKSTLÅS er absolutt, ingen ekstra ord.",
+      "Hvis tekst nevnes i ideen, integrer den naturlig med tydelig typografisk hierarki og lesbarhet.",
     ],
     preferredTermSlugs: [
       "cta-hierarki-design",
@@ -259,7 +253,7 @@ const domainPacks: Partial<Record<PromptDomain, DomainPack>> = {
       "Unngå moderne objekter, typografi og materialer som bryter perioden.",
       "Lås arkitekturdetaljer og bygningsspråk til valgt tidsramme.",
       "Hold fargepalett og lysnivå i tråd med historisk kontekst.",
-      "Ved tekst i bilde/video: TEKSTLÅS er absolutt, ingen ekstra ord.",
+      "Hvis tekst nevnes i ideen, integrer den naturlig med tydelig typografisk hierarki og lesbarhet.",
     ],
     preferredTermSlugs: [
       "arkitektonisk-elevasjon-arch",
@@ -286,7 +280,7 @@ const domainPacks: Partial<Record<PromptDomain, DomainPack>> = {
       "Lås terminologi: samme nøkkelbegrep skal ikke omskrives tilfeldig.",
       "Hvis voiceover: hold samme tone, tempo og person i hele teksten.",
       "Prioriter korte hovedsetninger med støttende detaljlag.",
-      "Ved tekst i bilde/video: TEKSTLÅS er absolutt, ingen ekstra ord.",
+      "Hvis tekst nevnes i ideen, integrer den naturlig med tydelig typografisk hierarki og lesbarhet.",
     ],
     preferredTermSlugs: [
       "begrepslas-ai",
@@ -313,7 +307,7 @@ const domainPacks: Partial<Record<PromptDomain, DomainPack>> = {
       "Definer én primær komponentstil og hold den gjennom alle varianter.",
       "Prioriter tilgjengelig kontrast og lesbarhet før dekorative effekter.",
       "Unngå nye mønstre utenfor definerte designregler.",
-      "Ved tekst i bilde/video: TEKSTLÅS er absolutt, ingen ekstra ord.",
+      "Hvis tekst nevnes i ideen, integrer den naturlig med tydelig typografisk hierarki og lesbarhet.",
     ],
     preferredTermSlugs: [
       "typografisk-rasterlas-design",
@@ -344,7 +338,7 @@ const domainPacks: Partial<Record<PromptDomain, DomainPack>> = {
       "Bevar identitet og objekt-permanens uten magisk forsvinning.",
       "Tillat skalaendring kun på eksplisitte elementer, lås resten av scenen.",
       "Hold lys og kamera realistisk selv om motivlogikken er absurd.",
-      "Ved tekst i bilde/video: TEKSTLÅS er absolutt, ingen ekstra ord.",
+      "Hvis tekst nevnes i ideen, integrer den naturlig med tydelig typografisk hierarki og lesbarhet.",
       "Alle absurde elementer må støtte budskap eller motiv, ikke tilfeldig støy.",
     ],
     preferredTermSlugs: [
@@ -382,7 +376,7 @@ const domainPacks: Partial<Record<PromptDomain, DomainPack>> = {
       "Lås linjetykkelse og linjeuttrykk når 2D brukes.",
       "Lås shader/cel-look når 3D stylized brukes.",
       "Unngå fotorealisme når animert uttrykk er valgt.",
-      "Ved tekst i bilde/video: TEKSTLÅS + ingen deformasjon av typografi.",
+      "Hvis tekst nevnes i ideen, integrer den naturlig med tydelig typografisk hierarki og lesbarhet.",
       "For video: bruk kontinuitetslås og unngå morphing av bakgrunn.",
     ],
     preferredTermSlugs: [
@@ -403,7 +397,7 @@ const domainPacks: Partial<Record<PromptDomain, DomainPack>> = {
 };
 
 const sectionOrder: Array<{ id: string; title: string }> = [
-  { id: "lead", title: "ROLLE / LEDETEKST" },
+  { id: "lead", title: "OPPGAVE TIL CHATMODELL" },
   { id: "goal", title: "MÅL" },
   { id: "motif", title: "MOTIV OG HANDLING" },
   { id: "environment", title: "MILJØ" },
@@ -424,7 +418,6 @@ function clamp(value: number, min: number, max: number): number {
 }
 
 function normalizeInput(input: BuildPromptInput): BuildPromptInput {
-  const language = toText(input.overlayLanguage || "norsk") || "norsk";
   const format =
     input.format === "16:9" || input.format === "9:16" || input.format === "1:1" ? input.format : undefined;
   const referenceIntent =
@@ -441,12 +434,6 @@ function normalizeInput(input: BuildPromptInput): BuildPromptInput {
     format,
     strictness: clamp(input.strictness, 0, 100),
     consistency: clamp(input.consistency, 0, 100),
-    textInVisual: Boolean(input.textInVisual),
-    overlayText: toText(input.overlayText),
-    overlayLanguage: language,
-    textCase: input.textCase === "store" || input.textCase === "små" ? input.textCase : "behold",
-    fontHint: toText(input.fontHint),
-    textPlacement: toText(input.textPlacement),
     useReferenceImage: Boolean(input.useReferenceImage),
     referenceIntent,
     referenceNotes: toText(input.referenceNotes),
@@ -470,10 +457,9 @@ function evaluateReferenceGuidance(input: BuildPromptInput): GuidanceDecision {
     };
   }
 
-  const source = `${input.input} ${input.overlayText || ""}`.toLowerCase();
+  const source = input.input.toLowerCase();
   let score = 0;
 
-  if (input.textInVisual) score += 2;
   if (input.strictness >= 65) score += 1;
   if (input.consistency >= 65) score += 1;
   if (input.domain === "produkt" || input.domain === "arkitektur" || input.domain === "design-system") score += 1;
@@ -517,12 +503,11 @@ function evaluateFirstLastGuidance(input: BuildPromptInput): GuidanceDecision {
     };
   }
 
-  const source = `${input.input} ${input.overlayText || ""}`.toLowerCase();
+  const source = input.input.toLowerCase();
   let score = 0;
 
   if (input.consistency >= 60) score += 1;
   if (input.strictness >= 60) score += 1;
-  if (input.textInVisual) score += 1;
   if (containsAny(source, ["overgang", "sekvens", "scene", "beveg", "løper", "fra", "til", "slutt", "start", "kamera"])) score += 1;
   if (input.domain === "film-vfx" || input.domain === "produkt" || input.domain === "sosiale-medier") score += 1;
 
@@ -653,90 +638,27 @@ function detectAudioMode(inputText: string, templateTitle?: string): "voice" | "
   return null;
 }
 
-function textPresenceBlock(input: BuildPromptInput): string {
-  if (!input.textInVisual) {
-    if (input.outputType === "image" || input.outputType === "video") {
-      return "Ingen tekst i bildet/videoen.";
-    }
-
-    return "Ingen visuell tekst er spesifisert.";
+function visualTextHintBlock(input: BuildPromptInput): string {
+  if (input.outputType === "text") {
+    return "Ikke relevant for ren tekstleveranse.";
   }
 
-  const lines = [
-    "Tekst i visuell leveranse: JA.",
-    `Eksakt tekst: "${input.overlayText || "MÅ FYLLES UT: skriv eksakt tekst her."}"`,
-    `Språk: ${input.overlayLanguage || "norsk"}.`,
-    `Case: ${input.textCase || "behold"}.`,
-  ];
+  const mentionsText = /(tekst|ordlyd|slagord|headline|overskrift|logo|typografi|font|bokstav|caption|tittel|skilt)/i
+    .test(input.input);
 
-  if (input.fontHint) {
-    lines.push(`Font-type (hint): ${input.fontHint}.`);
+  if (!mentionsText) {
+    return "Hvis motivet skal inneholde tekst, skriv ordlyd, plassering og visuell prioritet direkte i motivbeskrivelsen.";
   }
 
-  if (input.textPlacement) {
-    lines.push(`Plassering: ${input.textPlacement}.`);
-  }
-
-  return lines.join(" ");
-}
-
-function textLockBlock(input: BuildPromptInput): string {
-  if (!input.textInVisual) {
-    return "Ingen tekst skal genereres. Ingen bokstaver, ingen skilttekst, ingen automatisk typografi.";
-  }
-
-  const exactText = input.overlayText || "MÅ FYLLES UT: eksakt tekst";
-
-  return [
-    "All tekst i bildet/videoen skal være eksakt som angitt.",
-    "Ingen ekstra ord.",
-    "Ingen oversettelse.",
-    "Ingen alternative formuleringer.",
-    "Ingen stavefeil.",
-    "Ingen endring av bokstaver.",
-    "Ingen tillegg av slagord.",
-    "Ingen automatisk generert tekst.",
-    `Kun og nøyaktig følgende tekst: "${exactText}".`,
-  ].join(" ");
+  return "Tekst i motivet behandles som vanlig del av prompten: behold ordlyd, og styr typografisk hierarki, kontrast, størrelse og plassering i samme spesifikasjon.";
 }
 
 function languageRuleBlock(input: BuildPromptInput): string {
-  const overrideLanguage = (input.overlayLanguage || "norsk").toLowerCase();
-  const hasExplicitOverride = input.textInVisual && overrideLanguage !== "norsk";
-
-  const base = [
-    "Alt innhold skal være på norsk.",
-    "Modellen skal ikke generere engelsk tekst.",
-    "Ingen engelske ord, med mindre de eksplisitt er spesifisert.",
-    "Ikke oversett teksten.",
-    "Ikke legg til engelske slagord.",
-  ];
-
-  if (hasExplicitOverride) {
-    base.push(
-      `Eksplisitt unntak: tekstlåsen spesifiserer språk "${input.overlayLanguage}". Kun denne teksten er tillatt som avvik.`
-    );
+  if (input.outputType === "text") {
+    return "Svar på norsk med tydelig struktur og konkret ordvalg.";
   }
 
-  return base.join(" ");
-}
-
-function videoTextContinuityBlock(input: BuildPromptInput): string {
-  if (input.outputType !== "video") {
-    return "Ikke relevant for stillbilde/ren tekstleveranse.";
-  }
-
-  if (!input.textInVisual) {
-    return "Ingen tekst i video-frames. Hold alle frames fri for tekst.";
-  }
-
-  return [
-    "Teksten skal være identisk i alle frames.",
-    "Ingen bokstavdrift.",
-    "Ingen fontendring.",
-    "Ingen forvrengning.",
-    "Ingen morphing av tekst.",
-  ].join(" ");
+  return "Skriv sluttprompten på norsk. Hvis ideen inneholder konkret tekst i motivet, behold ordlyden slik den er beskrevet.";
 }
 
 function lightHint(style: PromptStyle, strictness: number): string {
@@ -764,6 +686,34 @@ function outputSpec(outputType: PromptOutputType, format?: "16:9" | "9:16" | "1:
   }
 
   return "Lever i norsk tekstformat med tydelig struktur, handlingsnær tone og konkret avslutning.";
+}
+
+function intermediaryTaskBlock(input: BuildPromptInput): string {
+  if (input.outputType === "text") {
+    return [
+      "Oppgave: bruk spesifikasjonen under til å skrive én ferdig norsk tekstleveranse.",
+      "Svar kun med selve sluttteksten.",
+      "Ikke skriv forklaring, analyse, overskrifter eller punktliste.",
+      "Ikke omskriv oppgaven som en ny instruksjon.",
+    ].join(" ");
+  }
+
+  const modelTarget = input.outputType === "video" ? "videomodell" : "bildemodell";
+
+  return [
+    `Oppgave: bruk spesifikasjonen under til å skrive én ferdig sluttprompt for en ${modelTarget}.`,
+    "Dette er ikke en oppgave om å forbedre instruksen eller lage ny meta-instruks.",
+    "Svar kun med selve sluttprompten, klar for liming i valgfri AI-modell.",
+    "Ikke skriv forklaring, analyse, overskrifter, punktliste, kodeblokk eller ekstra tekst før/etter sluttprompten.",
+  ].join(" ");
+}
+
+function responseContractBlock(input: BuildPromptInput): string {
+  if (input.outputType === "text") {
+    return "Svarformat: Kun slutttekst. Ingen forklaringer, ingen metadata.";
+  }
+
+  return "Svarformat: Kun én ferdig bilde/video-prompt i ren tekst. Ingen forklaringer eller meta-kommentarer.";
 }
 
 function chooseTemplate(input: BuildPromptInput) {
@@ -940,14 +890,6 @@ function buildConstraintList(input: BuildPromptInput, rules: NorskPromptingRule[
     "Ingen magisk transformasjon eller uforklarte hopp i geometri.",
     "Hold perspektiv, skala og lysforhold konsistent.",
   ];
-
-  if (input.outputType === "image" || input.outputType === "video") {
-    if (input.textInVisual) {
-      hard.push("All synlig tekst skal følge TEKSTLÅS-seksjonen eksakt.");
-    } else {
-      hard.push("Ingen tekst i bildet/videoen.");
-    }
-  }
 
   if (input.strictness >= 70) {
     hard.push("Lås identitet, kostyme og miljøparametere gjennom hele outputen.");
@@ -1177,18 +1119,13 @@ export function buildPrompt(rawInput: BuildPromptInput): BuildPromptResult {
   const constraints = buildConstraintList(input, rules, domainPack);
   const negativeList = buildNegativeList(rules, input.strictness);
   const languageRule = languageRuleBlock(input);
-  const textBlock = textPresenceBlock(input);
-  const textLock = textLockBlock(input);
-  const textContinuity = videoTextContinuityBlock(input);
+  const visualTextHint = visualTextHintBlock(input);
   const guidance = getPromptGuidance(input);
   const referenceStrategy = referenceStrategyBlock(input, guidance.reference);
   const firstLastStrategy = firstLastStrategyBlock(input, guidance.firstLast);
   const referenceActivated = referenceStrategy.includes("AKTIVERT");
   const firstLastActivated = firstLastStrategy.includes("AKTIVERT");
-  const withTextNegatives = input.textInVisual
-    ? [...negativeList, "unngå ekstra ord i bilde/video", "unngå bokstavforvrengning"]
-    : [...negativeList, "unngå all tekst i bilde/video"];
-  const allNegatives = [...withTextNegatives];
+  const allNegatives = [...negativeList];
 
   if (input.useReferenceImage) {
     allNegatives.push("unngå referansedrift i produkt, logo og identitet");
@@ -1271,26 +1208,22 @@ export function buildPrompt(rawInput: BuildPromptInput): BuildPromptResult {
 
   const outputControl = [
     outputSpec(input.outputType, formatValue),
-    input.outputType !== "text" ? textBlock : "",
-    input.textInVisual ? textLock : "",
-    input.outputType === "video" ? textContinuity : "",
+    input.outputType !== "text" ? visualTextHint : "",
     hiddenStabilityControls,
   ]
     .filter(Boolean)
     .join(" ");
 
-  const roleLine =
-    input.outputType === "text"
-      ? "Du er en norsk tekstprodusent som skriver tydelig, handlingsnært og målgruppebevisst."
-      : "Du er en visuell KI-operatør som gjør elevidéen produksjonsklar for bilde eller video.";
+  const leadInstruction = intermediaryTaskBlock(input);
+  const responseContract = responseContractBlock(input);
 
   const compactConstraints = constraints.slice(0, input.length === "lang" ? 5 : 3).join(" ");
 
   const sections: PromptBlock[] = [
     {
       id: "lead",
-      title: "ROLLE / LEDETEKST",
-      content: roleLine,
+      title: "OPPGAVE TIL CHATMODELL",
+      content: leadInstruction,
     },
     {
       id: "goal",
@@ -1336,7 +1269,7 @@ export function buildPrompt(rawInput: BuildPromptInput): BuildPromptResult {
     {
       id: "output",
       title: "OUTPUTKRAV",
-      content: `${outputControl} ${languageRule}`.trim(),
+      content: `${outputControl} ${responseContract} ${languageRule}`.trim(),
     },
     {
       id: "negative",

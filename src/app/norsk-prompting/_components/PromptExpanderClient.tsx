@@ -26,11 +26,6 @@ function toStudentStyle(value: string | null): StudentStyle {
   return "noktern";
 }
 
-function toBool(value: string | null, fallback = false): boolean {
-  if (value == null) return fallback;
-  return value === "1" || value === "true" || value === "ja";
-}
-
 function toFormatOption(value: string | null): FormatOption {
   if (value === "16:9" || value === "9:16" || value === "1:1") return value;
   return "";
@@ -84,8 +79,6 @@ export default function PromptExpanderClient() {
   const [studentStyle, setStudentStyle] = useState<StudentStyle>(toStudentStyle(searchParams.get("style")));
   const [length, setLength] = useState<PromptLength>(toLength(searchParams.get("length")));
   const [format, setFormat] = useState<FormatOption>(toFormatOption(searchParams.get("format")));
-  const [textInVisual, setTextInVisual] = useState<boolean>(toBool(searchParams.get("textInVisual"), false));
-  const [overlayText, setOverlayText] = useState(searchParams.get("overlayText") || "");
   const updateButtonId = "np-student-generate-button";
 
   const isVisualOutput = outputType === "image" || outputType === "video";
@@ -93,8 +86,6 @@ export default function PromptExpanderClient() {
   useEffect(() => {
     if (outputType === "text") {
       setFormat("");
-      setTextInVisual(false);
-      setOverlayText("");
     }
   }, [outputType]);
 
@@ -112,12 +103,6 @@ export default function PromptExpanderClient() {
       consistency: consistencyForLength(length),
       lockRules: true,
       jsonMode: false,
-      textInVisual: isVisualOutput ? textInVisual : false,
-      overlayText: isVisualOutput && textInVisual ? overlayText : "",
-      overlayLanguage: "norsk",
-      textCase: "behold",
-      fontHint: "",
-      textPlacement: "",
       useReferenceImage: isVisualOutput && (length === "lang" || domain === "produkt" || domain === "arkitektur"),
       referenceIntent: domain === "produkt" ? "produktgeometri" : "identitet-logo",
       referenceNotes: "",
@@ -125,7 +110,7 @@ export default function PromptExpanderClient() {
       firstFrame: "",
       lastFrame: "",
     }),
-    [input, outputType, domain, studentStyle, length, format, isVisualOutput, textInVisual, overlayText]
+    [input, outputType, domain, studentStyle, length, format, isVisualOutput]
   );
 
   const [activeRequest, setActiveRequest] = useState<BuildPromptInput>(draftRequest);
@@ -157,10 +142,6 @@ export default function PromptExpanderClient() {
       <div>
         <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[rgb(var(--muted))]">Prompt Hjelper</p>
         <h1 className="mt-2 text-3xl font-semibold tracking-tight">Prompt Hjelper – for medieelever</h1>
-        <p className="mt-2 text-sm text-[rgb(var(--muted))]">
-          Skriv ideen din med vanlige ord. Prompt Hjelper oversetter den til en ferdig pro-prompt med riktige
-          fagbegreper innen kamera, lys, komposisjon, lyd og stil. Klar til å kopieres rett inn i KI-verktøyet ditt.
-        </p>
       </div>
 
       <div className="mt-4 grid gap-4 lg:grid-cols-3 lg:items-start">
@@ -196,7 +177,7 @@ export default function PromptExpanderClient() {
               value={input}
               onChange={(event) => setInput(event.target.value)}
               className="mt-2 min-h-36 w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))] px-3 py-3 text-sm shadow-inner outline-none focus:border-zinc-300"
-              placeholder="Beskriv med vanlige ord. Du trenger ikke kunne fagbegreper."
+              placeholder="Beskriv med vanlige ord. Inkluder tekst i motivet her hvis du trenger det."
             />
           </div>
 
@@ -270,36 +251,11 @@ export default function PromptExpanderClient() {
             </div>
           ) : null}
 
-          {isVisualOutput ? (
-            <div className="rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/65 p-3">
-              <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">
-                6. Tekst i bilde/video
-              </p>
-              <select
-                value={textInVisual ? "ja" : "nei"}
-                onChange={(event) => setTextInVisual(event.target.value === "ja")}
-                className="mt-2 w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-3 py-2 text-sm"
-              >
-                <option value="nei">Ingen tekst</option>
-                <option value="ja">Ja</option>
-              </select>
-
-              {textInVisual ? (
-                <textarea
-                  value={overlayText}
-                  onChange={(event) => setOverlayText(event.target.value)}
-                  className="mt-2 min-h-20 w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-3 py-2 text-sm outline-none focus:border-zinc-300"
-                  placeholder="Skriv eksakt tekst som skal vises."
-                />
-              ) : null}
-            </div>
-          ) : null}
-
           <button
             id={updateButtonId}
             type="button"
             onClick={() => setActiveRequest(draftRequest)}
-            className="inline-flex w-full items-center justify-center rounded-xl border border-amber-200/45 bg-amber-300/16 px-5 py-2.5 text-sm font-semibold text-zinc-100 shadow-[0_10px_24px_rgba(0,0,0,0.25)] transition hover:bg-amber-300/25 disabled:cursor-not-allowed disabled:opacity-50"
+            className="inline-flex w-full items-center justify-center rounded-xl border border-zinc-300/40 bg-zinc-300/15 px-5 py-2.5 text-sm font-semibold text-zinc-100 shadow-[0_10px_24px_rgba(0,0,0,0.25)] transition hover:bg-zinc-300/25 disabled:cursor-not-allowed disabled:opacity-50"
             disabled={!hasDraftChanges}
           >
             Lag ferdig pro-prompt
@@ -308,7 +264,7 @@ export default function PromptExpanderClient() {
 
         <div className="space-y-3 lg:col-span-2">
           <div className="grid gap-3 lg:grid-cols-2">
-            <div className="rounded-2xl border border-zinc-300/30 bg-gradient-to-br from-zinc-500/20 via-zinc-500/5 to-amber-400/12 p-4">
+            <div className="rounded-2xl border border-zinc-300/30 bg-gradient-to-br from-zinc-500/20 via-zinc-500/5 to-sky-400/12 p-4">
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <p className="text-sm font-semibold">Kopier ferdig pro-prompt</p>
                 <CopyTextButton value={fullPrompt} label="Kopier prompt" />

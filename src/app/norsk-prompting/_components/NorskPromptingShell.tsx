@@ -37,18 +37,19 @@ export default function NorskPromptingShell({
                   <span className="np-chip-muted text-xs font-semibold uppercase tracking-[0.14em]">Arbeidsflate</span>
                 </div>
                 <h1 className="mt-2 text-[clamp(1.7rem,3.2vw,2.45rem)] font-semibold leading-[1.07] tracking-tight">{title}</h1>
+                <p className="mt-3 max-w-3xl text-sm leading-relaxed text-[rgb(var(--muted))]">{description}</p>
               </div>
 
               <div className="relative shrink-0">
                 <div className="group relative">
                   <span
                     tabIndex={0}
-                    className="inline-flex h-7 w-7 cursor-help items-center justify-center rounded-full border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/65 text-sm font-semibold text-[rgb(var(--muted))] outline-none transition hover:border-zinc-300/40 hover:text-zinc-100 focus:border-zinc-300/40 focus:text-zinc-100"
+                    className="inline-flex h-7 w-7 cursor-help items-center justify-center rounded-md border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/70 text-sm font-semibold text-[rgb(var(--muted))] outline-none transition hover:border-zinc-300/40 hover:bg-zinc-300/08 hover:text-zinc-100 focus:border-zinc-300/40 focus:bg-zinc-300/08 focus:text-zinc-100"
                     aria-label="Hva kan du gjøre her?"
                   >
                     i
                   </span>
-                  <div className="pointer-events-none absolute right-0 top-9 z-20 hidden w-72 rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/95 p-3 text-xs text-[rgb(var(--muted))] shadow-[0_14px_30px_rgba(0,0,0,0.35)] group-hover:block group-focus-within:block">
+                  <div className="pointer-events-none absolute right-0 top-9 z-20 hidden w-72 rounded-lg border border-[rgb(var(--border))] bg-[rgb(var(--card))]/96 p-3 text-xs text-[rgb(var(--muted))] shadow-[0_14px_30px_rgba(0,0,0,0.35)] group-hover:block group-focus-within:block">
                     <p className="font-semibold uppercase tracking-[0.12em] text-zinc-100/90">Hva kan du gjøre her?</p>
                     <p className="mt-2 leading-relaxed">{description}</p>
                   </div>

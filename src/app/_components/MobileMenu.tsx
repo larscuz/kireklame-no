@@ -111,7 +111,7 @@ export default function MobileMenu({ isAuthed, isAdmin, locale }: Props) {
                     onClick={close}
                     className={promptingItemClass}
                   >
-                    {locale === "en" ? "Norwegian Prompting" : "Norsk Prompting"}
+                    {locale === "en" ? "AI School" : "KI-skole"}
                   </Link>
 
                   {/* SignOutButton støtter ikke onClick -> vi lukker via wrapper */}
@@ -128,7 +128,7 @@ export default function MobileMenu({ isAuthed, isAdmin, locale }: Props) {
                     onClick={close}
                     className={promptingItemClass}
                   >
-                    {locale === "en" ? "Norwegian Prompting" : "Norsk Prompting"}
+                    {locale === "en" ? "AI School" : "KI-skole"}
                   </Link>
 
                   <Link href={localizePath(locale, "/auth")} onClick={close} className={itemClass}>

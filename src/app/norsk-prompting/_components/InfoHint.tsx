@@ -69,7 +69,7 @@ export default function InfoHint({ text, align = "left", className = "" }: Props
       <button
         ref={triggerRef}
         type="button"
-        className="inline-flex h-5 w-5 cursor-help items-center justify-center rounded-full border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/70 text-[11px] font-semibold text-[rgb(var(--muted))] outline-none transition hover:border-zinc-300/40 hover:text-zinc-100 focus:border-zinc-300/40 focus:text-zinc-100"
+        className="inline-flex h-5 w-5 cursor-help items-center justify-center rounded-md border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/80 text-[11px] font-semibold text-[rgb(var(--muted))] outline-none transition hover:border-zinc-300/40 hover:bg-zinc-300/08 hover:text-zinc-100 focus:border-zinc-300/40 focus:bg-zinc-300/08 focus:text-zinc-100"
         aria-label="Forklaring"
         onMouseEnter={() => setOpen(true)}
         onMouseLeave={() => setOpen(false)}
@@ -82,7 +82,7 @@ export default function InfoHint({ text, align = "left", className = "" }: Props
         ? createPortal(
             <span
               ref={tooltipRef}
-              className="pointer-events-none fixed z-[9999] min-w-[14rem] max-w-[19rem] rounded-md border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/95 p-2 text-xs font-normal normal-case leading-relaxed text-[rgb(var(--muted))] shadow-[0_12px_26px_rgba(0,0,0,0.32)]"
+              className="pointer-events-none fixed z-[9999] min-w-[14rem] max-w-[19rem] rounded-lg border border-[rgb(var(--border))] bg-[rgb(var(--card))]/96 p-2.5 text-xs font-normal normal-case leading-relaxed text-[rgb(var(--muted))] shadow-[0_14px_30px_rgba(0,0,0,0.36)]"
               style={{
                 top: position.top,
                 left: position.left,

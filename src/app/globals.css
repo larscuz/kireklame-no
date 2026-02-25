@@ -7,7 +7,7 @@
   --fg: 245 247 250;
   --muted: 164 170 182;
   --card: 36 39 47;
-  --border: 71 76 90;
+  --border: 36 39 47;
 }
 
 .light {
@@ -15,7 +15,7 @@
   --fg: 245 247 250;
   --muted: 164 170 182;
   --card: 38 41 49;
-  --border: 74 79 92;
+  --border: 38 41 49;
 }
 
 .dark {
@@ -23,7 +23,7 @@
   --fg: 245 247 250;
   --muted: 164 170 182;
   --card: 36 39 47;
-  --border: 71 76 90;
+  --border: 36 39 47;
 }
 
 html, body {
@@ -45,10 +45,13 @@ body {
   isolation: isolate;
   font-family: "Sohne", "Space Grotesk", "Avenir Next", "Manrope", "Segoe UI", sans-serif;
   letter-spacing: 0.01em;
-  --bg: 21 23 28;
-  --card: 39 42 49;
-  --border: 78 83 96;
-  --muted: 173 178 188;
+  --bg: 20 22 27;
+  --card: 33 36 43;
+  --border: 79 85 98;
+  --muted: 156 165 178;
+  --np-accent: 96 159 255;
+  --np-accent-alt: 99 213 255;
+  color-scheme: dark;
 }
 
 .np-shell::before {
@@ -58,60 +61,89 @@ body {
   z-index: -1;
   pointer-events: none;
   background:
-    radial-gradient(circle at 6% 10%, rgba(244, 244, 245, 0.035), transparent 34%),
-    radial-gradient(circle at 90% 9%, rgba(245, 210, 160, 0.05), transparent 34%),
-    radial-gradient(circle at 60% 36%, rgba(228, 228, 231, 0.025), transparent 42%),
+    radial-gradient(circle at 8% 12%, rgba(138, 180, 255, 0.15), transparent 34%),
+    radial-gradient(circle at 92% 6%, rgba(83, 98, 126, 0.18), transparent 36%),
+    linear-gradient(165deg, rgba(255, 255, 255, 0.04), transparent 44%),
     repeating-linear-gradient(
-      135deg,
-      rgba(161, 161, 170, 0.08) 0,
-      rgba(161, 161, 170, 0.08) 1px,
+      0deg,
+      rgba(148, 163, 184, 0.04) 0,
+      rgba(148, 163, 184, 0.04) 1px,
+      transparent 1px,
+      transparent 24px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      rgba(148, 163, 184, 0.025) 0,
+      rgba(148, 163, 184, 0.025) 1px,
       transparent 1px,
       transparent 24px
     );
-  background-size: auto, auto, auto, auto;
-  opacity: 0.12;
+  background-size: auto, auto, auto, auto, auto;
+  opacity: 0.7;
 }
 
-.light .np-shell::before {
-  opacity: 0.25;
+.np-shell::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(circle at 50% -20%, rgba(7, 12, 22, 0), rgba(7, 12, 22, 0.68) 78%);
 }
 
 .np-hero {
   position: relative;
+  border-bottom-color: rgba(var(--border), 0.62);
   background:
-    linear-gradient(125deg, rgba(45, 48, 56, 0.76), rgba(34, 36, 42, 0.3)),
-    linear-gradient(180deg, rgba(212, 212, 216, 0.05), transparent);
+    linear-gradient(180deg, rgba(43, 47, 57, 0.88), rgba(27, 30, 37, 0.7)),
+    linear-gradient(120deg, rgba(96, 159, 255, 0.08), transparent 46%);
 }
 
-.light .np-hero {
-  background:
-    linear-gradient(135deg, rgba(15, 23, 42, 0.05), rgba(2, 6, 23, 0.01)),
-    linear-gradient(180deg, rgba(148, 163, 184, 0.1), transparent);
+.np-hero::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(var(--np-accent), 0), rgba(var(--np-accent), 0.48), rgba(var(--np-accent), 0));
 }
 
 .np-hero-card {
   position: relative;
   overflow: hidden;
-  box-shadow: 0 16px 40px rgba(2, 6, 23, 0.22);
+  border-color: rgba(var(--border), 0.72);
+  box-shadow:
+    0 22px 56px rgba(2, 6, 23, 0.38),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
   background:
-    radial-gradient(circle at 90% 5%, rgba(244, 244, 245, 0.08), transparent 36%),
-    linear-gradient(145deg, rgba(58, 61, 70, 0.74), rgba(42, 45, 53, 0.62));
+    radial-gradient(circle at 100% 0, rgba(var(--np-accent), 0.16), transparent 44%),
+    linear-gradient(145deg, rgba(47, 51, 61, 0.9), rgba(34, 37, 45, 0.94));
 }
 
 .np-hero-card::before {
   content: "";
   position: absolute;
   left: 0;
+  right: 0;
   top: 0;
-  bottom: 0;
-  width: 6px;
-  background: linear-gradient(180deg, rgba(228, 228, 231, 0.9), rgba(245, 204, 153, 0.9));
+  height: 2px;
+  background: linear-gradient(90deg, rgba(var(--np-accent), 0.85), rgba(var(--np-accent-alt), 0));
+}
+
+.np-hero-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.02);
 }
 
 .np-shell h1,
 .np-shell h2 {
   font-family: "Sohne", "Space Grotesk", "Avenir Next", "Manrope", "Segoe UI", sans-serif;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.026em;
   font-weight: 700;
 }
 
@@ -120,35 +152,34 @@ body {
   display: inline-flex;
   align-items: center;
   border-radius: 0.45rem;
-  border: 1px solid rgba(161, 161, 170, 0.38);
+  border: 1px solid rgba(var(--border), 0.62);
   padding: 0.32rem 0.62rem;
   line-height: 1;
 }
 
 .np-chip {
-  background: rgba(228, 228, 231, 0.12);
+  background: rgba(var(--np-accent), 0.16);
   color: rgb(var(--fg));
 }
 
 .np-chip-muted {
-  border-color: rgba(161, 161, 170, 0.35);
-  background: rgba(39, 39, 42, 0.45);
+  border-color: rgba(var(--border), 0.52);
+  background: rgba(23, 26, 32, 0.72);
   color: rgb(var(--muted));
-}
-
-.light .np-chip-muted {
-  background: rgba(148, 163, 184, 0.12);
 }
 
 .np-nav {
   position: sticky;
-  top: 72px;
+  top: 68px;
   z-index: 20;
-  backdrop-filter: blur(10px);
-  border-color: rgba(212, 212, 216, 0.24);
+  backdrop-filter: blur(14px) saturate(125%);
+  border-color: rgba(var(--border), 0.74);
+  box-shadow:
+    0 14px 34px rgba(2, 6, 23, 0.36),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
   background:
-    linear-gradient(180deg, rgba(73, 76, 85, 0.22), rgba(36, 38, 45, 0.72)),
-    rgba(36, 38, 45, 0.9);
+    linear-gradient(180deg, rgba(51, 55, 65, 0.88), rgba(30, 33, 40, 0.94)),
+    rgba(30, 33, 40, 0.9);
 }
 
 .np-nav-item {
@@ -158,11 +189,11 @@ body {
 .np-nav-item::after {
   content: "";
   position: absolute;
-  right: -8px;
+  right: -7px;
   top: 50%;
-  width: 8px;
+  width: 6px;
   height: 1px;
-  background: rgba(161, 161, 170, 0.45);
+  background: rgba(var(--border), 0.65);
   transform: translateY(-50%);
 }
 
@@ -175,7 +206,7 @@ body {
 }
 
 .np-nav::-webkit-scrollbar-thumb {
-  background: rgba(148, 163, 184, 0.3);
+  background: rgba(var(--border), 0.7);
   border-radius: 0.38rem;
 }
 
@@ -184,8 +215,10 @@ body {
 }
 
 .np-shell details[open] {
-  border-color: rgba(228, 228, 231, 0.38);
-  box-shadow: 0 10px 24px rgba(113, 113, 122, 0.16);
+  border-color: rgba(var(--np-accent), 0.52);
+  box-shadow:
+    0 12px 28px rgba(2, 6, 23, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
 }
 
 .np-shell details > summary {
@@ -204,38 +237,35 @@ body {
 
 .np-rule-card::after,
 .np-template-card::after {
-  display: none;
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 34%;
+  height: 2px;
+  background: linear-gradient(90deg, rgba(var(--np-accent), 0.82), rgba(var(--np-accent-alt), 0));
+  opacity: 0.92;
 }
 
 .np-node-surface {
   position: relative;
   border-radius: 0.44rem;
-  border: 1px solid rgba(228, 228, 231, 0.16);
+  border: 1px solid rgba(var(--border), 0.72);
   background:
-    linear-gradient(145deg, rgba(56, 59, 68, 0.82), rgba(44, 47, 55, 0.72));
+    linear-gradient(166deg, rgba(44, 48, 57, 0.95), rgba(31, 34, 41, 0.97));
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.04),
-    0 8px 18px rgba(2, 6, 23, 0.16);
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.3),
+    0 12px 30px rgba(2, 6, 23, 0.34);
 }
 
 .np-node-surface::before {
   content: "";
   position: absolute;
-  left: 14px;
-  top: 12px;
-  width: 34px;
-  height: 8px;
-  border-radius: 0.2rem;
-  background: linear-gradient(90deg, rgba(228, 228, 231, 0.95), rgba(245, 204, 153, 0.9));
-  opacity: 0.72;
-}
-
-.light .np-node-surface {
-  background: linear-gradient(145deg, rgba(255, 255, 255, 0.94), rgba(248, 250, 252, 0.92));
-  border-color: rgba(148, 163, 184, 0.28);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.7),
-    0 14px 30px rgba(15, 23, 42, 0.08);
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.065), rgba(255, 255, 255, 0) 24%);
 }
 
 .np-node-grid {
@@ -258,8 +288,8 @@ body {
 .np-pipeline-node {
   position: relative;
   border-radius: 0.36rem;
-  border: 1px solid rgba(228, 228, 231, 0.3);
-  background: rgba(63, 63, 70, 0.62);
+  border: 1px solid rgba(var(--border), 0.68);
+  background: rgba(30, 34, 41, 0.92);
   padding: 0.45rem 0.55rem;
 }
 
@@ -271,7 +301,7 @@ body {
   width: 8px;
   height: 8px;
   border-radius: 999px;
-  background: rgba(228, 228, 231, 0.9);
+  background: rgba(var(--np-accent), 0.92);
   transform: translateY(-50%);
 }
 
@@ -286,7 +316,7 @@ body {
   top: 50%;
   width: 8px;
   height: 1px;
-  background: rgba(161, 161, 170, 0.38);
+  background: rgba(var(--border), 0.72);
   transform: translateY(-50%);
 }
 
@@ -300,6 +330,63 @@ body {
 
 .np-shell .rounded-xl {
   border-radius: 0.26rem;
+}
+
+.np-shell input:not([type="checkbox"]):not([type="radio"]),
+.np-shell select,
+.np-shell textarea {
+  color: rgb(var(--fg));
+  border-color: rgba(var(--border), 0.72);
+  background: linear-gradient(180deg, rgba(24, 27, 33, 0.92), rgba(31, 35, 42, 0.92));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.np-shell input::placeholder,
+.np-shell textarea::placeholder {
+  color: rgba(var(--muted), 0.9);
+}
+
+.np-shell select option {
+  background: rgb(24 27 33);
+  color: rgb(var(--fg));
+}
+
+.np-shell input:not([type="checkbox"]):not([type="radio"]):focus,
+.np-shell select:focus,
+.np-shell textarea:focus {
+  outline: none;
+  border-color: rgba(var(--np-accent), 0.74);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    0 0 0 1px rgba(var(--np-accent), 0.45),
+    0 0 0 3px rgba(var(--np-accent), 0.18);
+}
+
+.np-shell .border-zinc-300\/35,
+.np-shell .border-zinc-300\/40 {
+  border-color: rgba(var(--np-accent), 0.52);
+}
+
+.np-shell .bg-zinc-300\/08,
+.np-shell .bg-zinc-300\/10,
+.np-shell .bg-zinc-300\/14,
+.np-shell .bg-zinc-300\/15 {
+  background-color: rgba(var(--np-accent), 0.2);
+}
+
+.np-shell .text-zinc-100 {
+  color: rgb(231 239 255);
+}
+
+.np-shell .hover\:border-zinc-300\/35:hover,
+.np-shell .hover\:border-zinc-300\/40:hover {
+  border-color: rgba(var(--np-accent), 0.7);
+}
+
+.np-shell .hover\:bg-zinc-300\/08:hover,
+.np-shell .hover\:bg-zinc-300\/20:hover,
+.np-shell .hover\:bg-zinc-300\/25:hover {
+  background-color: rgba(var(--np-accent), 0.3);
 }
 
 .np-pipeline-node:first-child::after {
