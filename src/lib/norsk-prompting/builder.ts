@@ -16,6 +16,7 @@ export type BuildPromptInput = {
   domain: PromptDomain;
   style: PromptStyle;
   length: PromptLength;
+  format?: "16:9" | "9:16" | "1:1";
   strictness: number;
   consistency: number;
   lockRules: boolean;
@@ -41,12 +42,29 @@ export type PromptBlock = {
   content: string;
 };
 
+export type LearningPoint = {
+  title: string;
+  detail: string;
+};
+
+export type InjectedTerm = {
+  slug: string;
+  term_no: string;
+  definition_no: string;
+  why: string;
+  effect: string;
+};
+
 export type BuildPromptResult = {
+  fullPrompt: string;
+  sections: PromptBlock[];
+  injectedTerms: InjectedTerm[];
   prompt: string;
   blocks: PromptBlock[];
   usedRules: NorskPromptingRule[];
   usedTerms: GlossaryTerm[];
   negativeList: string[];
+  learningPoints: LearningPoint[];
   templateId: string | null;
   guidance: PromptGuidance;
 };
@@ -385,24 +403,16 @@ const domainPacks: Partial<Record<PromptDomain, DomainPack>> = {
 };
 
 const sectionOrder: Array<{ id: string; title: string }> = [
-  { id: "1", title: "Mål" },
-  { id: "2", title: "Motiv + handling" },
-  { id: "3", title: "Miljø / setting" },
-  { id: "4", title: "Kamera / stemme" },
-  { id: "5", title: "Lys / struktur" },
-  { id: "6", title: "Materialer / overflater" },
-  { id: "7", title: "Komposisjon" },
-  { id: "8", title: "Stil / estetikk" },
-  { id: "9", title: "Kontinuitet / konsistens" },
-  { id: "10", title: "Referansebilde-strategi" },
-  { id: "11", title: "First/Last-strategi (video)" },
-  { id: "12", title: "Tekst i bilde/video" },
-  { id: "13", title: "Tekstlås (kritisk)" },
-  { id: "14", title: "Språkregel (kritisk)" },
-  { id: "15", title: "Tekstkontinuitet (video)" },
-  { id: "16", title: "Begrensninger" },
-  { id: "17", title: "Negativ prompting / unngå" },
-  { id: "18", title: "Output-spesifikasjon" },
+  { id: "lead", title: "ROLLE / LEDETEKST" },
+  { id: "goal", title: "MÅL" },
+  { id: "motif", title: "MOTIV OG HANDLING" },
+  { id: "environment", title: "MILJØ" },
+  { id: "camera", title: "KAMERA" },
+  { id: "light", title: "LYS" },
+  { id: "composition", title: "KOMPOSISJON" },
+  { id: "style", title: "STIL OG ETTERARBEID" },
+  { id: "output", title: "OUTPUTKRAV" },
+  { id: "negative", title: "NEGATIVLISTE" },
 ];
 
 function toText(value: unknown): string {
@@ -415,6 +425,8 @@ function clamp(value: number, min: number, max: number): number {
 
 function normalizeInput(input: BuildPromptInput): BuildPromptInput {
   const language = toText(input.overlayLanguage || "norsk") || "norsk";
+  const format =
+    input.format === "16:9" || input.format === "9:16" || input.format === "1:1" ? input.format : undefined;
   const referenceIntent =
     input.referenceIntent === "identitet-logo" ||
     input.referenceIntent === "produktgeometri" ||
@@ -426,6 +438,7 @@ function normalizeInput(input: BuildPromptInput): BuildPromptInput {
   return {
     ...input,
     input: toText(input.input),
+    format,
     strictness: clamp(input.strictness, 0, 100),
     consistency: clamp(input.consistency, 0, 100),
     textInVisual: Boolean(input.textInVisual),
@@ -739,16 +752,18 @@ function lightHint(style: PromptStyle, strictness: number): string {
   return `${base} Hold kontrast under kontroll og unngå stiliserte artefakter.`;
 }
 
-function outputSpec(outputType: PromptOutputType): string {
+function outputSpec(outputType: PromptOutputType, format?: "16:9" | "9:16" | "1:1"): string {
+  const ratio = format || (outputType === "video" ? "9:16" : "16:9");
+
   if (outputType === "video") {
-    return "Oppgi format (9:16 eller 16:9), varighet, fps, og tydelig sluttramme uten geometrihopp.";
+    return `Format ${ratio}, varighet 6-10 sekunder, 24 fps, tydelig sluttbilde uten geometrihopp.`;
   }
 
   if (outputType === "image") {
-    return "Oppgi formatforhold, oppløsningsmål og krav om konsistent eksponering og detaljnivå.";
+    return `Format ${ratio}, høy oppløsning, stabil eksponering og tydelig detaljnivå i hovedmotiv.`;
   }
 
-  return "Lever i norsk tekstformat med overskrifter, punktliste og avsluttende handlingssjekk.";
+  return "Lever i norsk tekstformat med tydelig struktur, handlingsnær tone og konkret avslutning.";
 }
 
 function chooseTemplate(input: BuildPromptInput) {
@@ -825,21 +840,93 @@ function isVideoSpecificTerm(term: GlossaryTerm): boolean {
   return videoTermHints.some((hint) => haystack.includes(hint));
 }
 
-function chooseTerms(input: BuildPromptInput, domainPack: DomainPack | null, count = 8): GlossaryTerm[] {
+const imageTermPriorityHints = [
+  "utsnitt",
+  "brennvidde",
+  "dybdeskarphet",
+  "fokusplan",
+  "lysretning",
+  "kontrast",
+  "materialitet",
+  "komposisjon",
+  "lagdeling",
+  "perspektiv",
+];
+
+const videoTermPriorityHints = [
+  "kamerabevegelse",
+  "kontinuitet",
+  "bevegelsesretning",
+  "fokusovergang",
+  "lyslogikk",
+  "rytme",
+  "lydmodus",
+  "first/last",
+  "start-slutt",
+];
+
+const textTermPriorityHints = [
+  "tone",
+  "målgruppe",
+  "retor",
+  "struktur",
+  "cta",
+  "narrativ",
+  "perspektiv",
+];
+
+function termCountByLength(input: BuildPromptInput): number {
+  if (input.length === "kort") {
+    return 6 + Math.round((input.strictness / 100) * 2);
+  }
+
+  if (input.length === "lang") {
+    return 16 + Math.round(((input.strictness + input.consistency) / 200) * 8);
+  }
+
+  return 8 + Math.round(((input.strictness + input.consistency) / 200) * 6);
+}
+
+function termPriorityHints(outputType: PromptOutputType): string[] {
+  if (outputType === "video") return videoTermPriorityHints;
+  if (outputType === "text") return textTermPriorityHints;
+  return imageTermPriorityHints;
+}
+
+function termPriorityScore(term: GlossaryTerm, hints: string[]): number {
+  const haystack = [term.slug, term.term_no, term.term_en, term.definition_no, term.promptImpact, ...term.examples]
+    .join(" ")
+    .toLowerCase();
+
+  let score = 0;
+  for (const hint of hints) {
+    if (haystack.includes(hint)) score += 3;
+  }
+
+  return Math.min(score, 18);
+}
+
+function chooseTerms(input: BuildPromptInput, domainPack: DomainPack | null): GlossaryTerm[] {
   const domains = domainToGlossary[input.domain];
   const source = input.input.toLowerCase();
   const preferredSlugs = new Set(domainPack?.preferredTermSlugs ?? []);
+  const hints = termPriorityHints(input.outputType);
+  const count = termCountByLength(input);
 
   const candidates = glossaryTerms.filter((term) => {
     if (!domains.includes(term.domain)) return false;
     if (input.outputType === "image" && isVideoSpecificTerm(term)) return false;
     return true;
   });
+
   const weighted = candidates
     .map((term) => {
       const inInput = source.includes(term.term_no.toLowerCase()) || source.includes(term.term_en.toLowerCase());
       const preferred = preferredSlugs.has(term.slug);
-      const score = (inInput ? 10 : term.promptImpact.length % 7) + (preferred ? 20 : 0);
+      const score =
+        (inInput ? 12 : term.promptImpact.length % 6) +
+        (preferred ? 18 : 0) +
+        termPriorityScore(term, hints);
       return { term, score };
     })
     .sort((a, b) => b.score - a.score || a.term.term_no.localeCompare(b.term.term_no, "nb-NO"));
@@ -919,27 +1006,174 @@ function buildDomainStyleLine(input: BuildPromptInput, templateInstructions: str
   const styleLine = [`Stil: ${styleLabel[input.style]}.`];
 
   if (domainPack?.styleTokens?.length) {
-    styleLine.push(`Domeneordvalg: ${domainPack.styleTokens.join(", ")}.`);
+    const styleBudget = input.length === "lang" ? 4 : input.length === "medium" ? 3 : 2;
+    const filteredTokens = domainPack.styleTokens.filter((token) => {
+      if (input.outputType !== "image") return true;
+      const source = token.toLowerCase();
+      return !containsAny(source, ["j-kutt", "l-kutt", "lydbro", "shotliste", "matchmove", "plate clean-up"]);
+    });
+    styleLine.push(`Domeneordvalg: ${filteredTokens.slice(0, styleBudget).join(", ")}.`);
   }
 
-  if (templateInstructions) {
+  if (templateInstructions && input.length === "lang") {
     styleLine.push(templateInstructions);
   }
 
   return styleLine.join(" ").trim();
 }
 
+function pickTermsByHints(terms: GlossaryTerm[], hints: string[], limit: number): string[] {
+  const out: string[] = [];
+
+  for (const term of terms) {
+    const haystack = `${term.term_no} ${term.term_en} ${term.definition_no} ${term.promptImpact}`.toLowerCase();
+    if (hints.some((hint) => haystack.includes(hint)) && !out.includes(term.term_no)) {
+      out.push(term.term_no);
+    }
+    if (out.length >= limit) return out;
+  }
+
+  return out;
+}
+
+function fillTerms(seed: string[], terms: GlossaryTerm[], target: number): string[] {
+  const out = [...seed];
+  for (const term of terms) {
+    if (out.includes(term.term_no)) continue;
+    out.push(term.term_no);
+    if (out.length >= target) break;
+  }
+  return out;
+}
+
+function formatFallbackForOutput(outputType: PromptOutputType): "16:9" | "9:16" | "1:1" {
+  if (outputType === "video") return "9:16";
+  return "16:9";
+}
+
+function buildLearningPoints(input: BuildPromptInput, formatValue: "16:9" | "9:16" | "1:1"): LearningPoint[] {
+  const points: LearningPoint[] = [
+    {
+      title: "Kameraavstand",
+      detail: "Vi la inn forslag til brennvidde og avstand, slik at motivet holder riktig størrelse i rammen.",
+    },
+    {
+      title: "Lysretning",
+      detail: "Vi la inn hovedlys og fylllys, så modellen får tydelig volum i ansikt, produkt eller miljø.",
+    },
+    {
+      title: "Fokuspunkt",
+      detail: "Vi presiserte hva som skal være skarpt først, så oppmerksomheten går til riktig del av motivet.",
+    },
+    {
+      title: "Komposisjon",
+      detail: "Vi la inn lagdeling og plassering i bildet for å gjøre scenen lettere å lese visuelt.",
+    },
+    {
+      title: "Formatkrav",
+      detail: `Vi valgte format ${formatValue}, så prompten passer bedre til kanalen du skal publisere i.`,
+    },
+  ];
+
+  if (input.outputType === "text") {
+    return [
+      {
+        title: "Målgruppe",
+        detail: "Vi la inn målgruppe og tone, slik at teksten treffer riktigere.",
+      },
+      {
+        title: "Struktur",
+        detail: "Vi la inn en tydelig rekkefølge for budskap, så teksten blir enklere å følge.",
+      },
+      {
+        title: "Retorisk grep",
+        detail: "Vi la inn språkvalg som støtter ønsket effekt, ikke bare generelle formuleringer.",
+      },
+      {
+        title: "CTA",
+        detail: "Vi la inn en konkret handling til slutt, så teksten blir mer handlingsrettet.",
+      },
+      {
+        title: "Perspektiv",
+        detail: "Vi la inn narrativt perspektiv, så stemmen i teksten blir mer stabil.",
+      },
+    ];
+  }
+
+  return points;
+}
+
+type TermFocus = "kamera" | "lys" | "komposisjon" | "miljo" | "bevegelse" | "sprak";
+
+function shortDefinition(definition: string): string {
+  const normalized = definition.replace(/\s+/g, " ").trim();
+  if (normalized.length <= 180) return normalized;
+
+  const cut = normalized.slice(0, 180);
+  const stop = Math.max(cut.lastIndexOf("."), cut.lastIndexOf(","), cut.lastIndexOf(";"));
+  if (stop > 80) return `${cut.slice(0, stop).trim()}.`;
+  return `${cut.trim()}...`;
+}
+
+function detectTermFocus(term: GlossaryTerm, outputType: PromptOutputType): TermFocus {
+  const source = `${term.term_no} ${term.term_en} ${term.definition_no} ${term.promptImpact} ${term.examples.join(" ")}`.toLowerCase();
+
+  if (outputType === "text") return "sprak";
+  if (/brennvidde|utsnitt|fokus|dybdeskarphet|kamera|linse/.test(source)) return "kamera";
+  if (/lys|skygge|kontrast|hoylys|eksponering|rim|fill|key/.test(source)) return "lys";
+  if (/komposisjon|lagdeling|perspektiv|fokal|hierarki|blikk/.test(source)) return "komposisjon";
+  if (/bevegelse|rytme|kontinuitet|sekvens|tempo|frame|klipp|motion/.test(source)) return "bevegelse";
+  if (/miljo|rom|material|overflate|tekstur|setting/.test(source)) return "miljo";
+  return outputType === "video" ? "bevegelse" : "miljo";
+}
+
+function whyForTerm(focus: TermFocus, input: BuildPromptInput): string {
+  const ideaHint = splitSentences(input.input)[0] || "ideen din";
+
+  if (focus === "kamera") return `Begrepet støtter hvordan ${ideaHint.toLowerCase()} skal rammes inn i bildet/videoen.`;
+  if (focus === "lys") return `Begrepet støtter lyssettingen i ideen din slik at motivet blir tydeligere.`;
+  if (focus === "komposisjon") return `Begrepet støtter komposisjon og blikkretning i ideen din.`;
+  if (focus === "bevegelse") return `Begrepet støtter flyt og kontinuitet i sekvensen du beskriver.`;
+  if (focus === "sprak") return `Begrepet støtter tone og struktur i teksten du vil lage.`;
+  return `Begrepet støtter miljø og materialitet i ideen din.`;
+}
+
+function effectForTerm(focus: TermFocus, outputType: PromptOutputType): string {
+  if (focus === "kamera") return "Gir strammere perspektiv, tydeligere utsnitt og bedre separasjon mellom motiv og bakgrunn.";
+  if (focus === "lys") return "Gir mykere eller tydeligere skygger og mer kontrollert kontrast i motivet.";
+  if (focus === "komposisjon") return "Gir tydeligere fokuspunkt, bedre lagdeling og mer lesbar bildeflate.";
+  if (focus === "bevegelse") return "Gir jevnere bevegelsesretning og færre hopp mellom frames i video.";
+  if (focus === "sprak") return "Gir mer målgruppepresis tone, tydeligere struktur og skarpere CTA.";
+  return outputType === "text"
+    ? "Gir mer konkret og tydelig tekstbeskrivelse av kontekst og detaljer."
+    : "Gir tydeligere miljølogikk og mer troverdig materialrespons i scenen.";
+}
+
+function buildInjectedTerms(input: BuildPromptInput, terms: GlossaryTerm[]): InjectedTerm[] {
+  return terms.map((term) => {
+    const focus = detectTermFocus(term, input.outputType);
+    return {
+      slug: term.slug,
+      term_no: term.term_no,
+      definition_no: shortDefinition(term.definition_no),
+      why: whyForTerm(focus, input),
+      effect: effectForTerm(focus, input.outputType),
+    };
+  });
+}
+
 export function buildPrompt(rawInput: BuildPromptInput): BuildPromptResult {
   const input = normalizeInput(rawInput);
+  const formatValue = input.format || formatFallbackForOutput(input.outputType);
   const sentences = splitSentences(input.input);
-  const motif = sentences[0] || "Definer hovedmotiv og handling i én konkret setning.";
-  const action = sentences[1] || "Beskriv en fysisk plausibel handling med tydelig årsak og effekt.";
+  const motif = sentences[0] || "Et tydelig hovedmotiv i front med klar visuell prioritet.";
+  const action = sentences[1] || "En konkret handling med synlig årsak og effekt i scenen.";
 
   const template = chooseTemplate(input);
   const domainPack = domainPacks[input.domain] ?? null;
   const audioMode = detectAudioMode(input.input, template?.title);
   const rules = chooseRules(input, template?.recommendedRules ?? []);
-  const usedTerms = chooseTerms(input, domainPack, input.length === "lang" ? 10 : 8);
+  const usedTerms = chooseTerms(input, domainPack);
   const constraints = buildConstraintList(input, rules, domainPack);
   const negativeList = buildNegativeList(rules, input.strictness);
   const languageRule = languageRuleBlock(input);
@@ -949,13 +1183,10 @@ export function buildPrompt(rawInput: BuildPromptInput): BuildPromptResult {
   const guidance = getPromptGuidance(input);
   const referenceStrategy = referenceStrategyBlock(input, guidance.reference);
   const firstLastStrategy = firstLastStrategyBlock(input, guidance.firstLast);
+  const referenceActivated = referenceStrategy.includes("AKTIVERT");
+  const firstLastActivated = firstLastStrategy.includes("AKTIVERT");
   const withTextNegatives = input.textInVisual
-    ? [
-        ...negativeList,
-        "unngå ekstra ord i bilde/video",
-        "unngå automatisk oversettelse av tekst",
-        "unngå bokstavforvrengning",
-      ]
+    ? [...negativeList, "unngå ekstra ord i bilde/video", "unngå bokstavforvrengning"]
     : [...negativeList, "unngå all tekst i bilde/video"];
   const allNegatives = [...withTextNegatives];
 
@@ -967,184 +1198,173 @@ export function buildPrompt(rawInput: BuildPromptInput): BuildPromptResult {
     allNegatives.push("unngå brudd mellom first frame og last frame");
   }
 
-  const uniqueNegativeList = Array.from(new Set(allNegatives)).slice(0, 14);
+  const uniqueNegativeList = Array.from(new Set(allNegatives)).slice(0, 8);
 
   const templateInstructions = template
     ? template.blocks.map((block) => `${block.title}: ${block.instruction}`).join(" ")
     : "";
 
-  const consistencyLine =
-    input.consistency >= 70
-      ? "Aktiver høy konsistens: objektpermanens, identitetslås og stabil kamerageometri i hele outputen."
-      : "Hold grunnleggende konsistens mellom motiv, miljø og lys.";
-  const domainConsistency =
-    domainPack?.controlPoints?.length
-      ? ` Domene-kontroll: ${domainPack.controlPoints.slice(0, 2).join(" ")}`
-      : "";
+  const cameraTerms = fillTerms(
+    pickTermsByHints(
+      usedTerms,
+      input.outputType === "text"
+        ? ["perspektiv", "narrativ", "utsnitt"]
+        : ["utsnitt", "brennvidde", "dybdeskarphet", "fokusplan", "kamera", "fokusovergang"],
+      4
+    ),
+    usedTerms,
+    4
+  );
 
-  const blocks: PromptBlock[] = [
+  const lightTerms = fillTerms(
+    pickTermsByHints(
+      usedTerms,
+      input.outputType === "text"
+        ? ["tone", "retor", "struktur"]
+        : ["lysretning", "kontrast", "materialitet", "lys", "hoylys", "skygge"],
+      4
+    ),
+    usedTerms,
+    4
+  );
+
+  const compositionTerms = fillTerms(
+    pickTermsByHints(
+      usedTerms,
+      input.outputType === "text"
+        ? ["struktur", "cta", "narrativ", "målgruppe"]
+        : ["komposisjon", "lagdeling", "perspektiv", "fokalpunkt", "hierarki"],
+      4
+    ),
+    usedTerms,
+    4
+  );
+
+  const styleTerms = fillTerms(
+    pickTermsByHints(
+      usedTerms,
+      input.outputType === "text"
+        ? ["tone", "målgruppe", "retor", "cta", "perspektiv"]
+        : ["stil", "rytme", "tone", "material", "kontrast", "farge"],
+      4
+    ),
+    usedTerms,
+    4
+  );
+
+  const hiddenStabilityControls = [
+    input.outputType !== "text" && guidance.reference.level === "anbefalt"
+      ? "Hold identitet, logo og produktdetaljer stabile mellom varianter."
+      : "",
+    input.outputType !== "text" && referenceActivated
+      ? "Bruk referanse som fast kilde for form, geometri og nøkkeldetaljer."
+      : "",
+    input.outputType === "video" && guidance.firstLast.level === "anbefalt"
+      ? "Start- og sluttfase skal ha samme identitet, geometri og lysretning."
+      : "",
+    input.outputType === "video" && firstLastActivated
+      ? "Kontinuerlig overgang mellom start og slutt uten nye objekter eller geometrihopp."
+      : "",
+  ]
+    .filter(Boolean)
+    .join(" ");
+
+  const outputControl = [
+    outputSpec(input.outputType, formatValue),
+    input.outputType !== "text" ? textBlock : "",
+    input.textInVisual ? textLock : "",
+    input.outputType === "video" ? textContinuity : "",
+    hiddenStabilityControls,
+  ]
+    .filter(Boolean)
+    .join(" ");
+
+  const roleLine =
+    input.outputType === "text"
+      ? "Du er en norsk tekstprodusent som skriver tydelig, handlingsnært og målgruppebevisst."
+      : "Du er en visuell KI-operatør som gjør elevidéen produksjonsklar for bilde eller video.";
+
+  const compactConstraints = constraints.slice(0, input.length === "lang" ? 5 : 3).join(" ");
+
+  const sections: PromptBlock[] = [
     {
-      id: "1",
-      title: "Mål",
-      content: `Lag en ${describeLength(input.length)} ${input.outputType === "text" ? "norsk leveranse" : "prompt"} for ${domainLabel[input.domain]} med ${styleLabel[input.style]} tone.`,
+      id: "lead",
+      title: "ROLLE / LEDETEKST",
+      content: roleLine,
     },
     {
-      id: "2",
-      title: "Motiv + handling",
-      content: `${motif} ${action}`,
+      id: "goal",
+      title: "MÅL",
+      content: `${describeLength(input.length)} leveranse for ${domainLabel[input.domain]} med ${styleLabel[input.style]} tone.`,
     },
     {
-      id: "3",
-      title: "Miljø / setting",
-      content: detectEnvironment(input.input),
+      id: "motif",
+      title: "MOTIV OG HANDLING",
+      content: `${motif} ${action} Bruk fagbegreper: ${fillTerms([], usedTerms, Math.min(6, usedTerms.length)).join(", ")}.`,
     },
     {
-      id: "4",
-      title: "Kamera / stemme",
-      content:
-        audioMode === "voice"
-          ? "Stemme: norsk uttale, tydelig artikulasjon, kontrollert tempo og troverdig kommersiell tone."
-          : audioMode === "music"
-          ? "Stemme: ingen voiceover. Fokuser på musikalsk identitet, energi og jingle-signatur."
-          : audioMode === "sfx"
-          ? "Stemme: ingen voiceover. Fokuser på SFX-kilder, avstand, rom og tydelig hitpoint."
-          : cameraHint(input.outputType, input.domain),
+      id: "environment",
+      title: "MILJØ",
+      content: `${detectEnvironment(input.input)} Operative begrensninger: ${compactConstraints}`,
     },
     {
-      id: "5",
-      title: "Lys / struktur",
-      content:
-        audioMode === "voice"
-          ? "Struktur: hook 0-2s, nytte 2-7s, CTA 7-10s. Hold språk, tone og tempo konsistent."
-          : audioMode === "music"
-          ? "Struktur: definer BPM, intro-hook, build, dynamikk og miksprioritet. Hold tydelig outro."
-          : audioMode === "sfx"
-          ? "Struktur: ambience-base, SFX-lag, hitpoints og nivåbalanse uten masking av budskap."
-          : lightHint(input.style, input.strictness),
+      id: "camera",
+      title: "KAMERA",
+      content: `${cameraHint(input.outputType, input.domain)} Bruk kamera-begreper: ${cameraTerms.join(", ")}.`,
     },
     {
-      id: "6",
-      title: "Materialer / overflater",
-      content:
-        input.domain === "arkitektur" || input.domain === "produkt"
-          ? "Beskriv materialer med ruhet, glans, tekstur og reflektivitet."
-          : "Beskriv overflater og kontaktpunkter slik at modellen holder fysisk troverdighet.",
+      id: "light",
+      title: "LYS",
+      content: `${lightHint(input.style, input.strictness)} Bruk lys-begreper: ${lightTerms.join(", ")}.`,
     },
     {
-      id: "7",
-      title: "Komposisjon",
-      content: "Definer fokuspunkt, lagdeling og blikkretning i rammen.",
+      id: "composition",
+      title: "KOMPOSISJON",
+      content: `Fokuspunkt, lagdeling og blikkretning skal være tydelig gjennom hele leveransen. Bruk komposisjonsbegreper: ${compositionTerms.join(
+        ", "
+      )}.`,
     },
     {
-      id: "8",
-      title: "Stil / estetikk",
-      content: buildDomainStyleLine(input, templateInstructions, domainPack),
+      id: "style",
+      title: "STIL OG ETTERARBEID",
+      content: `${buildDomainStyleLine(input, templateInstructions, domainPack)} Bruk stilbegreper: ${styleTerms.join(
+        ", "
+      )}. ${audioMode === "voice" ? "Norsk voiceover med jevn rytme og tydelig artikulasjon." : ""} ${
+        audioMode === "music" ? "Musikk skal støtte budskap med tydelig oppbygning og avslutning." : ""
+      } ${audioMode === "sfx" ? "SFX skal støtte handling med tydelig kilde og romlig plassering." : ""}`.trim(),
     },
     {
-      id: "9",
-      title: "Kontinuitet / konsistens",
-      content: `${consistencyLine}${domainConsistency}`.trim(),
+      id: "output",
+      title: "OUTPUTKRAV",
+      content: `${outputControl} ${languageRule}`.trim(),
     },
     {
-      id: "10",
-      title: "Referansebilde-strategi",
-      content: referenceStrategy,
-    },
-    {
-      id: "11",
-      title: "First/Last-strategi (video)",
-      content: firstLastStrategy,
-    },
-    {
-      id: "12",
-      title: "Tekst i bilde/video",
-      content: textBlock,
-    },
-    {
-      id: "13",
-      title: "Tekstlås (kritisk)",
-      content: textLock,
-    },
-    {
-      id: "14",
-      title: "Språkregel (kritisk)",
-      content: languageRule,
-    },
-    {
-      id: "15",
-      title: "Tekstkontinuitet (video)",
-      content: textContinuity,
-    },
-    {
-      id: "16",
-      title: "Begrensninger",
-      content: constraints.join(" "),
-    },
-    {
-      id: "17",
-      title: "Negativ prompting / unngå",
+      id: "negative",
+      title: "NEGATIVLISTE",
       content: uniqueNegativeList.join("; "),
-    },
-    {
-      id: "18",
-      title: "Output-spesifikasjon",
-      content: outputSpec(input.outputType),
     },
   ];
 
-  const promptText = sectionOrder
+  const fullPrompt = sectionOrder
     .map((section) => {
-      const block = blocks.find((entry) => entry.id === section.id);
-      return `${section.id}) ${section.title}:\n${block?.content ?? ""}`;
+      const block = sections.find((entry) => entry.id === section.id);
+      return `${section.title}\n${block?.content ?? ""}`;
     })
     .join("\n\n");
 
-  if (input.jsonMode) {
-    return {
-      prompt: JSON.stringify(
-        {
-          meta: {
-            outputType: input.outputType,
-            domain: input.domain,
-            style: input.style,
-            strictness: input.strictness,
-            consistency: input.consistency,
-          lockRules: input.lockRules,
-          textInVisual: input.textInVisual,
-          overlayLanguage: input.overlayLanguage,
-          textCase: input.textCase,
-          textPlacement: input.textPlacement || null,
-          hasOverlayText: Boolean(input.overlayText),
-          useReferenceImage: input.useReferenceImage,
-          referenceIntent: input.referenceIntent,
-          hasReferenceNotes: Boolean(input.referenceNotes),
-          useFirstLast: input.useFirstLast,
-          hasFirstFrame: Boolean(input.firstFrame),
-          hasLastFrame: Boolean(input.lastFrame),
-        },
-        sections: blocks,
-        terminology: usedTerms.map((term) => term.term_no),
-        rules: rules.map((rule) => rule.id),
-        negativeList: uniqueNegativeList,
-      },
-      null,
-      2
-      ),
-      blocks,
-      usedRules: rules,
-      usedTerms,
-      negativeList: uniqueNegativeList,
-      templateId: template?.id ?? null,
-      guidance,
-    };
-  }
+  const learningPoints = buildLearningPoints(input, formatValue);
+  const injectedTerms = buildInjectedTerms(input, usedTerms);
 
   return {
-    prompt: promptText,
-    blocks,
+    fullPrompt,
+    sections,
+    injectedTerms,
+    prompt: fullPrompt,
+    blocks: sections,
     usedRules: rules,
     usedTerms,
     negativeList: uniqueNegativeList,
+    learningPoints,
     templateId: template?.id ?? null,
     guidance,
   };

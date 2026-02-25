@@ -4,27 +4,27 @@ import { siteMeta } from "@/lib/seo";
 import { absoluteUrl, buildBreadcrumbJsonLd, buildWebPageJsonLd } from "@/lib/norsk-prompting/seo";
 
 export const metadata = siteMeta({
-  title: "Prompt-utvider | Norsk Prompting",
+  title: "Prompt Hjelper | Norsk Prompting",
   description:
-    "Kort norsk beskrivelse blir til lang pro-prompt med fast struktur, regellås og terminologi fra Norsk Prompting.",
+    "Skriv ideen din med vanlige ord og få en ferdig pro-prompt med mediefaglige begreper for bilde, video eller tekst.",
   path: "/norsk-prompting/prompt-utvider",
 });
 
 export default function PromptUtviderPage() {
   const description =
-    "Skriv en kort norsk hensikt. Velg outputtype, domene og stil. Norsk Prompting bygger en forutsigbar prompt med samme seksjonsstruktur hver gang.";
+    "Skriv ideen din med vanlige ord. Prompt Hjelper oversetter den til en ferdig pro-prompt med riktige fagbegreper innen kamera, lys, komposisjon, lyd og stil. Klar til å kopieres rett inn i KI-verktøyet ditt.";
 
   return (
     <NorskPromptingShell
       currentPath="/norsk-prompting/prompt-utvider"
-      title="Prompt-utvider"
+      title="Prompt Hjelper – for medieelever"
       description={description}
       jsonLd={[
-        buildWebPageJsonLd("Prompt-utvider", "/norsk-prompting/prompt-utvider", description),
+        buildWebPageJsonLd("Prompt Hjelper", "/norsk-prompting/prompt-utvider", description),
         buildBreadcrumbJsonLd([
           { name: "Forside", item: absoluteUrl("/") },
           { name: "Norsk Prompting", item: absoluteUrl("/norsk-prompting") },
-          { name: "Prompt-utvider", item: absoluteUrl("/norsk-prompting/prompt-utvider") },
+          { name: "Prompt Hjelper", item: absoluteUrl("/norsk-prompting/prompt-utvider") },
         ]),
       ]}
     >
