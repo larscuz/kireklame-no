@@ -71,11 +71,10 @@ function sameRequest(a: BuildPromptInput, b: BuildPromptInput): boolean {
 export default function PromptExpanderClient() {
   const searchParams = useSearchParams();
   const queryInput = searchParams.get("input");
+  const hasInitialInput = (queryInput || "").trim().length > 0;
 
   const [outputType, setOutputType] = useState<PromptOutputType>(toOutputType(searchParams.get("outputType")));
-  const [input, setInput] = useState(
-    queryInput || "En kvinne løper gjennom en travel togstasjon i regn og mister mobilen i en vanndam."
-  );
+  const [input, setInput] = useState(queryInput || "");
   const [studentStyle, setStudentStyle] = useState<StudentStyle>(toStudentStyle(searchParams.get("style")));
   const [length, setLength] = useState<PromptLength>(toLength(searchParams.get("length")));
   const [format, setFormat] = useState<FormatOption>(toFormatOption(searchParams.get("format")));
@@ -115,9 +114,13 @@ export default function PromptExpanderClient() {
 
   const [activeRequest, setActiveRequest] = useState<BuildPromptInput>(draftRequest);
   const result = useMemo(() => buildPrompt(activeRequest), [activeRequest]);
-  const [editableSections, setEditableSections] = useState<PromptBlock[]>(result.sections);
+  const [hasGenerated, setHasGenerated] = useState<boolean>(hasInitialInput);
+  const [editableSections, setEditableSections] = useState<PromptBlock[]>(hasInitialInput ? result.sections : []);
   const [showInjectedTerms, setShowInjectedTerms] = useState(true);
   const hasDraftChanges = !sameRequest(draftRequest, activeRequest);
+  const canGenerate = (!hasGenerated && input.trim().length > 0) || (hasGenerated && hasDraftChanges);
+  const visibleInjectedTerms = hasGenerated ? result.injectedTerms : [];
+  const visibleLearningPoints = hasGenerated ? result.learningPoints : [];
   const fullPrompt = useMemo(
     () =>
       editableSections
@@ -128,8 +131,12 @@ export default function PromptExpanderClient() {
   );
 
   useEffect(() => {
+    if (!hasGenerated) {
+      setEditableSections([]);
+      return;
+    }
     setEditableSections(result.sections);
-  }, [result.sections]);
+  }, [hasGenerated, result.sections]);
 
   function updateSection(id: string, content: string) {
     setEditableSections((current) =>
@@ -176,8 +183,8 @@ export default function PromptExpanderClient() {
             <textarea
               value={input}
               onChange={(event) => setInput(event.target.value)}
-              className="mt-2 min-h-36 w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))] px-3 py-3 text-sm shadow-inner outline-none focus:border-zinc-300"
-              placeholder="Beskriv med vanlige ord. Inkluder tekst i motivet her hvis du trenger det."
+              className="mt-2 min-h-36 w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))] px-3 py-3 text-sm shadow-inner outline-none placeholder:text-[rgb(var(--muted))] placeholder:opacity-80 focus:border-zinc-300 focus:placeholder-transparent"
+              placeholder='Beskriv hva du vil ha, eller gå til Eksempler og velg et case via "Kjør i utvider".'
             />
           </div>
 
@@ -254,9 +261,12 @@ export default function PromptExpanderClient() {
           <button
             id={updateButtonId}
             type="button"
-            onClick={() => setActiveRequest(draftRequest)}
+            onClick={() => {
+              setActiveRequest(draftRequest);
+              setHasGenerated(true);
+            }}
             className="inline-flex w-full items-center justify-center rounded-xl border border-zinc-300/40 bg-zinc-300/15 px-5 py-2.5 text-sm font-semibold text-zinc-100 shadow-[0_10px_24px_rgba(0,0,0,0.25)] transition hover:bg-zinc-300/25 disabled:cursor-not-allowed disabled:opacity-50"
-            disabled={!hasDraftChanges}
+            disabled={!canGenerate}
           >
             Lag ferdig pro-prompt
           </button>
@@ -313,7 +323,7 @@ export default function PromptExpanderClient() {
             </div>
             {showInjectedTerms ? (
               <div className="mt-3 space-y-3">
-                {result.injectedTerms.map((term) => (
+                {visibleInjectedTerms.map((term) => (
                   <article key={term.slug} className="rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))]/70 p-3">
                     <p className="text-sm font-semibold">{term.term_no}</p>
                     <p className="mt-1 text-xs text-[rgb(var(--muted))]">
@@ -336,7 +346,7 @@ export default function PromptExpanderClient() {
               Ting vi la til som du kanskje ikke tenkte på
             </p>
             <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-[rgb(var(--fg))]/85">
-              {result.learningPoints.slice(0, 5).map((item) => (
+              {visibleLearningPoints.slice(0, 5).map((item) => (
                 <li key={item.title}>
                   <p className="font-semibold">{item.title}</p>
                   <p className="text-xs text-[rgb(var(--muted))]">{item.detail}</p>
