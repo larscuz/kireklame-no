@@ -3,27 +3,27 @@
 @tailwind utilities;
 
 :root {
-  --bg: 29 31 36;
+  --bg: 10 11 14;
   --fg: 245 247 250;
-  --muted: 173 178 188;
-  --card: 45 48 56;
-  --border: 84 89 102;
+  --muted: 164 170 182;
+  --card: 36 39 47;
+  --border: 71 76 90;
 }
 
 .light {
-  --bg: 255 255 255;
-  --fg: 12 16 26;
-  --muted: 99 115 129;
-  --card: 255 255 255;
-  --border: 230 232 236;
+  --bg: 12 13 16;
+  --fg: 245 247 250;
+  --muted: 164 170 182;
+  --card: 38 41 49;
+  --border: 74 79 92;
 }
 
 .dark {
-  --bg: 29 31 36;
+  --bg: 10 11 14;
   --fg: 245 247 250;
-  --muted: 173 178 188;
-  --card: 45 48 56;
-  --border: 84 89 102;
+  --muted: 164 170 182;
+  --card: 36 39 47;
+  --border: 71 76 90;
 }
 
 html, body {
@@ -119,7 +119,7 @@ body {
 .np-chip-muted {
   display: inline-flex;
   align-items: center;
-  border-radius: 9999px;
+  border-radius: 0.45rem;
   border: 1px solid rgba(161, 161, 170, 0.38);
   padding: 0.32rem 0.62rem;
   line-height: 1;
@@ -176,7 +176,7 @@ body {
 
 .np-nav::-webkit-scrollbar-thumb {
   background: rgba(148, 163, 184, 0.3);
-  border-radius: 9999px;
+  border-radius: 0.38rem;
 }
 
 .np-shell details {
@@ -209,7 +209,7 @@ body {
 
 .np-node-surface {
   position: relative;
-  border-radius: 1rem;
+  border-radius: 0.44rem;
   border: 1px solid rgba(228, 228, 231, 0.16);
   background:
     linear-gradient(145deg, rgba(56, 59, 68, 0.82), rgba(44, 47, 55, 0.72));
@@ -225,7 +225,7 @@ body {
   top: 12px;
   width: 34px;
   height: 8px;
-  border-radius: 999px;
+  border-radius: 0.2rem;
   background: linear-gradient(90deg, rgba(228, 228, 231, 0.95), rgba(245, 204, 153, 0.9));
   opacity: 0.72;
 }
@@ -257,7 +257,7 @@ body {
 
 .np-pipeline-node {
   position: relative;
-  border-radius: 0.8rem;
+  border-radius: 0.36rem;
   border: 1px solid rgba(228, 228, 231, 0.3);
   background: rgba(63, 63, 70, 0.62);
   padding: 0.45rem 0.55rem;
@@ -291,15 +291,15 @@ body {
 }
 
 .np-shell .rounded-3xl {
-  border-radius: 0.78rem;
+  border-radius: 0.56rem;
 }
 
 .np-shell .rounded-2xl {
-  border-radius: 0.48rem;
+  border-radius: 0.34rem;
 }
 
 .np-shell .rounded-xl {
-  border-radius: 0.38rem;
+  border-radius: 0.26rem;
 }
 
 .np-pipeline-node:first-child::after {
@@ -315,4 +315,47 @@ body {
   .np-pipeline-node::after {
     display: none;
   }
+}
+
+/* Global: flatter corners across cards/blocks while keeping slight rounding */
+.rounded-sm {
+  border-radius: 0.08rem;
+}
+
+.rounded {
+  border-radius: 0.1rem;
+}
+
+.rounded-md {
+  border-radius: 0.14rem;
+}
+
+.rounded-lg {
+  border-radius: 0.18rem;
+}
+
+.rounded-xl {
+  border-radius: 0.22rem;
+}
+
+.rounded-2xl {
+  border-radius: 0.28rem;
+}
+
+.rounded-3xl {
+  border-radius: 0.34rem;
+}
+
+.rounded-xl2 {
+  border-radius: 0.28rem;
+}
+
+.rounded-full {
+  border-radius: 0.44rem;
+}
+
+.rounded-full[class*="h-"][class*="w-"],
+.rounded-full[class*="size-"],
+.rounded-full.aspect-square {
+  border-radius: 9999px;
 }
