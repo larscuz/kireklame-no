@@ -131,7 +131,10 @@ async function seedExamplesAction() {
 
   const db = supabaseAdmin();
   const rows = buildCmsInsertRowsFromStaticExamples();
-  const { error } = await db.from("ki_skole_examples").upsert(rows, { onConflict: "example_key" });
+  const { error } = await db.from("ki_skole_examples").upsert(rows, {
+    onConflict: "example_key",
+    ignoreDuplicates: true,
+  });
   if (error) throw new Error(error.message);
 
   revalidateKISkolePaths();
@@ -377,7 +380,7 @@ export default async function AdminKISkolePage() {
             </form>
           </div>
           <p className="mt-2 text-sm text-[rgb(var(--muted))]">
-            Henter inn forslagene fra kodebasen til databasen (upsert på `example_key`).
+            Legger kun til manglende forslag fra kodebasen. Eksisterende CMS-data og opplastet media beholdes.
           </p>
         </section>
       ) : null}

@@ -618,4 +618,673 @@ Duration: 8s.`,
       isPlaceholder: true,
     },
   },
+  {
+    id: "img-ortografisk-aksjonometri-kjokken",
+    title: "Ortografisk eksplodert kjøkkenmodul med målbar geometri",
+    outputType: "image",
+    modelName: "Google Nano Banana Pro",
+    difficulty: "Svært vanskelig",
+    challenge: "Kombinere explodert aksjonometri, typografi og materialitet uten geometridrift.",
+    shortBrief: "Teknisk reklamebilde av modulært kjøkken med lagvis eksplodert visning.",
+    miniTutorial: [
+      "Lås først ortografisk projeksjon og geometrilås.",
+      "Definer materialitet per lag før lys og stil.",
+      "Legg inn typografisk rasterlås for labels og måltekst.",
+    ],
+    terms: ["Ortografisk projeksjon", "Explodert aksjonometri", "Eksplodert visning", "Geometrilås", "Materialitet", "Typografisk rasterlås"],
+    prompt: `Create a technical-advertising image of a modular kitchen island shown in exploded axonometric layers.
+
+Projection and geometry:
+Use orthographic projection. Preserve geometry exactly. No perspective drift.
+
+Layers:
+Top: brushed stainless worktop.
+Middle: frame in powder-coated matte black steel.
+Bottom: storage module in untreated oak with visible grain direction.
+
+Typography:
+Add clean callout labels in uppercase sans-serif, aligned to a strict typographic grid:
+"TOP PLATE", "STRUCTURAL FRAME", "STORAGE CORE".
+
+Lighting:
+Neutral 5600K studio setup with controlled soft shadows and clear layer separation.
+
+Style:
+Photoreal technical campaign visual. High edge clarity. 4K.`,
+    media: {
+      kind: "image",
+      src: placeholderImage,
+      alt: "Placeholder for orthographic exploded kitchen module case.",
+      caption: "Bytt med endelig ortografisk aksjonometri-output.",
+      isPlaceholder: true,
+    },
+  },
+  {
+    id: "img-chiaroscuro-portrett-identitetslas",
+    title: "Chiaroscuro-portrett med streng identitetslås",
+    outputType: "image",
+    modelName: "Google Nano Banana Pro",
+    difficulty: "Svært vanskelig",
+    challenge: "Lav nøkkel-lys gir ofte ansiktsdrift og tapt hudtekstur.",
+    shortBrief: "Dramatisk portrett for redaksjonell kampanje med realistisk huddetalj.",
+    miniTutorial: [
+      "Bruk identitetslås med konkrete ansiktsankre.",
+      "Definer kantlys og lav nøkkel-kontrastdominant eksplisitt.",
+      "Skille ekte filmkorn fra filter-look i prompten.",
+    ],
+    terms: ["Chiaroscuro", "Lav nøkkel-belysning", "Kantlys", "Identitetslås", "Fokusplan-lås", "Filmkorn ekte vs filter"],
+    prompt: `Create a dramatic editorial portrait using chiaroscuro lighting.
+
+Subject:
+One woman, exact facial identity preserved from reference. Preserve eye spacing, jawline, cheekbone structure and skin texture.
+
+Lighting:
+Low-key, contrast-dominant setup.
+Single key from camera right at 45 degrees.
+Narrow rim light to separate silhouette from background.
+
+Camera:
+85mm portrait perspective, eye-level, shallow depth of field with focus plane locked to both eyes.
+
+Look:
+Photoreal, subtle true film grain texture (not digital noise filter).
+No beauty smoothing, no identity drift, no facial deformation.
+Resolution: 4K.`,
+    media: {
+      kind: "image",
+      src: placeholderImage,
+      alt: "Placeholder for chiaroscuro portrait identity lock case.",
+      caption: "Bytt med ferdig lav-nøkkel portrettframe.",
+      isPlaceholder: true,
+    },
+  },
+  {
+    id: "img-high-key-skincare-cta-raster",
+    title: "Høy nøkkel skincare-packshot med CTA-rasterlås",
+    outputType: "image",
+    modelName: "Google Nano Banana Pro",
+    difficulty: "Vanskelig",
+    challenge: "Ren high-key look mister ofte teksthierarki og produktdetalj.",
+    shortBrief: "Konverteringsorientert skincare-keyvisual med lesbar tekststruktur.",
+    miniTutorial: [
+      "Lås høy nøkkel jevn lysflate og produkthero-lys separat.",
+      "Bruk CTA-hierarki med tydelig prioritet i tekstblokk.",
+      "Hold typografisk rasterlås og negativt rom stabilt.",
+    ],
+    terms: ["Høy nøkkel-belysning", "Produkthero-lys", "Lyskontrastforhold", "Typografisk rasterlås", "CTA-hierarki", "Negativt rom"],
+    prompt: `Create a high-key skincare campaign image with one serum bottle as hero product.
+
+Composition:
+Centered product with strict negative space around it for typography.
+
+Lighting:
+High-key even light field with soft product-hero highlights to reveal bottle curvature and label relief.
+
+Typography (must be clean and readable):
+Headline: "REN HUD. KLAR RETNING."
+CTA button text: "PRØV NÅ"
+Use strict typographic grid alignment and clear hierarchy.
+
+Style:
+Photoreal commercial beauty still, clean white background, no clutter.
+No label distortion, no random extra text, no washed-out product edges.
+Resolution: 4K.`,
+    media: {
+      kind: "image",
+      src: placeholderImage,
+      alt: "Placeholder for high key skincare CTA case.",
+      caption: "Bytt med endelig skincare-packshot med CTA.",
+      isPlaceholder: true,
+    },
+  },
+  {
+    id: "img-overhead-mat-grid-typografi",
+    title: "90-graders overhead matoppsett med hierarkisk grid",
+    outputType: "image",
+    modelName: "Google Nano Banana Pro",
+    difficulty: "Vanskelig",
+    challenge: "Overhead-komposisjon mister ofte struktur, teksturseparasjon og label-lesbarhet.",
+    shortBrief: "Sosial kampanjevisual med tydelig ingrediens-hierarki.",
+    miniTutorial: [
+      "Definer fugleperspektiv 90-graders overhead og statisk kamera locked-off.",
+      "Bygg symmetrisk komposisjon med visuell hierarkilinje.",
+      "Presiser teksturseparasjon mellom matte og blanke overflater.",
+    ],
+    terms: ["Fugleperspektiv 90-graders overhead", "Statisk kamera locked-off", "Symmetrisk komposisjon", "Visuell hierarkilinje", "Teksturseparasjon", "Materialitet"],
+    prompt: `Create a 90-degree overhead food campaign still on a neutral stone surface.
+
+Layout:
+Symmetric grid layout with one hero plate in center and four supporting ingredient clusters in corners.
+Keep strict spacing and visual hierarchy line from top-left to bottom-right.
+
+Camera:
+Locked-off overhead camera, no perspective skew.
+
+Texture and materials:
+Clear separation between glossy sauce, matte bread crust, metallic cutlery and ceramic plate.
+
+Style:
+Photoreal editorial food still, clean and controlled.
+No random extra objects, no broken grid alignment.
+Resolution: 4K.`,
+    media: {
+      kind: "image",
+      src: placeholderImage,
+      alt: "Placeholder for overhead food grid hierarchy case.",
+      caption: "Bytt med faktisk overhead-matvisual fra modell.",
+      isPlaceholder: true,
+    },
+  },
+  {
+    id: "img-persienneskygger-office-brand",
+    title: "Office editorial med persienneskygger og romakse-kontroll",
+    outputType: "image",
+    modelName: "Google Nano Banana Pro",
+    difficulty: "Vanskelig",
+    challenge: "Persienneskygger gir lett inkonsistent romlogikk og feil lysretning.",
+    shortBrief: "Brand-portrait i kontormiljø med filmatisk men kontrollert lys.",
+    miniTutorial: [
+      "Lås romakse før du beskriver lysretning.",
+      "Definer hard/myk skyggekvalitet eksplisitt.",
+      "Bruk varm/kald fargetemperatur for separasjon av plan.",
+    ],
+    terms: ["Persienneskygger", "Romakse", "Lysretning", "Skyggekvalitet hard/myk", "Fargetemperatur varm/kald", "Korrigering vs gradering"],
+    prompt: `Create an editorial office portrait scene with Venetian blind shadows across wall and subject.
+
+Scene:
+Modern office, one seated subject near window, clean desk surface, defined room axis.
+
+Lighting:
+Primary directional light through blinds from camera left.
+Hard shadow pattern on background wall, softer transition on face.
+Cool ambient fill and slightly warm key edge separation.
+
+Camera:
+50mm lens feel, medium close-up, eye-level.
+
+Style:
+Photoreal corporate editorial.
+Keep room geometry coherent, preserve shadow direction consistency, avoid random cinematic fog.
+Resolution: 4K.`,
+    media: {
+      kind: "image",
+      src: placeholderImage,
+      alt: "Placeholder for Venetian blind office portrait case.",
+      caption: "Bytt med endelig office-persienneskygge-case.",
+      isPlaceholder: true,
+    },
+  },
+  {
+    id: "img-liminalt-rom-skala-dissonans",
+    title: "Liminalt rom med kontrollert skala-dissonans",
+    outputType: "image",
+    modelName: "Google Nano Banana Pro",
+    difficulty: "Svært vanskelig",
+    challenge: "Surreal retning kollapser ofte til tilfeldig kaos uten kontrollankre.",
+    shortBrief: "Konseptuell kunstkampanje med streng komposisjonskontroll.",
+    miniTutorial: [
+      "Start med realistisk romgrunnlag før surreal inngrep.",
+      "Beskriv nøyaktig hvilken skala-dissonans som er tillatt.",
+      "Hold kontrollert ulogikk og symbolsk komposisjon i samme akse.",
+    ],
+    terms: ["Liminalt rom", "Skala-dissonans", "Visuell paradoks", "Kontrollert ulogikk", "Symbolsk komposisjon", "Defamiliarisering"],
+    prompt: `Create a surreal campaign still set in a liminal corridor that remains physically coherent.
+
+Base reality:
+Concrete hallway, overhead fluorescent fixtures, polished floor reflections, accurate perspective lines.
+
+Surreal intervention:
+One oversized office chair (3x scale) placed in center while all other objects remain normal scale.
+
+Constraints:
+Keep corridor geometry realistic.
+Maintain controlled paradox: only the chair scale is dissonant.
+No random floating objects, no melting surfaces.
+
+Style:
+Photoreal conceptual advertising image.
+Resolution: 4K.`,
+    media: {
+      kind: "image",
+      src: placeholderImage,
+      alt: "Placeholder for liminal scale dissonance case.",
+      caption: "Bytt med endelig liminalt-rom output.",
+      isPlaceholder: true,
+    },
+  },
+  {
+    id: "img-previs-matte-aov-zdepth",
+    title: "Previs-kompositt med matte-lag, AOV og Z-dybde",
+    outputType: "image",
+    modelName: "Google Nano Banana Pro",
+    difficulty: "Svært vanskelig",
+    challenge: "VFX-lignende lagdeling krever presise pass og separasjon av elementer.",
+    shortBrief: "Postvis-ramme for reklamefilm med tydelig kompositt-pipeline.",
+    miniTutorial: [
+      "Definer plate, CG-lag og matte-lag eksplisitt.",
+      "Be om Z-dybdepass logikk i gråtonekart-mentalitet.",
+      "Lås komposisjonen for å unngå pass-drift mellom iterasjoner.",
+    ],
+    terms: ["Postvis (previs-kompositt)", "Matte-kompositt", "AOV-pass", "Z-dybdepass", "Kompositt-pipeline", "Matte-lag"],
+    prompt: `Create a previs-style advertising frame that clearly separates compositing layers.
+
+Foreground:
+Actor holding product can.
+Midground:
+CG holographic UI ribbon.
+Background:
+Urban night plate with soft depth fog.
+
+Compositing intent:
+Design the image so foreground, midground and background are cleanly separable.
+Preserve edge clarity suitable for matte extraction.
+Maintain coherent depth ordering as if driven by z-depth pass logic.
+
+Style:
+Photoreal hybrid plate + CG look, production-ready composition discipline.
+Resolution: 4K.`,
+    media: {
+      kind: "image",
+      src: placeholderImage,
+      alt: "Placeholder for previs matte AOV z-depth case.",
+      caption: "Bytt med ferdig postvis-kompositt bilde.",
+      isPlaceholder: true,
+    },
+  },
+  {
+    id: "img-billboard-typografi-cta",
+    title: "Billboard mockup med typografisk rasterlås og CTA-hierarki",
+    outputType: "image",
+    modelName: "Google Nano Banana Pro",
+    difficulty: "Vanskelig",
+    challenge: "Tekst i storformat blir ofte deformert eller mister hierarki.",
+    shortBrief: "Outdoor kampanjemockup med høy lesbarhet på avstand.",
+    miniTutorial: [
+      "Skriv headline og CTA ordrett i prompten.",
+      "Presiser visuell hierarkilinje og avstand mellom tekstblokker.",
+      "Lås perspektiv for å redusere typografisk drift.",
+    ],
+    terms: ["Typografisk rasterlås", "Visuell hierarkilinje", "CTA-hierarki", "Instruksjonsprioritet", "Begrepslås", "Perspektivkompresjon"],
+    prompt: `Create a realistic outdoor billboard campaign mockup viewed from street level.
+
+Billboard text (exact):
+Headline: "BYGG KLARHET"
+Subline: "Fra idé til kampanje på én arbeidsflate"
+CTA: "START NÅ"
+
+Typography constraints:
+Use strict typographic grid lock, maintain clear hierarchy and spacing.
+No warped letters, no random extra copy.
+
+Camera:
+Slight telephoto compression to keep billboard plane readable.
+
+Style:
+Photoreal urban evening scene, clean brand-safe output.
+Resolution: 4K.`,
+    media: {
+      kind: "image",
+      src: placeholderImage,
+      alt: "Placeholder for billboard typography hierarchy case.",
+      caption: "Bytt med endelig billboard-typografi case.",
+      isPlaceholder: true,
+    },
+  },
+  {
+    id: "vid-shot-reverse-shot-intervju",
+    title: "Shot-reverse-shot intervju med streng kontinuitetslås",
+    outputType: "video",
+    modelName: "Kling 3.0",
+    difficulty: "Svært vanskelig",
+    challenge: "Eyeline, lysretning og ansiktskonsistens bryter lett mellom vekslende shots.",
+    shortBrief: "Kort intervju-sekvens med tydelig samtalestruktur.",
+    miniTutorial: [
+      "Start med etableringsbilde som romanker.",
+      "Definer shot-reverse-shot og romakse eksplisitt.",
+      "Krev kontinuitetslås på klær, blikkretning og bakgrunnselementer.",
+    ],
+    terms: ["Estableringsbilde", "Shot-reverse-shot", "Romakse", "Kontinuitetslås", "Temporal konsistens video", "Fokusplan-lås"],
+    prompt: `Shot 1 (establishing): Two people seated across a small table in a quiet studio office.
+Shot 2: Medium close-up on person A speaking.
+Shot 3: Reverse medium close-up on person B responding.
+Shot 4: Return to person A.
+
+Dialogue:
+Person A: "Hva er viktigst i en kampanje?"
+Person B: "Klar retning og konsekvent språk."
+
+Constraints:
+Preserve eyeline match across all reverse shots.
+Keep room axis, lighting direction, wardrobe and tabletop props unchanged.
+No identity drift, no background swap.
+
+Style:
+Photoreal documentary-interview aesthetic.
+Duration: 8s.`,
+    media: {
+      kind: "video",
+      posterSrc: placeholderImage,
+      thumbnailSrc: placeholderImage,
+      alt: "Placeholder for shot reverse shot interview case.",
+      caption: "Bytt med endelig intervju-klipp.",
+      isPlaceholder: true,
+    },
+  },
+  {
+    id: "vid-jcut-lcut-lydbro-kontor",
+    title: "Kontorsekvens med J-kutt, L-kutt og lydbro",
+    outputType: "video",
+    modelName: "Kling 3.0",
+    difficulty: "Svært vanskelig",
+    challenge: "Audiovisuell overgang mister ofte synk mellom lyd og bilde.",
+    shortBrief: "Tre korte shots med tydelig narrativ overgang gjennom lyd.",
+    miniTutorial: [
+      "Beskriv beat-ark før shotlisten.",
+      "Marker hvor J-kutt og L-kutt skal skje.",
+      "Legg lydbro i samme prompt for kontinuitet.",
+    ],
+    terms: ["Shotliste", "Beat-ark", "J-kutt", "L-kutt", "Lydbro", "VO-tonekart"],
+    prompt: `Beat structure:
+Beat 1 setup, beat 2 escalation, beat 3 resolve.
+
+Shot 1:
+Office desk close-up, fingers typing quickly.
+Shot 2:
+Medium shot of same person standing and answering phone.
+Shot 3:
+Wide shot as person walks into meeting room.
+
+Audio transition rules:
+Use J-cut from Shot 1 keyboard audio into start of Shot 2.
+Use L-cut of phone voice from Shot 2 into first second of Shot 3.
+Maintain one continuous ambient office room tone as audio bridge.
+
+Style:
+Photoreal branded corporate sequence.
+Duration: 8s.`,
+    media: {
+      kind: "video",
+      posterSrc: placeholderImage,
+      thumbnailSrc: placeholderImage,
+      alt: "Placeholder for J-cut L-cut audio bridge case.",
+      caption: "Bytt med ferdig lydbro-sekvens.",
+      isPlaceholder: true,
+    },
+  },
+  {
+    id: "vid-matchmove-billboard-lock",
+    title: "Matchmove-lås: mobilskjerm til billboard i samme motion",
+    outputType: "video",
+    modelName: "Kling 3.0",
+    difficulty: "Svært vanskelig",
+    challenge: "Komposisjon, tracking og objektpermanens kollapser ved transformasjon mellom flater.",
+    shortBrief: "Reklameovergang der app-UI ‘flyttes’ fra telefon til byskjerm.",
+    miniTutorial: [
+      "Lås kamerabanen med eksplisitt matchmove-lås.",
+      "Hold samme UI-komposisjon i begge flater.",
+      "Bruk plate clean-up guardrail mot artefakter i overgangen.",
+    ],
+    terms: ["Matchmove-lås", "Objekt-permanens", "Plate clean-up", "Geometrilås", "Temporal konsistens", "Instruksjonsdominans"],
+    prompt: `Scene:
+Evening street, one person holding a smartphone while walking toward a large digital billboard.
+
+Action:
+Camera tracks with person.
+Phone screen shows campaign UI.
+At midpoint, the same UI expands onto billboard while preserving layout and typography.
+
+Constraints:
+Match camera movement exactly through the transition.
+Keep UI geometry, alignment and colors stable from phone to billboard.
+No background warp, no object popping, no hand deformation.
+
+Style:
+Photoreal ad-tech sequence with clean compositing feel.
+Duration: 8s.`,
+    media: {
+      kind: "video",
+      posterSrc: placeholderImage,
+      thumbnailSrc: placeholderImage,
+      alt: "Placeholder for matchmove phone to billboard case.",
+      caption: "Bytt med endelig matchmove-overgang.",
+      isPlaceholder: true,
+    },
+  },
+  {
+    id: "vid-lockoff-produkthero-cta",
+    title: "Locked-off produkthero-video med typografisk CTA-lås",
+    outputType: "video",
+    modelName: "Veo 3.1",
+    difficulty: "Vanskelig",
+    challenge: "Tekst og produkt må være 100% stabilt gjennom hele klippet.",
+    shortBrief: "Landing page hero-video med rolig bevegelse i bakgrunnen.",
+    miniTutorial: [
+      "Bruk statisk kamera locked-off som hovedregel.",
+      "Lås CTA-hierarki og tekstplassering eksplisitt.",
+      "Gi produkthero-lys uten å overeksponere etiketten.",
+    ],
+    terms: ["Statisk kamera locked-off", "Produkthero-lys", "Typografisk rasterlås", "CTA-hierarki", "Objektpermanens", "Lyskontrastforhold"],
+    prompt: `Create a 6-second locked-off product hero video for a premium water bottle.
+
+Composition:
+Bottle centered. Background has subtle moving light gradients only.
+
+Text overlay (must stay fixed and readable):
+Headline: "REN ENERGI"
+CTA: "KJØP NÅ"
+
+Constraints:
+No camera movement.
+No text drift, no typography warping, no bottle geometry wobble.
+Keep label readable at all times.
+
+Style:
+Photoreal minimal commercial loop.
+Duration: 6s.`,
+    media: {
+      kind: "video",
+      posterSrc: placeholderImage,
+      thumbnailSrc: placeholderImage,
+      alt: "Placeholder for locked-off product CTA video case.",
+      caption: "Bytt med ferdig produkthero-loop.",
+      isPlaceholder: true,
+    },
+  },
+  {
+    id: "vid-handholdt-jitter-runner",
+    title: "Handholdt mikro-jitter løpesekvens med temporal kontroll",
+    outputType: "video",
+    modelName: "Kling 3.0",
+    difficulty: "Svært vanskelig",
+    challenge: "Organisk kamera uten at motiv og bakgrunn begynner å morphes.",
+    shortBrief: "Energetisk sportsreklame med kontrollert håndholdt følelse.",
+    miniTutorial: [
+      "Definer handholdt mikro-jitter som subtil, ikke kaotisk.",
+      "Angi optisk bevegelsesuskarphet i stedet for AI-smear.",
+      "Lås objektpermanens på klær og sko under raske steg.",
+    ],
+    terms: ["Handholdt mikro-jitter", "Optisk bevegelsesuskarphet", "Temporal konsistens video", "Objektpermanens", "Fokusplan", "Kontinuitetslås"],
+    prompt: `Scene:
+Urban running track at sunrise, one runner in black windbreaker and red shoes.
+
+Action:
+Runner accelerates from jog to sprint over 8 seconds.
+
+Camera:
+Handheld micro-jitter feel from side-front angle, but controlled and readable.
+Use natural optical motion blur on limbs only.
+
+Constraints:
+Preserve runner identity, outfit colors and shoe details through fast motion.
+No body warping, no background morphing, no frame-to-frame texture flicker.
+
+Style:
+Photoreal athletic commercial sequence.
+Duration: 8s.`,
+    media: {
+      kind: "video",
+      posterSrc: placeholderImage,
+      thumbnailSrc: placeholderImage,
+      alt: "Placeholder for handheld micro jitter runner case.",
+      caption: "Bytt med endelig sportssekvens.",
+      isPlaceholder: true,
+    },
+  },
+  {
+    id: "vid-hollandsk-vinkel-paradoks",
+    title: "Hollandsk vinkel + visuell paradoks uten kaos",
+    outputType: "video",
+    modelName: "Kling 3.0",
+    difficulty: "Svært vanskelig",
+    challenge: "Sterk stilisering gir ofte ukontrollert geometri og narrativ kollaps.",
+    shortBrief: "Konseptuell annonse med kontrollert ulogikk i kort format.",
+    miniTutorial: [
+      "Hold én tydelig paradoksregel for hele scenen.",
+      "Bruk hollandsk vinkel med fast grad, ikke tilfeldig tilt.",
+      "Kombiner narrativ friksjon med lesbar kinetisk komposisjon.",
+    ],
+    terms: ["Hollandsk vinkel", "Visuell paradoks", "Kontrollert ulogikk", "Narrativ friksjon", "Kinetisk komposisjon", "Komposisjonsdrift"],
+    prompt: `Scene:
+Corporate hallway where gravity appears slightly tilted but architecture remains intact.
+
+Camera:
+Dutch angle locked at 18 degrees through entire clip.
+
+Action:
+One person walks straight while hanging lights sway subtly in opposite direction, creating controlled visual paradox.
+
+Constraints:
+Keep hallway geometry stable.
+No random shape warping.
+Maintain one consistent paradox rule only.
+
+Style:
+Photoreal conceptual ad mood, sharp details, coherent motion.
+Duration: 8s.`,
+    media: {
+      kind: "video",
+      posterSrc: placeholderImage,
+      thumbnailSrc: placeholderImage,
+      alt: "Placeholder for Dutch angle controlled paradox case.",
+      caption: "Bytt med endelig paradoks-klipp.",
+      isPlaceholder: true,
+    },
+  },
+  {
+    id: "vid-dyp-fokus-crowd-stage",
+    title: "Dyp fokus scene med crowd og stage-kontinuitet",
+    outputType: "video",
+    modelName: "Kling 3.0",
+    difficulty: "Svært vanskelig",
+    challenge: "Dyp fokus i komplekse scener skaper ofte bakgrunnsartefakter og identitetsbytte.",
+    shortBrief: "Eventfilm med både forgrunn, mellomgrunn og bakgrunn i fokus.",
+    miniTutorial: [
+      "Definer dyp fokus som eksplisitt kvalitetskrav.",
+      "Bruk etableringsbilde som romanker i første sekund.",
+      "Lås objektpermanens på sceneelementer og hovedperson.",
+    ],
+    terms: ["Dyp fokus", "Estableringsbilde", "Romakse", "Objektpermanens", "Temporal konsistens video", "Kontinuitetslås"],
+    prompt: `Scene:
+Indoor launch event, stage in background, audience in foreground, presenter in midground.
+
+Camera plan:
+Start with wide establishing frame for 1 second.
+Slow push toward presenter while keeping deep focus across all depth layers.
+
+Constraints:
+Presenter identity remains constant.
+Stage screen graphics remain consistent.
+Audience silhouettes should not morph between frames.
+
+Style:
+Photoreal event commercial.
+No focus pumping, no background swap, no crowd flicker.
+Duration: 8s.`,
+    media: {
+      kind: "video",
+      posterSrc: placeholderImage,
+      thumbnailSrc: placeholderImage,
+      alt: "Placeholder for deep focus crowd stage case.",
+      caption: "Bytt med ferdig eventsekvens i dyp fokus.",
+      isPlaceholder: true,
+    },
+  },
+  {
+    id: "vid-cel-shading-animasjon-reklame",
+    title: "Cel shading reklameklipp med ren silhuettlesbarhet",
+    outputType: "video",
+    modelName: "Kling 3.0",
+    difficulty: "Vanskelig",
+    challenge: "Stilisert animasjon mister ofte timing, inbetweening og silhuettklarhet.",
+    shortBrief: "Kort karakteranimasjon for SoMe-annonse i stylized look.",
+    miniTutorial: [
+      "Lås stilanker: cel shading + linjeart.",
+      "Beskriv nøkkelposeringer før inbetweening.",
+      "Legg inn ease in / ease out for troverdig timing.",
+    ],
+    terms: ["Cel shading", "Linjeart", "Nøkkelposering", "Inbetweening", "Ease in / ease out", "Silhuettlesbarhet"],
+    prompt: `Create a stylized cel-shaded ad clip featuring one mascot character presenting a product box.
+
+Animation structure:
+Key pose 1: Mascot points to product.
+Key pose 2: Mascot steps forward and lifts box.
+Key pose 3: Mascot nods and presents CTA gesture.
+
+Motion:
+Use clean inbetweening and clear ease in/ease out.
+Maintain silhouette readability in every key pose.
+
+Visual style:
+Bold line art, flat color regions, controlled highlights.
+No frame jitter, no anatomy warping.
+
+Duration: 6s.`,
+    media: {
+      kind: "video",
+      posterSrc: placeholderImage,
+      thumbnailSrc: placeholderImage,
+      alt: "Placeholder for cel shading animation ad case.",
+      caption: "Bytt med endelig cel-shading klipp.",
+      isPlaceholder: true,
+    },
+  },
+  {
+    id: "vid-temporal-denoise-night-drive",
+    title: "Nattkjøring med temporal denoise uten ghosting",
+    outputType: "video",
+    modelName: "Veo 3.1",
+    difficulty: "Svært vanskelig",
+    challenge: "Mørke scener med lysglimt gir lett støy, ghosting og detaljtap.",
+    shortBrief: "Automotive nattsekvens med høy visuell stabilitet.",
+    miniTutorial: [
+      "Definer lav nøkkel-kontrast med kontrollerte høylys.",
+      "Be om temporal denoise uten å smøre teksturer.",
+      "Lås panelgeometri og reflekskontinuitet gjennom klippet.",
+    ],
+    terms: ["Lav nøkkel kontrastdominant", "Temporal denoise", "Optisk bevegelsesuskarphet", "Objektpermanens", "Materialitet", "Temporal konsistens video"],
+    prompt: `Create an 8-second night driving commercial shot of a dark sedan on wet asphalt.
+
+Lighting:
+Low-key contrast dominant, with passing streetlight highlights and controlled reflections on body panels.
+
+Camera:
+Side tracking shot at moderate speed, smooth stabilized movement.
+Natural optical motion blur only.
+
+Quality constraints:
+Apply temporal noise stability while preserving fine texture in paint and road surface.
+No ghost trails, no panel warping, no light streak artifacts.
+
+Style:
+Photoreal automotive commercial grade.
+Duration: 8s.`,
+    media: {
+      kind: "video",
+      posterSrc: placeholderImage,
+      thumbnailSrc: placeholderImage,
+      alt: "Placeholder for temporal denoise night drive case.",
+      caption: "Bytt med ferdig nattkjøring-klipp.",
+      isPlaceholder: true,
+    },
+  },
 ];

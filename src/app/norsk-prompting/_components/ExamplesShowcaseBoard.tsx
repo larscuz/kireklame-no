@@ -189,8 +189,8 @@ export default function ExamplesShowcaseBoard({ items }: Props) {
                   onClick={() => setFilter(option.id as FilterMode)}
                   className={`rounded-full border px-3 py-1 text-xs font-semibold uppercase tracking-[0.12em] ${
                     active
-                      ? "border-zinc-300/35 bg-zinc-300/10 text-white"
-                      : "border-zinc-600 text-zinc-300"
+                      ? "border-zinc-300/45 bg-zinc-300/18 !text-white"
+                      : "border-zinc-600 bg-zinc-800/70 !text-white/85 hover:!text-white"
                   }`}
                 >
                   {option.label}
