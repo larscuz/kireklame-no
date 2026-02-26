@@ -1,3 +1,9 @@
+import FreeModelsRankingBoard from "../_components/FreeModelsRankingBoard";
+import type {
+  FreeModelRankingCategory,
+  FreeModelRankingCategoryId,
+  FreeModelRankingSignals,
+} from "../_components/FreeModelsRankingTypes";
 import NorskPromptingShell from "../_components/NorskPromptingShell";
 import { siteMeta } from "@/lib/seo";
 import { absoluteUrl, buildArticleJsonLd, buildBreadcrumbJsonLd } from "@/lib/norsk-prompting/seo";
@@ -43,10 +49,26 @@ const imageModels: ModelLink[] = [
   { name: "SeaArt AI", href: "https://www.seaart.ai/", note: "Gratisnivå kan være tilgjengelig." },
   { name: "NightCafe Creator", href: "https://creator.nightcafe.studio/", note: "Gratis kreditter kan være tilgjengelig." },
   { name: "WOMBO Dream", href: "https://dream.ai/", note: "Gratisnivå kan være tilgjengelig." },
-  { name: "Fotor AI Image Generator", href: "https://www.fotor.com/ai-image-generator/", note: "Gratisnivå kan være tilgjengelig." },
-  { name: "Picsart AI Image Generator", href: "https://picsart.com/ai-image-generator/", note: "Gratisnivå kan være tilgjengelig." },
-  { name: "Copilot Designer", href: "https://copilot.microsoft.com/images/create", note: "Gratis tilgang med konto." },
-  { name: "Canva AI Image Generator", href: "https://www.canva.com/ai-image-generator/", note: "Gratisnivå kan være tilgjengelig." },
+  {
+    name: "Fotor AI Image Generator",
+    href: "https://www.fotor.com/ai-image-generator/",
+    note: "Gratisnivå kan være tilgjengelig.",
+  },
+  {
+    name: "Picsart AI Image Generator",
+    href: "https://picsart.com/ai-image-generator/",
+    note: "Gratisnivå kan være tilgjengelig.",
+  },
+  {
+    name: "Copilot Designer",
+    href: "https://copilot.microsoft.com/images/create",
+    note: "Gratis tilgang med konto.",
+  },
+  {
+    name: "Canva AI Image Generator",
+    href: "https://www.canva.com/ai-image-generator/",
+    note: "Gratisnivå kan være tilgjengelig.",
+  },
   { name: "Mage", href: "https://www.mage.space/", note: "Gratisnivå tilgjengelig." },
   { name: "getimg.ai", href: "https://getimg.ai/", note: "Gratisnivå kan være tilgjengelig." },
   { name: "Clipdrop", href: "https://clipdrop.co/", note: "Gratisnivå kan være tilgjengelig." },
@@ -55,17 +77,37 @@ const imageModels: ModelLink[] = [
 ];
 
 const videoModels: ModelLink[] = [
-  { name: "Google Flow", href: "https://labs.google/fx/tools/flow", note: "Google Labs-verktøy; gratisnivå/krav varierer." },
+  {
+    name: "Google Flow",
+    href: "https://labs.google/fx/tools/flow",
+    note: "Google Labs-verktøy; gratisnivå/krav varierer.",
+  },
   { name: "Kling AI", href: "https://klingai.com/", note: "Gratis kreditter kan være tilgjengelig." },
-  { name: "Runway", href: "https://app.runwayml.com/", note: "Gratisnivå kan være tilgjengelig med begrensninger." },
+  {
+    name: "Runway",
+    href: "https://app.runwayml.com/",
+    note: "Gratisnivå kan være tilgjengelig med begrensninger.",
+  },
   { name: "Pika", href: "https://pika.art/", note: "Gratisnivå tilgjengelig." },
-  { name: "Luma Dream Machine", href: "https://dream-machine.lumalabs.ai/", note: "Gratisnivå tilgjengelig." },
+  {
+    name: "Luma Dream Machine",
+    href: "https://dream-machine.lumalabs.ai/",
+    note: "Gratisnivå tilgjengelig.",
+  },
   { name: "Sora", href: "https://openai.com/sora", note: "Tilgjengelighet varierer etter plan/region." },
   { name: "Pollo AI", href: "https://pollo.ai/", note: "Gratisnivå kan være tilgjengelig." },
   { name: "Hedra", href: "https://www.hedra.com/", note: "Gratisnivå kan være tilgjengelig." },
   { name: "InVideo AI", href: "https://ai.invideo.io/", note: "Gratisnivå kan være tilgjengelig." },
-  { name: "VEED AI Video", href: "https://www.veed.io/tools/ai-video/ai-video-maker", note: "Gratisnivå kan være tilgjengelig." },
-  { name: "CapCut AI Video", href: "https://www.capcut.com/tools/ai-video-maker/", note: "Gratisnivå kan være tilgjengelig." },
+  {
+    name: "VEED AI Video",
+    href: "https://www.veed.io/tools/ai-video/ai-video-maker",
+    note: "Gratisnivå kan være tilgjengelig.",
+  },
+  {
+    name: "CapCut AI Video",
+    href: "https://www.capcut.com/tools/ai-video-maker/",
+    note: "Gratisnivå kan være tilgjengelig.",
+  },
   { name: "HeyGen", href: "https://www.heygen.com/", note: "Gratisnivå kan være tilgjengelig." },
   { name: "Hailuo AI", href: "https://hailuoai.video/", note: "Gratis kreditter kan være tilgjengelig." },
   { name: "PixVerse", href: "https://app.pixverse.ai/", note: "Gratisnivå tilgjengelig." },
@@ -77,7 +119,11 @@ const videoModels: ModelLink[] = [
 
 const audioModels: ModelLink[] = [
   { name: "Sonauto", href: "https://sonauto.ai/", note: "Gratisnivå kan være tilgjengelig." },
-  { name: "Google MusicFX", href: "https://labs.google/fx/tools/music-fx", note: "Tilgjengelighet varierer etter region." },
+  {
+    name: "Google MusicFX",
+    href: "https://labs.google/fx/tools/music-fx",
+    note: "Tilgjengelighet varierer etter region.",
+  },
   { name: "Suno", href: "https://suno.com/", note: "Gratisnivå tilgjengelig." },
   { name: "Udio", href: "https://www.udio.com/", note: "Gratisnivå tilgjengelig." },
   { name: "ElevenLabs", href: "https://elevenlabs.io/", note: "Gratisnivå tilgjengelig." },
@@ -93,34 +139,159 @@ const audioModels: ModelLink[] = [
   { name: "Riffusion", href: "https://www.riffusion.com/", note: "Gratisnivå kan være tilgjengelig." },
 ];
 
+function clampScore(value: number): number {
+  return Math.max(0, Math.min(100, value));
+}
+
+function slugify(value: string): string {
+  return value
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
+}
+
+const baseSignalsByCategory: Record<FreeModelRankingCategoryId, FreeModelRankingSignals> = {
+  text: {
+    serpVisibility: 72,
+    platformTrust: 72,
+    freeTierStrength: 74,
+    momentum: 70,
+    reliability: 74,
+    communityDemand: 71,
+  },
+  image: {
+    serpVisibility: 66,
+    platformTrust: 68,
+    freeTierStrength: 70,
+    momentum: 69,
+    reliability: 70,
+    communityDemand: 68,
+  },
+  video: {
+    serpVisibility: 64,
+    platformTrust: 67,
+    freeTierStrength: 65,
+    momentum: 74,
+    reliability: 66,
+    communityDemand: 72,
+  },
+  audio: {
+    serpVisibility: 60,
+    platformTrust: 64,
+    freeTierStrength: 68,
+    momentum: 67,
+    reliability: 66,
+    communityDemand: 63,
+  },
+};
+
+const signalProfiles: Array<{ pattern: RegExp; delta: Partial<FreeModelRankingSignals> }> = [
+  {
+    pattern: /(chatgpt|openai|sora|runway|gemini|google|microsoft|copilot|meta ai|claude|anthropic)/i,
+    delta: { serpVisibility: 18, platformTrust: 14, communityDemand: 12, reliability: 10 },
+  },
+  {
+    pattern: /(kling|pika|luma|vidu|pixverse|haiper|ideogram|leonardo|firefly|elevenlabs|suno|udio)/i,
+    delta: { momentum: 10, communityDemand: 8, platformTrust: 6, serpVisibility: 6 },
+  },
+  {
+    pattern: /(openrouter|hugging|deepseek|qwen|kimi|z\.ai|duck\.ai|mistral|perplexity)/i,
+    delta: { freeTierStrength: 7, communityDemand: 6, momentum: 4, serpVisibility: 3 },
+  },
+  {
+    pattern: /(labs\.google|beta|preview)/i,
+    delta: { momentum: 6, reliability: -5, freeTierStrength: -4 },
+  },
+  {
+    pattern: /(dream-machine|stableaudio|aiva|mubert|boomy|riffusion|sonauto|musicfx)/i,
+    delta: { momentum: 5, freeTierStrength: 3 },
+  },
+];
+
+function applyDelta(
+  base: FreeModelRankingSignals,
+  delta: Partial<FreeModelRankingSignals>
+): FreeModelRankingSignals {
+  return {
+    serpVisibility: clampScore(base.serpVisibility + (delta.serpVisibility ?? 0)),
+    platformTrust: clampScore(base.platformTrust + (delta.platformTrust ?? 0)),
+    freeTierStrength: clampScore(base.freeTierStrength + (delta.freeTierStrength ?? 0)),
+    momentum: clampScore(base.momentum + (delta.momentum ?? 0)),
+    reliability: clampScore(base.reliability + (delta.reliability ?? 0)),
+    communityDemand: clampScore(base.communityDemand + (delta.communityDemand ?? 0)),
+  };
+}
+
+function deriveSignals(categoryId: FreeModelRankingCategoryId, item: ModelLink): FreeModelRankingSignals {
+  let signals = { ...baseSignalsByCategory[categoryId] };
+  const fingerprint = `${item.name} ${item.href}`.toLowerCase();
+  const note = item.note.toLowerCase();
+
+  for (const profile of signalProfiles) {
+    if (profile.pattern.test(fingerprint)) {
+      signals = applyDelta(signals, profile.delta);
+    }
+  }
+
+  if (note.includes("varierer")) {
+    signals = applyDelta(signals, { freeTierStrength: -11, reliability: -6 });
+  }
+  if (note.includes("begrens")) {
+    signals = applyDelta(signals, { freeTierStrength: -9 });
+  }
+  if (note.includes("kreditter")) {
+    signals = applyDelta(signals, { freeTierStrength: -4, momentum: 3 });
+  }
+  if (note.includes("region")) {
+    signals = applyDelta(signals, { freeTierStrength: -10, reliability: -5 });
+  }
+  if (note.includes("open-source")) {
+    signals = applyDelta(signals, { freeTierStrength: 8, communityDemand: 7 });
+  }
+  if (note.includes("gratisnivå tilgjengelig") || note.includes("gratis tilgang")) {
+    signals = applyDelta(signals, { freeTierStrength: 7 });
+  }
+
+  if (item.href.includes("labs.google")) {
+    signals = applyDelta(signals, { momentum: 5, reliability: -3 });
+  }
+
+  return signals;
+}
+
+function buildCategory(
+  id: FreeModelRankingCategoryId,
+  title: string,
+  items: ModelLink[]
+): FreeModelRankingCategory {
+  return {
+    id,
+    title,
+    items: items.map((item, index) => {
+      const slug = slugify(item.name) || `model-${index + 1}`;
+      return {
+        id: `${id}-${slug}`,
+        name: item.name,
+        href: item.href,
+        note: item.note,
+        signals: deriveSignals(id, item),
+      };
+    }),
+  };
+}
+
+const rankingCategories: FreeModelRankingCategory[] = [
+  buildCategory("text", "TEKT", textModels),
+  buildCategory("image", "BILDE", imageModels),
+  buildCategory("video", "VIDEO", videoModels),
+  buildCategory("audio", "LYD", audioModels),
+];
+
 export const metadata = siteMeta({
   title: "Gratis modeller | Norsk Prompting",
   description: "Lenker til store tekst-, bilde-, video- og lydmodeller med gratisnivå eller gratis kreditter.",
   path: "/norsk-prompting/changelog",
 });
-
-function ModelSection({ title, items }: { title: string; items: ModelLink[] }) {
-  return (
-    <article className="np-node-surface min-w-0 rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))]/90 p-4 pt-7 shadow-[0_10px_30px_rgba(2,6,23,0.18)]">
-      <h2 className="text-xl font-semibold tracking-tight">{title}</h2>
-      <div className="mt-3 grid gap-2">
-        {items.map((item) => (
-          <a
-            key={item.name}
-            href={item.href}
-            target="_blank"
-            rel="noreferrer"
-            className="block w-full overflow-hidden rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/70 px-3 py-2 transition hover:border-zinc-300/40 hover:bg-zinc-300/08"
-          >
-            <p className="text-sm font-semibold text-[rgb(var(--fg))]">{item.name}</p>
-            <p className="mt-1 break-all text-xs text-[rgb(var(--muted))]">{item.href}</p>
-            <p className="mt-1 text-xs text-[rgb(var(--muted))]">{item.note}</p>
-          </a>
-        ))}
-      </div>
-    </article>
-  );
-}
 
 export default function NorskPromptingChangelogPage() {
   const description =
@@ -151,12 +322,7 @@ export default function NorskPromptingChangelogPage() {
         </p>
       </article>
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <ModelSection title="TEKT" items={textModels} />
-        <ModelSection title="BILDE" items={imageModels} />
-        <ModelSection title="VIDEO" items={videoModels} />
-        <ModelSection title="LYD" items={audioModels} />
-      </div>
+      <FreeModelsRankingBoard categories={rankingCategories} snapshotLabel="26. februar 2026" />
     </NorskPromptingShell>
   );
 }

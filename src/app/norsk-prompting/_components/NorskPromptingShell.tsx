@@ -7,6 +7,7 @@ type Props = {
   description: string;
   children: ReactNode;
   jsonLd?: unknown[];
+  showSectionNav?: boolean;
 };
 
 export default function NorskPromptingShell({
@@ -15,6 +16,7 @@ export default function NorskPromptingShell({
   description,
   children,
   jsonLd = [],
+  showSectionNav = true,
 }: Props) {
   return (
     <main className="np-shell min-h-screen bg-[rgb(var(--bg))] text-[rgb(var(--fg))]">
@@ -61,7 +63,7 @@ export default function NorskPromptingShell({
       </section>
 
       <section className="mx-auto max-w-6xl space-y-4 px-4 py-6 sm:py-8">
-        <SectionNav currentPath={currentPath} />
+        {showSectionNav ? <SectionNav currentPath={currentPath} /> : null}
         <div className="np-node-grid">{children}</div>
       </section>
     </main>

@@ -1,33 +1,22 @@
 import Link from "next/link";
-import { operativeExamples } from "@/data/norskPrompting/operativeExamples";
+import ExamplesShowcaseBoard from "../_components/ExamplesShowcaseBoard";
 import NorskPromptingShell from "../_components/NorskPromptingShell";
-import SearchPanel from "../_components/SearchPanel";
+import { operativeExamples } from "@/data/norskPrompting/operativeExamples";
 import { siteMeta } from "@/lib/seo";
 import { absoluteUrl, buildArticleJsonLd, buildBreadcrumbJsonLd } from "@/lib/norsk-prompting/seo";
-
-const outputTypeLabel = {
-  image: "Bilde",
-  video: "Video",
-  text: "Tekst",
-} as const;
+import { loadExampleShowcaseItems } from "@/lib/norsk-prompting/exampleShowcaseCms";
 
 export const metadata = siteMeta({
   title: "Eksempler | Norsk Prompting",
   description:
-    "Operative caser med prompt laget i prompt-utvider, fagbegreper fra ordforråd, resultatbilde og teknisk analyse.",
+    "Avanserte bilde- og videoeksempler med konkrete prompts, mini-tutorial og media-preview for krevende KI-scenarier.",
   path: "/norsk-prompting/eksempler",
 });
 
-export default function NorskPromptingEksemplerPage() {
+export default async function NorskPromptingEksemplerPage() {
   const description =
-    "Eksempler viser ferdig prompt, brukte fagbegreper, resultat og hvorfor resultatet ble kontrollert. Her valideres metodikken operativt.";
-
-  const searchItems = operativeExamples.map((example) => ({
-    type: "eksempel" as const,
-    title: example.title,
-    description: example.shortBrief,
-    href: `/norsk-prompting/eksempler/${example.slug}`,
-  }));
+    "Eksempler for vanskelige KI-caser: prompt-oppskrift, mini-tutorial og media-preview. Fokus er kontroll, konsistens og teknisk presisjon.";
+  const showcase = await loadExampleShowcaseItems();
 
   return (
     <NorskPromptingShell
@@ -36,7 +25,7 @@ export default function NorskPromptingEksemplerPage() {
       description={description}
       jsonLd={[
         buildArticleJsonLd({
-          headline: "Operative eksempler for Norsk Prompting",
+          headline: "Avanserte eksempler for Norsk Prompting",
           description,
           path: "/norsk-prompting/eksempler",
           dateModified: "2026-02-26",
@@ -48,35 +37,37 @@ export default function NorskPromptingEksemplerPage() {
         ]),
       ]}
     >
-      <SearchPanel items={searchItems} showResultsOnEmptyQuery={false} />
+      {showcase.source === "static" ? (
+        <section className="np-node-surface rounded-2xl border border-amber-300/35 bg-amber-500/10 p-4">
+          <p className="text-sm text-amber-100">
+            Eksempler vises fra statisk fallback. {showcase.tableMissing ? "Kjør SQL for `ki_skole_examples` i Supabase." : "CMS-data kunne ikke hentes akkurat nå."}
+          </p>
+          {showcase.errorMessage ? (
+            <p className="mt-1 text-xs text-amber-200/90">Detalj: {showcase.errorMessage}</p>
+          ) : null}
+        </section>
+      ) : null}
+
+      <ExamplesShowcaseBoard items={showcase.items} />
 
       <section className="np-node-surface rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))]/90 p-4 pt-7">
-        <h2 className="text-xl font-semibold tracking-tight">Struktur for hvert eksempel</h2>
-        <ol className="mt-2 list-decimal space-y-1 pl-5 text-sm text-[rgb(var(--fg))]/90">
-          <li>Kort briefing (mediefaglig).</li>
-          <li>Brukte fagbegreper fra ordforråd.</li>
-          <li>Ferdig prompt fra prompt-utvider.</li>
-          <li>Resultatbilde.</li>
-          <li>Teknisk analyse av hvorfor det fungerte.</li>
-        </ol>
+        <h2 className="text-lg font-semibold tracking-tight">Detaljsider med analyse</h2>
+        <p className="mt-1 text-sm text-[rgb(var(--muted))]">
+          Disse detaljsidene kan brukes for mer inngående faganalyse per case.
+        </p>
+        <div className="mt-3 grid gap-2 md:grid-cols-2">
+          {operativeExamples.map((example) => (
+            <Link
+              key={example.slug}
+              href={`/norsk-prompting/eksempler/${example.slug}`}
+              className="rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/68 px-3 py-2 text-sm transition hover:border-zinc-300/40 hover:bg-zinc-300/08"
+            >
+              <p className="font-semibold">{example.title}</p>
+              <p className="mt-1 text-xs text-[rgb(var(--muted))]">{example.shortBrief}</p>
+            </Link>
+          ))}
+        </div>
       </section>
-
-      <div className="grid gap-3 md:grid-cols-2">
-        {operativeExamples.map((example) => (
-          <Link
-            key={example.slug}
-            href={`/norsk-prompting/eksempler/${example.slug}`}
-            className="np-node-surface rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))]/90 p-4 pt-7 shadow-[0_10px_30px_rgba(2,6,23,0.18)] transition hover:-translate-y-px hover:border-zinc-300/35"
-          >
-            <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">
-              {outputTypeLabel[example.outputType]} · {example.modelName}
-            </p>
-            <h2 className="mt-2 text-lg font-semibold tracking-tight">{example.title}</h2>
-            <p className="mt-2 text-sm text-[rgb(var(--muted))]">{example.shortBrief}</p>
-            <p className="mt-3 text-xs text-[rgb(var(--muted))]">Resultat og analyse tilgjengelig</p>
-          </Link>
-        ))}
-      </div>
     </NorskPromptingShell>
   );
 }

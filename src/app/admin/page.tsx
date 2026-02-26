@@ -62,6 +62,11 @@ export default async function AdminDashboardPage() {
           desc="Visuell kontroll på /ki-reklame: legg til, fjern og sjekk duplikater."
         />
         <Card
+          href="/admin/ki-skole"
+          title="KI-skole CMS"
+          desc="Visuell styring av Eksempler med prompts, metadata og mediaopplasting."
+        />
+        <Card
           href="/admin/settings"
           title="Innstillinger"
           desc="Featured selskap + hero video på forsiden."
