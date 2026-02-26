@@ -214,9 +214,6 @@ export default function ExamplesShowcaseBoard({ items }: Props) {
                   <span className="rounded-full border border-zinc-300/35 bg-zinc-300/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-white">
                     {item.outputType === "video" ? "Video" : "Bilde"}
                   </span>
-                  <span className="rounded-full border border-zinc-600 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-zinc-300">
-                    {item.difficulty}
-                  </span>
                   <span className="rounded-full border border-zinc-600 px-2 py-0.5 text-[10px] uppercase tracking-[0.12em] text-zinc-300">
                     {item.modelName}
                   </span>
