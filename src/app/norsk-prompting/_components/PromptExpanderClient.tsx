@@ -129,6 +129,10 @@ export default function PromptExpanderClient() {
         .trim(),
     [editableSections]
   );
+  const hasPromptOutput = fullPrompt.length > 0;
+  const hasEditableSections = editableSections.length > 0;
+  const hasInjectedTerms = visibleInjectedTerms.length > 0;
+  const hasLearningPoints = visibleLearningPoints.length > 0;
 
   useEffect(() => {
     if (!hasGenerated) {
@@ -144,11 +148,19 @@ export default function PromptExpanderClient() {
     );
   }
 
+  function generatePrompt() {
+    setActiveRequest(draftRequest);
+    setHasGenerated(true);
+  }
+
   return (
     <section className="np-node-surface rounded-3xl border border-[rgb(var(--border))] bg-[rgb(var(--card))]/92 p-4 pt-7 shadow-[0_18px_60px_rgba(2,6,23,0.3)] sm:p-6">
       <div>
-        <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[rgb(var(--muted))]">Prompt Hjelper</p>
-        <h1 className="mt-2 text-3xl font-semibold tracking-tight">Prompt Hjelper – for medieelever</h1>
+        <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[rgb(var(--muted))]">Arbeidsflate</p>
+        <h2 className="mt-2 text-3xl font-semibold tracking-tight text-black">Bygg pro-prompten din</h2>
+        <p className="mt-2 text-sm text-black">
+          Start med en kort idé, velg stil og detaljer, og generer en ferdig prompt til bilde, video eller tekst.
+        </p>
       </div>
 
       <div className="mt-4 grid gap-4 lg:grid-cols-3 lg:items-start">
@@ -179,8 +191,11 @@ export default function PromptExpanderClient() {
           </div>
 
           <div className="rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/65 p-3">
-            <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">2. Skriv ideen din</p>
+            <label htmlFor="np-idea-input" className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">
+              2. Skriv ideen din
+            </label>
             <textarea
+              id="np-idea-input"
               value={input}
               onChange={(event) => setInput(event.target.value)}
               className="mt-2 min-h-36 w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))] px-3 py-3 text-sm shadow-inner outline-none placeholder:text-[rgb(var(--muted))] placeholder:opacity-80 focus:border-zinc-300 focus:placeholder-transparent"
@@ -244,8 +259,11 @@ export default function PromptExpanderClient() {
 
           {isVisualOutput ? (
             <div className="rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/65 p-3">
-              <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">5. Format (valgfritt)</p>
+              <label htmlFor="np-format-select" className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">
+                5. Format (valgfritt)
+              </label>
               <select
+                id="np-format-select"
                 value={format}
                 onChange={(event) => setFormat(event.target.value as FormatOption)}
                 className="mt-2 w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-3 py-2 text-sm"
@@ -261,11 +279,8 @@ export default function PromptExpanderClient() {
           <button
             id={updateButtonId}
             type="button"
-            onClick={() => {
-              setActiveRequest(draftRequest);
-              setHasGenerated(true);
-            }}
-            className="inline-flex w-full items-center justify-center rounded-xl border border-zinc-300/40 bg-zinc-300/15 px-5 py-2.5 text-sm font-semibold text-zinc-100 shadow-[0_10px_24px_rgba(0,0,0,0.25)] transition hover:bg-zinc-300/25 disabled:cursor-not-allowed disabled:opacity-50"
+            onClick={generatePrompt}
+            className="np-action-btn inline-flex w-full items-center justify-center rounded-xl border border-zinc-300/40 bg-zinc-300/15 px-5 py-2.5 text-sm font-semibold text-black shadow-[0_10px_24px_rgba(0,0,0,0.25)] transition hover:bg-zinc-300/25 disabled:cursor-not-allowed disabled:opacity-100"
             disabled={!canGenerate}
           >
             Lag ferdig pro-prompt
@@ -276,34 +291,57 @@ export default function PromptExpanderClient() {
           <div className="grid gap-3 lg:grid-cols-2">
             <div className="rounded-2xl border border-zinc-300/30 bg-gradient-to-br from-zinc-500/20 via-zinc-500/5 to-sky-400/12 p-4">
               <div className="flex flex-wrap items-center justify-between gap-2">
-                <p className="text-sm font-semibold">Kopier ferdig pro-prompt</p>
-                <CopyTextButton value={fullPrompt} label="Kopier prompt" />
+                <p className="text-sm font-semibold text-black">Kopier ferdig pro-prompt</p>
+                <div className="flex flex-wrap items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={generatePrompt}
+                    className="np-action-btn inline-flex items-center justify-center rounded-lg border border-zinc-300/40 bg-zinc-300/15 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.11em] text-black transition hover:bg-zinc-300/25 disabled:cursor-not-allowed disabled:opacity-100"
+                    disabled={!canGenerate}
+                  >
+                    Lag ferdig pro-prompt
+                  </button>
+                  <CopyTextButton
+                    value={fullPrompt}
+                    label="Kopier prompt"
+                    disabled={!hasPromptOutput}
+                    className="text-black disabled:opacity-100"
+                  />
+                </div>
               </div>
               <pre className="mt-3 max-h-[36rem] overflow-auto whitespace-pre-wrap rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/70 p-3 text-sm text-[rgb(var(--fg))]/90">
                 {fullPrompt}
               </pre>
-              <p className="mt-2 text-xs text-[rgb(var(--muted))]">
-                Lim inn i ChatGPT, Midjourney, Runway, Kling eller annet verktøy.
+              <p className="mt-2 text-xs text-black">
+                {hasPromptOutput
+                  ? "Lim inn i ChatGPT, Midjourney, Runway, Kling eller annet verktøy."
+                  : "Prompten vises her etter at du trykker \"Lag ferdig pro-prompt\"."}
               </p>
             </div>
 
             <article className="rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/65 p-3">
-              <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">
+              <p className="text-xs font-semibold uppercase tracking-[0.12em] text-black">
                 Redigerbare prompt-seksjoner
               </p>
               <div className="mt-2 max-h-[36rem] space-y-3 overflow-auto pr-1">
-                {editableSections.map((section) => (
-                  <label key={section.id} className="block">
-                    <span className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">
-                      {section.title}
-                    </span>
-                    <textarea
-                      value={section.content}
-                      onChange={(event) => updateSection(section.id, event.target.value)}
-                      className="mt-1 min-h-20 w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-3 py-2 text-sm outline-none focus:border-zinc-300"
-                    />
-                  </label>
-                ))}
+                {hasEditableSections ? (
+                  editableSections.map((section) => (
+                    <label key={section.id} className="block">
+                      <span className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">
+                        {section.title}
+                      </span>
+                      <textarea
+                        value={section.content}
+                        onChange={(event) => updateSection(section.id, event.target.value)}
+                        className="mt-1 min-h-20 w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-3 py-2 text-sm outline-none focus:border-zinc-300"
+                      />
+                    </label>
+                  ))
+                ) : (
+                  <p className="text-sm text-black">
+                    Seksjonene vises her etter at du har laget en pro-prompt.
+                  </p>
+                )}
               </div>
             </article>
           </div>
@@ -316,27 +354,34 @@ export default function PromptExpanderClient() {
               <button
                 type="button"
                 onClick={() => setShowInjectedTerms((current) => !current)}
-                className="rounded-lg border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/60 px-3 py-1 text-xs font-semibold uppercase tracking-[0.08em] text-[rgb(var(--muted))] hover:text-zinc-100"
+                disabled={!hasInjectedTerms}
+                className="rounded-lg border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/60 px-3 py-1 text-xs font-semibold uppercase tracking-[0.08em] text-[rgb(var(--muted))] hover:text-zinc-100 disabled:cursor-not-allowed disabled:opacity-50"
               >
-                {showInjectedTerms ? "Skjul" : "Vis"}
+                {hasInjectedTerms ? (showInjectedTerms ? "Skjul" : "Vis") : "Ingen"}
               </button>
             </div>
             {showInjectedTerms ? (
               <div className="mt-3 space-y-3">
-                {visibleInjectedTerms.map((term) => (
-                  <article key={term.slug} className="rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))]/70 p-3">
-                    <p className="text-sm font-semibold">{term.term_no}</p>
-                    <p className="mt-1 text-xs text-[rgb(var(--muted))]">
-                      <span className="font-semibold text-zinc-100">Hva det betyr:</span> {term.definition_no}
-                    </p>
-                    <p className="mt-1 text-xs text-[rgb(var(--muted))]">
-                      <span className="font-semibold text-zinc-100">Hvorfor:</span> {term.why}
-                    </p>
-                    <p className="mt-1 text-xs text-[rgb(var(--muted))]">
-                      <span className="font-semibold text-zinc-100">Effekt på bildet/videoen:</span> {term.effect}
-                    </p>
-                  </article>
-                ))}
+                {hasInjectedTerms ? (
+                  visibleInjectedTerms.map((term) => (
+                    <article key={term.slug} className="rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))]/70 p-3">
+                      <p className="text-sm font-semibold">{term.term_no}</p>
+                      <p className="mt-1 text-xs text-[rgb(var(--muted))]">
+                        <span className="font-semibold text-zinc-100">Hva det betyr:</span> {term.definition_no}
+                      </p>
+                      <p className="mt-1 text-xs text-[rgb(var(--muted))]">
+                        <span className="font-semibold text-zinc-100">Hvorfor:</span> {term.why}
+                      </p>
+                      <p className="mt-1 text-xs text-[rgb(var(--muted))]">
+                        <span className="font-semibold text-zinc-100">Effekt på bildet/videoen:</span> {term.effect}
+                      </p>
+                    </article>
+                  ))
+                ) : (
+                  <p className="text-sm text-[rgb(var(--muted))]">
+                    Ingen ekstra begreper ennå. Lag en pro-prompt for å se hva som blir lagt til.
+                  </p>
+                )}
               </div>
             ) : null}
           </article>
@@ -345,14 +390,20 @@ export default function PromptExpanderClient() {
             <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">
               Ting vi la til som du kanskje ikke tenkte på
             </p>
-            <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-[rgb(var(--fg))]/85">
-              {visibleLearningPoints.slice(0, 5).map((item) => (
-                <li key={item.title}>
-                  <p className="font-semibold">{item.title}</p>
-                  <p className="text-xs text-[rgb(var(--muted))]">{item.detail}</p>
-                </li>
-              ))}
-            </ul>
+            {hasLearningPoints ? (
+              <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-[rgb(var(--fg))]/85">
+                {visibleLearningPoints.slice(0, 5).map((item) => (
+                  <li key={item.title}>
+                    <p className="font-semibold">{item.title}</p>
+                    <p className="text-xs text-[rgb(var(--muted))]">{item.detail}</p>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="mt-2 text-sm text-[rgb(var(--muted))]">
+                Her får du forslag til viktige detaljer systemet la til automatisk.
+              </p>
+            )}
           </article>
         </div>
       </div>

@@ -37,7 +37,7 @@ export default function NorskPromptingShell({
                   <span className="np-chip-muted text-xs font-semibold uppercase tracking-[0.14em]">Arbeidsflate</span>
                 </div>
                 <h1 className="mt-2 text-[clamp(1.7rem,3.2vw,2.45rem)] font-semibold leading-[1.07] tracking-tight">{title}</h1>
-                <p className="mt-3 max-w-3xl text-sm leading-relaxed text-[rgb(var(--muted))]">{description}</p>
+                <p className="mt-3 max-w-3xl text-sm leading-relaxed text-[rgb(var(--fg))]/92">{description}</p>
               </div>
 
               <div className="relative shrink-0">

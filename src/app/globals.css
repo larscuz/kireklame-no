@@ -389,6 +389,200 @@ body {
   background-color: rgba(var(--np-accent), 0.3);
 }
 
+.light .np-shell {
+  --bg: 238 242 248;
+  --fg: 0 0 0;
+  --muted: 0 0 0;
+  --card: 249 251 255;
+  --border: 149 166 191;
+  --np-accent: 28 99 217;
+  --np-accent-alt: 10 142 228;
+  color-scheme: light;
+}
+
+.light .np-shell::before {
+  background:
+    radial-gradient(circle at 8% 10%, rgba(67, 121, 200, 0.14), transparent 36%),
+    radial-gradient(circle at 96% 6%, rgba(68, 111, 173, 0.16), transparent 38%),
+    linear-gradient(170deg, rgba(255, 255, 255, 0.55), transparent 46%),
+    repeating-linear-gradient(
+      0deg,
+      rgba(96, 122, 158, 0.09) 0,
+      rgba(96, 122, 158, 0.09) 1px,
+      transparent 1px,
+      transparent 24px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      rgba(96, 122, 158, 0.06) 0,
+      rgba(96, 122, 158, 0.06) 1px,
+      transparent 1px,
+      transparent 24px
+    );
+  opacity: 0.74;
+}
+
+.light .np-shell::after {
+  background: radial-gradient(circle at 50% -28%, rgba(255, 255, 255, 0.82), rgba(219, 228, 239, 0.44) 80%);
+}
+
+.light .np-hero {
+  border-bottom-color: rgba(var(--border), 0.55);
+  background:
+    linear-gradient(180deg, rgba(245, 249, 255, 0.93), rgba(233, 240, 249, 0.88)),
+    linear-gradient(120deg, rgba(var(--np-accent), 0.1), transparent 48%);
+}
+
+.light .np-hero-card {
+  border-color: rgba(var(--border), 0.66);
+  box-shadow:
+    0 16px 36px rgba(33, 57, 90, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.88);
+  background:
+    radial-gradient(circle at 100% 0, rgba(var(--np-accent), 0.13), transparent 44%),
+    linear-gradient(145deg, rgba(255, 255, 255, 0.94), rgba(239, 246, 254, 0.95));
+}
+
+.light .np-hero-card::after {
+  box-shadow: inset 0 0 0 1px rgba(35, 54, 81, 0.05);
+}
+
+.light .np-chip {
+  background: rgba(var(--np-accent), 0.14);
+  color: rgb(var(--fg));
+}
+
+.light .np-chip-muted {
+  border-color: rgba(var(--border), 0.58);
+  background: rgba(230, 237, 247, 0.84);
+  color: rgb(var(--muted));
+}
+
+.light .np-nav {
+  border-color: rgba(var(--border), 0.66);
+  box-shadow:
+    0 10px 26px rgba(33, 57, 90, 0.14),
+    inset 0 1px 0 rgba(255, 255, 255, 0.85);
+  background:
+    linear-gradient(180deg, rgba(251, 253, 255, 0.96), rgba(240, 246, 253, 0.95)),
+    rgba(242, 247, 253, 0.93);
+}
+
+.light .np-shell details[open] {
+  box-shadow:
+    0 10px 22px rgba(40, 65, 99, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.82);
+}
+
+.light .np-node-surface {
+  border-color: rgba(var(--border), 0.64);
+  background: linear-gradient(166deg, rgba(254, 255, 255, 0.96), rgba(242, 248, 255, 0.97));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.88),
+    inset 0 -1px 0 rgba(168, 184, 204, 0.2),
+    0 12px 26px rgba(35, 63, 100, 0.12);
+}
+
+.light .np-node-surface::before {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0) 34%);
+}
+
+.light .np-pipeline-node {
+  border-color: rgba(var(--border), 0.64);
+  background: rgba(247, 251, 255, 0.9);
+}
+
+.light .np-shell input:not([type="checkbox"]):not([type="radio"]),
+.light .np-shell select,
+.light .np-shell textarea {
+  border-color: rgba(var(--border), 0.66);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(246, 249, 253, 0.95));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.86);
+}
+
+.light .np-shell select option {
+  background: rgb(246 250 255);
+  color: rgb(var(--fg));
+}
+
+.light .np-shell .border-zinc-300\/30,
+.light .np-shell .border-zinc-300\/35,
+.light .np-shell .border-zinc-300\/40 {
+  border-color: rgba(var(--np-accent), 0.34);
+}
+
+.light .np-shell .bg-zinc-300\/08,
+.light .np-shell .bg-zinc-300\/10,
+.light .np-shell .bg-zinc-300\/14,
+.light .np-shell .bg-zinc-300\/15,
+.light .np-shell .bg-zinc-300\/20,
+.light .np-shell .bg-zinc-300\/25 {
+  background-color: rgba(var(--np-accent), 0.16);
+}
+
+.light .np-shell .text-zinc-100 {
+  color: rgb(10 18 34);
+}
+
+.light .np-shell .text-zinc-100\/90 {
+  color: rgba(10, 18, 34, 0.9);
+}
+
+.light .np-shell .hover\:border-zinc-300\/35:hover,
+.light .np-shell .hover\:border-zinc-300\/40:hover {
+  border-color: rgba(var(--np-accent), 0.56);
+}
+
+.light .np-shell .hover\:bg-zinc-300\/08:hover,
+.light .np-shell .hover\:bg-zinc-300\/20:hover,
+.light .np-shell .hover\:bg-zinc-300\/25:hover {
+  background-color: rgba(var(--np-accent), 0.2);
+}
+
+.light .np-shell .hover\:text-zinc-100:hover,
+.light .np-shell .focus\:text-zinc-100:focus {
+  color: rgb(10 18 34);
+}
+
+.np-action-btn {
+  border-color: rgba(var(--np-accent), 0.45);
+  background: rgba(var(--np-accent), 0.2);
+  color: rgb(10 18 32);
+}
+
+.np-action-btn:hover {
+  background: rgba(var(--np-accent), 0.3);
+}
+
+.light .np-shell .np-action-btn {
+  border-color: rgba(var(--np-accent), 0.56);
+  background: rgba(var(--np-accent), 0.24);
+  color: rgb(0 0 0);
+  box-shadow:
+    0 8px 20px rgba(29, 70, 128, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.45);
+}
+
+.light .np-shell .np-action-btn:hover {
+  background: rgba(var(--np-accent), 0.33);
+}
+
+.light .np-shell .np-action-btn:disabled {
+  border-color: rgba(106, 125, 154, 0.44);
+  background: rgba(181, 196, 216, 0.55);
+  color: rgba(58, 73, 95, 0.82);
+  box-shadow: none;
+}
+
+/* Hard contrast pass: section headers should not look muted in light mode */
+.light .np-shell .text-xs.font-semibold.uppercase {
+  color: rgb(var(--fg));
+}
+
+.light .np-shell .np-chip-muted {
+  color: rgb(var(--fg));
+}
+
 .np-pipeline-node:first-child::after {
   display: none;
 }
