@@ -203,7 +203,7 @@ export default function PromptExpanderClient() {
               id="np-idea-input"
               value={input}
               onChange={(event) => setInput(event.target.value)}
-              className="mt-2 min-h-36 w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))] px-3 py-3 text-sm shadow-inner outline-none placeholder:text-[rgb(var(--muted))] placeholder:opacity-80 focus:border-zinc-300 focus:placeholder-transparent"
+              className="np-dynamic-text mt-2 min-h-36 w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))] px-3 py-3 text-sm shadow-inner outline-none focus:border-zinc-300 focus:placeholder-transparent"
               placeholder='Beskriv hva du vil ha, eller gå til Eksempler og velg et case via "Kjør i utvider".'
             />
           </div>
@@ -314,7 +314,7 @@ export default function PromptExpanderClient() {
                   />
                 </div>
               </div>
-              <pre className="mt-3 max-h-[36rem] overflow-auto whitespace-pre-wrap rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/70 p-3 text-sm text-[rgb(var(--fg))]/90">
+              <pre className="np-dynamic-text mt-3 max-h-[36rem] overflow-auto whitespace-pre-wrap rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/70 p-3 text-sm">
                 {fullPrompt}
               </pre>
               <p className="mt-2 text-xs text-black">
@@ -338,7 +338,7 @@ export default function PromptExpanderClient() {
                       <textarea
                         value={section.content}
                         onChange={(event) => updateSection(section.id, event.target.value)}
-                        className="mt-1 min-h-20 w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-3 py-2 text-sm outline-none focus:border-zinc-300"
+                        className="np-dynamic-text mt-1 min-h-20 w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-3 py-2 text-sm outline-none focus:border-zinc-300"
                       />
                     </label>
                   ))
