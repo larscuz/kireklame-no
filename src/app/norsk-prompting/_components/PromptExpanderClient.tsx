@@ -157,9 +157,14 @@ export default function PromptExpanderClient() {
     <section className="np-node-surface rounded-3xl border border-[rgb(var(--border))] bg-[rgb(var(--card))]/92 p-4 pt-7 shadow-[0_18px_60px_rgba(2,6,23,0.3)] sm:p-6">
       <div>
         <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[rgb(var(--muted))]">Arbeidsflate</p>
-        <h2 className="mt-2 text-3xl font-semibold tracking-tight text-black">Bygg pro-prompten din</h2>
-        <p className="mt-2 text-sm text-black">
-          Start med en kort idé, velg stil og detaljer, og generer en ferdig prompt til bilde, video eller tekst.
+        <h2
+          className="mt-2 text-3xl font-semibold tracking-tight"
+          style={{ position: "relative", zIndex: 2, color: "#000000" }}
+        >
+          BESKRIV IDEEN DIN - VI UTVIDER - TA TEKSTEN TIL CHAT MODELL
+        </h2>
+        <p className="mt-2 text-sm" style={{ position: "relative", zIndex: 2, color: "#000000" }}>
+          Start med en enkel tekst. Vi legger til mediefaglige begreper som hjelper ChatGPT, Gemini, Claude og DeepSeek med å lage bedre prompter.
         </p>
       </div>
 
@@ -283,7 +288,7 @@ export default function PromptExpanderClient() {
             className="np-action-btn inline-flex w-full items-center justify-center rounded-xl border border-zinc-300/40 bg-zinc-300/15 px-5 py-2.5 text-sm font-semibold text-black shadow-[0_10px_24px_rgba(0,0,0,0.25)] transition hover:bg-zinc-300/25 disabled:cursor-not-allowed disabled:opacity-100"
             disabled={!canGenerate}
           >
-            Lag ferdig pro-prompt
+            Oppdater tekst
           </button>
         </aside>
 
@@ -291,7 +296,7 @@ export default function PromptExpanderClient() {
           <div className="grid gap-3 lg:grid-cols-2">
             <div className="rounded-2xl border border-zinc-300/30 bg-gradient-to-br from-zinc-500/20 via-zinc-500/5 to-sky-400/12 p-4">
               <div className="flex flex-wrap items-center justify-between gap-2">
-                <p className="text-sm font-semibold text-black">Kopier ferdig pro-prompt</p>
+                <p className="text-sm font-semibold text-black">Kopier oppdatert tekst</p>
                 <div className="flex flex-wrap items-center gap-2">
                   <button
                     type="button"
@@ -299,11 +304,11 @@ export default function PromptExpanderClient() {
                     className="np-action-btn inline-flex items-center justify-center rounded-lg border border-zinc-300/40 bg-zinc-300/15 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.11em] text-black transition hover:bg-zinc-300/25 disabled:cursor-not-allowed disabled:opacity-100"
                     disabled={!canGenerate}
                   >
-                    Lag ferdig pro-prompt
+                    Oppdater tekst
                   </button>
                   <CopyTextButton
                     value={fullPrompt}
-                    label="Kopier prompt"
+                    label="Kopier tekst"
                     disabled={!hasPromptOutput}
                     className="text-black disabled:opacity-100"
                   />
@@ -314,8 +319,8 @@ export default function PromptExpanderClient() {
               </pre>
               <p className="mt-2 text-xs text-black">
                 {hasPromptOutput
-                  ? "Lim inn i ChatGPT, Midjourney, Runway, Kling eller annet verktøy."
-                  : "Prompten vises her etter at du trykker \"Lag ferdig pro-prompt\"."}
+                  ? "Lim inn i ChatGPT, Gemini, Claude, DeepSeek eller annen chatmodell."
+                  : "Den oppdaterte teksten vises her etter at du trykker \"Oppdater tekst\"."}
               </p>
             </div>
 
@@ -339,7 +344,7 @@ export default function PromptExpanderClient() {
                   ))
                 ) : (
                   <p className="text-sm text-black">
-                    Seksjonene vises her etter at du har laget en pro-prompt.
+                    Seksjonene vises her etter at du har oppdatert teksten.
                   </p>
                 )}
               </div>
@@ -379,7 +384,7 @@ export default function PromptExpanderClient() {
                   ))
                 ) : (
                   <p className="text-sm text-[rgb(var(--muted))]">
-                    Ingen ekstra begreper ennå. Lag en pro-prompt for å se hva som blir lagt til.
+                    Ingen ekstra begreper ennå. Trykk "Oppdater tekst" for å se hva som blir lagt til.
                   </p>
                 )}
               </div>

@@ -15,12 +15,12 @@ import { absoluteUrl, buildBreadcrumbJsonLd, buildWebPageJsonLd } from "@/lib/no
 export const metadata = siteMeta({
   title: "Norsk Prompting | Prompt-utvider og profesjonell prompting",
   description:
-    "Start direkte i Prompt-utvider. Kort norsk input blir til strukturert pro-prompt med regler, maler, ordforråd og eksempler.",
+    "Start direkte i Prompt-utvider. Berik enkel tekst med mediefaglige begreper som hjelper tekstmodeller å lage mer presise prompter.",
   path: "/norsk-prompting",
 });
 
 const intro =
-  "Erfarne folk i mediebransjen får ofte bedre resultater fordi de kan beskrive ønsket uttrykk presist med riktige fagbegreper. Prompt Hjelper gjør den samme presisjonen tilgjengelig for deg som ikke har den erfaringen ennå, slik at du får mer kontroll, bedre detaljer og en mer produksjonsklar prompt.";
+  "Erfarne folk i mediebransjen får ofte bedre resultater fra KI modeller fordi de kan beskrive ønsket uttrykk presist med riktige fagbegreper. Prompt Hjelper gjør den samme presisjonen tilgjengelig for deg som ikke har den erfaringen ennå, slik at du får mer kontroll, bedre detaljer og en mer produksjonsklar prompt. Verktøyet lager ikke en ferdig pro-prompt, men beriker forklaringen din med fagbegreper som hjelper chatmodellen å lage bedre prompter.";
 
 export default function NorskPromptingHubPage() {
   const searchItems = [

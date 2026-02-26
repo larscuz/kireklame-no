@@ -6,13 +6,13 @@ import { absoluteUrl, buildBreadcrumbJsonLd, buildWebPageJsonLd } from "@/lib/no
 export const metadata = siteMeta({
   title: "Prompt Hjelper | Norsk Prompting",
   description:
-    "Skriv ideen din med vanlige ord og få en ferdig pro-prompt med mediefaglige begreper for bilde, video eller tekst.",
+    "Skriv ideen din med vanlige ord og berik teksten med mediefaglige begreper som hjelper tekstmodeller å lage bedre prompter.",
   path: "/norsk-prompting/prompt-utvider",
 });
 
 export default function PromptUtviderPage() {
   const description =
-    "Erfarne folk i mediebransjen får ofte bedre resultater fordi de kan beskrive ønsket uttrykk presist med riktige fagbegreper. Prompt Hjelper gjør den samme presisjonen tilgjengelig for deg som ikke har den erfaringen ennå, slik at du får mer kontroll, bedre detaljer og en mer produksjonsklar prompt.";
+    "Erfarne folk i mediebransjen får ofte bedre resultater fra KI modeller fordi de kan beskrive ønsket uttrykk presist med riktige fagbegreper. Prompt Hjelper gjør den samme presisjonen tilgjengelig for deg som ikke har den erfaringen ennå, slik at du får mer kontroll, bedre detaljer og en mer produksjonsklar prompt. Verktøyet lager ikke en ferdig pro-prompt, men beriker forklaringen din med mediefaglige begreper som gjør at tekstmodeller kan bygge bedre prompter.";
 
   return (
     <NorskPromptingShell
