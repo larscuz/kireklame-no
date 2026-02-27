@@ -11,6 +11,20 @@ type Props = {
   mediaKind: MediaKind;
 };
 
+type DirectUploadTarget = {
+  putUrl: string;
+  publicUrl: string;
+  contentType?: string;
+};
+
+type PrepareUploadResponse = {
+  ok?: boolean;
+  code?: string;
+  error?: string;
+  upload?: DirectUploadTarget;
+  posterUpload?: DirectUploadTarget | null;
+};
+
 function once(target: EventTarget, eventName: string): Promise<void> {
   return new Promise((resolve, reject) => {
     const onSuccess = () => {
@@ -90,6 +104,62 @@ async function buildPosterFromVideo(file: File): Promise<File | null> {
   }
 }
 
+async function readJsonSafe(response: Response): Promise<any> {
+  const contentType = response.headers.get("content-type") ?? "";
+  if (!contentType.includes("application/json")) return null;
+  return response.json().catch(() => null);
+}
+
+async function uploadToPresignedUrl(target: DirectUploadTarget, file: File) {
+  try {
+    const response = await fetch(target.putUrl, {
+      method: "PUT",
+      headers: {
+        "Content-Type": target.contentType || file.type || "application/octet-stream",
+      },
+      body: file,
+    });
+
+    if (!response.ok) {
+      const details = await response.text().catch(() => "");
+      throw new Error(`Direkte opplasting feilet (${response.status}). ${details.slice(0, 180)}`);
+    }
+  } catch (error: any) {
+    if (error instanceof TypeError) {
+      throw new Error("Direkte opplasting ble blokkert. Sjekk R2 CORS-regler for admin-domenet.");
+    }
+    throw error;
+  }
+}
+
+async function uploadViaLegacyRoute(args: {
+  exampleId: string;
+  mediaKind: MediaKind;
+  selectedFile: File;
+  posterFile: File | null;
+}) {
+  const payload = new FormData();
+  payload.set("example_id", args.exampleId);
+  payload.set("media_kind", args.mediaKind);
+  payload.set("file", args.selectedFile);
+  if (args.posterFile) {
+    payload.set("poster_file", args.posterFile);
+  }
+
+  const response = await fetch("/api/admin/ki-skole-media", {
+    method: "POST",
+    headers: {
+      Accept: "application/json",
+    },
+    body: payload,
+  });
+
+  if (!response.ok) {
+    const data = await readJsonSafe(response);
+    throw new Error(String(data?.error ?? `Opplasting feilet (${response.status}).`));
+  }
+}
+
 export default function KISkoleMediaUploadForm({ exampleId, mediaKind }: Props) {
   const router = useRouter();
   const [isUploading, setIsUploading] = useState(false);
@@ -116,37 +186,85 @@ export default function KISkoleMediaUploadForm({ exampleId, mediaKind }: Props) 
     setIsUploading(true);
 
     try {
-      const payload = new FormData();
-      payload.set("example_id", exampleId);
-      payload.set("media_kind", mediaKind);
-      payload.set("file", selectedFile);
-
+      let posterFile: File | null = null;
       if (mediaKind === "video") {
         try {
-          const poster = await buildPosterFromVideo(selectedFile);
-          if (poster) {
-            payload.set("poster_file", poster);
-          }
+          posterFile = await buildPosterFromVideo(selectedFile);
         } catch (error) {
-          console.warn("Klarte ikke å lage automatisk poster fra video. Fortsetter med videoupload.", error);
+          console.warn("Klarte ikke å lage automatisk poster fra video. Fortsetter uten poster.", error);
         }
       }
 
-      const response = await fetch("/api/admin/ki-skole-media", {
+      const prepareResponse = await fetch("/api/admin/ki-skole-media", {
         method: "POST",
         headers: {
           Accept: "application/json",
+          "Content-Type": "application/json",
         },
-        body: payload,
+        body: JSON.stringify({
+          action: "prepare",
+          example_id: exampleId,
+          media_kind: mediaKind,
+          file_name: selectedFile.name,
+          file_type: selectedFile.type,
+          file_size: selectedFile.size,
+          poster_file_name: posterFile?.name ?? "",
+          poster_file_type: posterFile?.type ?? "",
+          poster_file_size: posterFile?.size ?? 0,
+        }),
       });
 
-      const contentType = response.headers.get("content-type") ?? "";
-      if (!response.ok) {
-        if (contentType.includes("application/json")) {
-          const data = await response.json().catch(() => null);
-          throw new Error(String(data?.error ?? `Opplasting feilet (${response.status}).`));
+      if (!prepareResponse.ok) {
+        const prepareData = (await readJsonSafe(prepareResponse)) as PrepareUploadResponse | null;
+        if (prepareData?.code === "DIRECT_UPLOAD_UNAVAILABLE") {
+          if (mediaKind === "video") {
+            throw new Error(
+              "Direkte R2-opplasting er ikke aktiv. Video via app-server stopper ofte på 413 i live. Aktiver R2 direct upload."
+            );
+          }
+
+          await uploadViaLegacyRoute({
+            exampleId,
+            mediaKind,
+            selectedFile,
+            posterFile,
+          });
+        } else {
+          throw new Error(String(prepareData?.error ?? `Opplasting feilet (${prepareResponse.status}).`));
         }
-        throw new Error(`Opplasting feilet (${response.status}).`);
+      } else {
+        const prepared = (await readJsonSafe(prepareResponse)) as PrepareUploadResponse | null;
+        const uploadTarget = prepared?.upload;
+        if (!uploadTarget?.putUrl || !uploadTarget.publicUrl) {
+          throw new Error("Manglende opplastingsmål fra server.");
+        }
+
+        await uploadToPresignedUrl(uploadTarget, selectedFile);
+
+        const posterTarget = prepared?.posterUpload ?? null;
+        if (posterFile && posterTarget?.putUrl && posterTarget.publicUrl) {
+          await uploadToPresignedUrl(posterTarget, posterFile);
+        }
+
+        const completeResponse = await fetch("/api/admin/ki-skole-media", {
+          method: "POST",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            action: "complete",
+            example_id: exampleId,
+            media_kind: mediaKind,
+            media_url: uploadTarget.publicUrl,
+            poster_url: posterTarget?.publicUrl ?? null,
+          }),
+        });
+
+        if (!completeResponse.ok) {
+          const completeData = await readJsonSafe(completeResponse);
+          throw new Error(String(completeData?.error ?? `Lagring feilet (${completeResponse.status}).`));
+        }
       }
 
       form.reset();

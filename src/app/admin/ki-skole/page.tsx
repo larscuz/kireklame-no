@@ -380,6 +380,9 @@ export default async function AdminKISkolePage() {
           <div className="mt-2 space-y-1">
             <p>Primær modus: direkte R2-opplasting med `KI_SKOLE_UPLOAD_PREFIX` og bucket `intelligenspartiet-media`.</p>
             <p>Fallback modus: endpoint med `KI_SKOLE_UPLOAD_URL` og `KI_SKOLE_UPLOAD_TOKEN`.</p>
+            <p>
+              For direkte browser-opplasting må R2 bucket ha CORS som tillater `PUT` fra admin-domenet.
+            </p>
             {uploadStatus.missing.length > 0 ? (
               <p>Mangler nå: {uploadStatus.missing.join(", ")}.</p>
             ) : null}

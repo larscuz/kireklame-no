@@ -8,6 +8,7 @@ export const runtime = "nodejs";
 
 type MediaKind = "image" | "video";
 type UploadedMedia = { publicUrl: string; posterUrl: string | null };
+type FileMeta = { name: string; type: string; size: number };
 
 type ForwardUploadConfig = {
   mode: "forward";
@@ -30,6 +31,26 @@ type DirectR2UploadConfig = {
 
 type UploadConfig = ForwardUploadConfig | DirectR2UploadConfig;
 
+type PrepareUploadInput = {
+  action: "prepare";
+  example_id: string;
+  media_kind?: string;
+  file_name: string;
+  file_type?: string;
+  file_size: number;
+  poster_file_name?: string;
+  poster_file_type?: string;
+  poster_file_size?: number;
+};
+
+type CompleteUploadInput = {
+  action: "complete";
+  example_id: string;
+  media_kind?: string;
+  media_url: string;
+  poster_url?: string | null;
+};
+
 function wantsJsonResponse(req: Request): boolean {
   return (req.headers.get("accept") ?? "").includes("application/json");
 }
@@ -38,12 +59,12 @@ function normalizeMediaKind(value: string): MediaKind {
   return value === "video" ? "video" : "image";
 }
 
-function safeExtFromFile(file: File) {
-  const name = (file.name || "").toLowerCase();
+function safeExtFromNameAndType(nameInput: string, typeInput: string) {
+  const name = (nameInput || "").toLowerCase();
   const byName = name.split(".").pop();
   if (byName && byName.length <= 8) return byName;
 
-  const type = (file.type || "").toLowerCase();
+  const type = (typeInput || "").toLowerCase();
   if (type.includes("jpeg")) return "jpg";
   if (type.includes("png")) return "png";
   if (type.includes("webp")) return "webp";
@@ -51,6 +72,10 @@ function safeExtFromFile(file: File) {
   if (type.includes("webm")) return "webm";
   if (type.includes("quicktime")) return "mov";
   return "bin";
+}
+
+function safeExtFromFile(file: File) {
+  return safeExtFromNameAndType(file.name || "", file.type || "");
 }
 
 function normalizePrefix(prefix: string): string {
@@ -329,8 +354,80 @@ async function uploadViaDirectR2(
   };
 }
 
-function validateFile(file: File, kind: MediaKind): { ok: true; ext: string } | { ok: false; error: string } {
-  const ext = safeExtFromFile(file).replace("jpeg", "jpg");
+function prepareDirectR2Upload(
+  config: DirectR2UploadConfig,
+  args: { effectiveKind: MediaKind; filename: string; ext: string; fileType: string }
+): { putUrl: string; publicUrl: string; contentType: string } {
+  const key = buildObjectKey({
+    prefix: config.uploadPrefix,
+    mediaKind: args.effectiveKind,
+    filename: args.filename,
+  });
+
+  const putUrl = createPresignedPutUrl({
+    accountId: config.accountId,
+    bucket: config.bucket,
+    accessKeyId: config.accessKeyId,
+    secretAccessKey: config.secretAccessKey,
+    key,
+    expiresIn: 900,
+  });
+
+  return {
+    putUrl,
+    publicUrl: buildPublicObjectUrl(config.publicBaseUrl, key),
+    contentType: contentTypeFromExt(args.ext, args.fileType),
+  };
+}
+
+async function loadExampleById(exampleId: string): Promise<{ id: string; media_kind: string } | null> {
+  const db = supabaseAdmin();
+  const { data: example, error } = await db
+    .from("ki_skole_examples")
+    .select("id,media_kind")
+    .eq("id", exampleId)
+    .maybeSingle();
+
+  if (error) throw new Error(error.message);
+  return (example as { id: string; media_kind: string } | null) ?? null;
+}
+
+async function applyExampleMediaUpdate(args: {
+  exampleId: string;
+  effectiveKind: MediaKind;
+  mediaUrl: string;
+  posterUrl?: string | null;
+}) {
+  const db = supabaseAdmin();
+
+  const updatePatch: Record<string, unknown> = {
+    media_kind: args.effectiveKind,
+    media_src: args.mediaUrl,
+    is_placeholder: false,
+  };
+
+  if (args.effectiveKind === "image") {
+    updatePatch.media_thumbnail_src = args.mediaUrl;
+    updatePatch.media_poster_src = null;
+  } else if (args.posterUrl) {
+    updatePatch.media_poster_src = args.posterUrl;
+    updatePatch.media_thumbnail_src = args.posterUrl;
+  }
+
+  const { error } = await db.from("ki_skole_examples").update(updatePatch).eq("id", args.exampleId);
+  if (error) throw new Error(error.message);
+
+  revalidatePath("/admin/ki-skole");
+  revalidatePath("/norsk-prompting/eksempler");
+
+  return {
+    mediaUrl: args.mediaUrl,
+    posterUrl: (updatePatch.media_poster_src as string | undefined) ?? null,
+  };
+}
+
+function validateFileMeta(file: FileMeta, kind: MediaKind): { ok: true; ext: string } | { ok: false; error: string } {
+  const ext = safeExtFromNameAndType(file.name, file.type).replace("jpeg", "jpg");
 
   if (kind === "image") {
     const allowed = new Set(["png", "jpg", "webp"]);
@@ -358,6 +455,17 @@ function validateFile(file: File, kind: MediaKind): { ok: true; ext: string } | 
   return { ok: true, ext };
 }
 
+function validateFile(file: File, kind: MediaKind): { ok: true; ext: string } | { ok: false; error: string } {
+  return validateFileMeta(
+    {
+      name: file.name || "file",
+      type: file.type || "application/octet-stream",
+      size: Number(file.size || 0),
+    },
+    kind
+  );
+}
+
 export async function POST(req: Request) {
   const shouldReturnJson = wantsJsonResponse(req);
 
@@ -368,6 +476,137 @@ export async function POST(req: Request) {
     }
     if (!isAdminUser(user.email)) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
+    const contentType = req.headers.get("content-type") ?? "";
+    const isJson = contentType.includes("application/json");
+
+    if (isJson) {
+      const payload = (await req.json()) as Partial<PrepareUploadInput | CompleteUploadInput>;
+      const action = String(payload?.action ?? "").trim();
+
+      if (action === "prepare") {
+        const prepare = payload as Partial<PrepareUploadInput>;
+        const exampleId = String(prepare.example_id ?? "").trim();
+        const requestedKind = normalizeMediaKind(String(prepare.media_kind ?? "image"));
+        const fileName = String(prepare.file_name ?? "").trim();
+        const fileType = String(prepare.file_type ?? "application/octet-stream").trim();
+        const fileSize = Number(prepare.file_size ?? 0);
+
+        if (!exampleId) {
+          return NextResponse.json({ error: "Missing example_id" }, { status: 400 });
+        }
+        if (!fileName || !Number.isFinite(fileSize) || fileSize <= 0) {
+          return NextResponse.json({ error: "Missing file metadata" }, { status: 400 });
+        }
+
+        const example = await loadExampleById(exampleId);
+        if (!example) {
+          return NextResponse.json({ error: "Example not found" }, { status: 404 });
+        }
+
+        const effectiveKind = normalizeMediaKind(example.media_kind ?? requestedKind);
+        const validation = validateFileMeta({ name: fileName, type: fileType, size: fileSize }, effectiveKind);
+        if (!validation.ok) {
+          return NextResponse.json({ error: validation.error }, { status: 415 });
+        }
+
+        const posterName = String(prepare.poster_file_name ?? "").trim();
+        const posterType = String(prepare.poster_file_type ?? "application/octet-stream").trim();
+        const posterSize = Number(prepare.poster_file_size ?? 0);
+        const hasPoster = effectiveKind === "video" && posterName.length > 0 && Number.isFinite(posterSize) && posterSize > 0;
+
+        const posterValidation =
+          hasPoster
+            ? validateFileMeta({ name: posterName, type: posterType, size: posterSize }, "image")
+            : ({ ok: true, ext: "" } as const);
+        if (!posterValidation.ok) {
+          return NextResponse.json({ error: posterValidation.error }, { status: 415 });
+        }
+
+        const uploadConfig = resolveUploadConfig();
+        if (uploadConfig.mode !== "r2") {
+          return NextResponse.json(
+            {
+              error: "Direct upload unavailable. Configure R2 env for large media uploads.",
+              code: "DIRECT_UPLOAD_UNAVAILABLE",
+            },
+            { status: 409 }
+          );
+        }
+
+        const now = Date.now();
+        const upload = prepareDirectR2Upload(uploadConfig, {
+          effectiveKind,
+          filename: `${exampleId}-${now}.${validation.ext}`,
+          ext: validation.ext,
+          fileType,
+        });
+        const posterUpload =
+          hasPoster && posterValidation.ok
+            ? prepareDirectR2Upload(uploadConfig, {
+                effectiveKind: "image",
+                filename: `${exampleId}-${now}-poster.${posterValidation.ext}`,
+                ext: posterValidation.ext,
+                fileType: posterType,
+              })
+            : null;
+
+        return NextResponse.json({
+          ok: true,
+          mode: "direct-r2",
+          effectiveKind,
+          upload,
+          posterUpload,
+        });
+      }
+
+      if (action === "complete") {
+        const complete = payload as Partial<CompleteUploadInput>;
+        const exampleId = String(complete.example_id ?? "").trim();
+        const requestedKind = normalizeMediaKind(String(complete.media_kind ?? "image"));
+        const mediaUrl = String(complete.media_url ?? "").trim();
+        const posterUrlRaw = String(complete.poster_url ?? "").trim();
+        const posterUrl = posterUrlRaw.length > 0 ? posterUrlRaw : null;
+
+        if (!exampleId) {
+          return NextResponse.json({ error: "Missing example_id" }, { status: 400 });
+        }
+        if (!mediaUrl) {
+          return NextResponse.json({ error: "Missing media_url" }, { status: 400 });
+        }
+
+        const example = await loadExampleById(exampleId);
+        if (!example) {
+          return NextResponse.json({ error: "Example not found" }, { status: 404 });
+        }
+
+        const effectiveKind = normalizeMediaKind(example.media_kind ?? requestedKind);
+        const uploadConfig = resolveUploadConfig();
+        if (uploadConfig.mode === "r2") {
+          const base = uploadConfig.publicBaseUrl.replace(/\/+$/, "");
+          if (!mediaUrl.startsWith(`${base}/`)) {
+            return NextResponse.json({ error: "media_url is not under configured R2 public base URL." }, { status: 400 });
+          }
+          if (posterUrl && !posterUrl.startsWith(`${base}/`)) {
+            return NextResponse.json({ error: "poster_url is not under configured R2 public base URL." }, { status: 400 });
+          }
+        }
+
+        const persisted = await applyExampleMediaUpdate({
+          exampleId,
+          effectiveKind,
+          mediaUrl,
+          posterUrl,
+        });
+
+        return NextResponse.json({
+          ok: true,
+          mediaUrl: persisted.mediaUrl,
+          posterUrl: persisted.posterUrl,
+        });
+      }
+
+      return NextResponse.json({ error: "Missing or invalid action for JSON request." }, { status: 400 });
     }
 
     const form = await req.formData();
@@ -387,16 +626,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Empty file" }, { status: 400 });
     }
 
-    const db = supabaseAdmin();
-    const { data: example, error: fetchError } = await db
-      .from("ki_skole_examples")
-      .select("id,media_kind")
-      .eq("id", exampleId)
-      .maybeSingle();
-
-    if (fetchError) {
-      return NextResponse.json({ error: fetchError.message }, { status: 500 });
-    }
+    const example = await loadExampleById(exampleId);
     if (!example) {
       return NextResponse.json({ error: "Example not found" }, { status: 404 });
     }
@@ -437,37 +667,19 @@ export async function POST(req: Request) {
               file: posterFile,
             })
         : null;
-    const publicUrl = uploaded.publicUrl;
-    const updatePatch: Record<string, unknown> = {
-      media_kind: effectiveKind,
-      media_src: publicUrl,
-      is_placeholder: false,
-    };
 
-    if (effectiveKind === "image") {
-      updatePatch.media_thumbnail_src = publicUrl;
-      updatePatch.media_poster_src = null;
-    } else {
-      const posterUrl = uploadedPoster?.publicUrl ?? uploaded.posterUrl;
-      if (posterUrl) {
-        updatePatch.media_poster_src = posterUrl;
-        updatePatch.media_thumbnail_src = posterUrl;
-      }
-    }
-
-    const { error: updateError } = await db.from("ki_skole_examples").update(updatePatch).eq("id", exampleId);
-    if (updateError) {
-      return NextResponse.json({ error: updateError.message }, { status: 500 });
-    }
-
-    revalidatePath("/admin/ki-skole");
-    revalidatePath("/norsk-prompting/eksempler");
+    const persisted = await applyExampleMediaUpdate({
+      exampleId,
+      effectiveKind,
+      mediaUrl: uploaded.publicUrl,
+      posterUrl: uploadedPoster?.publicUrl ?? uploaded.posterUrl,
+    });
 
     if (shouldReturnJson) {
       return NextResponse.json({
         ok: true,
-        mediaUrl: publicUrl,
-        posterUrl: (updatePatch.media_poster_src as string | undefined) ?? null,
+        mediaUrl: persisted.mediaUrl,
+        posterUrl: persisted.posterUrl,
       });
     }
 
