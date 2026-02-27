@@ -226,6 +226,19 @@ export const norskPromptingRules: NorskPromptingRule[] = [
       "Unngå protagonist-bytte etter occlusion, crowd-morphing/kloning og teleportering eller reset i bakgrunn.",
   }),
   regel({
+    id: "ui-interaction-integrity-lock",
+    name: "Ved UI-nærbilde: lås tekst, touch-kausalitet og anatomi",
+    category: "Tekst i bilde",
+    severity: 5,
+    description:
+      "UI-interaksjon med hånd i nærbilde krever streng kontroll av stavemåte, touch-respons, skjermgeometri og fingeranatomi.",
+    appliesTo: "video",
+    addToPrompt:
+      "Ved lesbar UI + håndinteraksjon: legg inn text integrity rule, exact spelling lock, touch-response causality rule, anatomical stability rule og screen plane rigidity rule.",
+    negativeAdd:
+      "Unngå tekstforvrengning, flytende UI-lag, touch uten respons, respons uten kontakt og anatomiske feil i fingre/tommel.",
+  }),
+  regel({
     id: "unnga-overmettet-farge",
     name: "Unngå overmettet farge uten begrunnelse",
     category: "Lys",

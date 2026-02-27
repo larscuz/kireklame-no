@@ -668,34 +668,127 @@ No temporal jitter.`,
     id: "vid-phone-screen-legibility",
     title: "Hånd + mobilskjerm med lesbar UI i bevegelse",
     outputType: "video",
-    modelName: "Veo 3.1",
+    modelName: "Kling 3.0",
     difficulty: "Vanskelig",
-    challenge: "Skjerminnhold blir ofte uleselig ved hand-motion og fokusendring.",
-    shortBrief: "App-demo-klipp med håndinteraksjon og tydelig skjermtekst.",
+    challenge: "Tekst, touch-kausalitet, skjermplan og fingeranatomi bryter lett i UI-nærbilder.",
+    shortBrief: "6 sek UI-demo med streng tekstlås, touch-respons og anatomisk stabilitet.",
     miniTutorial: [
-      "Definer ordlyd/UI-tekst ordrett.",
-      "Beskriv fokusplan mellom hånd og skjerm.",
-      "Hold kamerabevegelse rolig for lesbarhet.",
+      "Lås all UI-tekst ordrett med eksplisitt stavings- og renderingskrav.",
+      "Definer touch-kausalitet i strict rekkefølge: kontakt, feedback, UI-respons, scroll, ny kontakt.",
+      "Lås skjermplanet og enhetsgeometri for å unngå warping og perspektivdrift.",
+      "Legg inn anatomilås for hånd/fingre med fysisk plausibel tommelbevegelse.",
     ],
-    terms: ["UI legibility", "Hand interaction", "Focus pull", "Close-up control"],
-    prompt: `Create a 6-second close-up video of a hand using a smartphone app interface.
+    terms: [
+      "Text integrity rule",
+      "Exact spelling lock",
+      "Touch-response causality",
+      "Anatomical stability",
+      "Screen plane rigidity",
+      "UI legibility",
+    ],
+    prompt: `Duration: 6 seconds
+Language: Norwegian UI
+No voice
 
-UI text must be readable and exact:
-Top title: "Kampanjeoversikt"
-Primary button: "Publiser"
-Secondary button: "Forhåndsvis"
+Scene:
+Close-up of a modern smartphone held in one hand.
+Natural indoor lighting, neutral 5200-5600K.
+Clean background, softly out of focus.
+No visual clutter.
 
-Action:
-Thumb taps "Forhåndsvis", scrolls slightly, then taps "Publiser".
+Device constraints:
+Phone geometry must remain stable.
+No edge bending.
+No screen warping.
+No thickness fluctuation.
+Screen plane must remain flat and rigid.
+
+UI layout:
+Clean Scandinavian interface design.
+White background.
+High contrast black typography.
+Flat design (no glass morphism).
+
+Exact text (must be rendered exactly as written, no spelling variation):
+
+Top title:
+"Kampanjeoversikt"
+
+Primary button:
+"Publiser"
+
+Secondary button:
+"Forhåndsvis"
+
+Text rules:
+All text must remain sharp and readable in all frames.
+No letter substitution.
+No spacing drift.
+No flicker.
+No font change mid-shot.
+Correct Norwegian characters must render accurately (å, ø, æ if present).
+
+Action sequence (strict order):
+
+Thumb taps "Forhåndsvis".
+
+Screen responds with subtle realistic press animation.
+
+Content scrolls slightly upward.
+
+Thumb taps "Publiser".
+
+Button press gives subtle visual feedback.
+
+Timing must feel natural.
+Touch must align precisely with button contact.
+No delayed UI reaction.
+
+Hand constraints:
+Fingers anatomically correct.
+No extra fingers.
+No warped knuckles.
+No elastic deformation.
+Thumb joint movement must remain physically plausible.
+Skin texture consistent.
 
 Camera:
-Stable close-up, slight handheld realism but minimal shake.
-Focus priority on screen text readability.
+Stable close-up.
+Slight natural handheld realism, minimal micro-movement only.
+No reframing.
+No zoom.
+No focal length change.
+
+Focus:
+Screen text always prioritized.
+Shallow depth of field allowed but UI text must remain sharp.
+No focus breathing.
+
+Lighting:
+Soft key light.
+Subtle screen glow.
+No brightness pulsing.
+No exposure flicker.
+
+Material fidelity:
+Glass screen reflection subtle and stable.
+No reflection jitter.
+No UI floating above glass plane.
 
 Style:
 Photoreal product-demo aesthetic.
-Guardrails: No warped fingers, no floating UI artifacts, no unreadable text.
-Duration: 6s.`,
+Premium tech commercial.
+Clean Scandinavian minimalism.
+4K detail.
+
+Guardrails:
+No warped fingers.
+No floating UI layers.
+No unreadable text.
+No UI distortion.
+No screen perspective drift.
+No device morphing.
+No identity drift of hand.`,
     media: {
       kind: "video",
       posterSrc: placeholderImage,

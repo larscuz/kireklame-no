@@ -811,6 +811,14 @@ function shouldIncludeSpecializedRule(ruleId: string, input: BuildPromptInput): 
     return input.outputType === "video" && hasCrowd && (hasTracking || hasOcclusion);
   }
 
+  if (ruleId === "ui-interaction-integrity-lock") {
+    const hasUi = /(ui|interface|app|screen|skjerm|button|knapp)/.test(source);
+    const hasText = /(text|tekst|readable|lesbar|stav|spelling|font|kampanjeoversikt|forhåndsvis|publiser)/.test(source);
+    const hasTouch = /(tap|touch|taps|thumb|tommel|press|scroll|interaksjon)/.test(source);
+    const hasHand = /(hand|hånd|fingers|finger|thumb|tommel|close-up|close up|nærbilde)/.test(source);
+    return input.outputType === "video" && hasUi && hasText && hasTouch && hasHand;
+  }
+
   return true;
 }
 
