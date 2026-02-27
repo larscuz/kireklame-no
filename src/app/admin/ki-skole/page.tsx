@@ -161,7 +161,7 @@ async function createExampleAction(formData: FormData) {
   const mediaAlt = String(formData.get("media_alt") ?? "").trim();
   const mediaCaption = String(formData.get("media_caption") ?? "").trim();
   const sortOrder = parseSortOrder(String(formData.get("sort_order") ?? "0"));
-  const isActive = formData.get("is_active") === "on";
+  const isVisibleInFrontend = formData.get("is_active") === "on";
   const isPlaceholder = formData.get("is_placeholder") === "on";
 
   if (!exampleKey || !title || !modelName || !challenge || !shortBrief || !promptText || !mediaAlt || !mediaCaption) {
@@ -187,7 +187,7 @@ async function createExampleAction(formData: FormData) {
     media_alt: mediaAlt,
     media_caption: mediaCaption,
     sort_order: sortOrder,
-    is_active: isActive,
+    is_active: isVisibleInFrontend,
     is_placeholder: isPlaceholder,
   });
 
@@ -219,7 +219,7 @@ async function updateExampleAction(formData: FormData) {
   const mediaAlt = String(formData.get("media_alt") ?? "").trim();
   const mediaCaption = String(formData.get("media_caption") ?? "").trim();
   const sortOrder = parseSortOrder(String(formData.get("sort_order") ?? "0"));
-  const isActive = formData.get("is_active") === "on";
+  const isVisibleInFrontend = formData.get("is_active") === "on";
   const isPlaceholder = formData.get("is_placeholder") === "on";
 
   if (!exampleKey || !title || !modelName || !challenge || !shortBrief || !promptText || !mediaAlt || !mediaCaption) {
@@ -247,7 +247,7 @@ async function updateExampleAction(formData: FormData) {
       media_alt: mediaAlt,
       media_caption: mediaCaption,
       sort_order: sortOrder,
-      is_active: isActive,
+      is_active: isVisibleInFrontend,
       is_placeholder: isPlaceholder,
     })
     .eq("id", id);
@@ -382,6 +382,9 @@ export default async function AdminKISkolePage() {
           <p className="mt-2 text-sm text-[rgb(var(--muted))]">
             Legger kun til manglende forslag fra kodebasen. Eksisterende CMS-data og opplastet media beholdes.
           </p>
+          <p className="mt-1 text-xs text-[rgb(var(--muted))]">
+            Merk: Alle rader vises alltid i admin. Avhuking for frontend styrer kun visning på /norsk-prompting/eksempler.
+          </p>
         </section>
       ) : null}
 
@@ -430,7 +433,7 @@ export default async function AdminKISkolePage() {
               <input
                 name="model_name"
                 required
-                placeholder="Kling 3.0"
+                placeholder="Veo 3.1"
                 className="rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-3 py-2"
               />
             </label>
@@ -536,7 +539,7 @@ export default async function AdminKISkolePage() {
             <div className="grid gap-2 text-sm md:col-span-2">
               <label className="inline-flex items-center gap-2">
                 <input type="checkbox" name="is_active" defaultChecked />
-                Aktiv
+                Vis i frontend (ligger fortsatt i admin når den er av)
               </label>
               <label className="inline-flex items-center gap-2">
                 <input type="checkbox" name="is_placeholder" defaultChecked />
@@ -566,7 +569,7 @@ export default async function AdminKISkolePage() {
                     {row.output_type} · {row.media_kind}
                   </div>
                   <div className="absolute right-2 top-2 rounded-full border border-white/20 bg-black/55 px-2 py-0.5 text-[10px] uppercase tracking-[0.14em] text-white/85">
-                    {row.is_active ? "Aktiv" : "Inaktiv"}
+                    {row.is_active ? "Synlig i frontend" : "Skjult i frontend"}
                   </div>
                 </div>
 
@@ -763,7 +766,7 @@ export default async function AdminKISkolePage() {
                   <div className="grid gap-2 text-sm">
                     <label className="inline-flex items-center gap-2">
                       <input type="checkbox" name="is_active" defaultChecked={row.is_active} />
-                      Aktiv
+                      Vis i frontend (ligger fortsatt i admin når den er av)
                     </label>
                     <label className="inline-flex items-center gap-2">
                       <input type="checkbox" name="is_placeholder" defaultChecked={row.is_placeholder} />

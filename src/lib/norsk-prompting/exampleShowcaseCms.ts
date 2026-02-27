@@ -129,6 +129,7 @@ export async function loadExampleShowcaseItems(): Promise<{
       .select(
         "id,example_key,title,output_type,model_name,difficulty,challenge,short_brief,mini_tutorial,prompt_text,terms,media_kind,media_src,media_thumbnail_src,media_poster_src,media_alt,media_caption,is_placeholder,sort_order,is_active,created_at,updated_at"
       )
+      // `is_active` fungerer som "vis i frontend". Admin-siden viser alle rader.
       .eq("is_active", true)
       .order("sort_order", { ascending: true })
       .order("created_at", { ascending: true });

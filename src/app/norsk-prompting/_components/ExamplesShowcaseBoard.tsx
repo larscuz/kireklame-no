@@ -15,6 +15,10 @@ function promptPreview(value: string, max = 520): string {
   return `${value.slice(0, max).trimEnd()}...`;
 }
 
+function shouldShowPlaceholderCaption(item: ExampleShowcaseItem): boolean {
+  return item.media.isPlaceholder !== false && item.media.caption.trim().length > 0;
+}
+
 function MediaThumb({ item, onOpen }: { item: ExampleShowcaseItem; onOpen: () => void }) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const hasVideo = item.media.kind === "video" && Boolean(item.media.src);
@@ -135,7 +139,7 @@ function MediaModal({ item, onClose }: { item: ExampleShowcaseItem; onClose: () 
             </div>
           )}
 
-          <p className="mt-3 text-sm text-zinc-300">{item.media.caption}</p>
+          {shouldShowPlaceholderCaption(item) ? <p className="mt-3 text-sm text-zinc-300">{item.media.caption}</p> : null}
         </div>
       </div>
     </div>
@@ -246,7 +250,7 @@ export default function ExamplesShowcaseBoard({ items }: Props) {
 
               <div className="min-w-0">
                 <MediaThumb item={item} onOpen={() => setActiveId(item.id)} />
-                <p className="mt-2 text-xs text-zinc-300">{item.media.caption}</p>
+                {shouldShowPlaceholderCaption(item) ? <p className="mt-2 text-xs text-zinc-300">{item.media.caption}</p> : null}
               </div>
             </div>
           </article>
