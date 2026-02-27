@@ -36,6 +36,17 @@ export const norskPromptingRules: NorskPromptingRule[] = [
     negativeAdd: "Unngå aksebrudd uten tydelig narrativ begrunnelse.",
   }),
   regel({
+    id: "spraklas-dialog-voice",
+    name: "Lås talespråk og replikk ordrett",
+    category: "Produksjonslogikk",
+    severity: 5,
+    description: "Dialog blir mer stabil når språk, uttale og ordlyd låses eksplisitt.",
+    appliesTo: "video",
+    addToPrompt:
+      "Ved dialog/voiceover: velg ett talespråk, krev naturlig uttale i valgt språk, og skriv replikk ordrett i anførselstegn.",
+    negativeAdd: "Unngå språkblanding, oversatt replikk, aksentdrift og ekstra ord i talen.",
+  }),
+  regel({
     id: "unnga-vage-stilord",
     name: "Unngå generelle ord som 'cinematisk' uten presisering",
     category: "Produksjonslogikk",

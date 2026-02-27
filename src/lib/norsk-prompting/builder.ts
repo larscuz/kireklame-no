@@ -405,6 +405,7 @@ const sectionOrder: Array<{ id: string; title: string }> = [
   { id: "light", title: "LYS" },
   { id: "composition", title: "KOMPOSISJON" },
   { id: "style", title: "STIL OG ETTERARBEID" },
+  { id: "speech", title: "SPRÅKLÅS FOR TALE" },
   { id: "output", title: "OUTPUTKRAV" },
   { id: "negative", title: "NEGATIVLISTE" },
 ];
@@ -638,6 +639,13 @@ function detectAudioMode(inputText: string, templateTitle?: string): "voice" | "
   return null;
 }
 
+function hasSpeechSignals(text: string): boolean {
+  const source = text.toLowerCase();
+  return /(dialog|dialogue|replikk|voiceover|voice-over|fortellerstemme|speaker|stemme|tale|uttale|lip[- ]?sync|sier|says)/.test(
+    source
+  );
+}
+
 function visualTextHintBlock(input: BuildPromptInput): string {
   if (input.outputType === "text") {
     return "Ikke relevant for ren tekstleveranse.";
@@ -658,7 +666,29 @@ function languageRuleBlock(input: BuildPromptInput): string {
     return "Svar på norsk med tydelig struktur og konkret ordvalg.";
   }
 
-  return "Skriv sluttprompten på norsk. Hvis ideen inneholder konkret tekst i motivet, behold ordlyden slik den er beskrevet.";
+  if (detectAudioMode(input.input) === "voice" || hasSpeechSignals(input.input)) {
+    return "Skriv sluttprompten på norsk. Skill tydelig mellom sceneinstruks og dialoglinjer, og behold ordlyden i dialogen nøyaktig som spesifisert.";
+  }
+
+  return "Skriv sluttprompten på norsk. Bruk ett språk konsekvent i instruksjonsteksten. Hvis ideen inneholder konkret tekst i motivet, behold ordlyden slik den er beskrevet.";
+}
+
+function speechLanguageLockBlock(input: BuildPromptInput): string {
+  if (input.outputType !== "video") {
+    return "Ikke relevant: denne leveransetypen har ikke talespor.";
+  }
+
+  const speechMode = detectAudioMode(input.input) === "voice" || hasSpeechSignals(input.input);
+  if (!speechMode) {
+    return "Ingen dialog/voiceover i input. Hvis tale legges til senere: lås valgt språk, krev ordrett replikk i anførselstegn og unngå språkblanding.";
+  }
+
+  return [
+    "Hard språklås for tale: velg ett talespråk og hold det 100 prosent konsekvent i hele klippet.",
+    "Hvis norsk er valgt: bruk naturlig norsk bokmålsuttale uten engelske fonemer eller engelsk prosodi.",
+    "Alle replikker i anførselstegn skal leveres ordrett, uten oversettelse, omskriving eller ekstra ord.",
+    "Lip-sync skal følge faktiske fonemer i valgt språk.",
+  ].join(" ");
 }
 
 function lightHint(style: PromptStyle, strictness: number): string {
@@ -1119,6 +1149,7 @@ export function buildPrompt(rawInput: BuildPromptInput): BuildPromptResult {
   const constraints = buildConstraintList(input, rules, domainPack);
   const negativeList = buildNegativeList(rules, input.strictness);
   const languageRule = languageRuleBlock(input);
+  const speechLanguageLock = speechLanguageLockBlock(input);
   const visualTextHint = visualTextHintBlock(input);
   const guidance = getPromptGuidance(input);
   const referenceStrategy = referenceStrategyBlock(input, guidance.reference);
@@ -1265,6 +1296,11 @@ export function buildPrompt(rawInput: BuildPromptInput): BuildPromptResult {
       )}. ${audioMode === "voice" ? "Norsk voiceover med jevn rytme og tydelig artikulasjon." : ""} ${
         audioMode === "music" ? "Musikk skal støtte budskap med tydelig oppbygning og avslutning." : ""
       } ${audioMode === "sfx" ? "SFX skal støtte handling med tydelig kilde og romlig plassering." : ""}`.trim(),
+    },
+    {
+      id: "speech",
+      title: "SPRÅKLÅS FOR TALE",
+      content: speechLanguageLock,
     },
     {
       id: "output",

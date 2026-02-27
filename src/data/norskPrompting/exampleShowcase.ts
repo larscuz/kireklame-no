@@ -292,13 +292,22 @@ Resolution: 4K.`,
       "Sceneanker først (bilinteriør, tid, vær).",
       "Lås karakterroller med konsekvent navn/omtale.",
       "Beskriv shot-rekkefolge og kamerabevegelse eksplisitt.",
+      "Legg inn hard språklås for tale: valgt språk, ordrett replikk, ingen språkblanding.",
     ],
     terms: ["Shot continuity", "Dialogue timing", "Eye-line match", "Reflections control"],
-    prompt: `Scene: Interior of a moving electric car at blue hour in light rain, city reflections passing through side windows.
-Characters: Woman in gray coat driving, man in black jacket in passenger seat.
-Action: They exchange a short focused dialogue while the car moves smoothly through traffic.
-Dialogue: Woman says "Vi er fremme om to minutter." (calm voice). Man answers "Perfekt, da rekker vi presentasjonen." (confident voice).
-Camera: Start on medium two-shot, then slow push to passenger close-up, then back to driver close-up. Keep continuity in hand positions and gaze direction.
+    prompt: `Goal: Create an 8-second photoreal cinematic ad scene with stable identity, clean continuity and natural spoken delivery.
+Scene anchor: Interior of a moving electric car at blue hour in light rain, city reflections passing through side windows.
+Characters (locked): Driver is a woman in a gray coat. Passenger is a man in a black jacket. Keep wardrobe, facial identity and role assignment unchanged in every shot.
+Action: They exchange one short focused dialogue while the car moves smoothly through traffic.
+Dialogue (HARD LOCK - speech language):
+- Spoken language must be Norwegian Bokmål only, with natural native Norwegian pronunciation.
+- No English phonemes, no English rhythm/prosody, no mixed-language substitutions.
+- Deliver dialogue exactly word-for-word, no paraphrasing and no extra words:
+  Driver (calm voice): "Vi er fremme om to minutter."
+  Passenger (confident voice): "Perfekt, da rekker vi presentasjonen."
+- Lip-sync must match Norwegian phonemes precisely for each spoken word.
+Camera plan: Start on medium two-shot, then slow push to passenger close-up, then return to driver close-up.
+Continuity locks: Keep continuity in hand positions, gaze direction, seat position and body orientation across all cuts.
 Style: Photoreal cinematic ad look, natural skin detail, controlled reflections.
 Guardrails: No identity drift, no lip-sync jitter, no window morphing, no steering wheel deformation.
 Duration: 8s.`,
