@@ -408,16 +408,47 @@ Duration: 8s.`,
     challenge: "Ren transformasjon fra frame A til B med kontrollert overgang.",
     shortBrief: "Produktperson fra kontorlook til eventlook i ett flytende klipp.",
     miniTutorial: [
-      "Beskriv hva som skal være konstant mellom start/slutt.",
-      "Definer nøyaktig hva som får endre seg.",
-      "Sett tempo og kamerastabilitet i samme setning.",
+      "DEL 1: generer et startbilde med låst identitet, pose og kameravinkel.",
+      "DEL 2: generer et sluttbilde med startbildet som referanse, og endre kun outfit/miljø.",
+      "DEL 3: generer video med begge referansebildene og lås kontinuitet i ansikt og proporsjon.",
     ],
-    terms: ["Start-end interpolation", "Identity preservation", "Motion continuity"],
-    prompt: `Start frame: A woman in a gray blazer standing in a minimal office, neutral expression, eye-level framing.
-End frame: Same woman, same face and proportions, now in elegant evening outfit on a small stage with warm practical lights.
-Transition: Smooth 8-second visual transformation of clothing and environment while identity stays exact.
-Camera: Stable slow push-in, no sudden shake.
-Constraints: Preserve facial geometry, eye distance, jawline and skin tone. No facial morphing, no body proportion drift.
+    terms: ["Start-end interpolation", "Identity preservation", "Motion continuity", "Reference-image chaining"],
+    prompt: `DEL 1 - FIRST IMAGE (START FRAME REFERENCE)
+
+Create a photoreal still image of a woman in a gray blazer standing in a minimal office.
+Expression: neutral and confident.
+Framing: eye-level medium portrait.
+Camera: natural portrait perspective, no wide-angle distortion.
+Constraints:
+- Preserve realistic face proportions and skin texture.
+- No stylization, no facial warping.
+- Keep pose and framing clean for later transition use.
+
+DEL 2 - SECOND IMAGE (END FRAME REFERENCE, USE DEL 1 AS REFERENCE)
+
+Use the first reference image from DEL 1.
+Generate the same woman with exact same identity and proportions.
+Change only outfit and environment:
+- Outfit: elegant evening look.
+- Environment: small stage with warm practical lights.
+Keep pose family and camera framing closely matched to DEL 1.
+Constraints:
+- No identity drift.
+- No facial morphing.
+- No body proportion change.
+
+DEL 3 - VIDEO PROMPT (USE BOTH REFERENCE IMAGES FROM DEL 1 + DEL 2)
+
+Use both generated reference images:
+- DEL 1 image as start anchor.
+- DEL 2 image as end anchor.
+
+Create an 8-second smooth transition video from start look to end look.
+Camera: stable slow push-in, no sudden shake.
+Motion: gradual and physically plausible transition of clothing and environment.
+Identity lock:
+- Preserve facial geometry, eye distance, jawline and skin tone throughout.
+- No facial morphing, no body proportion drift.
 Style: Photoreal cinematic commercial transition.
 Duration: 8s.`,
     media: {

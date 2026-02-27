@@ -11,9 +11,46 @@ type Props = {
 type FilterMode = "all" | "image" | "video";
 const PROMPT_PREVIEW_MAX = 520;
 
+type PromptPanel = {
+  id: string;
+  title: string;
+  content: string;
+};
+
 function promptPreview(value: string, max = 520): string {
   if (value.length <= max) return value;
   return `${value.slice(0, max).trimEnd()}...`;
+}
+
+function parsePromptPanels(prompt: string): PromptPanel[] {
+  const source = String(prompt ?? "").trim();
+  if (!source) {
+    return [{ id: "panel-1", title: "Prompt", content: "" }];
+  }
+
+  const pattern = /^DEL\s+(\d+)\s*[-–:]\s*(.+)$/gim;
+  const matches = Array.from(source.matchAll(pattern));
+  if (matches.length < 2) {
+    return [{ id: "panel-1", title: "Prompt", content: source }];
+  }
+
+  const panels: PromptPanel[] = [];
+  for (let index = 0; index < matches.length; index += 1) {
+    const match = matches[index];
+    const number = String(match[1] ?? "").trim();
+    const label = String(match[2] ?? "").trim();
+    const start = (match.index ?? 0) + match[0].length;
+    const end = index + 1 < matches.length ? (matches[index + 1].index ?? source.length) : source.length;
+    const content = source.slice(start, end).trim();
+
+    panels.push({
+      id: `panel-${number || index + 1}`,
+      title: `DEL ${number || index + 1} - ${label}`,
+      content,
+    });
+  }
+
+  return panels;
 }
 
 function shouldShowPlaceholderCaption(item: ExampleShowcaseItem): boolean {
@@ -218,64 +255,88 @@ export default function ExamplesShowcaseBoard({ items }: Props) {
       </article>
 
       <div className="grid gap-3">
-        {filteredItems.map((item) => (
-          <article
-            key={item.id}
-            id={`example-${item.id}`}
-            className="rounded-2xl border border-zinc-700 bg-zinc-900 p-4 pt-7 text-white shadow-[0_10px_30px_rgba(2,6,23,0.35)]"
-          >
-            <div className="grid gap-4 lg:grid-cols-[minmax(0,1.35fr)_minmax(0,0.95fr)] lg:items-start">
-              <div className="min-w-0">
-                <div className="flex flex-wrap items-center gap-2">
-                  <span className="rounded-full border border-zinc-300/35 bg-zinc-300/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-white">
-                    {item.outputType === "video" ? "Video" : "Bilde"}
-                  </span>
-                  <span className="rounded-full border border-zinc-600 px-2 py-0.5 text-[10px] uppercase tracking-[0.12em] text-zinc-300">
-                    {item.modelName}
-                  </span>
+        {filteredItems.map((item) => {
+          const promptPanels = parsePromptPanels(item.prompt);
+          const hasMultiplePanels = promptPanels.length > 1;
+          const hasExpandablePanel = promptPanels.some((panel) => panel.content.length > PROMPT_PREVIEW_MAX);
+
+          return (
+            <article
+              key={item.id}
+              id={`example-${item.id}`}
+              className="rounded-2xl border border-zinc-700 bg-zinc-900 p-4 pt-7 text-white shadow-[0_10px_30px_rgba(2,6,23,0.35)]"
+            >
+              <div className="grid gap-4 lg:grid-cols-[minmax(0,1.35fr)_minmax(0,0.95fr)] lg:items-start">
+                <div className="min-w-0">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="rounded-full border border-zinc-300/35 bg-zinc-300/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-white">
+                      {item.outputType === "video" ? "Video" : "Bilde"}
+                    </span>
+                    <span className="rounded-full border border-zinc-600 px-2 py-0.5 text-[10px] uppercase tracking-[0.12em] text-zinc-300">
+                      {item.modelName}
+                    </span>
+                  </div>
+
+                  <h3 className="mt-2 text-lg font-semibold tracking-tight">{item.title}</h3>
+                  <p className="mt-1 text-sm text-zinc-300">{item.shortBrief}</p>
+                  <p className="mt-2 text-sm text-white">
+                    <strong>Hvorfor vanskelig:</strong> {item.challenge}
+                  </p>
+
+                  <p className="mt-3 text-xs font-semibold uppercase tracking-[0.12em] text-zinc-300">Mini tutorial</p>
+                  <ol className="mt-1 list-decimal space-y-1 pl-5 text-sm text-white">
+                    {item.miniTutorial.map((step) => (
+                      <li key={`${item.id}-step-${step}`}>{step}</li>
+                    ))}
+                  </ol>
+
+                  <p className="mt-3 text-xs font-semibold uppercase tracking-[0.12em] text-zinc-300">Prompt (klar til bruk)</p>
+                  <div className="mt-1 space-y-2">
+                    {promptPanels.map((panel) => (
+                      <article key={`${item.id}-${panel.id}`} className="rounded-xl border border-zinc-600 bg-zinc-950 p-3">
+                        {hasMultiplePanels ? (
+                          <p className="mb-2 text-[11px] font-semibold uppercase tracking-[0.11em] text-zinc-300">{panel.title}</p>
+                        ) : null}
+                        <pre className="max-h-52 overflow-auto whitespace-pre-wrap text-xs text-white">
+                          {isPromptExpanded(item.id) || !hasExpandablePanel
+                            ? panel.content
+                            : promptPreview(panel.content, PROMPT_PREVIEW_MAX)}
+                        </pre>
+                      </article>
+                    ))}
+                  </div>
+
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    {hasExpandablePanel ? (
+                      <button
+                        type="button"
+                        onClick={() => togglePromptExpanded(item.id)}
+                        className="rounded-lg border !border-zinc-100 !bg-zinc-100 px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.11em] !text-zinc-950 shadow-sm transition hover:!bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-100"
+                      >
+                        {isPromptExpanded(item.id) ? "Vis kortversjon" : "Vis hele prompten"}
+                      </button>
+                    ) : null}
+                    {promptPanels.map((panel) => (
+                      <CopyTextButton
+                        key={`${item.id}-copy-${panel.id}`}
+                        value={panel.content}
+                        label={hasMultiplePanels ? `Kopier ${panel.title}` : "Kopier prompt"}
+                        className="!border-white/35 !bg-white/10 !text-white hover:!bg-white/20"
+                      />
+                    ))}
+                  </div>
+
+                  <p className="mt-2 text-xs text-zinc-300">Fagbegreper: {item.terms.join(" · ")}</p>
                 </div>
 
-                <h3 className="mt-2 text-lg font-semibold tracking-tight">{item.title}</h3>
-                <p className="mt-1 text-sm text-zinc-300">{item.shortBrief}</p>
-                <p className="mt-2 text-sm text-white">
-                  <strong>Hvorfor vanskelig:</strong> {item.challenge}
-                </p>
-
-                <p className="mt-3 text-xs font-semibold uppercase tracking-[0.12em] text-zinc-300">Mini tutorial</p>
-                <ol className="mt-1 list-decimal space-y-1 pl-5 text-sm text-white">
-                  {item.miniTutorial.map((step) => (
-                    <li key={`${item.id}-step-${step}`}>{step}</li>
-                  ))}
-                </ol>
-
-                <p className="mt-3 text-xs font-semibold uppercase tracking-[0.12em] text-zinc-300">Prompt (klar til bruk)</p>
-                <pre className="mt-1 max-h-52 overflow-auto whitespace-pre-wrap rounded-xl border border-zinc-600 bg-zinc-950 p-3 text-xs text-white">
-                  {isPromptExpanded(item.id) ? item.prompt : promptPreview(item.prompt, PROMPT_PREVIEW_MAX)}
-                </pre>
-
-                <div className="mt-2 flex flex-wrap gap-2">
-                  {item.prompt.length > PROMPT_PREVIEW_MAX ? (
-                    <button
-                      type="button"
-                      onClick={() => togglePromptExpanded(item.id)}
-                      className="rounded-lg border border-white bg-white px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.11em] !text-black shadow-sm hover:bg-zinc-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
-                    >
-                      {isPromptExpanded(item.id) ? "Vis kortversjon" : "Vis hele prompten"}
-                    </button>
-                  ) : null}
-                  <CopyTextButton value={item.prompt} label="Kopier prompt" className="!border-white/35 !bg-white/10 !text-white hover:!bg-white/20" />
+                <div className="min-w-0">
+                  <MediaThumb item={item} onOpen={() => setActiveId(item.id)} />
+                  {shouldShowPlaceholderCaption(item) ? <p className="mt-2 text-xs text-zinc-300">{item.media.caption}</p> : null}
                 </div>
-
-                <p className="mt-2 text-xs text-zinc-300">Fagbegreper: {item.terms.join(" · ")}</p>
               </div>
-
-              <div className="min-w-0">
-                <MediaThumb item={item} onOpen={() => setActiveId(item.id)} />
-                {shouldShowPlaceholderCaption(item) ? <p className="mt-2 text-xs text-zinc-300">{item.media.caption}</p> : null}
-              </div>
-            </div>
-          </article>
-        ))}
+            </article>
+          );
+        })}
       </div>
 
       {activeItem ? <MediaModal item={activeItem} onClose={() => setActiveId(null)} /> : null}
