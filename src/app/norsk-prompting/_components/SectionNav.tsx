@@ -5,7 +5,7 @@ const links = [
   { href: "/norsk-prompting/ordforrad", label: "Ordforråd" },
   { href: "/norsk-prompting/maler", label: "Maler" },
   { href: "/norsk-prompting/eksempler", label: "Eksempler" },
-  { href: "/norsk-prompting/changelog", label: "Gratis modeller" },
+  { href: "/norsk-prompting/changelog", label: "KI-verktøy" },
 ];
 
 type Props = {

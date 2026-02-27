@@ -288,7 +288,7 @@ const rankingCategories: FreeModelRankingCategory[] = [
 ];
 
 export const metadata = siteMeta({
-  title: "Gratis modeller | Norsk Prompting",
+  title: "KI-verktøy | Norsk Prompting",
   description: "Lenker til store tekst-, bilde-, video- og lydmodeller med gratisnivå eller gratis kreditter.",
   path: "/norsk-prompting/changelog",
 });
@@ -300,11 +300,11 @@ export default function NorskPromptingChangelogPage() {
   return (
     <NorskPromptingShell
       currentPath="/norsk-prompting/changelog"
-      title="Gratis modeller"
+      title="KI-verktøy"
       description={description}
       jsonLd={[
         buildArticleJsonLd({
-          headline: "Gratis modeller for Norsk Prompting",
+          headline: "KI-verktøy for Norsk Prompting",
           description,
           path: "/norsk-prompting/changelog",
           dateModified: "2026-02-26",
@@ -312,12 +312,12 @@ export default function NorskPromptingChangelogPage() {
         buildBreadcrumbJsonLd([
           { name: "Forside", item: absoluteUrl("/") },
           { name: "Norsk Prompting", item: absoluteUrl("/norsk-prompting") },
-          { name: "Gratis modeller", item: absoluteUrl("/norsk-prompting/changelog") },
+          { name: "KI-verktøy", item: absoluteUrl("/norsk-prompting/changelog") },
         ]),
       ]}
     >
-      <article className="np-node-surface rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))]/90 p-4 pt-7">
-        <p className="text-sm text-[rgb(var(--fg))]/90">
+      <article className="rounded-2xl border border-zinc-700 bg-zinc-900 p-4 pt-7 text-white shadow-[0_10px_30px_rgba(2,6,23,0.35)]">
+        <p className="text-sm text-zinc-200">
           Merk: gratisnivå, kreditter og regiontilgang kan endres av leverandørene over tid.
         </p>
       </article>

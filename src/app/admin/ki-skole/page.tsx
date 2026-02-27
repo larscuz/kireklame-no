@@ -11,6 +11,7 @@ type ExampleDifficulty = "Vanskelig" | "Svært vanskelig";
 type OutputType = "image" | "video";
 type MediaKind = "image" | "video";
 type UploadMode = "r2" | "endpoint" | "missing";
+type CmsSeedRow = ReturnType<typeof buildCmsInsertRowsFromStaticExamples>[number];
 
 type ExampleRow = {
   id: string;
@@ -132,9 +133,43 @@ async function seedExamplesAction() {
 
   const db = supabaseAdmin();
   const rows = buildCmsInsertRowsFromStaticExamples();
-  const { error } = await db.from("ki_skole_examples").upsert(rows, {
+  const { data: existingData, error: existingError } = await db
+    .from("ki_skole_examples")
+    .select("example_key,media_kind,media_src,media_thumbnail_src,media_poster_src,is_placeholder,is_active,sort_order");
+  if (existingError) throw new Error(existingError.message);
+
+  const existingByKey = new Map(
+    ((existingData ?? []) as Array<{
+      example_key: string;
+      media_kind: MediaKind;
+      media_src: string | null;
+      media_thumbnail_src: string | null;
+      media_poster_src: string | null;
+      is_placeholder: boolean;
+      is_active: boolean;
+      sort_order: number;
+    }>).map((row) => [row.example_key, row])
+  );
+
+  const syncRows: CmsSeedRow[] = rows.map((row) => {
+    const existing = existingByKey.get(row.example_key);
+    if (!existing) return row;
+
+    return {
+      ...row,
+      media_kind: existing.media_kind,
+      media_src: existing.media_src,
+      media_thumbnail_src: existing.media_thumbnail_src,
+      media_poster_src: existing.media_poster_src,
+      is_placeholder: existing.is_placeholder,
+      is_active: existing.is_active,
+      sort_order: existing.sort_order,
+    };
+  });
+
+  const { error } = await db.from("ki_skole_examples").upsert(syncRows, {
     onConflict: "example_key",
-    ignoreDuplicates: true,
+    ignoreDuplicates: false,
   });
   if (error) throw new Error(error.message);
 
@@ -376,12 +411,13 @@ export default async function AdminKISkolePage() {
                 type="submit"
                 className="inline-flex rounded-lg border border-[rgb(var(--border))] px-3 py-1.5 text-sm font-semibold hover:bg-[rgb(var(--bg))]"
               >
-                Importer forslag til CMS
+                Importer/synk forslag til CMS
               </button>
             </form>
           </div>
           <p className="mt-2 text-sm text-[rgb(var(--muted))]">
-            Legger kun til manglende forslag fra kodebasen. Eksisterende CMS-data og opplastet media beholdes.
+            Synkroniserer tekstfelter (prompt, mini-tutorial, modellvalg, etc.) fra kodebasen til CMS.
+            Opplastet media, frontend-synlighet og sortering i CMS beholdes.
           </p>
           <p className="mt-1 text-xs text-[rgb(var(--muted))]">
             Merk: Alle rader vises alltid i admin. Avhuking for frontend styrer kun visning på /norsk-prompting/eksempler.

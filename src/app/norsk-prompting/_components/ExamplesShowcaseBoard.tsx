@@ -9,6 +9,7 @@ type Props = {
 };
 
 type FilterMode = "all" | "image" | "video";
+const PROMPT_PREVIEW_MAX = 520;
 
 function promptPreview(value: string, max = 520): string {
   if (value.length <= max) return value;
@@ -149,6 +150,7 @@ function MediaModal({ item, onClose }: { item: ExampleShowcaseItem; onClose: () 
 export default function ExamplesShowcaseBoard({ items }: Props) {
   const [filter, setFilter] = useState<FilterMode>("all");
   const [activeId, setActiveId] = useState<string | null>(null);
+  const [expandedPromptIds, setExpandedPromptIds] = useState<string[]>([]);
 
   const filteredItems = useMemo(() => {
     if (filter === "all") return items;
@@ -156,6 +158,16 @@ export default function ExamplesShowcaseBoard({ items }: Props) {
   }, [filter, items]);
 
   const activeItem = filteredItems.find((item) => item.id === activeId) ?? items.find((item) => item.id === activeId) ?? null;
+
+  function isPromptExpanded(itemId: string): boolean {
+    return expandedPromptIds.includes(itemId);
+  }
+
+  function togglePromptExpanded(itemId: string) {
+    setExpandedPromptIds((current) =>
+      current.includes(itemId) ? current.filter((id) => id !== itemId) : [...current, itemId]
+    );
+  }
 
   useEffect(() => {
     if (!activeId) return;
@@ -238,10 +250,19 @@ export default function ExamplesShowcaseBoard({ items }: Props) {
 
                 <p className="mt-3 text-xs font-semibold uppercase tracking-[0.12em] text-zinc-300">Prompt (klar til bruk)</p>
                 <pre className="mt-1 max-h-52 overflow-auto whitespace-pre-wrap rounded-xl border border-zinc-600 bg-zinc-950 p-3 text-xs text-white">
-                  {promptPreview(item.prompt)}
+                  {isPromptExpanded(item.id) ? item.prompt : promptPreview(item.prompt, PROMPT_PREVIEW_MAX)}
                 </pre>
 
                 <div className="mt-2 flex flex-wrap gap-2">
+                  {item.prompt.length > PROMPT_PREVIEW_MAX ? (
+                    <button
+                      type="button"
+                      onClick={() => togglePromptExpanded(item.id)}
+                      className="rounded-lg border border-white bg-white px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.11em] !text-black shadow-sm hover:bg-zinc-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+                    >
+                      {isPromptExpanded(item.id) ? "Vis kortversjon" : "Vis hele prompten"}
+                    </button>
+                  ) : null}
                   <CopyTextButton value={item.prompt} label="Kopier prompt" className="!border-white/35 !bg-white/10 !text-white hover:!bg-white/20" />
                 </div>
 
