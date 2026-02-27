@@ -466,31 +466,88 @@ Duration: 8s.`,
     outputType: "video",
     modelName: "Veo 3.1",
     difficulty: "Vanskelig",
-    challenge: "Rotasjon av blankt produkt med konsistent geometri og etikett.",
-    shortBrief: "6 sek produktfilm for landing page hero.",
+    challenge: "Rotasjon med fysisk kontinuitet, akse-/hastighetslås og etikettstabilitet uten wobble.",
+    shortBrief: "6 sek premium produktfilm med streng start/slutt- og materialkontroll.",
     miniTutorial: [
-      "Lås produktgeometri og etiketttekst først.",
-      "Beskriv rotasjonshastighet og aksen eksplisitt.",
-      "Unngå motstridende lysbeskrivelser i samme prompt.",
+      "Definer alltid starttilstand og sluttilstand før du beskriver bevegelse.",
+      "Lås rotasjonsretning, vinkel, akse og hastighetsprofil (ingen ujevn fart).",
+      "Lås etiketttekst teknisk: ingen stretching, flicker eller fontendring.",
+      "Spesifiser refleksjons- og materialkontinuitet med anti-wobble guardrails.",
     ],
-    terms: ["Product spin", "Reflection continuity", "Label fidelity", "Hero animation"],
-    prompt: `Create a 6-second product hero video of a matte-black smart speaker rotating 220 degrees on a clean reflective surface.
+    terms: ["Product rotation lock", "Axis lock", "Velocity profile", "Reflection continuity", "Label fidelity", "Material fidelity"],
+    prompt: `Create a 6-second premium product hero video of a matte-black cylindrical smart speaker rotating exactly 220 degrees clockwise around its vertical axis.
 
-Product constraints:
-Cylinder geometry must remain stable.
-Front label text "AURUM ONE" must remain readable and undistorted.
+Duration:
+6 seconds total.
+Smooth continuous motion from start to end.
+No speed fluctuation.
+No easing overshoot.
+
+Start frame:
+Speaker front label "NORSK SKOGSBRANN" facing directly toward camera.
+Perfect vertical alignment.
+Text centered and horizontally level.
+
+End frame:
+Speaker rotated 220 degrees.
+Final orientation stable.
+No snap or drift.
+
+Geometry constraints:
+Perfect cylinder.
+Flat top and bottom planes.
+No shape morphing.
+No tapering.
+No warping during rotation.
+No micro-deformation.
+
+Text lock:
+"NORSK SKOGSBRANN" must remain:
+Crisp.
+Undistorted.
+Perspective-consistent.
+No stretching.
+No flicker.
+No font weight change.
 
 Camera:
-Locked-off camera, slight telephoto look, centered framing.
+Locked-off camera.
+Centered framing.
+Slight telephoto compression (approx. 70-85mm equivalent).
+No camera movement.
+No parallax drift.
+
+Surface:
+Clean reflective surface.
+Reflection must rotate physically accurate with object.
+No reflection lag.
+No reflection morphing.
+No secondary ghost reflections.
 
 Lighting:
-Soft top key with controlled side rim highlights.
-Reflections must stay physically coherent through rotation.
+Soft top key light (approx. 5600K).
+Controlled subtle side rim highlights.
+Matte material behavior preserved.
+No specular popping.
+No highlight jitter.
+
+Material fidelity:
+Matte-black surface with subtle microtexture.
+No gloss shift during rotation.
 
 Style:
-Photoreal premium ad film.
-No geometry wobble. No text deformation.
-Duration: 6s.`,
+Photoreal premium advertisement.
+Luxury product film aesthetic.
+High contrast control.
+Clean commercial finish.
+4K detail.
+
+Guardrails:
+No geometry wobble.
+No label deformation.
+No lighting temperature shift.
+No background flicker.
+No motion artifacts.`,
     media: {
       kind: "video",
       posterSrc: placeholderImage,

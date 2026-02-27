@@ -200,6 +200,19 @@ export const norskPromptingRules: NorskPromptingRule[] = [
     negativeAdd: "Unngå uklar referansenavnsetting som bryter koblingen mellom UI-felter og prompt.",
   }),
   regel({
+    id: "veo-produktrotasjon-streng-las",
+    name: "Ved produktrotasjon: lås start/slutt, akse og fysikk",
+    category: "Produksjonslogikk",
+    severity: 5,
+    description:
+      "Rotasjonsprompter blir mer reklameklare når retning, akse, hastighetsprofil, tekst og refleksjoner er eksplisitt låst.",
+    appliesTo: "video",
+    addToPrompt:
+      "Ved roterende produkt: spesifiser startorientering, sluttutslag, retning, rotasjonsakse og hastighetsprofil. Lås tekst/etikett, refleksjonskontinuitet og materialoppførsel med anti-wobble guardrails.",
+    negativeAdd:
+      "Unngå vag 'rotating'-instruks uten start/slutt-lås, og unngå wobble, etikettflimmer, refleksjonslag eller ujevn rotasjonshastighet.",
+  }),
+  regel({
     id: "unnga-overmettet-farge",
     name: "Unngå overmettet farge uten begrunnelse",
     category: "Lys",
