@@ -189,6 +189,17 @@ export const norskPromptingRules: NorskPromptingRule[] = [
     negativeAdd: "Unngå å redesigne objektet når visningsformen endres fra referanse til exploded.",
   }),
   regel({
+    id: "modellspesifikke-referansefelter",
+    name: "Bruk modellspesifikke referansefelter og tags",
+    category: "Produksjonslogikk",
+    severity: 5,
+    description: "Referansearbeid blir mer stabilt når prompten speiler modellens faktiske feltnavn og tag-format.",
+    appliesTo: "all",
+    addToPrompt:
+      "Når referanser brukes: bruk modellens feltnavn (Kling 3.0: Start image/End image) og tag referanser eksplisitt som @img1, @img2, ...",
+    negativeAdd: "Unngå uklar referansenavnsetting som bryter koblingen mellom UI-felter og prompt.",
+  }),
+  regel({
     id: "unnga-overmettet-farge",
     name: "Unngå overmettet farge uten begrunnelse",
     category: "Lys",

@@ -426,7 +426,7 @@ Constraints:
 
 DEL 2 - SECOND IMAGE (END FRAME REFERENCE, USE DEL 1 AS REFERENCE)
 
-Use the first reference image from DEL 1.
+Use @img1 (the DEL 1 image) as the identity reference.
 Generate the same woman with exact same identity and proportions.
 Change only outfit and environment:
 - Outfit: elegant evening look.
@@ -440,8 +440,8 @@ Constraints:
 DEL 3 - VIDEO PROMPT (USE BOTH REFERENCE IMAGES FROM DEL 1 + DEL 2)
 
 Use both generated reference images:
-- DEL 1 image as start anchor.
-- DEL 2 image as end anchor.
+- Start image (@img1) as start anchor.
+- End image (@img2) as end anchor.
 
 Create an 8-second smooth transition video from start look to end look.
 Camera: stable slow push-in, no sudden shake.
@@ -663,7 +663,7 @@ Resolution: 4K.`,
     ],
     terms: ["Lip sync", "Facial stability", "Close-up portrait", "Identity guardrails", "Language lock", "Phonetic precision"],
     prompt: `Scene: Tight portrait close-up, neutral indoor background, soft natural key light.
-Character: Same woman from reference image, dark blond hair, green eyes.
+Character: Same woman from @img1 reference image, dark blond hair, green eyes.
 Language lock: Norwegian Bokmal with natural neutral Oslo pronunciation.
 Dialogue (strict wording): "Vi lanserer i morgen." (confident, calm tone).
 
@@ -787,7 +787,7 @@ Do not alter material order.
 
 DEL 2 - EXPLODED AXONOMETRIC (USE WITH THE REFERENCE IMAGE)
 
-Use the provided reference image of the modular kitchen island.
+Use @img1 as the provided reference image of the modular kitchen island.
 
 Create a technical advertising visualization showing the same object in exploded axonometric view.
 
@@ -869,7 +869,7 @@ No layer warping.`,
     prompt: `Create a dramatic editorial portrait using chiaroscuro lighting.
 
 Subject:
-One woman, exact facial identity preserved from reference. Preserve eye spacing, jawline, cheekbone structure and skin texture.
+One woman, exact facial identity preserved from @img1 reference image. Preserve eye spacing, jawline, cheekbone structure and skin texture.
 
 Lighting:
 Low-key, contrast-dominant setup.

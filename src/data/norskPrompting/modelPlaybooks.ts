@@ -434,7 +434,7 @@ Change [@Video] to [style/weather]`,
             title: "Mal 3: Start-End Frames",
             purpose: "Stabil overgang mellom to nøkkelbilder med tydelig endemål.",
             template:
-              "Start frame: {beskriv hva som er sant i start}. End frame: {beskriv ønsket slutt}. Overgang: {hva endres, hva beveger seg, tempo}. Kamera: {bevegelse/stabilitet}. Bevar karakterens identitet og ansikt uendret gjennom hele overgangen.",
+              "Start image (@img1): {beskriv hva som er sant i start}. End image (@img2): {beskriv ønsket slutt}. Overgang: {hva endres, hva beveger seg, tempo}. Kamera: {bevegelse/stabilitet}. Bevar karakterens identitet og ansikt uendret gjennom hele overgangen.",
           },
           {
             id: "kling3-video-reference",

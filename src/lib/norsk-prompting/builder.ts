@@ -606,6 +606,7 @@ function referenceStrategyBlock(input: BuildPromptInput, guidance: GuidanceDecis
     "Referansebilde: AKTIVERT.",
     intentMap[input.referenceIntent || "identitet-logo"],
     "Bruk referanse som fast kilde for form, geometri og nøkkeldetaljer.",
+    "Referansealias: bruk @img1 for første referansebilde, @img2 for neste, osv.",
   ];
 
   if (input.referenceNotes) {
@@ -626,8 +627,10 @@ function firstLastStrategyBlock(input: BuildPromptInput, guidance: GuidanceDecis
 
   return [
     "First/Last-metode: AKTIVERT.",
-    `First frame: ${input.firstFrame || "MÅ FYLLES UT: beskriv startbilde med motiv, lys og kameraposisjon."}`,
-    `Last frame: ${input.lastFrame || "MÅ FYLLES UT: beskriv sluttbilde med samme geometri- og identitetslogikk."}`,
+    "Modellnavn: I Kling 3.0 brukes feltene Start image og End image.",
+    `Start image: ${input.firstFrame || "MÅ FYLLES UT: beskriv startbilde med motiv, lys og kameraposisjon."}`,
+    `End image: ${input.lastFrame || "MÅ FYLLES UT: beskriv sluttbilde med samme geometri- og identitetslogikk."}`,
+    "Tag-kobling ved behov: Start image = @img1, End image = @img2.",
     "Overgang: fysisk plausibel bevegelse mellom start og slutt, uten nye objekter eller magiske transformasjoner.",
   ].join(" ");
 }
@@ -974,7 +977,7 @@ function buildConstraintList(input: BuildPromptInput, rules: NorskPromptingRule[
   }
 
   if (input.outputType === "video" && input.useFirstLast) {
-    hard.push("First/Last er låst: start- og sluttramme skal være kompatible med logisk, fysisk overgang.");
+    hard.push("Start image/End image er låst: start- og sluttramme skal være kompatible med logisk, fysisk overgang.");
   }
 
   if (domainPack?.controlPoints?.length) {
@@ -1202,7 +1205,7 @@ export function buildPrompt(rawInput: BuildPromptInput): BuildPromptResult {
   }
 
   if (input.outputType === "video" && input.useFirstLast) {
-    allNegatives.push("unngå brudd mellom first frame og last frame");
+    allNegatives.push("unngå brudd mellom Start image og End image");
   }
 
   const uniqueNegativeList = Array.from(new Set(allNegatives)).slice(0, 8);
@@ -1269,13 +1272,13 @@ export function buildPrompt(rawInput: BuildPromptInput): BuildPromptResult {
       ? "Arbeidsrekkefølge: 1) Lås objekt i referansebilde. 2) Modifiser visningsform (for eksempel exploded aksjonometri)."
       : "",
     input.outputType !== "text" && referenceActivated
-      ? "Bruk referanse som fast kilde for form, geometri og nøkkeldetaljer."
+      ? "Bruk referanse som fast kilde for form, geometri og nøkkeldetaljer. Referansealias: @img1, @img2, ..."
       : "",
     input.outputType === "video" && guidance.firstLast.level === "anbefalt"
       ? "Start- og sluttfase skal ha samme identitet, geometri og lysretning."
       : "",
     input.outputType === "video" && firstLastActivated
-      ? "Kontinuerlig overgang mellom start og slutt uten nye objekter eller geometrihopp."
+      ? "Kontinuerlig overgang mellom Start image og End image uten nye objekter eller geometrihopp. I Kling 3.0 brukes feltnavnene Start image/End image."
       : "",
   ]
     .filter(Boolean)
