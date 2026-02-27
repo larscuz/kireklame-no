@@ -4,6 +4,7 @@ import { buildCmsInsertRowsFromStaticExamples } from "@/lib/norsk-prompting/exam
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import { requireAdmin } from "@/lib/supabase/server";
 import KISkoleMediaUploadForm from "./KISkoleMediaUploadForm";
+import AdminPromptPanels from "./AdminPromptPanels";
 
 export const dynamic = "force-dynamic";
 
@@ -611,6 +612,7 @@ export default async function AdminKISkolePage() {
                 </div>
 
                 <KISkoleMediaUploadForm exampleId={row.id} mediaKind={row.media_kind} />
+                <AdminPromptPanels prompt={row.prompt_text} className="mt-3" />
 
                 <form action={updateExampleAction} className="mt-3 grid gap-2">
                   <input type="hidden" name="id" value={row.id} />
@@ -702,7 +704,7 @@ export default async function AdminKISkolePage() {
                   </label>
 
                   <label className="grid gap-1 text-xs">
-                    <span className="font-medium text-[rgb(var(--muted))]">Prompt</span>
+                    <span className="font-medium text-[rgb(var(--muted))]">Prompt (råtekst)</span>
                     <textarea
                       name="prompt_text"
                       rows={8}
