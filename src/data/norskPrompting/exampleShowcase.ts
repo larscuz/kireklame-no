@@ -694,32 +694,125 @@ Duration: 8s.`,
     modelName: "Google Nano Banana Pro",
     difficulty: "Svært vanskelig",
     challenge: "Kombinere explodert aksjonometri, typografi og materialitet uten geometridrift.",
-    shortBrief: "Teknisk reklamebilde av modulært kjøkken med lagvis eksplodert visning.",
+    shortBrief: "To-trinns case: først geometrilås i referansebilde, deretter exploded aksjonometri.",
     miniTutorial: [
-      "Lås først ortografisk projeksjon og geometrilås.",
-      "Definer materialitet per lag før lys og stil.",
-      "Legg inn typografisk rasterlås for labels og måltekst.",
+      "Alltid lås objektet i et nøytralt referansebilde før exploded view.",
+      "Deretter modifiser kun visningsform (ikke geometri, proporsjon eller materialrekkefølge).",
+      "Legg inn operasjonelle regler for lag-separasjon, akser, labels og guardrails.",
+      "Kontrollspørsmål: Trenger du først å generere et geometrisk referansebilde for å låse form og proporsjon?",
     ],
-    terms: ["Ortografisk projeksjon", "Explodert aksjonometri", "Eksplodert visning", "Geometrilås", "Materialitet", "Typografisk rasterlås"],
-    prompt: `Create a technical-advertising image of a modular kitchen island shown in exploded axonometric layers.
+    terms: [
+      "Ortografisk projeksjon",
+      "Explodert aksjonometri",
+      "Eksplodert visning",
+      "Geometrilås",
+      "Materialitet",
+      "Typografisk rasterlås",
+      "Referansebilde",
+      "Objektkontinuitet",
+    ],
+    prompt: `DEL 1 - REFERENCE IMAGE (GEOMETRY LOCK)
 
-Projection and geometry:
-Use orthographic projection. Preserve geometry exactly. No perspective drift.
+Create a photoreal product image of a modular kitchen island.
 
-Layers:
-Top: brushed stainless worktop.
-Middle: frame in powder-coated matte black steel.
-Bottom: storage module in untreated oak with visible grain direction.
+Geometry:
+Rectangular island, exact 240cm x 90cm x 92cm proportions.
+Flat brushed stainless steel worktop.
+Powder-coated matte black steel frame with visible right-angle joints.
+Lower storage volume in untreated oak with natural vertical grain direction.
+No chamfers unless specified.
+No design additions.
+No missing structural parts.
 
-Typography:
-Add clean callout labels in uppercase sans-serif, aligned to a strict typographic grid:
-"TOP PLATE", "STRUCTURAL FRAME", "STORAGE CORE".
+Projection:
+Use neutral eye-level product perspective.
+No wide-angle distortion.
+Lens equivalent 50mm.
+Preserve straight lines and parallel edges.
 
 Lighting:
-Neutral 5600K studio setup with controlled soft shadows and clear layer separation.
+Neutral studio lighting at 5600K.
+Soft controlled shadow under base.
+No dramatic highlights.
+No color grading.
+
+Background:
+Seamless neutral light grey studio backdrop.
+No props.
+No extra objects.
 
 Style:
-Photoreal technical campaign visual. High edge clarity. 4K.`,
+Photoreal commercial product photography.
+High surface fidelity.
+Accurate material separation.
+4K detail.
+No stylization.
+
+Strict rules:
+Do not redesign.
+Do not add handles.
+Do not change proportions.
+Do not alter material order.
+
+DEL 2 - EXPLODED AXONOMETRIC (USE WITH THE REFERENCE IMAGE)
+
+Use the provided reference image of the modular kitchen island.
+
+Create a technical advertising visualization showing the same object in exploded axonometric view.
+
+Projection:
+Strict orthographic projection.
+No perspective.
+No vanishing points.
+Preserve all original proportions exactly as in reference.
+
+Explosion logic:
+Separate object vertically in three precise layers.
+Maintain perfect alignment on X and Y axis.
+Uniform vertical spacing between layers.
+
+Top layer:
+Brushed stainless steel worktop.
+
+Middle layer:
+Powder-coated matte black steel structural frame.
+
+Bottom layer:
+Untreated oak storage module with preserved grain direction.
+
+Typography:
+Add uppercase sans-serif callout labels:
+"TOP PLATE"
+"STRUCTURAL FRAME"
+"STORAGE CORE"
+
+Align labels to a strict modular grid.
+Thin leader lines with consistent stroke weight.
+No decorative typography.
+
+Lighting:
+Neutral 5600K studio lighting.
+Controlled soft shadow under each layer.
+Clear layer separation.
+No dramatic rim light.
+
+Material fidelity:
+Preserve brushed steel direction.
+Preserve oak grain orientation.
+Preserve matte coating behavior.
+
+Style:
+Photoreal technical campaign visual.
+High edge clarity.
+Clean commercial aesthetic.
+4K resolution.
+
+Guardrails:
+No geometry drift.
+No proportion change.
+No added design features.
+No camera distortion.
+No layer warping.`,
     media: {
       kind: "image",
       src: placeholderImage,

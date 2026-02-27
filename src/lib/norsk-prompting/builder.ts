@@ -448,6 +448,33 @@ function containsAny(haystack: string, needles: string[]): boolean {
   return needles.some((needle) => haystack.includes(needle));
 }
 
+function needsGeometryReferenceLock(input: BuildPromptInput): boolean {
+  if (input.outputType === "text") return false;
+
+  const source = input.input.toLowerCase();
+  const hasExplodedSignals = containsAny(source, [
+    "exploded",
+    "explodert",
+    "axonometric",
+    "aksjonometri",
+    "aksonometri",
+    "orthographic",
+    "ortografisk",
+  ]);
+  const hasPrecisionSignals = containsAny(source, [
+    "identisk objekt",
+    "samme objekt",
+    "preserve all original proportions",
+    "bevar proporsjon",
+    "produktpresisjon",
+    "teknisk visualisering",
+    "geometrilås",
+  ]);
+  const hasRelevantDomain = input.domain === "produkt" || input.domain === "arkitektur" || input.domain === "design-system";
+
+  return hasExplodedSignals || (hasRelevantDomain && hasPrecisionSignals);
+}
+
 function evaluateReferenceGuidance(input: BuildPromptInput): GuidanceDecision {
   if (input.outputType === "text") {
     return {
@@ -455,6 +482,16 @@ function evaluateReferenceGuidance(input: BuildPromptInput): GuidanceDecision {
       title: "Ikke relevant",
       reason: "Referansebilde brukes for visuelle leveranser, ikke ren tekst.",
       howToUse: "Ingen tiltak nødvendig for denne outputtypen.",
+    };
+  }
+
+  if (needsGeometryReferenceLock(input)) {
+    return {
+      level: "anbefalt",
+      title: "Referanse først for geometrilås",
+      reason: "Caset krever identisk objekt og teknisk geometribevaring i neste steg.",
+      howToUse:
+        "Trenger du først å generere et geometrisk referansebilde for å låse form og proporsjon? Generer referansen først, og modifiser visningsform i steg to.",
     };
   }
 
@@ -1224,7 +1261,12 @@ export function buildPrompt(rawInput: BuildPromptInput): BuildPromptResult {
 
   const hiddenStabilityControls = [
     input.outputType !== "text" && guidance.reference.level === "anbefalt"
-      ? "Hold identitet, logo og produktdetaljer stabile mellom varianter."
+      ? needsGeometryReferenceLock(input)
+        ? "Kontrollspørsmål: Trenger du først å generere et geometrisk referansebilde for å låse form og proporsjon?"
+        : "Hold identitet, logo og produktdetaljer stabile mellom varianter."
+      : "",
+    input.outputType !== "text" && input.useReferenceImage && needsGeometryReferenceLock(input)
+      ? "Arbeidsrekkefølge: 1) Lås objekt i referansebilde. 2) Modifiser visningsform (for eksempel exploded aksjonometri)."
       : "",
     input.outputType !== "text" && referenceActivated
       ? "Bruk referanse som fast kilde for form, geometri og nøkkeldetaljer."

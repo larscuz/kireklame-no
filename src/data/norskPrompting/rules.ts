@@ -178,6 +178,17 @@ export const norskPromptingRules: NorskPromptingRule[] = [
     negativeAdd: "Unngå perspektivkonvergens i tekniske elevasjoner.",
   }),
   regel({
+    id: "referanse-forst-ved-exploded-aksjonometri",
+    name: "Generer referansebilde før exploded aksjonometri",
+    category: "Produksjonslogikk",
+    severity: 5,
+    description: "To-trinns arbeidsflyt gir stabil geometri når identisk objekt og teknisk visning kreves.",
+    appliesTo: "all",
+    addToPrompt:
+      "Ved exploded view/teknisk aksjonometri/identisk objekt: generer først et geometrisk referansebilde, og bruk det som lås i steg to.",
+    negativeAdd: "Unngå å redesigne objektet når visningsformen endres fra referanse til exploded.",
+  }),
+  regel({
     id: "unnga-overmettet-farge",
     name: "Unngå overmettet farge uten begrunnelse",
     category: "Lys",
