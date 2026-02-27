@@ -30,6 +30,10 @@ type DirectR2UploadConfig = {
 
 type UploadConfig = ForwardUploadConfig | DirectR2UploadConfig;
 
+function wantsJsonResponse(req: Request): boolean {
+  return (req.headers.get("accept") ?? "").includes("application/json");
+}
+
 function normalizeMediaKind(value: string): MediaKind {
   return value === "video" ? "video" : "image";
 }
@@ -355,6 +359,8 @@ function validateFile(file: File, kind: MediaKind): { ok: true; ext: string } | 
 }
 
 export async function POST(req: Request) {
+  const shouldReturnJson = wantsJsonResponse(req);
+
   try {
     const user = await getUserOrNull();
     if (!user) {
@@ -368,6 +374,8 @@ export async function POST(req: Request) {
     const exampleId = String(form.get("example_id") ?? "").trim();
     const requestedKind = normalizeMediaKind(String(form.get("media_kind") ?? "image"));
     const file = form.get("file");
+    const posterFileEntry = form.get("poster_file");
+    const posterFile = posterFileEntry instanceof File && posterFileEntry.size > 0 ? posterFileEntry : null;
 
     if (!exampleId) {
       return NextResponse.json({ error: "Missing example_id" }, { status: 400 });
@@ -398,6 +406,11 @@ export async function POST(req: Request) {
     if (!validation.ok) {
       return NextResponse.json({ error: validation.error }, { status: 415 });
     }
+    const posterValidation =
+      effectiveKind === "video" && posterFile ? validateFile(posterFile, "image") : ({ ok: true, ext: "" } as const);
+    if (!posterValidation.ok) {
+      return NextResponse.json({ error: posterValidation.error }, { status: 415 });
+    }
 
     const ext = validation.ext;
     const uploadConfig = resolveUploadConfig();
@@ -408,6 +421,22 @@ export async function POST(req: Request) {
       uploadConfig.mode === "r2"
         ? await uploadViaDirectR2(uploadConfig, { effectiveKind, filename, file, ext })
         : await uploadViaForward(uploadConfig, { exampleId, effectiveKind, filename, file });
+    const uploadedPoster =
+      effectiveKind === "video" && posterFile && posterValidation.ok
+        ? uploadConfig.mode === "r2"
+          ? await uploadViaDirectR2(uploadConfig, {
+              effectiveKind: "image",
+              filename: `${exampleId}-${now}-poster.${posterValidation.ext}`,
+              file: posterFile,
+              ext: posterValidation.ext,
+            })
+          : await uploadViaForward(uploadConfig, {
+              exampleId,
+              effectiveKind: "image",
+              filename: `${exampleId}-${now}-poster.${posterValidation.ext}`,
+              file: posterFile,
+            })
+        : null;
     const publicUrl = uploaded.publicUrl;
     const updatePatch: Record<string, unknown> = {
       media_kind: effectiveKind,
@@ -419,7 +448,7 @@ export async function POST(req: Request) {
       updatePatch.media_thumbnail_src = publicUrl;
       updatePatch.media_poster_src = null;
     } else {
-      const posterUrl = uploaded.posterUrl;
+      const posterUrl = uploadedPoster?.publicUrl ?? uploaded.posterUrl;
       if (posterUrl) {
         updatePatch.media_poster_src = posterUrl;
         updatePatch.media_thumbnail_src = posterUrl;
@@ -433,6 +462,14 @@ export async function POST(req: Request) {
 
     revalidatePath("/admin/ki-skole");
     revalidatePath("/norsk-prompting/eksempler");
+
+    if (shouldReturnJson) {
+      return NextResponse.json({
+        ok: true,
+        mediaUrl: publicUrl,
+        posterUrl: (updatePatch.media_poster_src as string | undefined) ?? null,
+      });
+    }
 
     const origin = new URL(req.url).origin;
     return NextResponse.redirect(`${origin}/admin/ki-skole`, { status: 303 });

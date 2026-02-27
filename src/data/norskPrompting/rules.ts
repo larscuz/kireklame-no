@@ -43,8 +43,9 @@ export const norskPromptingRules: NorskPromptingRule[] = [
     description: "Dialog blir mer stabil når språk, uttale og ordlyd låses eksplisitt.",
     appliesTo: "video",
     addToPrompt:
-      "Ved dialog/voiceover: velg ett talespråk, krev naturlig uttale i valgt språk, og skriv replikk ordrett i anførselstegn.",
-    negativeAdd: "Unngå språkblanding, oversatt replikk, aksentdrift og ekstra ord i talen.",
+      "Ved dialog/voiceover: velg ett talespråk, spesifiser dialekt/uttalestandard, krev ordrett replikk i anførselstegn, og legg uttalesegmentering for vanskelige ord.",
+    negativeAdd:
+      "Unngå språkblanding, omskrevet replikk, fyllord, anglifisert prosodi/fonemer og aksentdrift i talen.",
   }),
   regel({
     id: "unnga-vage-stilord",

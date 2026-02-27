@@ -49,6 +49,30 @@ function normalizeDifficulty(value: string): ExampleDifficulty {
   return value === "Svært vanskelig" ? "Svært vanskelig" : "Vanskelig";
 }
 
+function reinforceNorwegianDialogueLock(promptText: string): string {
+  const prompt = String(promptText ?? "").trim();
+  if (!prompt) return prompt;
+
+  const source = prompt.toLowerCase();
+  const hasDialogueSignals = /(dialogue|dialog|person a:|person b:|voice|replikk|sier|says)/.test(source);
+  const hasNorwegianSignals =
+    /(norsk|bokm[åa]l|vi er|framme|fremme|presentasjonen|hva er viktigst|lanserer|kampanje|ø|æ|å)/.test(source);
+  const alreadyLocked = /(språklås|language lock|anglifisert|english phonetic coloring|no foreign accent)/.test(source);
+
+  if (!hasDialogueSignals || !hasNorwegianSignals || alreadyLocked) {
+    return prompt;
+  }
+
+  return `${prompt}
+
+Language lock (Norwegian speech, strict):
+- Spoken language: Norwegian Bokmal with natural neutral Oslo pronunciation.
+- No foreign accent, no English phonetic coloring, no anglicized vowel shaping.
+- Dialogue must be spoken exactly as written: no paraphrasing, no added/removed words, no filler words.
+- Lip-sync must match Norwegian phonetics with natural pacing and intonation.
+- Add syllable segmentation for difficult words when relevant.`;
+}
+
 function mapRowToItem(row: ExampleShowcaseCmsRow): ExampleShowcaseItem {
   const outputType: PromptOutputType = row.output_type === "video" ? "video" : "image";
   const mediaKind: MediaKind = row.media_kind === "video" ? "video" : "image";
@@ -82,7 +106,7 @@ function mapRowToItem(row: ExampleShowcaseCmsRow): ExampleShowcaseItem {
     challenge: row.challenge,
     shortBrief: row.short_brief,
     miniTutorial: normalizeLines(row.mini_tutorial),
-    prompt: row.prompt_text,
+    prompt: reinforceNorwegianDialogueLock(row.prompt_text),
     terms: normalizeLines(row.terms),
     media,
   };

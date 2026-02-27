@@ -3,6 +3,7 @@ import { revalidatePath } from "next/cache";
 import { buildCmsInsertRowsFromStaticExamples } from "@/lib/norsk-prompting/exampleShowcaseCms";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import { requireAdmin } from "@/lib/supabase/server";
+import KISkoleMediaUploadForm from "./KISkoleMediaUploadForm";
 
 export const dynamic = "force-dynamic";
 
@@ -573,27 +574,7 @@ export default async function AdminKISkolePage() {
                   </div>
                 </div>
 
-                <form action="/api/admin/ki-skole-media" method="post" encType="multipart/form-data" className="mt-3 rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/60 p-3">
-                  <input type="hidden" name="example_id" value={row.id} />
-                  <input type="hidden" name="media_kind" value={row.media_kind} />
-                  <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">Cloudflare-opplasting</p>
-                  <div className="mt-2 flex flex-wrap items-center gap-2">
-                    <input
-                      type="file"
-                      name="file"
-                      accept={row.media_kind === "video" ? "video/mp4,video/webm,video/quicktime" : "image/png,image/jpeg,image/webp"}
-                      required
-                      className="max-w-full text-xs"
-                    />
-                    <button
-                      type="submit"
-                      className="inline-flex rounded-lg border border-[rgb(var(--border))] px-3 py-1.5 text-sm font-semibold hover:bg-[rgb(var(--bg))]"
-                    >
-                      Last opp fil
-                    </button>
-                  </div>
-                  <p className="mt-1 text-[11px] text-[rgb(var(--muted))]">Oppdaterer `media_src` automatisk for dette kortet.</p>
-                </form>
+                <KISkoleMediaUploadForm exampleId={row.id} mediaKind={row.media_kind} />
 
                 <form action={updateExampleAction} className="mt-3 grid gap-2">
                   <input type="hidden" name="id" value={row.id} />

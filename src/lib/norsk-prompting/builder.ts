@@ -667,7 +667,7 @@ function languageRuleBlock(input: BuildPromptInput): string {
   }
 
   if (detectAudioMode(input.input) === "voice" || hasSpeechSignals(input.input)) {
-    return "Skriv sluttprompten på norsk. Skill tydelig mellom sceneinstruks og dialoglinjer, og behold ordlyden i dialogen nøyaktig som spesifisert.";
+    return "Skriv sluttprompten på norsk. Skill tydelig mellom sceneinstruks og dialoglinjer, og behold ordlyden i dialogen nøyaktig som spesifisert uten omskriving.";
   }
 
   return "Skriv sluttprompten på norsk. Bruk ett språk konsekvent i instruksjonsteksten. Hvis ideen inneholder konkret tekst i motivet, behold ordlyden slik den er beskrevet.";
@@ -685,9 +685,11 @@ function speechLanguageLockBlock(input: BuildPromptInput): string {
 
   return [
     "Hard språklås for tale: velg ett talespråk og hold det 100 prosent konsekvent i hele klippet.",
-    "Hvis norsk er valgt: bruk naturlig norsk bokmålsuttale uten engelske fonemer eller engelsk prosodi.",
-    "Alle replikker i anførselstegn skal leveres ordrett, uten oversettelse, omskriving eller ekstra ord.",
-    "Lip-sync skal følge faktiske fonemer i valgt språk.",
+    "Hvis norsk er valgt: spesifiser bokmål med naturlig nøytral Oslo-uttale.",
+    "Forby anglifisert uttale: ingen engelske fonemer, ingen engelsk prosodi og ingen anglifisert vokalforming.",
+    "Alle replikker i anførselstegn skal leveres ordrett: ingen parafrasering, ingen ekstra/fjernede ord og ingen fyllord.",
+    "Legg uttalesegmentering for krevende ord ved behov (eksempel: pre-sen-ta-sjo-nen).",
+    "Lip-sync skal følge faktiske fonemer i valgt språk med naturlig rytme og intonasjon.",
   ].join(" ");
 }
 

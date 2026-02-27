@@ -293,25 +293,72 @@ Resolution: 4K.`,
       "Lås karakterroller med konsekvent navn/omtale.",
       "Beskriv shot-rekkefolge og kamerabevegelse eksplisitt.",
       "Legg inn hard språklås for tale: valgt språk, ordrett replikk, ingen språkblanding.",
+      "Legg inn uttalekontroll (fonemer/prosodi) og stavelsesdeling for krevende ord.",
       "For norsk dialog: prioriter Veo 3.1 for bedre uttale og lip-sync-stabilitet.",
     ],
-    terms: ["Shot continuity", "Dialogue timing", "Eye-line match", "Reflections control"],
-    prompt: `Goal: Create an 8-second photoreal cinematic ad scene with stable identity, clean continuity and natural spoken delivery.
-Scene anchor: Interior of a moving electric car at blue hour in light rain, city reflections passing through side windows.
-Characters (locked): Driver is a woman in a gray coat. Passenger is a man in a black jacket. Keep wardrobe, facial identity and role assignment unchanged in every shot.
-Action: They exchange one short focused dialogue while the car moves smoothly through traffic.
-Dialogue (HARD LOCK - speech language):
-- Spoken language must be Norwegian Bokmål only, with natural native Norwegian pronunciation.
-- No English phonemes, no English rhythm/prosody, no mixed-language substitutions.
-- Deliver dialogue exactly word-for-word, no paraphrasing and no extra words:
-  Driver (calm voice): "Vi er fremme om to minutter."
-  Passenger (confident voice): "Perfekt, da rekker vi presentasjonen."
-- Lip-sync must match Norwegian phonemes precisely for each spoken word.
-Camera plan: Start on medium two-shot, then slow push to passenger close-up, then return to driver close-up.
-Continuity locks: Keep continuity in hand positions, gaze direction, seat position and body orientation across all cuts.
-Style: Photoreal cinematic ad look, natural skin detail, controlled reflections.
-Guardrails: No identity drift, no lip-sync jitter, no window morphing, no steering wheel deformation.
-Duration: 8s.`,
+    terms: ["Shot continuity", "Dialogue timing", "Eye-line match", "Reflections control", "Language lock", "Phonetic precision"],
+    prompt: `Model target: Veo 3.1 (Accent Lock Version; transferable to Kling 3.0 and other video models)
+Duration: 8 seconds
+Language lock: Norwegian (Bokmal, native Oslo region pronunciation)
+
+Scene:
+Interior of a moving modern electric car during blue hour in light rain.
+City reflections glide naturally across the side windows.
+The car moves smoothly through controlled urban traffic.
+No sudden braking. No unrealistic motion.
+
+Characters (locked):
+- Woman in gray coat driving.
+- Man in black jacket in passenger seat.
+
+Speech and articulation lock (strict):
+- Both characters are native Norwegian speakers.
+- Speech must sound natural, neutral Oslo dialect.
+- No foreign accent.
+- No anglicized vowel shaping.
+- No exaggerated consonants.
+- No over-articulation.
+- Natural Scandinavian rhythm and melodic intonation.
+- Mouth shapes must correspond precisely to Norwegian phonetics.
+
+Dialogue (strict wording, do not alter text):
+Woman (calm, natural tone): "Vi er framme om to minutter."
+Man (confident, relaxed tone): "Perfekt, da rekker vi presentasjonen."
+
+Dialogue rules:
+- Dialogue must be spoken exactly as written.
+- No paraphrasing.
+- No added words.
+- No removed words.
+- No hesitation sounds.
+- No English phonetic coloring.
+- Correct pronunciation targets: "fram-me", "mi-nut-ter", "rek-ker", "pre-sen-ta-sjo-nen".
+- Natural Norwegian pacing and vowel length.
+
+Camera choreography:
+Start with a balanced medium two-shot from dashboard perspective.
+Soft practical dashboard light and cool exterior blue ambience (approx. 6500K outside, 4200K interior fill).
+Slow stable push-in toward passenger close-up during his line.
+Cut or drift back to driver close-up while maintaining exact eye-line continuity.
+No jump cuts. No perspective warping.
+
+Visual realism controls:
+Photoreal cinematic advertisement look.
+Natural skin micro-texture.
+Controlled reflections on windows (no morphing).
+Raindrops maintain consistent scale and direction.
+Steering wheel geometry remains stable.
+Hands remain anatomically consistent across frames.
+
+Guardrails (strict):
+No identity drift.
+No lip-sync jitter.
+No window morphing.
+No steering wheel deformation.
+No lighting temperature shift mid-shot.
+No background traffic duplication artifacts.
+
+Maintain full physical continuity across all 8 seconds.`,
     media: {
       kind: "video",
       posterSrc: placeholderImage,
@@ -580,15 +627,26 @@ Resolution: 4K.`,
       "Bruk rolig kamerabevegelse og naturlig portrettperspektiv.",
       "Skriv replikk kort og tydelig med voice-tag.",
       "Legg inn ansikts-guardrails eksplisitt.",
+      "Lås bokmål-uttale med eksplisitt forbud mot anglifisert prosodi.",
       "For norsk dialog: prioriter Veo 3.1 for mer naturlig uttale.",
     ],
-    terms: ["Lip sync", "Facial stability", "Close-up portrait", "Identity guardrails"],
+    terms: ["Lip sync", "Facial stability", "Close-up portrait", "Identity guardrails", "Language lock", "Phonetic precision"],
     prompt: `Scene: Tight portrait close-up, neutral indoor background, soft natural key light.
 Character: Same woman from reference image, dark blond hair, green eyes.
-Dialogue: "Vi lanserer i morgen." (confident, calm tone).
+Language lock: Norwegian Bokmal with natural neutral Oslo pronunciation.
+Dialogue (strict wording): "Vi lanserer i morgen." (confident, calm tone).
+
+Speech rules:
+- No foreign accent.
+- No anglicized vowels or English prosody.
+- No paraphrasing, no filler words, no added/removed words.
+- Keep natural Norwegian rhythm, intonation and vowel length.
+- Pronunciation targets: "lan-se-rer", "mor-gen".
+- Lip-sync must match Norwegian phonetics exactly.
+
 Camera: Very subtle push-in, portrait perspective, no wide-angle distortion.
 Constraints: Preserve facial structure, eye spacing, jawline and skin texture exactly.
-No lip-sync jitter, no mouth warping, no identity drift.
+Guardrails: No lip-sync jitter, no mouth warping, no identity drift.
 Style: Photoreal ad close-up.
 Duration: 6s.`,
     media: {
@@ -953,9 +1011,10 @@ Resolution: 4K.`,
       "Start med etableringsbilde som romanker.",
       "Definer shot-reverse-shot og romakse eksplisitt.",
       "Krev kontinuitetslås på klær, blikkretning og bakgrunnselementer.",
+      "Legg inn språkregel: bokmål, ordrett replikk, ingen fyllord og ingen anglifisert uttale.",
       "For norsk tale: prioriter Veo 3.1 for tydeligere språkføring.",
     ],
-    terms: ["Estableringsbilde", "Shot-reverse-shot", "Romakse", "Kontinuitetslås", "Temporal konsistens video", "Fokusplan-lås"],
+    terms: ["Estableringsbilde", "Shot-reverse-shot", "Romakse", "Kontinuitetslås", "Temporal konsistens video", "Fokusplan-lås", "Language lock"],
     prompt: `Shot 1 (establishing): Two people seated across a small table in a quiet studio office.
 Shot 2: Medium close-up on person A speaking.
 Shot 3: Reverse medium close-up on person B responding.
@@ -965,10 +1024,17 @@ Dialogue:
 Person A: "Hva er viktigst i en kampanje?"
 Person B: "Klar retning og konsekvent språk."
 
+Language and articulation lock:
+- Spoken language: Norwegian Bokmal with natural Oslo-region pronunciation.
+- Dialogue must be spoken exactly as written. No paraphrasing, no extra words, no removed words.
+- No foreign accent, no English phonetic coloring, no over-articulation.
+- Natural Norwegian pacing and melodic intonation.
+- Lip-sync must match Norwegian phonetics in both close-ups.
+
 Constraints:
 Preserve eyeline match across all reverse shots.
 Keep room axis, lighting direction, wardrobe and tabletop props unchanged.
-No identity drift, no background swap.
+No identity drift, no background swap, no lip-sync jitter.
 
 Style:
 Photoreal documentary-interview aesthetic.
