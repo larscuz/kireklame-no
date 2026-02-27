@@ -563,22 +563,98 @@ No motion artifacts.`,
     outputType: "video",
     modelName: "Kling 3.0",
     difficulty: "Svært vanskelig",
-    challenge: "Holde riktig person gjennom tett crowd og kryssende bevegelser.",
-    shortBrief: "Urban reklamesekvens der protagonist skal holdes i fokus.",
+    challenge: "Crowd tracking med tett occlusion uten identitetsdrift, background reset eller kamera-lost lock.",
+    shortBrief: "6 sek urban tracking-shot med streng protagonist- og crowd-kontinuitet.",
     miniTutorial: [
-      "Gi protagonist en entydig visuell identitet (klær/farger).",
-      "Beskriv crowd-bevegelse relativt til protagonist.",
-      "Sett guardrail mot bytte av hovedperson.",
+      "Lås protagonist med faste attributter og ansiktsmarkorer som ikke kan endres.",
+      "Definer crowd-logikk eksplisitt: retning, tetthet, ikke-synkronitet og occlusion-integritet.",
+      "Lås kameraadferd (tracking-retning, høyde, utsnitt, ingen zoom/linsebytte).",
+      "Legg inn guardrails for non-duplication, background continuity og anti-morph.",
     ],
-    terms: ["Protagonist lock", "Crowd choreography", "Tracking shot", "Occlusion continuity"],
-    prompt: `Scene: Busy pedestrian street at noon.
-Main character: Woman in cobalt blue coat and white sneakers, carrying a yellow folder.
-Action: Camera tracks backward in front of her as she walks through a dense crowd crossing left and right.
-Camera: Smooth tracking at chest height, medium shot, keep protagonist centered while background people pass close to lens.
-Continuity: Do not switch main character. Preserve blue coat, white sneakers, yellow folder in all frames.
-Style: Photoreal commercial city sequence, natural motion blur.
-Guardrails: No identity swap, no crowd morphing, no background teleporting.
-Duration: 8s.`,
+    terms: ["Protagonist lock", "Occlusion integrity", "Crowd non-duplication", "Background continuity", "Tracking shot"],
+    prompt: `Duration: 6 seconds
+Language: No dialogue
+
+Scene:
+Busy pedestrian street at noon in a modern European city.
+Natural daylight (approx. 5600K).
+Stable urban environment.
+Consistent storefronts and pavement pattern across entire shot.
+No background reset.
+
+Main character:
+Woman in cobalt blue coat, white sneakers, carrying a yellow folder.
+Hair length and color must remain constant.
+Facial structure must remain identical in all frames.
+No wardrobe variation.
+
+Action:
+She walks forward at steady natural pace.
+Camera tracks backward directly in front of her.
+She maintains forward eye-line.
+
+Crowd behavior:
+Dense crowd crossing left-to-right and right-to-left.
+Background pedestrians move independently.
+No synchronized walking.
+No duplicated faces.
+No cloning artifacts.
+No character morphing when passing in front of camera.
+Occlusions must be physically correct.
+If someone crosses lens, protagonist remains unchanged when re-exposed.
+
+Camera:
+Smooth stabilized backward tracking.
+Chest height framing.
+Medium shot (waist to head).
+Protagonist always centered.
+No sudden reframing.
+No zoom.
+No lens change.
+Natural handheld micro-movement allowed but subtle.
+
+Lens behavior:
+35-50mm equivalent.
+No wide-angle distortion.
+No edge stretching.
+
+Motion:
+Natural motion blur on passing pedestrians.
+Protagonist remains sharp relative to focus plane.
+No temporal ghosting.
+
+Continuity rules:
+Do not switch main character.
+Preserve:
+Cobalt blue coat.
+White sneakers.
+Yellow folder.
+Correct scale and proportions throughout.
+No color shift.
+No saturation fluctuation.
+
+Lighting:
+Consistent daylight direction.
+No light flicker.
+No shifting shadow direction mid-shot.
+
+Environment stability:
+No building warping.
+No storefront morphing.
+No background teleporting.
+No pavement pattern reset.
+
+Style:
+Photoreal commercial city sequence.
+High-end advertising realism.
+Clean cinematic clarity.
+
+Guardrails:
+No identity drift.
+No crowd morphing.
+No background duplication.
+No body part deformation.
+No temporal jitter.`,
     media: {
       kind: "video",
       posterSrc: placeholderImage,

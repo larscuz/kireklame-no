@@ -213,6 +213,19 @@ export const norskPromptingRules: NorskPromptingRule[] = [
       "Unngå vag 'rotating'-instruks uten start/slutt-lås, og unngå wobble, etikettflimmer, refleksjonslag eller ujevn rotasjonshastighet.",
   }),
   regel({
+    id: "crowd-tracking-occlusion-integrity",
+    name: "Ved crowd tracking: lås occlusion, identitet og bakgrunn",
+    category: "Kontinuitet",
+    severity: 5,
+    description:
+      "Tett folkemengde med tracking shot krever ekstra regler for å hindre identitetsdrift, crowd-kloning og background reset.",
+    appliesTo: "video",
+    addToPrompt:
+      "Ved crowd + tracking + occlusion: legg inn occlusion integrity rule, identity persistence rule, crowd non-duplication rule og background continuity rule.",
+    negativeAdd:
+      "Unngå protagonist-bytte etter occlusion, crowd-morphing/kloning og teleportering eller reset i bakgrunn.",
+  }),
+  regel({
     id: "unnga-overmettet-farge",
     name: "Unngå overmettet farge uten begrunnelse",
     category: "Lys",

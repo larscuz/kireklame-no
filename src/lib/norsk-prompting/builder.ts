@@ -795,10 +795,30 @@ function chooseTemplate(input: BuildPromptInput) {
   return byId ?? null;
 }
 
+function shouldIncludeSpecializedRule(ruleId: string, input: BuildPromptInput): boolean {
+  const source = String(input.input ?? "").toLowerCase();
+
+  if (ruleId === "veo-produktrotasjon-streng-las") {
+    const hasRotation = /(rotate|rotating|rotasjon|spinner|spin|dreie|turntable)/.test(source);
+    const hasProduct = /(produkt|speaker|flaske|bottle|packshot|etikett|label|cylinder|sylinder)/.test(source);
+    return input.outputType === "video" && hasRotation && hasProduct;
+  }
+
+  if (ruleId === "crowd-tracking-occlusion-integrity") {
+    const hasCrowd = /(crowd|folkemengde|pedestrian|gjengere|busy street|traveling shot)/.test(source);
+    const hasTracking = /(track|tracking|tracking shot|dolly|kamera følger|kamera tracks)/.test(source);
+    const hasOcclusion = /(occlusion|occlusions|passerer foran|crosses lens|krysser foran|bak folk)/.test(source);
+    return input.outputType === "video" && hasCrowd && (hasTracking || hasOcclusion);
+  }
+
+  return true;
+}
+
 function chooseRules(input: BuildPromptInput, templateRuleIds: string[]): NorskPromptingRule[] {
-  const base = norskPromptingRules.filter(
-    (rule) => rule.appliesTo === "all" || rule.appliesTo === input.outputType
-  );
+  const base = norskPromptingRules.filter((rule) => {
+    if (!(rule.appliesTo === "all" || rule.appliesTo === input.outputType)) return false;
+    return shouldIncludeSpecializedRule(rule.id, input);
+  });
 
   const recommended = base.filter((rule) => templateRuleIds.includes(rule.id));
   const remainder = base
