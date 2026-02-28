@@ -116,23 +116,6 @@ export default function NorskPromptingHubPage() {
       description={intro}
       jsonLd={jsonLd}
     >
-      <section className="np-node-surface rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))]/88 p-5 md:p-6">
-        <h2 className="text-xl font-semibold">
-          KI-skole (KI-undervisning og prompting i praksis)
-        </h2>
-        <p className="mt-2 text-sm leading-relaxed text-[rgb(var(--muted))]">
-          Norsk Prompting er en praktisk arbeidsflate for KI undervisning og AI
-          undervisning der elever og lærere kan utforske KI i skolen med konkrete
-          oppgaver. Her trener du prompting, prompt-teknikk og
-          undervisningsopplegg for bilde, video, tekst og kreativ produksjon.
-        </p>
-        <p className="mt-2 text-sm leading-relaxed text-[rgb(var(--muted))]">
-          Målet er å gjøre generativ KI forståelig og brukbar i praksis, spesielt
-          for mediefag, visuell kommunikasjon og produksjonsnære fag der språk,
-          lys, komposisjon og leveransekvalitet betyr noe.
-        </p>
-      </section>
-
       <section className="grid gap-3 md:grid-cols-3">
         <Link
           href="/norsk-prompting/regler"
@@ -173,6 +156,23 @@ export default function NorskPromptingHubPage() {
 
       {/* Interaktiv del */}
       <PromptExpanderClient />
+
+      <section className="np-node-surface rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))]/88 p-5 md:p-6">
+        <h2 className="text-xl font-semibold">
+          KI-skole (KI-undervisning og prompting i praksis)
+        </h2>
+        <p className="mt-2 text-sm leading-relaxed text-[rgb(var(--muted))]">
+          Norsk Prompting er en praktisk arbeidsflate for KI undervisning og AI
+          undervisning der elever og lærere kan utforske KI i skolen med konkrete
+          oppgaver. Her trener du prompting, prompt-teknikk og
+          undervisningsopplegg for bilde, video, tekst og kreativ produksjon.
+        </p>
+        <p className="mt-2 text-sm leading-relaxed text-[rgb(var(--muted))]">
+          Målet er å gjøre generativ KI forståelig og brukbar i praksis, spesielt
+          for mediefag, visuell kommunikasjon og produksjonsnære fag der språk,
+          lys, komposisjon og leveransekvalitet betyr noe.
+        </p>
+      </section>
 
       {/* SEO-tekst (indekserbar) */}
       <section className="np-node-surface rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))]/86 p-5 md:p-6 mb-4">
