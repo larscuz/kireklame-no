@@ -116,6 +116,9 @@ export default function NorskPromptingHubPage() {
       description={intro}
       jsonLd={jsonLd}
     >
+      {/* Interaktiv del */}
+      <PromptExpanderClient />
+
       {/* SEO-tekst (indekserbar) */}
       <section className="np-node-surface rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))]/86 p-5 md:p-6 mb-4">
         <h2 className="text-xl font-semibold">Hva er KI-skole?</h2>
@@ -164,9 +167,6 @@ export default function NorskPromptingHubPage() {
           output tilpasset bilde-, video- eller tekstproduksjon.
         </p>
       </section>
-
-      {/* Interaktiv del */}
-      <PromptExpanderClient />
 
       <section className="grid gap-3 lg:grid-cols-12">
         <article className="np-node-surface np-template-card lg:col-span-4 rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))]/88 p-5 pt-7">
