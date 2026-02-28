@@ -355,6 +355,31 @@ export default function StereoscopicViewerWheel({ items }: { items: ShowreelItem
                 {activeItem.ctaLabel || "Åpne case"} <span className="ml-2">&gt;</span>
               </Link>
             </div>
+            <div className="mt-4 border-t border-white/12 pt-3">
+              <p className="text-[11px] uppercase tracking-[0.18em] text-white/56">
+                KI-skole og prompting
+              </p>
+              <div className="mt-2 flex flex-wrap gap-2 text-sm">
+                <Link
+                  href="/norsk-prompting"
+                  className="pointer-events-auto rounded-full border border-white/20 bg-white/8 px-3 py-1.5 text-white/92 hover:bg-white/14"
+                >
+                  Norsk Prompting
+                </Link>
+                <Link
+                  href="/norsk-prompting/prompt-utvider"
+                  className="pointer-events-auto rounded-full border border-white/20 bg-white/8 px-3 py-1.5 text-white/92 hover:bg-white/14"
+                >
+                  Prompt-utvider
+                </Link>
+                <Link
+                  href="/norsk-prompting/ordforrad"
+                  className="pointer-events-auto rounded-full border border-white/20 bg-white/8 px-3 py-1.5 text-white/92 hover:bg-white/14"
+                >
+                  Ordforråd
+                </Link>
+              </div>
+            </div>
           </div>
         ) : null}
 

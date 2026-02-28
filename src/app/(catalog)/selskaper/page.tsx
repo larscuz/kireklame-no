@@ -168,6 +168,11 @@ export default async function CompaniesPage({
         <div className="text-sm font-semibold">
           {locale === "en" ? "Related topics" : "Relaterte temaer"}
         </div>
+        <p className="mt-2 max-w-3xl text-sm leading-relaxed text-[rgb(var(--muted))]">
+          {locale === "en"
+            ? "Norsk Prompting is the practical KI-skole hub for AI teaching, prompt technique, and media-oriented production work."
+            : "Norsk Prompting er den praktiske KI-skole-huben for KI-undervisning, prompt-teknikk og produksjonsnært arbeid i mediefag."}
+        </p>
         <div className="mt-2 flex flex-wrap gap-2 text-sm">
           <Link
             href={localizePath(locale, "/ki-reklame")}
@@ -192,6 +197,24 @@ export default async function CompaniesPage({
             className="rounded-full border border-[rgb(var(--border))] bg-[rgb(var(--bg))] px-3 py-1.5 text-[rgb(var(--fg))] hover:opacity-80 transition"
           >
             {locale === "en" ? "AI marketing" : "KI markedsføring"}
+          </Link>
+          <Link
+            href={localizePath(locale, "/norsk-prompting")}
+            className="rounded-full border border-[rgb(var(--border))] bg-[rgb(var(--bg))] px-3 py-1.5 text-[rgb(var(--fg))] hover:opacity-80 transition"
+          >
+            {locale === "en" ? "KI school hub" : "KI-skole hub"}
+          </Link>
+          <Link
+            href={localizePath(locale, "/norsk-prompting/prompt-utvider")}
+            className="rounded-full border border-[rgb(var(--border))] bg-[rgb(var(--bg))] px-3 py-1.5 text-[rgb(var(--fg))] hover:opacity-80 transition"
+          >
+            {locale === "en" ? "Prompt helper" : "Prompt-utvider"}
+          </Link>
+          <Link
+            href={localizePath(locale, "/norsk-prompting/ordforrad")}
+            className="rounded-full border border-[rgb(var(--border))] bg-[rgb(var(--bg))] px-3 py-1.5 text-[rgb(var(--fg))] hover:opacity-80 transition"
+          >
+            {locale === "en" ? "Prompt vocabulary" : "Ordforråd"}
           </Link>
         </div>
       </section>

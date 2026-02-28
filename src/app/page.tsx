@@ -228,6 +228,50 @@ export default async function Home(props: any) {
 
       <section className="mx-auto max-w-6xl px-4 pb-8">
         <div className="rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] p-6 shadow-soft">
+          <div className="text-[11px] uppercase tracking-[0.22em] text-[rgb(var(--muted))]">
+            {locale === "en" ? "AI school and prompting" : "KI-skole og prompting"}
+          </div>
+          <h2 className="mt-3 text-2xl font-semibold tracking-tight">
+            {locale === "en"
+              ? "Learn practical prompting for school and media work"
+              : "Lær prompting i praksis for skole og mediefag"}
+          </h2>
+          <p className="mt-2 max-w-3xl text-sm leading-relaxed text-[rgb(var(--muted))]">
+            {locale === "en"
+              ? "Norsk Prompting connects AI teaching, prompt technique, and media production in one practical hub."
+              : "Norsk Prompting kobler KI-undervisning, prompt-teknikk og mediefaglig produksjon i ett praktisk univers."}
+          </p>
+          <div className="mt-4 flex flex-wrap gap-2 text-sm">
+            <Link
+              href={localizePath(locale, "/norsk-prompting")}
+              className="rounded-full border border-[rgb(var(--border))] bg-[rgb(var(--bg))] px-3 py-1.5 text-[rgb(var(--fg))] hover:opacity-80 transition"
+            >
+              {locale === "en" ? "KI school hub" : "KI-skole hub"}
+            </Link>
+            <Link
+              href={localizePath(locale, "/norsk-prompting/prompt-utvider")}
+              className="rounded-full border border-[rgb(var(--border))] bg-[rgb(var(--bg))] px-3 py-1.5 text-[rgb(var(--fg))] hover:opacity-80 transition"
+            >
+              {locale === "en" ? "Prompt helper" : "Prompt-utvider"}
+            </Link>
+            <Link
+              href={localizePath(locale, "/norsk-prompting/ordforrad")}
+              className="rounded-full border border-[rgb(var(--border))] bg-[rgb(var(--bg))] px-3 py-1.5 text-[rgb(var(--fg))] hover:opacity-80 transition"
+            >
+              {locale === "en" ? "Prompt vocabulary" : "Ordforråd"}
+            </Link>
+            <Link
+              href={localizePath(locale, "/norsk-prompting/eksempler")}
+              className="rounded-full border border-[rgb(var(--border))] bg-[rgb(var(--bg))] px-3 py-1.5 text-[rgb(var(--fg))] hover:opacity-80 transition"
+            >
+              {locale === "en" ? "Examples" : "Eksempler"}
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-6xl px-4 pb-8">
+        <div className="rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] p-6 shadow-soft">
           <h2 className="text-2xl font-semibold tracking-tight">
             {locale === "en"
               ? "FAQ: commercial AI video production"
