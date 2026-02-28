@@ -7,9 +7,9 @@ import { siteMeta } from "@/lib/seo";
 import { absoluteUrl, buildArticleJsonLd, buildBreadcrumbJsonLd } from "@/lib/norsk-prompting/seo";
 
 export const metadata = siteMeta({
-  title: "Ordforråd | Norsk Prompting",
+  title: "Ordforråd for KI-skole og prompting | Norsk Prompting",
   description:
-    "Terminologibase for film, VFX, arkitektur, lys/foto, AI-begreper og designspråk i Norsk Prompting.",
+    "Utforsk ordforråd for KI-skole, prompting og mediefag i Norsk Prompting. Finn begreper for lys, komposisjon, film, VFX og generativ KI som gjør undervisning og produksjon mer presis.",
   path: "/norsk-prompting/ordforrad",
 });
 
@@ -86,6 +86,18 @@ export default async function NorskPromptingOrdforradPage({ searchParams }: Prop
         ]),
       ]}
     >
+      <section className="np-node-surface rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))]/88 p-5 md:p-6">
+        <p className="text-sm leading-relaxed text-[rgb(var(--muted))]">
+          Ordforråd-siden samler begreper for KI undervisning, prompting og
+          profesjonell produksjon i mediefag. Her finner du språk for lys,
+          komposisjon, film, VFX og generativ KI som gjør instrukser tydeligere.
+        </p>
+        <p className="mt-2 text-sm leading-relaxed text-[rgb(var(--muted))]">
+          Dette gjør siden nyttig både for elever som vil lære KI og for lærere som
+          bygger undervisningsopplegg med presis fagterminologi.
+        </p>
+      </section>
+
       <section className="np-node-surface rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))]/90 p-4 pt-7 shadow-[0_10px_30px_rgba(2,6,23,0.18)]">
         <div className="flex items-center gap-2">
           <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">Visning</p>

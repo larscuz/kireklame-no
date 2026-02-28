@@ -4,9 +4,9 @@ import { siteMeta } from "@/lib/seo";
 import { absoluteUrl, buildBreadcrumbJsonLd, buildWebPageJsonLd } from "@/lib/norsk-prompting/seo";
 
 export const metadata = siteMeta({
-  title: "Prompt Hjelper | Norsk Prompting",
+  title: "Prompt-utvider for KI-skole | Norsk Prompting",
   description:
-    "Skriv ideen din med vanlige ord og berik teksten med mediefaglige begreper som hjelper tekstmodeller å lage bedre prompter.",
+    "Bruk Prompt-utvider i KI-skole og Norsk Prompting for å trene prompting i praksis. Skriv en idé og få et sterkere utgangspunkt for KI undervisning, mediefag og generativ produksjon.",
   path: "/norsk-prompting/prompt-utvider",
 });
 
@@ -28,6 +28,19 @@ export default function PromptUtviderPage() {
         ]),
       ]}
     >
+      <section className="np-node-surface rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))]/88 p-5 md:p-6">
+        <p className="text-sm leading-relaxed text-[rgb(var(--muted))]">
+          Prompt-utvider er laget for KI undervisning og prompting i praksis, der
+          elever kan gå fra enkel idé til mer presis prompt-teknikk. Verktøyet er
+          nyttig i KI-skole, generativ KI-arbeid og mediefag når du vil forbedre
+          beskrivelser for bilde, video og tekst.
+        </p>
+        <p className="mt-2 text-sm leading-relaxed text-[rgb(var(--muted))]">
+          Bruk det som et konkret undervisningsopplegg for å vise hvordan språk,
+          begrepsbruk og iterasjon påvirker kvaliteten i output fra KI-verktøy.
+        </p>
+      </section>
+
       <PromptExpanderClient />
     </NorskPromptingShell>
   );

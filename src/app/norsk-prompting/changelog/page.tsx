@@ -288,8 +288,9 @@ const rankingCategories: FreeModelRankingCategory[] = [
 ];
 
 export const metadata = siteMeta({
-  title: "KI-verktøy | Norsk Prompting",
-  description: "Lenker til store tekst-, bilde-, video- og lydmodeller med gratisnivå eller gratis kreditter.",
+  title: "KI-verktøy for KI-skole | Norsk Prompting",
+  description:
+    "Finn KI-verktøy for KI-skole, prompting og undervisning i Norsk Prompting. Siden samler tekst-, bilde-, video- og lydverktøy som kan brukes i mediefag og generativ praksis.",
   path: "/norsk-prompting/changelog",
 });
 
@@ -316,6 +317,19 @@ export default function NorskPromptingChangelogPage() {
         ]),
       ]}
     >
+      <section className="np-node-surface rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))]/88 p-5 md:p-6">
+        <p className="text-sm leading-relaxed text-[rgb(var(--muted))]">
+          KI-verktøy-siden gir en oversikt over modeller som kan brukes i KI-skole,
+          prompting og undervisning i praksis. Her finner du tekst-, bilde-, video-
+          og lydverktøy som passer til generativ KI og mediefaglige arbeidsflyter.
+        </p>
+        <p className="mt-2 text-sm leading-relaxed text-[rgb(var(--muted))]">
+          Målet er å gjøre det enklere for lærere og elever å velge riktige verktøy
+          når de bygger undervisningsopplegg eller tester prompt-teknikk i ulike
+          produksjonsformer.
+        </p>
+      </section>
+
       <article className="rounded-2xl border border-zinc-700 bg-zinc-900 p-4 pt-7 text-white shadow-[0_10px_30px_rgba(2,6,23,0.35)]">
         <p className="text-sm text-zinc-200">
           Merk: gratisnivå, kreditter og regiontilgang kan endres av leverandørene over tid.

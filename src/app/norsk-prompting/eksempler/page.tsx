@@ -7,9 +7,9 @@ import { absoluteUrl, buildArticleJsonLd, buildBreadcrumbJsonLd } from "@/lib/no
 import { loadExampleShowcaseItems } from "@/lib/norsk-prompting/exampleShowcaseCms";
 
 export const metadata = siteMeta({
-  title: "Eksempler | Norsk Prompting",
+  title: "Eksempler for KI-skole og prompting | Norsk Prompting",
   description:
-    "Avanserte bilde- og videoeksempler med konkrete prompts, mini-tutorial og media-preview for krevende KI-scenarier.",
+    "Se eksempler på prompting i praksis for KI-skole, mediefag og generativ produksjon i Norsk Prompting. Siden viser bilde- og videoeksempler med konkrete prompts, analyse og arbeidsflyt.",
   path: "/norsk-prompting/eksempler",
 });
 
@@ -37,6 +37,18 @@ export default async function NorskPromptingEksemplerPage() {
         ]),
       ]}
     >
+      <section className="np-node-surface rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))]/88 p-5 md:p-6">
+        <p className="text-sm leading-relaxed text-[rgb(var(--muted))]">
+          Eksempler-siden viser prompting i praksis for KI undervisning, mediefag
+          og generativ produksjon. Her kan elever og lærere se hvordan korte ideer
+          blir til konkrete leveranser for bilde og video.
+        </p>
+        <p className="mt-2 text-sm leading-relaxed text-[rgb(var(--muted))]">
+          Hver case er laget for å forklare valg av språk, struktur og kontroll,
+          slik at KI-skole blir koblet direkte til praktisk arbeid og analyse.
+        </p>
+      </section>
+
       {showcase.source === "static" ? (
         <section className="np-node-surface rounded-2xl border border-amber-300/35 bg-amber-500/10 p-4">
           <p className="text-sm text-amber-100">

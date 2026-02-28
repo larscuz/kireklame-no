@@ -116,6 +116,61 @@ export default function NorskPromptingHubPage() {
       description={intro}
       jsonLd={jsonLd}
     >
+      <section className="np-node-surface rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))]/88 p-5 md:p-6">
+        <h2 className="text-xl font-semibold">
+          KI-skole (KI-undervisning og prompting i praksis)
+        </h2>
+        <p className="mt-2 text-sm leading-relaxed text-[rgb(var(--muted))]">
+          Norsk Prompting er en praktisk arbeidsflate for KI undervisning og AI
+          undervisning der elever og lærere kan utforske KI i skolen med konkrete
+          oppgaver. Her trener du prompting, prompt-teknikk og
+          undervisningsopplegg for bilde, video, tekst og kreativ produksjon.
+        </p>
+        <p className="mt-2 text-sm leading-relaxed text-[rgb(var(--muted))]">
+          Målet er å gjøre generativ KI forståelig og brukbar i praksis, spesielt
+          for mediefag, visuell kommunikasjon og produksjonsnære fag der språk,
+          lys, komposisjon og leveransekvalitet betyr noe.
+        </p>
+      </section>
+
+      <section className="grid gap-3 md:grid-cols-3">
+        <Link
+          href="/norsk-prompting/regler"
+          className="np-node-surface rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))]/86 p-5 transition hover:border-zinc-300/30"
+        >
+          <h3 className="text-lg font-semibold">For lærere</h3>
+          <p className="mt-2 text-sm leading-relaxed text-[rgb(var(--muted))]">
+            Bruk KI for lærere som ramme for KI i undervisning med tydelige
+            undervisningsopplegg, vurdering og etikk. Seksjonen hjelper deg å
+            strukturere trygg bruk av prompting i klasserommet.
+          </p>
+        </Link>
+
+        <Link
+          href="/norsk-prompting/prompt-utvider"
+          className="np-node-surface rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))]/86 p-5 transition hover:border-zinc-300/30"
+        >
+          <h3 className="text-lg font-semibold">For elever</h3>
+          <p className="mt-2 text-sm leading-relaxed text-[rgb(var(--muted))]">
+            Her kan du lære KI gjennom prompting i praksis og teste generativ KI
+            for bilde, video og tekst. Prompt Hjelper viser hvordan en enkel idé
+            kan bli til en mer presis og produksjonsklar instruksjon.
+          </p>
+        </Link>
+
+        <Link
+          href="/norsk-prompting/ordforrad"
+          className="np-node-surface rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))]/86 p-5 transition hover:border-zinc-300/30"
+        >
+          <h3 className="text-lg font-semibold">For mediefag</h3>
+          <p className="mt-2 text-sm leading-relaxed text-[rgb(var(--muted))]">
+            Bygg bedre KI i mediefag med ordforråd for produksjon, lys/komposisjon,
+            film/VFX og profesjonell prompting. Dette er laget for elever og lærere
+            som vil knytte språk direkte til kvalitet i visuell produksjon.
+          </p>
+        </Link>
+      </section>
+
       {/* Interaktiv del */}
       <PromptExpanderClient />
 
