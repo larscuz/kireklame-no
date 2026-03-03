@@ -38,12 +38,12 @@ export default function HeroSearch({
       <div
         className={
           sponsorAd || sponsorMiniAd
-            ? "grid gap-6 lg:grid-cols-[1fr_360px] items-start mb-20"
-            : "grid gap-6 items-start mb-20"
+            ? "grid gap-6 lg:grid-cols-[1fr_360px] mb-20"
+            : "grid gap-6 mb-20"
         }
       >
         {/* FLUID HERO */}
-        <div className="relative min-h-[500px] flex flex-col justify-end p-8 md:p-16 overflow-hidden rounded-[3rem] liquid-hover-swell group">
+        <div className="relative h-full min-h-[350px] flex flex-col justify-end p-8 md:p-16 overflow-hidden rounded-[3rem] liquid-hover-swell group">
 
           {/* Underlay Video */}
           <div className="absolute inset-0 z-0">
@@ -53,18 +53,6 @@ export default function HeroSearch({
 
           {/* Foreground minimal UI */}
           <div className="relative z-10 w-full max-w-4xl">
-            <h1 className="text-6xl md:text-8xl lg:text-9xl font-black tracking-tighter text-white mb-6 mix-blend-difference drop-shadow-lg">
-              {locale === "en" ? "Fluid." : "Flytende."}
-            </h1>
-
-            <div className="w-full max-w-2xl mt-8">
-              <input
-                type="text"
-                placeholder={locale === "en" ? "Search for fluid minds..." : "Søk etter byråer..."}
-                className="bg-transparent border-0 border-b-4 border-white/20 text-3xl md:text-5xl text-white outline-none w-full placeholder:text-white/30 focus:ring-0 focus:border-white transition-colors py-4 font-bold"
-              />
-            </div>
-
             {/* Featured */}
             {featuredCompany?.slug ? (
               <div className="mt-12 flex items-center gap-4 text-white/50 font-bold uppercase tracking-widest text-sm">

@@ -15,7 +15,7 @@ export default async function CompanyCard({ company }: { company: CompanyCardMod
       <Link href={localizePath(locale, `/selskap/${company.slug}`)} className="flex flex-col h-full block">
 
         {/* Swelling Liquid Image */}
-        <div className="relative w-full aspect-video md:aspect-[21/9] overflow-hidden rounded-[2rem] bg-black/40 shadow-2xl">
+        <div className="relative w-full aspect-[4/3] md:aspect-[16/10] lg:aspect-video overflow-hidden rounded-[2rem] bg-black/40 shadow-2xl">
           <CoverImg
             src={cover}
             alt={company.name}
