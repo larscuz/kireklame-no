@@ -65,7 +65,7 @@ export default function BlizzardTransition() {
             const timer = setTimeout(() => {
                 setIsActive(false);
                 if (containerRef.current) containerRef.current.innerHTML = "";
-            }, 2500);
+            }, 1500);
             return () => clearTimeout(timer);
         }
     }, [isActive]);
@@ -140,13 +140,13 @@ export default function BlizzardTransition() {
                 snowball.style.height = `${massiveSize}px`;
                 snowball.style.left = `${cx - massiveSize / 2}px`;
                 snowball.style.top = `${cy - massiveSize / 2}px`;
-            }, 600); // 600ms allows the swarming flakes to finish
+            }, 500); // 500ms allows the swarming flakes to finish
         });
 
         // Step 5: Route
         setTimeout(() => {
             router.push(href);
-        }, 1100);
+        }, 650);
     };
 
     return (
