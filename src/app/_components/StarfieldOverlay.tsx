@@ -75,8 +75,8 @@ export default function StarfieldOverlay() {
 
         for (let i = 0; i < starCount; i++) {
             stars3D.push({
-                x: (Math.random() - 0.5) * 2000, // Spread across a huge 3D X space
-                y: (Math.random() - 0.5) * 2000, // Spread across a huge 3D Y space
+                x: (Math.random() - 0.5) * 4000, // Spread across a huge 3D X space
+                y: (Math.random() - 0.5) * 4000, // Spread across a huge 3D Y space
                 z: Math.random() * 2000,         // Depth limits
                 baseRadius: Math.random() * 1.5 + 0.5
             });
@@ -103,9 +103,9 @@ export default function StarfieldOverlay() {
                 star.z -= warpSpeed;
 
                 // Reset star if it passes the camera or goes out of bounds
-                if (star.z <= 1) {
-                    star.x = (Math.random() - 0.5) * 2000;
-                    star.y = (Math.random() - 0.5) * 2000;
+                if (star.z <= 10) {
+                    star.x = (Math.random() - 0.5) * 4000;
+                    star.y = (Math.random() - 0.5) * 4000;
                     star.z = 1999;
                 }
 
