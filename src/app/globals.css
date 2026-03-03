@@ -668,3 +668,8 @@ body {
   will-change: transform, left, top, width, height, opacity;
   pointer-events: none;
 }
+
+/* Deep Space Tint */
+.bg-deep-space {
+  background: radial-gradient(circle at center, #0a0a0e 0%, #000000 100%);
+}

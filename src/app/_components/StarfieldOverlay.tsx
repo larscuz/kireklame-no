@@ -63,7 +63,7 @@ export default function StarfieldOverlay() {
         // Configuration for 3D projection
         const starCount = Math.floor((width * height) / 3000);
         const fov = 300; // Field of View
-        const warpSpeed = 1.5;
+        const warpSpeed = 4.5;
 
         // Stars are defined in 3D space: x, y, z
         const stars3D: {
@@ -106,7 +106,7 @@ export default function StarfieldOverlay() {
                 if (star.z <= 1) {
                     star.x = (Math.random() - 0.5) * 2000;
                     star.y = (Math.random() - 0.5) * 2000;
-                    star.z = 2000;
+                    star.z = 1999;
                 }
 
                 // 3D Perspective Projection Math

@@ -64,7 +64,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         >
           <StarfieldOverlay />
           <SupernovaTransition />
-          <div className="min-h-screen flex flex-col">
+          <div className="min-h-screen flex flex-col bg-deep-space">
             <Topbar />
             <main className="flex-1">{children}</main>
             <Footer />
