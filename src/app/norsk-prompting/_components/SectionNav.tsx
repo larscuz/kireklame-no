@@ -4,7 +4,6 @@ const links = [
   { href: "/norsk-prompting/prompt-utvider", label: "Prompt-utvider" },
   { href: "/norsk-prompting/ordforrad", label: "Ordforråd" },
   { href: "/norsk-prompting/maler", label: "Maler" },
-  { href: "/norsk-prompting/eksempler", label: "Eksempler" },
   { href: "/norsk-prompting/changelog", label: "KI-verktøy" },
 ];
 
