@@ -38,12 +38,12 @@ export default function HeroSearch({
       <div
         className={
           sponsorAd || sponsorMiniAd
-            ? "grid gap-6 lg:grid-cols-[1fr_360px] items-start mb-20"
-            : "grid gap-6 items-start mb-20"
+            ? "grid gap-6 lg:grid-cols-[1fr_360px] mb-20"
+            : "grid gap-6 mb-20"
         }
       >
         {/* FLUID HERO */}
-        <div className="relative min-h-[500px] flex flex-col justify-end p-8 md:p-16 overflow-hidden rounded-[3rem] liquid-hover-swell group">
+        <div className="relative h-full min-h-[350px] flex flex-col justify-end p-8 md:p-16 overflow-hidden rounded-[3rem] liquid-hover-swell group">
 
           {/* Underlay Video */}
           <div className="absolute inset-0 z-0">
