@@ -48,7 +48,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 
   return (
     <html lang={locale === "en" ? "en" : "no"} suppressHydrationWarning>
-      <body className="min-h-screen overflow-x-hidden antialiased">
+      <body className="min-h-screen overflow-x-hidden antialiased bg-[#050505]">
         <script
           type="application/ld+json"
           // eslint-disable-next-line react/no-danger
@@ -60,10 +60,21 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           enableSystem={false}
           storageKey="kireklame-theme-v2"
         >
-          <div className="min-h-screen flex flex-col">
-            <Topbar />
-            <main className="flex-1">{children}</main>
-            <Footer />
+          {/* Spline Core Background */}
+          <div className="fixed inset-0 z-0 pointer-events-auto">
+            <iframe
+              src="https://my.spline.design/interactivespheres-8c7cd9893d584347dbd4ba30704383c2/"
+              frameBorder="0"
+              width="100%"
+              height="100%"
+              className="w-full h-full"
+            />
+          </div>
+
+          <div className="relative z-10 min-h-screen flex flex-col pointer-events-none">
+            <div className="pointer-events-auto"><Topbar /></div>
+            <main className="flex-1 pointer-events-auto mix-blend-screen">{children}</main>
+            <div className="pointer-events-auto"><Footer /></div>
           </div>
         </ThemeProvider>
         <Analytics />

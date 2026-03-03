@@ -43,77 +43,41 @@ export default async function ListingGrid({
     Boolean(gridBannerAd3) && companies.length >= banner3InsertAfterCompanyIndex + 2;
 
   return (
-    <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+    <div className="flex flex-col border-t border-[rgba(255,255,255,0.1)]">
       {companies.map((c, index) => (
         <div key={c.id} className="contents">
           <CompanyCard company={c} />
           {shouldInsertGridBanner && index === bannerInsertAfterCompanyIndex ? (
-            <div className="sm:col-span-2 lg:col-span-3">
-              <div className="sm:hidden">
-                <AdSlot
-                  ad={gridBannerAd ?? null}
-                  sponsorLabel={locale === "en" ? "Sponsored" : "Sponset"}
-                  openLinkFallback={locale === "en" ? "Open link" : "Åpne lenke"}
-                  variant="banner"
-                  compact
-                  locale={locale}
-                />
-              </div>
-              <div className="hidden sm:block">
-                <AdSlot
-                  ad={gridBannerAd ?? null}
-                  sponsorLabel={locale === "en" ? "Sponsored" : "Sponset"}
-                  openLinkFallback={locale === "en" ? "Open link" : "Åpne lenke"}
-                  variant="banner"
-                  locale={locale}
-                />
-              </div>
+            <div className="w-full border-b border-[rgba(255,255,255,0.1)] py-8">
+              <AdSlot
+                ad={gridBannerAd ?? null}
+                sponsorLabel={locale === "en" ? "Sponsored" : "Sponset"}
+                openLinkFallback={locale === "en" ? "Open link" : "Åpne lenke"}
+                variant="banner"
+                locale={locale}
+              />
             </div>
           ) : null}
           {shouldInsertGridBanner2 && index === banner2InsertAfterCompanyIndex ? (
-            <div className="sm:col-span-2 lg:col-span-3">
-              <div className="sm:hidden">
-                <AdSlot
-                  ad={gridBannerAd2 ?? null}
-                  sponsorLabel={locale === "en" ? "Sponsored" : "Sponset"}
-                  openLinkFallback={locale === "en" ? "Open link" : "Åpne lenke"}
-                  variant="banner"
-                  compact
-                  locale={locale}
-                />
-              </div>
-              <div className="hidden sm:block">
-                <AdSlot
-                  ad={gridBannerAd2 ?? null}
-                  sponsorLabel={locale === "en" ? "Sponsored" : "Sponset"}
-                  openLinkFallback={locale === "en" ? "Open link" : "Åpne lenke"}
-                  variant="banner"
-                  locale={locale}
-                />
-              </div>
+            <div className="w-full border-b border-[rgba(255,255,255,0.1)] py-8">
+              <AdSlot
+                ad={gridBannerAd2 ?? null}
+                sponsorLabel={locale === "en" ? "Sponsored" : "Sponset"}
+                openLinkFallback={locale === "en" ? "Open link" : "Åpne lenke"}
+                variant="banner"
+                locale={locale}
+              />
             </div>
           ) : null}
           {shouldInsertGridBanner3 && index === banner3InsertAfterCompanyIndex ? (
-            <div className="sm:col-span-2 lg:col-span-3">
-              <div className="sm:hidden">
-                <AdSlot
-                  ad={gridBannerAd3 ?? null}
-                  sponsorLabel={locale === "en" ? "Sponsored" : "Sponset"}
-                  openLinkFallback={locale === "en" ? "Open link" : "Åpne lenke"}
-                  variant="banner"
-                  compact
-                  locale={locale}
-                />
-              </div>
-              <div className="hidden sm:block">
-                <AdSlot
-                  ad={gridBannerAd3 ?? null}
-                  sponsorLabel={locale === "en" ? "Sponsored" : "Sponset"}
-                  openLinkFallback={locale === "en" ? "Open link" : "Åpne lenke"}
-                  variant="banner"
-                  locale={locale}
-                />
-              </div>
+            <div className="w-full border-b border-[rgba(255,255,255,0.1)] py-8">
+              <AdSlot
+                ad={gridBannerAd3 ?? null}
+                sponsorLabel={locale === "en" ? "Sponsored" : "Sponset"}
+                openLinkFallback={locale === "en" ? "Open link" : "Åpne lenke"}
+                variant="banner"
+                locale={locale}
+              />
             </div>
           ) : null}
         </div>

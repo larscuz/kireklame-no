@@ -1,7 +1,6 @@
 // src/app/_components/HeroSearch.tsx
 "use client";
 
-import HeroBackgroundVideo from "./HeroBackgroundVideo";
 import AdSlot from "./AdSlot";
 import { localizePath, type Locale } from "@/lib/i18n";
 import type { SponsorAd } from "@/lib/ads";
@@ -38,41 +37,42 @@ export default function HeroSearch({
       <div
         className={
           sponsorAd || sponsorMiniAd
-            ? "grid gap-6 lg:grid-cols-[1fr_360px] items-start"
-            : "grid gap-6 items-start"
+            ? "grid gap-6 lg:grid-cols-[1fr_360px] items-start pt-20 pb-10"
+            : "items-start pt-20 pb-10"
         }
       >
-        {/* HERO */}
-        <div className="relative min-h-[280px] md:min-h-[320px] lg:h-[360px] rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] shadow-soft overflow-hidden">
-          {/* Background video */}
-          <HeroBackgroundVideo src={heroVideoUrl} poster="/covers/cover-1.jpg" />
+        {/* MONOLITHIC HERO LOGIC */}
+        <div className="flex flex-col justify-center h-[50vh] min-h-[400px] z-10 pointer-events-auto mix-blend-difference text-white">
+          <h1 className="text-6xl md:text-8xl lg:text-[10rem] font-bold tracking-tighter uppercase leading-none mb-6">
+            {locale === "en" ? "Index." : "Katalog."}
+          </h1>
 
-          {/* Foreground content */}
-          <div className="relative z-10 flex h-full items-end p-6 md:p-12">
-            {/* Featured */}
-            {featuredCompany?.slug ? (
-              <div className="text-sm text-[rgb(var(--muted))]">
-                <span className="mr-2 inline-flex items-center rounded-full border border-[rgb(var(--border))] bg-[rgb(var(--bg))] px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide">
-                  {copy.featuredLabel}
-                </span>
-                <a
-                  href={localizePath(locale, `/selskap/${featuredCompany.slug}`)}
-                  className="font-semibold underline-offset-2 hover:underline text-[rgb(var(--fg))]"
-                >
-                  {featuredCompany.name}
-                </a>
-
-                {featuredCompany.company_type || featuredCompany.locationName ? (
-                  <span className="ml-2 text-[rgb(var(--muted))]">
-                    {featuredCompany.company_type ? featuredCompany.company_type : ""}
-                    {featuredCompany.company_type && featuredCompany.locationName ? " · " : ""}
-                    {featuredCompany.locationName ? featuredCompany.locationName : ""}
-                  </span>
-                ) : null}
-              </div>
-            ) : null}
+          <div className="w-full max-w-4xl relative">
+            <span className="absolute left-0 top-1/2 -translate-y-1/2 text-2xl md:text-4xl lg:text-5xl font-mono opacity-50">
+              &gt;_
+            </span>
+            <input
+              type="text"
+              placeholder={locale === "en" ? "SEARCH AGENCIES" : "SØK BYRÅER"}
+              className="w-full bg-transparent border-0 border-b-2 border-white/30 text-2xl md:text-4xl lg:text-5xl font-mono uppercase py-4 pl-12 md:pl-20 focus:outline-none focus:border-white transition-colors"
+            // In a real implementation this would tie back to the search state
+            />
           </div>
+
+          {/* Featured */}
+          {featuredCompany?.slug ? (
+            <div className="mt-12 text-sm text-[rgba(255,255,255,0.6)] font-mono uppercase tracking-widest flex items-center gap-4">
+              <span className="inline-block px-3 py-1 bg-white text-black font-bold text-xs">{copy.featuredLabel}</span>
+              <a
+                href={localizePath(locale, `/selskap/${featuredCompany.slug}`)}
+                className="hover:text-white transition-colors"
+              >
+                {featuredCompany.name}
+              </a>
+            </div>
+          ) : null}
         </div>
+
 
         {/* SPONSOR */}
         {sponsorAd || sponsorMiniAd ? (
