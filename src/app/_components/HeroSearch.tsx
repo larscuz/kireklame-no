@@ -38,37 +38,44 @@ export default function HeroSearch({
       <div
         className={
           sponsorAd || sponsorMiniAd
-            ? "grid gap-6 lg:grid-cols-[1fr_360px] items-start"
-            : "grid gap-6 items-start"
+            ? "grid gap-6 lg:grid-cols-[1fr_360px] items-start mb-20"
+            : "grid gap-6 items-start mb-20"
         }
       >
-        {/* HERO */}
-        <div className="relative min-h-[280px] md:min-h-[320px] lg:h-[360px] rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] shadow-soft overflow-hidden">
-          {/* Background video */}
-          <HeroBackgroundVideo src={heroVideoUrl} poster="/covers/cover-1.jpg" />
+        {/* FLUID HERO */}
+        <div className="relative min-h-[500px] flex flex-col justify-end p-8 md:p-16 overflow-hidden rounded-[3rem] liquid-hover-swell group">
 
-          {/* Foreground content */}
-          <div className="relative z-10 flex h-full items-end p-6 md:p-12">
+          {/* Underlay Video */}
+          <div className="absolute inset-0 z-0">
+            <HeroBackgroundVideo src={heroVideoUrl} poster="/covers/cover-1.jpg" />
+            <div className="absolute inset-0 bg-black/30 pointer-events-none transition-opacity duration-700 group-hover:bg-black/10"></div>
+          </div>
+
+          {/* Foreground minimal UI */}
+          <div className="relative z-10 w-full max-w-4xl">
+            <h1 className="text-6xl md:text-8xl lg:text-9xl font-black tracking-tighter text-white mb-6 mix-blend-difference drop-shadow-lg">
+              {locale === "en" ? "Fluid." : "Flytende."}
+            </h1>
+
+            <div className="w-full max-w-2xl mt-8">
+              <input
+                type="text"
+                placeholder={locale === "en" ? "Search for fluid minds..." : "Søk etter byråer..."}
+                className="bg-transparent border-0 border-b-4 border-white/20 text-3xl md:text-5xl text-white outline-none w-full placeholder:text-white/30 focus:ring-0 focus:border-white transition-colors py-4 font-bold"
+              />
+            </div>
+
             {/* Featured */}
             {featuredCompany?.slug ? (
-              <div className="text-sm text-[rgb(var(--muted))]">
-                <span className="mr-2 inline-flex items-center rounded-full border border-[rgb(var(--border))] bg-[rgb(var(--bg))] px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide">
-                  {copy.featuredLabel}
-                </span>
+              <div className="mt-12 flex items-center gap-4 text-white/50 font-bold uppercase tracking-widest text-sm">
+                <span>{copy.featuredLabel}</span>
+                <span className="w-1.5 h-1.5 rounded-full bg-white/30" />
                 <a
                   href={localizePath(locale, `/selskap/${featuredCompany.slug}`)}
-                  className="font-semibold underline-offset-2 hover:underline text-[rgb(var(--fg))]"
+                  className="text-white hover:text-white/70 transition-colors pointer-events-auto liquid-hover-swell"
                 >
                   {featuredCompany.name}
                 </a>
-
-                {featuredCompany.company_type || featuredCompany.locationName ? (
-                  <span className="ml-2 text-[rgb(var(--muted))]">
-                    {featuredCompany.company_type ? featuredCompany.company_type : ""}
-                    {featuredCompany.company_type && featuredCompany.locationName ? " · " : ""}
-                    {featuredCompany.locationName ? featuredCompany.locationName : ""}
-                  </span>
-                ) : null}
               </div>
             ) : null}
           </div>
