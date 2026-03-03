@@ -1,16 +1,44 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
+
+export interface FlakeData {
+    x: number;
+    y: number;
+    radius: number;
+    opacity: number;
+}
 
 export default function SnowOverlay() {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const [isSucking, setIsSucking] = useState(false);
 
-    useEffect(() => {
-        const handleSuck = () => setIsSucking(true);
-        window.addEventListener("blizzard-suck", handleSuck);
-        return () => window.removeEventListener("blizzard-suck", handleSuck);
+    // We need a stable reference to the current flakes so the event listener can read them
+    const flakesRef = useRef<FlakeData[]>([]);
+
+    const handleInit = useCallback((e: Event) => {
+        const customEvent = e as CustomEvent<{ cx: number; cy: number; href: string }>;
+        const { cx, cy, href } = customEvent.detail;
+
+        setIsSucking(true); // Fades canvas to opacity 0 instantly
+
+        // Dispatch the extracted flakes to the DOM Transition engine
+        window.dispatchEvent(
+            new CustomEvent("blizzard-start", {
+                detail: {
+                    flakes: flakesRef.current,
+                    cx,
+                    cy,
+                    href
+                }
+            })
+        );
     }, []);
+
+    useEffect(() => {
+        window.addEventListener("blizzard-init", handleInit);
+        return () => window.removeEventListener("blizzard-init", handleInit);
+    }, [handleInit]);
 
     useEffect(() => {
         const canvas = canvasRef.current;
@@ -32,28 +60,16 @@ export default function SnowOverlay() {
         };
         window.addEventListener("resize", handleResize);
 
-        // Snow properties: highly performant, just white circles
         const flakeCount = Math.floor((width * height) / 4000);
-        const flakes: {
-            x: number;
-            y: number;
-            radius: number;
-            speedY: number;
-            speedX: number;
-            step: number;
-            stepSize: number;
-            opacity: number;
-        }[] = [];
+        const flakes: (FlakeData & { speedY: number; speedX: number; step: number; stepSize: number; })[] = [];
 
         for (let i = 0; i < flakeCount; i++) {
             flakes.push({
                 x: Math.random() * width,
                 y: Math.random() * height,
                 radius: Math.random() * 2.5 + 0.5,
-                // Gentle drift
                 speedY: Math.random() * 1.5 + 0.5,
                 speedX: 0,
-                // Sine wave drift parameters
                 step: Math.random() * Math.PI * 2,
                 stepSize: Math.random() * 0.05 + 0.01,
                 opacity: Math.random() * 0.5 + 0.2
@@ -66,8 +82,8 @@ export default function SnowOverlay() {
             ctx.clearRect(0, 0, width, height);
 
             if (isSucking) {
-                animationFrameId = requestAnimationFrame(draw);
-                return; // Stop drawing instantly on click
+                // Stop rendering frames to save CPU, DOM takes over
+                return;
             }
 
             ctx.fillStyle = "white";
@@ -86,12 +102,14 @@ export default function SnowOverlay() {
                 ctx.fillStyle = `rgba(255, 255, 255, ${flake.opacity})`;
                 ctx.fill();
 
-                // Reset if they hit the bottom or sides
                 if (flake.y > height + 5 || flake.x > width + 5 || flake.x < -5) {
                     flake.y = -5;
                     flake.x = Math.random() * width;
                 }
             }
+
+            // Sync the ref so the event listener always has the exact frame's coordinates
+            flakesRef.current = flakes.map(f => ({ x: f.x, y: f.y, radius: f.radius, opacity: f.opacity }));
 
             animationFrameId = requestAnimationFrame(draw);
         };
@@ -107,7 +125,7 @@ export default function SnowOverlay() {
     return (
         <canvas
             ref={canvasRef}
-            className={`fixed inset-0 pointer-events-none z-[8] transition-opacity duration-300 ${isSucking ? 'opacity-0' : 'opacity-100'}`}
+            className={`fixed inset-0 pointer-events-none z-[8] ${isSucking ? 'opacity-0' : 'opacity-100'}`}
         />
     );
 }
