@@ -11,18 +11,16 @@ export interface StarData {
 
 export default function StarfieldOverlay() {
     const canvasRef = useRef<HTMLCanvasElement>(null);
-    const [isWarpingOut, setIsWarpingOut] = useState(false);
-
     // Stable reference to the current 2D screen projections of the 3D stars
+
     const starsRef = useRef<StarData[]>([]);
 
     const handleInit = useCallback((e: Event) => {
         const customEvent = e as CustomEvent<{ cx: number; cy: number; href: string }>;
         const { cx, cy, href } = customEvent.detail;
 
-        setIsWarpingOut(true);
-
         // Dispatch extracted 2D coordinates so DOM replicas can overlay them perfectly
+
         window.dispatchEvent(
             new CustomEvent("supernova-start", {
                 detail: {
@@ -87,10 +85,6 @@ export default function StarfieldOverlay() {
         const draw = () => {
             ctx.clearRect(0, 0, width, height);
 
-            if (isWarpingOut) {
-                return; // Stop rendering
-            }
-
             ctx.fillStyle = "white";
             const current2DStars: StarData[] = [];
             const cx = width / 2;
@@ -139,13 +133,13 @@ export default function StarfieldOverlay() {
             window.removeEventListener("resize", handleResize);
             cancelAnimationFrame(animationFrameId);
         };
-    }, [isWarpingOut]);
+    }, []);
 
     return (
         <canvas
             ref={canvasRef}
             // Positioned securely between the layout background and the foreground hero content
-            className={`fixed inset-0 pointer-events-none z-0 mix-blend-screen opacity-60 ${isWarpingOut ? 'invisible' : 'visible'}`}
+            className="fixed inset-0 pointer-events-none z-0 mix-blend-screen opacity-60"
         />
     );
 }
