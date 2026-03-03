@@ -48,7 +48,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 
   return (
     <html lang={locale === "en" ? "en" : "no"} suppressHydrationWarning>
-      <body className="min-h-screen overflow-x-hidden antialiased">
+      <body className="min-h-screen overflow-x-hidden antialiased bg-black selection:bg-white/30">
         <script
           type="application/ld+json"
           // eslint-disable-next-line react/no-danger

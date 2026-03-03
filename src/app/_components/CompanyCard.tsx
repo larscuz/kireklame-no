@@ -11,56 +11,67 @@ export default async function CompanyCard({ company }: { company: CompanyCardMod
   const cover = company.cover_image || "/covers/cover-1.jpg";
 
   return (
-    <div className="group rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] shadow-soft hover:shadow-lift transition overflow-hidden">
-      <Link href={localizePath(locale, `/selskap/${company.slug}`)} className="block">
-        <div className="relative aspect-[16/11] overflow-hidden bg-[rgb(var(--bg))]">
-          <CoverImg
-            src={cover}
-            alt={company.name}
-            className="h-full w-full object-cover object-center group-hover:scale-[1.02] transition duration-300"
-          />
+    <div className="glass-panel group relative overflow-hidden flex flex-col">
+      <Link href={localizePath(locale, `/selskap/${company.slug}`)} className="flex flex-col h-full block">
 
-          <div className="absolute left-3 top-3 flex gap-2">
-            <Badge>AI: {aiLevelLabel(company.ai_level, locale)}</Badge>
-            <Badge variant="muted">
-              {locale === "en" ? "Price" : "Pris"}:{" "}
-              {priceLevelLabel(company.price_level, locale)}
-            </Badge>
+        {/* Spatial Cover Image */}
+        <div className="relative w-full aspect-[16/10] overflow-hidden rounded-t-[2rem] p-2 bg-black/20 shrink-0">
+          <div className="w-full h-full rounded-[1.5rem] overflow-hidden relative">
+            <CoverImg
+              src={cover}
+              alt={company.name}
+              className="h-full w-full object-cover object-center group-hover:scale-105 transition-transform duration-700 ease-out"
+            />
+          </div>
+
+          <div className="absolute bottom-4 left-4 flex flex-wrap gap-2 z-10">
+            <span className="bg-white/10 backdrop-blur-md border border-white/20 text-white shadow-lg rounded-full px-3 py-1 text-xs font-medium">
+              AI: {aiLevelLabel(company.ai_level, locale)}
+            </span>
+            <span className="bg-white/10 backdrop-blur-md border border-white/20 text-white/90 shadow-lg rounded-full px-3 py-1 text-xs font-medium">
+              {typeLabel(company.company_type, locale)}
+            </span>
             {company.is_verified && (
-              <Badge variant="muted">{locale === "en" ? "Verified" : "Verifisert"}</Badge>
+              <span className="bg-blue-500/20 backdrop-blur-md border border-blue-400/30 text-blue-100 shadow-lg rounded-full px-3 py-1 text-xs font-medium flex items-center gap-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse" />
+                {locale === "en" ? "Verified" : "Verifisert"}
+              </span>
             )}
           </div>
         </div>
 
-        <div className="p-4">
-          <div className="flex items-start justify-between gap-3">
-            <div>
-              <div className="font-semibold tracking-tight">{company.name}</div>
-              <div className="mt-1 text-sm text-[rgb(var(--muted))]">
-                {company.location?.name ? `${company.location.name} • ` : ""}
-                {typeLabel(company.company_type, locale)}
-              </div>
+        {/* Glass Typography Area */}
+        <div className="p-6 md:p-8 flex-1 flex flex-col justify-between">
+          <div>
+            <h2 className="text-2xl md:text-3xl font-semibold tracking-tight text-white mb-2 group-hover:text-blue-100 transition-colors">
+              {company.name}
+            </h2>
+
+            <div className="text-sm text-white/60 mb-4 flex items-center gap-2">
+              <span>{company.location?.name || "—"}</span>
+              <span className="w-1 h-1 rounded-full bg-white/20" />
+              <span>{priceLevelLabel(company.price_level, locale)}</span>
             </div>
+
+            {company.short_description && (
+              <p className="text-base text-white/80 leading-relaxed font-light mb-6 line-clamp-3">
+                {company.short_description}
+              </p>
+            )}
           </div>
 
-          {company.short_description && (
-            <p className="mt-3 text-sm text-[rgb(var(--muted))] line-clamp-2">
-              {company.short_description}
-            </p>
-          )}
-
           {company.tags?.length ? (
-            <div className="mt-4 flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-1.5">
               {company.tags.slice(0, 3).map((t) => (
-                <span key={t.slug} className="text-xs text-[rgb(var(--muted))]">
-                  #{t.name}
+                <span key={t.slug} className="text-xs text-white/50 bg-white/5 px-2.5 py-1 rounded-lg">
+                  {t.name}
                 </span>
               ))}
             </div>
           ) : null}
         </div>
-      </Link>
 
+      </Link>
     </div>
   );
 }

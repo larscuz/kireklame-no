@@ -43,12 +43,12 @@ export default async function ListingGrid({
     Boolean(gridBannerAd3) && companies.length >= banner3InsertAfterCompanyIndex + 2;
 
   return (
-    <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+    <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3 lg:gap-12 relative z-10 px-4">
       {companies.map((c, index) => (
-        <div key={c.id} className="contents">
+        <div key={c.id} className="contents break-inside-avoid">
           <CompanyCard company={c} />
           {shouldInsertGridBanner && index === bannerInsertAfterCompanyIndex ? (
-            <div className="sm:col-span-2 lg:col-span-3">
+            <div className="sm:col-span-2 lg:col-span-3 glass-panel p-2 my-8">
               <div className="sm:hidden">
                 <AdSlot
                   ad={gridBannerAd ?? null}
@@ -71,7 +71,7 @@ export default async function ListingGrid({
             </div>
           ) : null}
           {shouldInsertGridBanner2 && index === banner2InsertAfterCompanyIndex ? (
-            <div className="sm:col-span-2 lg:col-span-3">
+            <div className="sm:col-span-2 lg:col-span-3 glass-panel p-2 my-8">
               <div className="sm:hidden">
                 <AdSlot
                   ad={gridBannerAd2 ?? null}
@@ -94,7 +94,7 @@ export default async function ListingGrid({
             </div>
           ) : null}
           {shouldInsertGridBanner3 && index === banner3InsertAfterCompanyIndex ? (
-            <div className="sm:col-span-2 lg:col-span-3">
+            <div className="sm:col-span-2 lg:col-span-3 glass-panel p-2 my-8">
               <div className="sm:hidden">
                 <AdSlot
                   ad={gridBannerAd3 ?? null}
