@@ -1,7 +1,6 @@
 // src/app/_components/HeroSearch.tsx
 "use client";
 
-import HeroBackgroundVideo from "./HeroBackgroundVideo";
 import AdSlot from "./AdSlot";
 import { localizePath, type Locale } from "@/lib/i18n";
 import type { SponsorAd } from "@/lib/ads";
@@ -38,40 +37,52 @@ export default function HeroSearch({
       <div
         className={
           sponsorAd || sponsorMiniAd
-            ? "grid gap-6 lg:grid-cols-[1fr_360px] items-start"
-            : "grid gap-6 items-start"
+            ? "grid gap-6 lg:grid-cols-[1fr_360px] items-start pt-[8vh] pb-10"
+            : "items-start pt-[8vh] pb-10"
         }
       >
-        {/* HERO */}
-        <div className="relative min-h-[280px] md:min-h-[320px] lg:h-[360px] rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] shadow-soft overflow-hidden">
-          {/* Background video */}
-          <HeroBackgroundVideo src={heroVideoUrl} poster="/covers/cover-1.jpg" />
+        {/* LIQUID CARVED HERO */}
+        <div className="flex flex-col items-center justify-center text-center z-10 pointer-events-auto">
 
-          {/* Foreground content */}
-          <div className="relative z-10 flex h-full items-end p-6 md:p-12">
-            {/* Featured */}
-            {featuredCompany?.slug ? (
-              <div className="text-sm text-[rgb(var(--muted))]">
-                <span className="mr-2 inline-flex items-center rounded-full border border-[rgb(var(--border))] bg-[rgb(var(--bg))] px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide">
-                  {copy.featuredLabel}
-                </span>
-                <a
-                  href={localizePath(locale, `/selskap/${featuredCompany.slug}`)}
-                  className="font-semibold underline-offset-2 hover:underline text-[rgb(var(--fg))]"
-                >
-                  {featuredCompany.name}
-                </a>
+          <h1
+            className="text-5xl md:text-6xl lg:text-8xl font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-white to-white/40 mb-10 liquid-blob"
+            style={{ filter: 'drop-shadow(0 0 20px rgba(255,255,255,0.2)) drop-shadow(0 0 40px rgba(100,200,255,0.1))' }}
+          >
+            {locale === "en" ? "Mutate." : "Muter."}
+          </h1>
 
-                {featuredCompany.company_type || featuredCompany.locationName ? (
-                  <span className="ml-2 text-[rgb(var(--muted))]">
-                    {featuredCompany.company_type ? featuredCompany.company_type : ""}
-                    {featuredCompany.company_type && featuredCompany.locationName ? " · " : ""}
-                    {featuredCompany.locationName ? featuredCompany.locationName : ""}
-                  </span>
-                ) : null}
-              </div>
-            ) : null}
+          <div className="w-full max-w-3xl relative liquid-blob animation-duration-[18s]">
+            <div className="liquid-card p-4 md:p-6 flex flex-col md:flex-row items-center gap-4 rounded-[40%_60%_70%_30%/40%_50%_60%_50%] shadow-[inset_0_0_40px_rgba(0,0,0,0.6),0_10px_30px_rgba(0,0,0,0.3)] border-white/5">
+              <span className="text-white/30 font-black text-2xl hidden md:block opacity-50 wobble mix-blend-screen px-4">?</span>
+              <input
+                type="text"
+                placeholder={locale === "en" ? "Feed the syntax..." : "Mat syntaksen..."}
+                className="w-full bg-transparent border-0 text-xl md:text-2xl font-bold text-white placeholder:text-white/30 placeholder:font-normal focus:outline-none focus:ring-0 py-4 text-center md:text-left"
+              />
+              <button
+                className="bg-white/5 hover:bg-white/20 text-white px-8 py-5 transition-all font-bold tracking-widest uppercase border border-white/10 shadow-[inset_0_0_15px_rgba(255,255,255,0.1)] w-full md:w-auto"
+                style={{ borderRadius: '60% 40% 30% 70% / 60% 30% 70% 40%' }}
+              >
+                {locale === "en" ? "Inject" : "Injisering"}
+              </button>
+            </div>
           </div>
+
+          {/* Featured */}
+          {featuredCompany?.slug ? (
+            <div className="mt-12 text-sm text-white flex items-center gap-3 liquid-card px-6 py-3 border-white/5 rounded-[30%_70%_50%_50%/50%_50%_70%_30%]">
+              <span className="inline-block px-2 py-1 bg-white/10 font-bold text-[9px] uppercase tracking-widest rounded-[50%_50%_30%_70%/70%_30%_50%_50%]">
+                {copy.featuredLabel}
+              </span>
+              <a
+                href={localizePath(locale, `/selskap/${featuredCompany.slug}`)}
+                className="hover:text-[#aaccff] transition-colors font-extrabold tracking-tight"
+                style={{ textShadow: '0 0 10px rgba(255,255,255,0.3)' }}
+              >
+                {featuredCompany.name}
+              </a>
+            </div>
+          ) : null}
         </div>
 
         {/* SPONSOR */}
