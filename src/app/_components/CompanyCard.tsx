@@ -11,56 +11,69 @@ export default async function CompanyCard({ company }: { company: CompanyCardMod
   const cover = company.cover_image || "/covers/cover-1.jpg";
 
   return (
-    <div className="group rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] shadow-soft hover:shadow-lift transition overflow-hidden">
+    <div className="block border-b-4 border-[rgb(var(--border))] group pb-12 mb-12 last:border-b-0">
       <Link href={localizePath(locale, `/selskap/${company.slug}`)} className="block">
-        <div className="relative aspect-[16/11] overflow-hidden bg-[rgb(var(--bg))]">
+
+        {/* Cinematic Cover Cut */}
+        <div className="relative w-full aspect-[21/9] lg:aspect-[3/1] overflow-hidden bg-black group-hover:opacity-90 transition-opacity">
           <CoverImg
             src={cover}
             alt={company.name}
-            className="h-full w-full object-cover object-center group-hover:scale-[1.02] transition duration-300"
+            className="h-full w-full object-cover object-center grayscale group-hover:grayscale-0 transition-all duration-700 blur-[2px] group-hover:blur-0 scale-105 group-hover:scale-100"
           />
+        </div>
 
-          <div className="absolute left-3 top-3 flex gap-2">
-            <Badge>AI: {aiLevelLabel(company.ai_level, locale)}</Badge>
-            <Badge variant="muted">
-              {locale === "en" ? "Price" : "Pris"}:{" "}
+        {/* Editorial Body */}
+        <div className="mt-8 flex flex-col md:flex-row gap-8 justify-between items-start">
+
+          <div className="flex-1">
+            <div className="flex flex-wrap items-baseline gap-4 mb-2 text-sm font-bold uppercase tracking-widest text-[rgb(var(--np-accent))]">
+              <span>{typeLabel(company.company_type, locale)}</span>
+              <span className="w-1.5 h-1.5 bg-[rgb(var(--border))] rounded-full" />
+              <span>AI {aiLevelLabel(company.ai_level, locale)}</span>
+            </div>
+
+            <h2 className="text-5xl lg:text-7xl font-black tracking-tighter uppercase text-[rgb(var(--fg))] mb-6 group-hover:text-[rgb(var(--np-accent))] transition-colors">
+              {company.name}
+            </h2>
+
+            {company.short_description && (
+              <p className="text-lg md:text-xl text-[rgb(var(--muted))] max-w-3xl leading-relaxed font-medium">
+                {company.short_description}
+              </p>
+            )}
+
+            {company.tags?.length ? (
+              <div className="mt-8 flex flex-wrap gap-x-4 gap-y-2 text-xs font-bold uppercase tracking-widest text-[rgb(var(--muted))]">
+                {company.tags.slice(0, 5).map((t, i) => (
+                  <span key={t.slug}>
+                    {t.name}
+                    {i < Math.min(company.tags!.length, 5) - 1 ? <span className="mx-2 opacity-30">/</span> : null}
+                  </span>
+                ))}
+              </div>
+            ) : null}
+          </div>
+
+          <div className="md:w-48 shrink-0 flex flex-col gap-4 text-sm font-semibold uppercase tracking-wider text-[rgb(var(--muted))] border-l-2 border-[rgb(var(--border))] pl-6 my-auto">
+            <div>
+              <span className="block text-[10px] opacity-50 mb-1">{locale === "en" ? "Location" : "Sted"}</span>
+              {company.location?.name || "—"}
+            </div>
+            <div>
+              <span className="block text-[10px] opacity-50 mb-1">{locale === "en" ? "Pricing" : "Pris"}</span>
               {priceLevelLabel(company.price_level, locale)}
-            </Badge>
+            </div>
             {company.is_verified && (
-              <Badge variant="muted">{locale === "en" ? "Verified" : "Verifisert"}</Badge>
+              <div className="text-[rgb(var(--fg))] mt-2 flex items-center gap-2">
+                <span className="w-2 h-2 bg-[rgb(var(--np-accent))] rounded-full animate-pulse" />
+                {locale === "en" ? "Verified" : "Verifisert"}
+              </div>
             )}
           </div>
-        </div>
 
-        <div className="p-4">
-          <div className="flex items-start justify-between gap-3">
-            <div>
-              <div className="font-semibold tracking-tight">{company.name}</div>
-              <div className="mt-1 text-sm text-[rgb(var(--muted))]">
-                {company.location?.name ? `${company.location.name} • ` : ""}
-                {typeLabel(company.company_type, locale)}
-              </div>
-            </div>
-          </div>
-
-          {company.short_description && (
-            <p className="mt-3 text-sm text-[rgb(var(--muted))] line-clamp-2">
-              {company.short_description}
-            </p>
-          )}
-
-          {company.tags?.length ? (
-            <div className="mt-4 flex flex-wrap gap-2">
-              {company.tags.slice(0, 3).map((t) => (
-                <span key={t.slug} className="text-xs text-[rgb(var(--muted))]">
-                  #{t.name}
-                </span>
-              ))}
-            </div>
-          ) : null}
         </div>
       </Link>
-
     </div>
   );
 }

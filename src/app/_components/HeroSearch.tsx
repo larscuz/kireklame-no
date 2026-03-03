@@ -1,7 +1,6 @@
 // src/app/_components/HeroSearch.tsx
 "use client";
 
-import HeroBackgroundVideo from "./HeroBackgroundVideo";
 import AdSlot from "./AdSlot";
 import { localizePath, type Locale } from "@/lib/i18n";
 import type { SponsorAd } from "@/lib/ads";
@@ -38,40 +37,43 @@ export default function HeroSearch({
       <div
         className={
           sponsorAd || sponsorMiniAd
-            ? "grid gap-6 lg:grid-cols-[1fr_360px] items-start"
-            : "grid gap-6 items-start"
+            ? "grid gap-12 lg:grid-cols-[1fr_300px] items-start pt-[5vh] pb-16 border-b-4 border-[rgb(var(--border))] mb-16"
+            : "items-start pt-[5vh] pb-16 border-b-4 border-[rgb(var(--border))] mb-16"
         }
       >
-        {/* HERO */}
-        <div className="relative min-h-[280px] md:min-h-[320px] lg:h-[360px] rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] shadow-soft overflow-hidden">
-          {/* Background video */}
-          <HeroBackgroundVideo src={heroVideoUrl} poster="/covers/cover-1.jpg" />
+        {/* EDITORIAL HERO */}
+        <div className="flex flex-col z-10">
 
-          {/* Foreground content */}
-          <div className="relative z-10 flex h-full items-end p-6 md:p-12">
-            {/* Featured */}
-            {featuredCompany?.slug ? (
-              <div className="text-sm text-[rgb(var(--muted))]">
-                <span className="mr-2 inline-flex items-center rounded-full border border-[rgb(var(--border))] bg-[rgb(var(--bg))] px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide">
-                  {copy.featuredLabel}
-                </span>
-                <a
-                  href={localizePath(locale, `/selskap/${featuredCompany.slug}`)}
-                  className="font-semibold underline-offset-2 hover:underline text-[rgb(var(--fg))]"
-                >
-                  {featuredCompany.name}
-                </a>
+          <h1 className="text-6xl md:text-8xl lg:text-[7rem] leading-[0.85] font-black uppercase tracking-tighter text-[rgb(var(--fg))] mb-10">
+            {locale === "en" ? (
+              <>Find Your<br /><span className="text-[rgb(var(--np-accent))]">Syntax</span></>
+            ) : (
+              <>Finn Ditt<br /><span className="text-[rgb(var(--np-accent))]">Byrå</span></>
+            )}
+          </h1>
 
-                {featuredCompany.company_type || featuredCompany.locationName ? (
-                  <span className="ml-2 text-[rgb(var(--muted))]">
-                    {featuredCompany.company_type ? featuredCompany.company_type : ""}
-                    {featuredCompany.company_type && featuredCompany.locationName ? " · " : ""}
-                    {featuredCompany.locationName ? featuredCompany.locationName : ""}
-                  </span>
-                ) : null}
-              </div>
-            ) : null}
+          <div className="w-full max-w-2xl relative">
+            <input
+              type="text"
+              placeholder={locale === "en" ? "Search agencies, tools, locations..." : "Søk etter byråer, verktøy, sted..."}
+              className="w-full bg-transparent border-0 border-b-4 border-[rgb(var(--border))] text-xl md:text-3xl font-bold text-[rgb(var(--fg))] placeholder:text-[rgb(var(--muted))] focus:outline-none focus:ring-0 focus:border-[rgb(var(--np-accent))] transition-colors py-4 px-0 rounded-none"
+            />
           </div>
+
+          {/* Featured */}
+          {featuredCompany?.slug ? (
+            <div className="mt-12 text-sm text-[rgb(var(--muted))] flex flex-col items-start gap-2">
+              <span className="inline-block font-bold text-[10px] uppercase tracking-widest text-[rgb(var(--np-accent))]">
+                {copy.featuredLabel}
+              </span>
+              <a
+                href={localizePath(locale, `/selskap/${featuredCompany.slug}`)}
+                className="text-2xl font-black uppercase tracking-tighter hover:text-[rgb(var(--np-accent))] transition-colors"
+              >
+                {featuredCompany.name}
+              </a>
+            </div>
+          ) : null}
         </div>
 
         {/* SPONSOR */}

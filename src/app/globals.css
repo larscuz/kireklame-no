@@ -3,11 +3,11 @@
 @tailwind utilities;
 
 :root {
-  --bg: 10 11 14;
-  --fg: 245 247 250;
-  --muted: 164 170 182;
-  --card: 36 39 47;
-  --border: 36 39 47;
+  --bg: 10 10 10;
+  --fg: 255 255 255;
+  --muted: 150 150 150;
+  --card: 15 15 15;
+  --border: 40 40 40;
 }
 
 .light {
@@ -19,14 +19,15 @@
 }
 
 .dark {
-  --bg: 10 11 14;
-  --fg: 245 247 250;
-  --muted: 164 170 182;
-  --card: 36 39 47;
-  --border: 36 39 47;
+  --bg: 10 10 10;
+  --fg: 255 255 255;
+  --muted: 150 150 150;
+  --card: 15 15 15;
+  --border: 40 40 40;
 }
 
-html, body {
+html,
+body {
   height: 100%;
   overflow-x: hidden;
 }
@@ -64,20 +65,16 @@ body {
     radial-gradient(circle at 8% 12%, rgba(138, 180, 255, 0.15), transparent 34%),
     radial-gradient(circle at 92% 6%, rgba(83, 98, 126, 0.18), transparent 36%),
     linear-gradient(165deg, rgba(255, 255, 255, 0.04), transparent 44%),
-    repeating-linear-gradient(
-      0deg,
+    repeating-linear-gradient(0deg,
       rgba(148, 163, 184, 0.04) 0,
       rgba(148, 163, 184, 0.04) 1px,
       transparent 1px,
-      transparent 24px
-    ),
-    repeating-linear-gradient(
-      90deg,
+      transparent 24px),
+    repeating-linear-gradient(90deg,
       rgba(148, 163, 184, 0.025) 0,
       rgba(148, 163, 184, 0.025) 1px,
       transparent 1px,
-      transparent 24px
-    );
+      transparent 24px);
   background-size: auto, auto, auto, auto, auto;
   opacity: 0.7;
 }
@@ -221,11 +218,11 @@ body {
     inset 0 1px 0 rgba(255, 255, 255, 0.05);
 }
 
-.np-shell details > summary {
+.np-shell details>summary {
   list-style: none;
 }
 
-.np-shell details > summary::-webkit-details-marker {
+.np-shell details>summary::-webkit-details-marker {
   display: none;
 }
 
@@ -270,7 +267,7 @@ body {
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.065), rgba(255, 255, 255, 0) 24%);
 }
 
-.np-node-surface > * {
+.np-node-surface>* {
   position: relative;
   z-index: 1;
 }
@@ -423,20 +420,16 @@ body {
     radial-gradient(circle at 8% 10%, rgba(67, 121, 200, 0.14), transparent 36%),
     radial-gradient(circle at 96% 6%, rgba(68, 111, 173, 0.16), transparent 38%),
     linear-gradient(170deg, rgba(255, 255, 255, 0.55), transparent 46%),
-    repeating-linear-gradient(
-      0deg,
+    repeating-linear-gradient(0deg,
       rgba(96, 122, 158, 0.09) 0,
       rgba(96, 122, 158, 0.09) 1px,
       transparent 1px,
-      transparent 24px
-    ),
-    repeating-linear-gradient(
-      90deg,
+      transparent 24px),
+    repeating-linear-gradient(90deg,
       rgba(96, 122, 158, 0.06) 0,
       rgba(96, 122, 158, 0.06) 1px,
       transparent 1px,
-      transparent 24px
-    );
+      transparent 24px);
   opacity: 0.74;
 }
 
@@ -617,44 +610,24 @@ body {
 }
 
 /* Global: flatter corners across cards/blocks while keeping slight rounding */
-.rounded-sm {
-  border-radius: 0.08rem;
-}
-
-.rounded {
-  border-radius: 0.1rem;
-}
-
-.rounded-md {
-  border-radius: 0.14rem;
-}
-
-.rounded-lg {
-  border-radius: 0.18rem;
-}
-
-.rounded-xl {
-  border-radius: 0.22rem;
-}
-
-.rounded-2xl {
-  border-radius: 0.28rem;
-}
-
-.rounded-3xl {
-  border-radius: 0.34rem;
-}
-
-.rounded-xl2 {
-  border-radius: 0.28rem;
-}
-
-.rounded-full {
-  border-radius: 0.44rem;
-}
-
+/* Global Brutalism: Kill all curves */
+.rounded-sm,
+.rounded,
+.rounded-md,
+.rounded-lg,
+.rounded-xl,
+.rounded-2xl,
+.rounded-3xl,
+.rounded-xl2,
+.rounded-full,
 .rounded-full[class*="h-"][class*="w-"],
 .rounded-full[class*="size-"],
 .rounded-full.aspect-square {
-  border-radius: 9999px;
+  border-radius: 0 !important;
+}
+
+/* Base Body Update for Editorial */
+body {
+  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  letter-spacing: -0.01em;
 }
