@@ -43,7 +43,7 @@ export default async function ListingGrid({
     Boolean(gridBannerAd3) && companies.length >= banner3InsertAfterCompanyIndex + 2;
 
   return (
-    <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+    <div className="grid np-stagger-grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
       {companies.map((c, index) => (
         <div key={c.id} className="contents">
           <CompanyCard company={c} />

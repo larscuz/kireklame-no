@@ -17,7 +17,7 @@ export default async function CompanyCard({ company }: { company: CompanyCardMod
           <CoverImg
             src={cover}
             alt={company.name}
-            className="h-full w-full object-cover object-center group-hover:scale-[1.05] transition duration-500 ease-out"
+            className="np-pop-out h-full w-full object-cover object-center"
           />
 
           <div className="absolute left-3 top-3 flex gap-2">

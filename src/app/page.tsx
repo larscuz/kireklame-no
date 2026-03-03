@@ -25,72 +25,72 @@ export default async function Home(props: any) {
   const faqItems =
     locale === "en"
       ? [
-          {
-            q: "What does AI video production for commercial campaigns cost?",
-            a: "Price depends on scope, formats, and delivery speed. Compare agencies and studios to get quotes for your campaign needs.",
-          },
-          {
-            q: "What is the difference between AI advertising and general marketing automation?",
-            a: "AI advertising here means customer-facing campaign creative and commercial video production, not only backend automation.",
-          },
-          {
-            q: "Can I order campaign video directly from listed companies?",
-            a: "Yes. KiReklame is built to help buyers find relevant suppliers for commercial AI creative production in Norway.",
-          },
-          {
-            q: "How do I choose an AI agency for commercial video?",
-            a: "Review relevant cases, service fit, delivery model, and budget alignment before contacting shortlisted providers.",
-          },
-        ]
+        {
+          q: "What does AI video production for commercial campaigns cost?",
+          a: "Price depends on scope, formats, and delivery speed. Compare agencies and studios to get quotes for your campaign needs.",
+        },
+        {
+          q: "What is the difference between AI advertising and general marketing automation?",
+          a: "AI advertising here means customer-facing campaign creative and commercial video production, not only backend automation.",
+        },
+        {
+          q: "Can I order campaign video directly from listed companies?",
+          a: "Yes. KiReklame is built to help buyers find relevant suppliers for commercial AI creative production in Norway.",
+        },
+        {
+          q: "How do I choose an AI agency for commercial video?",
+          a: "Review relevant cases, service fit, delivery model, and budget alignment before contacting shortlisted providers.",
+        },
+      ]
       : [
-          {
-            q: "Hva koster AI videoproduksjon for reklamekampanjer?",
-            a: "Pris avhenger av omfang, format og leveringstakt. Sammenlign byråer og studioer for å få konkrete tilbud til kampanjen din.",
-          },
-          {
-            q: "Hva er forskjellen på KI-reklame og generell markedsføringsautomatisering?",
-            a: "Her betyr KI-reklame kundevendt kampanjekreativitet og kommersiell videoproduksjon, ikke bare intern automatisering.",
-          },
-          {
-            q: "Kan jeg bestille kampanjevideo direkte fra selskapene i katalogen?",
-            a: "Ja. KiReklame er laget for å hjelpe kjøpere med å finne relevante leverandører for kommersiell AI-kreativ produksjon i Norge.",
-          },
-          {
-            q: "Hvordan velger jeg riktig KI-byrå for reklamefilm?",
-            a: "Se på relevante caser, tjenestematch, leveransemodell og budsjett før du kontakter aktuelle leverandører.",
-          },
-          {
-            q: "Er det forskjell på «KI i reklame» og «AI i reklame»?",
-            a: "Begrepene brukes ofte om samme område: bruk av kunstig intelligens i kommersiell reklameproduksjon og kampanjekreativitet.",
-          },
-        ];
+        {
+          q: "Hva koster AI videoproduksjon for reklamekampanjer?",
+          a: "Pris avhenger av omfang, format og leveringstakt. Sammenlign byråer og studioer for å få konkrete tilbud til kampanjen din.",
+        },
+        {
+          q: "Hva er forskjellen på KI-reklame og generell markedsføringsautomatisering?",
+          a: "Her betyr KI-reklame kundevendt kampanjekreativitet og kommersiell videoproduksjon, ikke bare intern automatisering.",
+        },
+        {
+          q: "Kan jeg bestille kampanjevideo direkte fra selskapene i katalogen?",
+          a: "Ja. KiReklame er laget for å hjelpe kjøpere med å finne relevante leverandører for kommersiell AI-kreativ produksjon i Norge.",
+        },
+        {
+          q: "Hvordan velger jeg riktig KI-byrå for reklamefilm?",
+          a: "Se på relevante caser, tjenestematch, leveransemodell og budsjett før du kontakter aktuelle leverandører.",
+        },
+        {
+          q: "Er det forskjell på «KI i reklame» og «AI i reklame»?",
+          a: "Begrepene brukes ofte om samme område: bruk av kunstig intelligens i kommersiell reklameproduksjon og kampanjekreativitet.",
+        },
+      ];
 
   const highIntentLinks =
     locale === "en"
       ? [
-          { label: "AI advertising", href: localizePath(locale, "/ki-reklame") },
-          { label: "AI commercial production price", href: localizePath(locale, "/ai-video") },
-          { label: "Commercial production", href: localizePath(locale, "/ai-video") },
-          { label: "AI agency", href: localizePath(locale, "/ki-reklamebyra") },
-          { label: "AI media agency", href: localizePath(locale, "/ki-reklamebyra") },
-          { label: "AI campaign", href: localizePath(locale, "/ki-markedsforing") },
-          { label: "Apprentices", href: `${localizePath(locale, "/selskaper")}?q=${encodeURIComponent(apprenticeQuery)}` },
-          { label: "AI video production", href: localizePath(locale, "/ai-video") },
-        ]
+        { label: "AI advertising", href: localizePath(locale, "/ki-reklame") },
+        { label: "AI commercial production price", href: localizePath(locale, "/ai-video") },
+        { label: "Commercial production", href: localizePath(locale, "/ai-video") },
+        { label: "AI agency", href: localizePath(locale, "/ki-reklamebyra") },
+        { label: "AI media agency", href: localizePath(locale, "/ki-reklamebyra") },
+        { label: "AI campaign", href: localizePath(locale, "/ki-markedsforing") },
+        { label: "Apprentices", href: `${localizePath(locale, "/selskaper")}?q=${encodeURIComponent(apprenticeQuery)}` },
+        { label: "AI video production", href: localizePath(locale, "/ai-video") },
+      ]
       : [
-          { label: "ki reklame", href: localizePath(locale, "/ki-reklame") },
-          { label: "ai reklame", href: localizePath(locale, "/ki-reklame") },
-          { label: "ki i reklame", href: localizePath(locale, "/ki-reklame") },
-          { label: "ai i reklame", href: localizePath(locale, "/ki-reklame") },
-          { label: "reklamefilm bedrift pris", href: localizePath(locale, "/ai-video") },
-          { label: "reklamefilm produksjon", href: localizePath(locale, "/ai-video") },
-          { label: "reklamefilmproduksjon", href: localizePath(locale, "/ai-video") },
-          { label: "ai digitalbyrå", href: localizePath(locale, "/ki-reklamebyra") },
-          { label: "ai mediebyrå", href: localizePath(locale, "/ki-reklamebyra") },
-          { label: "ki kampanje", href: localizePath(locale, "/ki-markedsforing") },
-          { label: "lærlinger", href: `${localizePath(locale, "/selskaper")}?q=${encodeURIComponent(apprenticeQuery)}` },
-          { label: "ai videoproduksjon", href: localizePath(locale, "/ai-video") },
-        ];
+        { label: "ki reklame", href: localizePath(locale, "/ki-reklame") },
+        { label: "ai reklame", href: localizePath(locale, "/ki-reklame") },
+        { label: "ki i reklame", href: localizePath(locale, "/ki-reklame") },
+        { label: "ai i reklame", href: localizePath(locale, "/ki-reklame") },
+        { label: "reklamefilm bedrift pris", href: localizePath(locale, "/ai-video") },
+        { label: "reklamefilm produksjon", href: localizePath(locale, "/ai-video") },
+        { label: "reklamefilmproduksjon", href: localizePath(locale, "/ai-video") },
+        { label: "ai digitalbyrå", href: localizePath(locale, "/ki-reklamebyra") },
+        { label: "ai mediebyrå", href: localizePath(locale, "/ki-reklamebyra") },
+        { label: "ki kampanje", href: localizePath(locale, "/ki-markedsforing") },
+        { label: "lærlinger", href: `${localizePath(locale, "/selskaper")}?q=${encodeURIComponent(apprenticeQuery)}` },
+        { label: "ai videoproduksjon", href: localizePath(locale, "/ai-video") },
+      ];
   const faqSchema = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
@@ -122,11 +122,11 @@ export default async function Home(props: any) {
   const featured =
     featuredCompany?.slug
       ? {
-          name: featuredCompany.name,
-          slug: featuredCompany.slug,
-          company_type: featuredCompany.company_type ?? null,
-          locationName: featuredCompany.location?.name ?? null,
-        }
+        name: featuredCompany.name,
+        slug: featuredCompany.slug,
+        company_type: featuredCompany.company_type ?? null,
+        locationName: featuredCompany.location?.name ?? null,
+      }
       : null;
 
   // 3) Annonser
@@ -140,7 +140,7 @@ export default async function Home(props: any) {
   ]);
 
   return (
-    <div className="bg-[rgb(var(--bg))]">
+    <div>
       <script
         type="application/ld+json"
         // eslint-disable-next-line react/no-danger

@@ -43,29 +43,29 @@ export default function HeroSearch({
         }
       >
         {/* HERO */}
-        <div className="relative min-h-[280px] md:min-h-[320px] lg:h-[360px] rounded-2xl border border-[rgb(var(--border))] bg-black/20 backdrop-blur-md shadow-soft overflow-hidden">
+        <div className="relative min-h-[280px] md:min-h-[320px] lg:h-[360px] rounded-2xl flex items-end">
           {/* Background video */}
-          <div className="absolute inset-0 mix-blend-luminosity opacity-40">
+          <div className="absolute inset-0 mix-blend-luminosity opacity-40 rounded-2xl overflow-hidden pointer-events-none">
             <HeroBackgroundVideo src={heroVideoUrl} poster="/covers/cover-1.jpg" />
           </div>
 
-          {/* Foreground content */}
-          <div className="relative z-10 flex h-full items-end p-6 md:p-12">
+          {/* Foreground content floating in Z-space */}
+          <div className="relative z-10 p-6 md:p-12 w-full np-neon-shadow bg-black/20 backdrop-blur-md rounded-2xl border border-[rgb(var(--border))] translate-y-6 sm:translate-y-10 lg:translate-x-10 lg:w-[110%] transition-transform duration-700 hover:translate-y-4">
             {/* Featured */}
             {featuredCompany?.slug ? (
               <div className="text-sm text-[rgb(var(--muted))]">
-                <span className="mr-2 inline-flex items-center rounded-full border border-[rgb(var(--border))] bg-[rgb(var(--bg))] px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide">
+                <span className="mr-2 inline-flex items-center rounded-full border border-[rgb(var(--border))] bg-fuchsia-500/20 text-fuchsia-300 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-wide">
                   {copy.featuredLabel}
                 </span>
                 <a
                   href={localizePath(locale, `/selskap/${featuredCompany.slug}`)}
-                  className="font-semibold underline-offset-2 hover:underline text-[rgb(var(--fg))] drop-shadow-[0_0_8px_rgba(255,255,255,0.6)]"
+                  className="font-semibold underline-offset-2 hover:underline text-[rgb(var(--fg))] drop-shadow-[0_0_8px_rgba(255,255,255,0.6)] text-lg sm:text-2xl"
                 >
                   {featuredCompany.name}
                 </a>
 
                 {featuredCompany.company_type || featuredCompany.locationName ? (
-                  <span className="ml-2 text-[rgb(var(--muted))]">
+                  <span className="ml-2 text-[rgb(var(--muted))] hidden sm:inline-block">
                     {featuredCompany.company_type ? featuredCompany.company_type : ""}
                     {featuredCompany.company_type && featuredCompany.locationName ? " · " : ""}
                     {featuredCompany.locationName ? featuredCompany.locationName : ""}
