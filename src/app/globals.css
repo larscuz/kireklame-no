@@ -684,7 +684,6 @@ body {
 /* --- Generative Aurora Background --- */
 .np-aurora-bg {
   position: relative;
-  overflow: hidden;
   background-color: rgb(var(--bg));
   z-index: 0;
 }
