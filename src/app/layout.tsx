@@ -3,8 +3,8 @@ import "./globals.css";
 import { ThemeProvider } from "next-themes";
 import Topbar from "./_components/Topbar";
 import Footer from "./_components/Footer";
-import SnowOverlay from "./_components/SnowOverlay";
-import BlizzardTransition from "./_components/BlizzardTransition";
+import StarfieldOverlay from "./_components/StarfieldOverlay";
+import SupernovaTransition from "./_components/SupernovaTransition";
 import { siteMeta } from "@/lib/seo";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
@@ -62,8 +62,8 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           enableSystem={false}
           storageKey="kireklame-theme-v2"
         >
-          <SnowOverlay />
-          <BlizzardTransition />
+          <StarfieldOverlay />
+          <SupernovaTransition />
           <div className="min-h-screen flex flex-col">
             <Topbar />
             <main className="flex-1">{children}</main>
