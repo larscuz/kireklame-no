@@ -6,7 +6,6 @@ import { useRouter } from "next/navigation";
 export default function QuicksilverTransition() {
     const router = useRouter();
     const [isActive, setIsActive] = useState(false);
-    const [clickPos, setClickPos] = useState({ x: 0, y: 0 });
     const containerRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
@@ -21,16 +20,20 @@ export default function QuicksilverTransition() {
                 if (url.hostname === window.location.hostname && anchor.target !== "_blank") {
                     e.preventDefault();
 
-                    setClickPos({ x: e.clientX, y: e.clientY });
                     setIsActive(true);
 
-                    // Spawn droplets instantly
-                    spawnDroplets(e.clientX, e.clientY);
+                    // Dispatch event to hide the Z-axis rain canvas
+                    window.dispatchEvent(new Event("quicksilver-suck"));
+
+                    // Ensure React has committed the isActive state
+                    setTimeout(() => {
+                        spawnDroplets(e.clientX, e.clientY);
+                    }, 10);
 
                     // Perform navigation after the animation expands
                     setTimeout(() => {
                         router.push(anchor.href);
-                    }, 600); // 600ms allows droplets to gather and expand
+                    }, 800); // 800ms allows droplets to gather and expand
                 }
             }
         };
@@ -49,7 +52,7 @@ export default function QuicksilverTransition() {
             const timer = setTimeout(() => {
                 setIsActive(false);
                 if (containerRef.current) containerRef.current.innerHTML = "";
-            }, 1500);
+            }, 1800);
             return () => clearTimeout(timer);
         }
     }, [isActive]);
@@ -60,38 +63,49 @@ export default function QuicksilverTransition() {
         const container = containerRef.current;
         container.innerHTML = ""; // Clear any old droplets
 
-        const numDrops = 12;
+        const numDrops = 35; // Dense enough to look like the rain
         const w = window.innerWidth;
         const h = window.innerHeight;
 
         for (let i = 0; i < numDrops; i++) {
             const drop = document.createElement("div");
-            // Start from edges
-            const startX = Math.random() > 0.5 ? (Math.random() > 0.5 ? -100 : w + 100) : Math.random() * w;
-            const startY = startX <= 0 || startX >= w ? Math.random() * h : (Math.random() > 0.5 ? -100 : h + 100);
+
+            // Start randomly scattered ON screen, pretending to be the existing rain splatters
+            const startX = Math.random() * w;
+            const startY = Math.random() * h;
 
             drop.className = "quicksilver-drop";
             drop.style.left = `${startX}px`;
             drop.style.top = `${startY}px`;
 
-            // Random sizes
-            const size = Math.random() * 40 + 20;
+            // Random sizes, slightly smaller initially like raindrops
+            const size = Math.random() * 15 + 10;
             drop.style.width = `${size}px`;
             drop.style.height = `${size}px`;
 
             container.appendChild(drop);
+            void drop.offsetWidth; // Force CSS reflow to ensure transition starts from position
 
             // Animate to click position, then merge
             requestAnimationFrame(() => {
-                // Wait slightly for DOM
+                // Stagger the magnetic pull slightly based on distance for cool fluid physics
+                const dist = Math.sqrt(Math.pow(cx - startX, 2) + Math.pow(cy - startY, 2));
+                const delay = dist * 0.15 + (Math.random() * 50);
+
                 setTimeout(() => {
                     drop.style.left = `${cx - size / 2}px`;
                     drop.style.top = `${cy - size / 2}px`;
-                    // As they reach the center, expand heavily to consume the screen
+
+                    // As they reach the center, blow them up to join the massive puddle
                     setTimeout(() => {
-                        drop.style.transform = `scale(${100 + Math.random() * 50})`;
-                    }, 300); // they take 300ms to arrive, then expand
-                }, 10 + i * 5); // Slight stagger
+                        const newSize = Math.random() * 200 + 100;
+                        drop.style.width = `${newSize}px`;
+                        drop.style.height = `${newSize}px`;
+                        drop.style.left = `${cx - newSize / 2}px`;
+                        drop.style.top = `${cy - newSize / 2}px`;
+                        drop.style.transform = `scale(${15 + Math.random() * 5})`;
+                    }, 350); // wait for transit
+                }, delay);
             });
         }
 
@@ -103,15 +117,18 @@ export default function QuicksilverTransition() {
         mainDrop.style.width = "100px";
         mainDrop.style.height = "100px";
         container.appendChild(mainDrop);
+        void mainDrop.offsetWidth; // Force CSS reflow
 
         requestAnimationFrame(() => {
             setTimeout(() => {
-                mainDrop.style.transform = "scale(80)";
-            }, 200);
+                const massiveSize = Math.max(w, h) * 1.5;
+                mainDrop.style.width = `${massiveSize}px`;
+                mainDrop.style.height = `${massiveSize}px`;
+                mainDrop.style.left = `${cx - massiveSize / 2}px`;
+                mainDrop.style.top = `${cy - massiveSize / 2}px`;
+            }, 300); // Expanding after the small drops hit it
         });
     };
-
-    if (!isActive) return null;
 
     return (
         <>
@@ -127,7 +144,7 @@ export default function QuicksilverTransition() {
             </svg>
 
             <div
-                className="fixed inset-0 z-[99999] pointer-events-none"
+                className={`fixed inset-0 z-[99999] pointer-events-none ${isActive ? '' : 'hidden'}`}
                 style={{ filter: "url('#goo')" }} // apply gooey merge to children
             >
                 <div ref={containerRef} className="absolute inset-0 w-full h-full" />
