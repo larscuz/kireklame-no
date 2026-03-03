@@ -63,7 +63,7 @@ export default function StarfieldOverlay() {
         // Configuration for 3D projection
         const starCount = Math.floor((width * height) / 3000);
         const fov = 300; // Field of View
-        const warpSpeed = 4.5;
+        const warpSpeed = 10;
 
         // Stars are defined in 3D space: x, y, z
         const stars3D: {
@@ -144,8 +144,9 @@ export default function StarfieldOverlay() {
     return (
         <canvas
             ref={canvasRef}
-            // Background only: fixed, zero pointer events, pushed completely back
-            className={`fixed inset-0 pointer-events-none -z-10 bg-transparent ${isWarpingOut ? 'invisible' : 'visible'}`}
+            // Positioned securely between the layout background and the foreground hero content
+            className={`fixed inset-0 pointer-events-none z-0 mix-blend-screen opacity-60 ${isWarpingOut ? 'invisible' : 'visible'}`}
         />
     );
 }
+
