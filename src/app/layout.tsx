@@ -3,6 +3,7 @@ import "./globals.css";
 import { ThemeProvider } from "next-themes";
 import Topbar from "./_components/Topbar";
 import Footer from "./_components/Footer";
+import HeroBackgroundVideo from "./_components/HeroBackgroundVideo";
 import { siteMeta } from "@/lib/seo";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
@@ -48,7 +49,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 
   return (
     <html lang={locale === "en" ? "en" : "no"} suppressHydrationWarning>
-      <body className="min-h-screen overflow-x-hidden antialiased">
+      <body className="min-h-screen overflow-x-hidden antialiased bg-[#050505]">
         <script
           type="application/ld+json"
           // eslint-disable-next-line react/no-danger
@@ -60,10 +61,16 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           enableSystem={false}
           storageKey="kireklame-theme-v2"
         >
-          <div className="min-h-screen flex flex-col">
-            <Topbar />
-            <main className="flex-1">{children}</main>
-            <Footer />
+          {/* Global Hero Video Background */}
+          <div className="fixed inset-0 z-0 pointer-events-none opacity-90">
+            <HeroBackgroundVideo src="/videos/hero-bg.mp4" poster="/covers/cover-1.jpg" />
+            <div className="absolute inset-0 bg-black/40" /> {/* Subtle darkening overlay */}
+          </div>
+
+          <div className="relative z-10 min-h-screen flex flex-col pointer-events-none">
+            <div className="pointer-events-auto"><Topbar /></div>
+            <main className="flex-1 pointer-events-auto">{children}</main>
+            <div className="pointer-events-auto"><Footer /></div>
           </div>
         </ThemeProvider>
         <Analytics />
