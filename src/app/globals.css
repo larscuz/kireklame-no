@@ -19,11 +19,19 @@
 }
 
 .dark {
-  --bg: 10 11 14;
+  --bg: 8 9 11;
   --fg: 245 247 250;
-  --muted: 164 170 182;
-  --card: 36 39 47;
+  --muted: 170 176 188;
+  --card: 32 35 42;
   --border: 36 39 47;
+}
+
+.np-card-hover {
+  transition: transform 300ms cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 300ms ease-out;
+}
+.np-card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
 html, body {
