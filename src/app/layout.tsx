@@ -3,7 +3,8 @@ import "./globals.css";
 import { ThemeProvider } from "next-themes";
 import Topbar from "./_components/Topbar";
 import Footer from "./_components/Footer";
-import LiquidCursor from "./_components/LiquidCursor";
+import RainOverlay from "./_components/RainOverlay";
+import QuicksilverTransition from "./_components/QuicksilverTransition";
 import { siteMeta } from "@/lib/seo";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
@@ -61,7 +62,8 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           enableSystem={false}
           storageKey="kireklame-theme-v2"
         >
-          <LiquidCursor />
+          <RainOverlay />
+          <QuicksilverTransition />
           <div className="min-h-screen flex flex-col">
             <Topbar />
             <main className="flex-1">{children}</main>
