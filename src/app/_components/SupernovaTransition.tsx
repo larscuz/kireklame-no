@@ -87,8 +87,8 @@ export default function SupernovaTransition() {
         container.appendChild(core);
 
         // Limit the number of stars rendered so the DOM transition stays at 60fps locking
-        // We only take the ~150 largest/brightest stars on screen
-        const optimizedStars = stars.sort((a, b) => b.radius - a.radius).slice(0, 150);
+        // We only take the ~300 largest/brightest stars on screen
+        const optimizedStars = stars.sort((a, b) => b.radius - a.radius).slice(0, 300);
 
         // Step 2: Generate exact DOM replicas of the active stars
         for (let i = 0; i < optimizedStars.length; i++) {

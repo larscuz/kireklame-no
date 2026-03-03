@@ -61,7 +61,7 @@ export default function StarfieldOverlay() {
         window.addEventListener("resize", handleResize);
 
         // Configuration for 3D projection
-        const starCount = Math.floor((width * height) / 3000);
+        const starCount = Math.floor((width * height) / 1000);
         const fov = 300; // Field of View
         const warpSpeed = 10;
 
