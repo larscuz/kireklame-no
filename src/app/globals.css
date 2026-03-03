@@ -652,6 +652,23 @@ body {
   border-radius: 9999px;
 }
 
+/* SUPERNOVA PARTICLE */
+.star-particle {
+  position: absolute;
+  border-radius: 50%;
+  background-color: white;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 1), 0 0 20px rgba(255, 255, 255, 0.8), 0 0 30px rgba(100, 200, 255, 0.4);
+  transition: transform 0.5s cubic-bezier(0.9, 0, 0.1, 1),
+    left 0.5s cubic-bezier(0.9, 0, 0.1, 1),
+    top 0.5s cubic-bezier(0.9, 0, 0.1, 1),
+    width 0.5s cubic-bezier(0.9, 0, 0.1, 1),
+    height 0.5s cubic-bezier(0.9, 0, 0.1, 1),
+    opacity 0.4s ease;
+  transform-origin: center center;
+  will-change: transform, left, top, width, height, opacity;
+  pointer-events: none;
+}
+
 /* Deep Space Tint */
 .bg-deep-space {
   background: radial-gradient(circle at center, #0a0a0e 0%, #000000 100%);
