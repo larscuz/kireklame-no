@@ -1,44 +1,9 @@
 "use client";
 
-import { useEffect, useRef, useState, useCallback } from "react";
-
-export interface StarData {
-    x: number; // 2D screen X
-    y: number; // 2D screen Y
-    radius: number; // Projected 2D radius
-    opacity: number;
-}
+import { useEffect, useRef } from "react";
 
 export default function StarfieldOverlay() {
     const canvasRef = useRef<HTMLCanvasElement>(null);
-    const [isWarpingOut, setIsWarpingOut] = useState(false);
-
-    // Stable reference to the current 2D screen projections of the 3D stars
-    const starsRef = useRef<StarData[]>([]);
-
-    const handleInit = useCallback((e: Event) => {
-        const customEvent = e as CustomEvent<{ cx: number; cy: number; href: string }>;
-        const { cx, cy, href } = customEvent.detail;
-
-        setIsWarpingOut(true);
-
-        // Dispatch extracted 2D coordinates so DOM replicas can overlay them perfectly
-        window.dispatchEvent(
-            new CustomEvent("supernova-start", {
-                detail: {
-                    stars: starsRef.current,
-                    cx,
-                    cy,
-                    href
-                }
-            })
-        );
-    }, []);
-
-    useEffect(() => {
-        window.addEventListener("supernova-init", handleInit);
-        return () => window.removeEventListener("supernova-init", handleInit);
-    }, [handleInit]);
 
     useEffect(() => {
         const canvas = canvasRef.current;
@@ -87,12 +52,7 @@ export default function StarfieldOverlay() {
         const draw = () => {
             ctx.clearRect(0, 0, width, height);
 
-            if (isWarpingOut) {
-                return; // Stop rendering
-            }
-
             ctx.fillStyle = "white";
-            const current2DStars: StarData[] = [];
             const cx = width / 2;
             const cy = height / 2;
 
@@ -110,7 +70,6 @@ export default function StarfieldOverlay() {
                 }
 
                 // 3D Perspective Projection Math
-                // We project the 3D (x,y,z) coordinate onto a 2D (sx, sy) flat plane
                 const scale = fov / star.z;
                 const sx = star.x * scale + cx;
                 const sy = star.y * scale + cy;
@@ -124,12 +83,9 @@ export default function StarfieldOverlay() {
                     ctx.arc(sx, sy, projectedRadius, 0, Math.PI * 2);
                     ctx.fillStyle = `rgba(255, 255, 255, ${opacity})`;
                     ctx.fill();
-
-                    current2DStars.push({ x: sx, y: sy, radius: projectedRadius, opacity });
                 }
             }
 
-            starsRef.current = current2DStars;
             animationFrameId = requestAnimationFrame(draw);
         };
 
@@ -139,14 +95,13 @@ export default function StarfieldOverlay() {
             window.removeEventListener("resize", handleResize);
             cancelAnimationFrame(animationFrameId);
         };
-    }, [isWarpingOut]);
+    }, []);
 
     return (
         <canvas
             ref={canvasRef}
             // Positioned securely between the layout background and the foreground hero content
-            className={`fixed inset-0 pointer-events-none z-0 mix-blend-screen opacity-60 ${isWarpingOut ? 'invisible' : 'visible'}`}
+            className="fixed inset-0 pointer-events-none z-0 mix-blend-screen opacity-60"
         />
     );
 }
-
