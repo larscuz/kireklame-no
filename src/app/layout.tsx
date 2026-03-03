@@ -48,7 +48,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 
   return (
     <html lang={locale === "en" ? "en" : "no"} suppressHydrationWarning>
-      <body className="min-h-screen overflow-x-hidden antialiased">
+      <body className="min-h-screen overflow-x-hidden antialiased bg-black selection:bg-[#00ff00] selection:text-black">
         <script
           type="application/ld+json"
           // eslint-disable-next-line react/no-danger
@@ -60,7 +60,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           enableSystem={false}
           storageKey="kireklame-theme-v2"
         >
-          <div className="min-h-screen flex flex-col">
+          <div className="pointer-events-none fixed inset-0 z-50 mix-blend-overlay opacity-40 bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.5)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] bg-[length:100%_4px,3px_100%]"></div>
+
+          <div className="min-h-screen flex flex-col relative z-10 text-[#00ff00]">
             <Topbar />
             <main className="flex-1">{children}</main>
             <Footer />
