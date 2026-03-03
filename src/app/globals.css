@@ -19,22 +19,44 @@
 }
 
 .dark {
-  --bg: 8 9 11;
+  --bg: 5 6 8;
   --fg: 245 247 250;
   --muted: 170 176 188;
-  --card: 32 35 42;
+  --card: 16 18 24;
   --border: 36 39 47;
 }
 
 .np-card-hover {
-  transition: transform 300ms cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 300ms ease-out;
-}
-.np-card-hover:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  position: relative;
+  background: linear-gradient(to bottom, rgba(var(--card), 0.7), rgba(var(--card), 0.4));
+  background-clip: padding-box;
+  border: 1px solid transparent;
+  transition: transform 600ms cubic-bezier(0.25, 1, 0.5, 1), background-color 600ms ease;
 }
 
-html, body {
+.np-card-hover::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  z-index: -1;
+  border-radius: inherit;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.02) 50%, rgba(255, 255, 255, 0.05) 100%);
+  transition: opacity 600ms ease;
+  opacity: 0.5;
+}
+
+.np-card-hover:hover {
+  transform: translateY(-4px);
+  background: linear-gradient(to bottom, rgba(var(--card), 0.5), rgba(var(--card), 0.2));
+}
+
+.np-card-hover:hover::before {
+  opacity: 1;
+  background: linear-gradient(135deg, rgba(168, 85, 247, 0.4) 0%, rgba(59, 130, 246, 0.2) 50%, rgba(236, 72, 153, 0.3) 100%);
+}
+
+html,
+body {
   height: 100%;
   overflow-x: hidden;
 }
@@ -72,20 +94,16 @@ body {
     radial-gradient(circle at 8% 12%, rgba(138, 180, 255, 0.15), transparent 34%),
     radial-gradient(circle at 92% 6%, rgba(83, 98, 126, 0.18), transparent 36%),
     linear-gradient(165deg, rgba(255, 255, 255, 0.04), transparent 44%),
-    repeating-linear-gradient(
-      0deg,
+    repeating-linear-gradient(0deg,
       rgba(148, 163, 184, 0.04) 0,
       rgba(148, 163, 184, 0.04) 1px,
       transparent 1px,
-      transparent 24px
-    ),
-    repeating-linear-gradient(
-      90deg,
+      transparent 24px),
+    repeating-linear-gradient(90deg,
       rgba(148, 163, 184, 0.025) 0,
       rgba(148, 163, 184, 0.025) 1px,
       transparent 1px,
-      transparent 24px
-    );
+      transparent 24px);
   background-size: auto, auto, auto, auto, auto;
   opacity: 0.7;
 }
@@ -229,11 +247,11 @@ body {
     inset 0 1px 0 rgba(255, 255, 255, 0.05);
 }
 
-.np-shell details > summary {
+.np-shell details>summary {
   list-style: none;
 }
 
-.np-shell details > summary::-webkit-details-marker {
+.np-shell details>summary::-webkit-details-marker {
   display: none;
 }
 
@@ -278,7 +296,7 @@ body {
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.065), rgba(255, 255, 255, 0) 24%);
 }
 
-.np-node-surface > * {
+.np-node-surface>* {
   position: relative;
   z-index: 1;
 }
@@ -431,20 +449,16 @@ body {
     radial-gradient(circle at 8% 10%, rgba(67, 121, 200, 0.14), transparent 36%),
     radial-gradient(circle at 96% 6%, rgba(68, 111, 173, 0.16), transparent 38%),
     linear-gradient(170deg, rgba(255, 255, 255, 0.55), transparent 46%),
-    repeating-linear-gradient(
-      0deg,
+    repeating-linear-gradient(0deg,
       rgba(96, 122, 158, 0.09) 0,
       rgba(96, 122, 158, 0.09) 1px,
       transparent 1px,
-      transparent 24px
-    ),
-    repeating-linear-gradient(
-      90deg,
+      transparent 24px),
+    repeating-linear-gradient(90deg,
       rgba(96, 122, 158, 0.06) 0,
       rgba(96, 122, 158, 0.06) 1px,
       transparent 1px,
-      transparent 24px
-    );
+      transparent 24px);
   opacity: 0.74;
 }
 
@@ -665,4 +679,84 @@ body {
 .rounded-full[class*="size-"],
 .rounded-full.aspect-square {
   border-radius: 9999px;
+}
+
+/* --- Generative Aurora Background --- */
+.np-aurora-bg {
+  position: relative;
+  overflow: hidden;
+  background-color: rgb(var(--bg));
+  z-index: 0;
+}
+
+.np-aurora-bg::before,
+.np-aurora-bg::after {
+  content: "";
+  position: fixed;
+  width: 80vw;
+  height: 80vw;
+  border-radius: 50%;
+  filter: blur(120px);
+  z-index: -2;
+  opacity: 0.5;
+  pointer-events: none;
+  mix-blend-mode: screen;
+  will-change: transform;
+}
+
+.np-aurora-bg::before {
+  top: -40vw;
+  left: -20vw;
+  background: radial-gradient(circle, rgba(147, 51, 234, 0.35) 0%, rgba(147, 51, 234, 0) 70%);
+  animation: aurora-drift-1 25s infinite ease-in-out alternate;
+}
+
+.np-aurora-bg::after {
+  bottom: -40vw;
+  right: -20vw;
+  background: radial-gradient(circle, rgba(59, 130, 246, 0.35) 0%, rgba(236, 72, 153, 0) 70%);
+  animation: aurora-drift-2 30s infinite ease-in-out alternate-reverse;
+}
+
+@keyframes aurora-drift-1 {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+    opacity: 0.4;
+  }
+
+  50% {
+    transform: translate3d(15vw, 10vh, 0) scale(1.1);
+    opacity: 0.6;
+  }
+
+  100% {
+    transform: translate3d(-5vw, 20vh, 0) scale(0.95);
+    opacity: 0.5;
+  }
+}
+
+@keyframes aurora-drift-2 {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1.05);
+    opacity: 0.5;
+  }
+
+  50% {
+    transform: translate3d(-20vw, -15vh, 0) scale(0.9);
+    opacity: 0.3;
+  }
+
+  100% {
+    transform: translate3d(10vw, -5vh, 0) scale(1.1);
+    opacity: 0.6;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+  .np-aurora-bg::before,
+  .np-aurora-bg::after {
+    animation: none;
+    opacity: 0.4;
+  }
 }

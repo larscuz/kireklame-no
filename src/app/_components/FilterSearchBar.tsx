@@ -17,29 +17,29 @@ export default function FilterSearchBar({ initialQuery }: { initialQuery?: strin
   }
 
   return (
-  <div className="flex items-center gap-3">
-    <div className="min-w-0 flex-1">
-      <label className="block text-[11px] uppercase tracking-wide text-[rgb(var(--muted))]">
-        {isEn ? "Search" : "Søk"}
-      </label>
-      <input
-        value={q}
-        onChange={(e) => setQ(e.target.value)}
-        onKeyDown={(e) => e.key === "Enter" && submit()}
-        placeholder={
-          isEn ? "Search by company, AI level, or price" : "Søk etter bedrift, AI-nivå eller pris"
-        }
-        className="mt-1 w-full bg-transparent outline-none text-sm"
-      />
-    </div>
+    <div className="flex items-center gap-3">
+      <div className="min-w-0 flex-1">
+        <label className="block text-[11px] uppercase tracking-wide text-[rgb(var(--muted))]">
+          {isEn ? "Search" : "Søk"}
+        </label>
+        <input
+          value={q}
+          onChange={(e) => setQ(e.target.value)}
+          onKeyDown={(e) => e.key === "Enter" && submit()}
+          placeholder={
+            isEn ? "Search by company, AI level, or price" : "Søk etter bedrift, AI-nivå eller pris"
+          }
+          className="mt-1 w-full bg-transparent outline-none text-sm rounded-full px-4 py-2 border border-transparent focus:border-purple-500/50 focus:ring-2 focus:ring-purple-500/20 transition-all"
+        />
+      </div>
 
-    <button
-      onClick={submit}
-      className="shrink-0 rounded-2xl bg-[rgb(var(--fg))] text-[rgb(var(--bg))] px-4 py-2.5 text-sm font-semibold shadow-soft hover:opacity-90 transition"
-    >
-      {isEn ? "Search" : "Søk"}
-    </button>
-  </div>
-);
+      <button
+        onClick={submit}
+        className="shrink-0 rounded-full bg-[rgb(var(--fg))] text-[rgb(var(--bg))] px-5 py-2.5 text-sm font-semibold shadow-soft hover:opacity-90 hover:scale-[1.02] active:scale-[0.98] transition-all"
+      >
+        {isEn ? "Search" : "Søk"}
+      </button>
+    </div>
+  );
 
 }

@@ -43,9 +43,11 @@ export default function HeroSearch({
         }
       >
         {/* HERO */}
-        <div className="relative min-h-[280px] md:min-h-[320px] lg:h-[360px] rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] shadow-soft overflow-hidden">
+        <div className="relative min-h-[280px] md:min-h-[320px] lg:h-[360px] rounded-2xl border border-[rgb(var(--border))] bg-black/20 backdrop-blur-md shadow-soft overflow-hidden">
           {/* Background video */}
-          <HeroBackgroundVideo src={heroVideoUrl} poster="/covers/cover-1.jpg" />
+          <div className="absolute inset-0 mix-blend-luminosity opacity-40">
+            <HeroBackgroundVideo src={heroVideoUrl} poster="/covers/cover-1.jpg" />
+          </div>
 
           {/* Foreground content */}
           <div className="relative z-10 flex h-full items-end p-6 md:p-12">
@@ -57,7 +59,7 @@ export default function HeroSearch({
                 </span>
                 <a
                   href={localizePath(locale, `/selskap/${featuredCompany.slug}`)}
-                  className="font-semibold underline-offset-2 hover:underline text-[rgb(var(--fg))]"
+                  className="font-semibold underline-offset-2 hover:underline text-[rgb(var(--fg))] drop-shadow-[0_0_8px_rgba(255,255,255,0.6)]"
                 >
                   {featuredCompany.name}
                 </a>
