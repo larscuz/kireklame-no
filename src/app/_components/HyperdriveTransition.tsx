@@ -9,9 +9,25 @@ export default function HyperdriveTransition() {
     const [isActive, setIsActive] = useState(false);
     const containerRef = useRef<HTMLDivElement>(null);
 
-    // Aggressively force scroll to top the exact moment the Next.js route swap finishes
+    // Aggressively force scroll to top the exact moment the Next.js route swap finishes.
+    // Next.js App Router can aggressively restore scroll positions async after the DOM paints, 
+    // so we lock it to the top continuously during the whiteout blind transition.
     useEffect(() => {
-        window.scrollTo(0, 0);
+        const interval = setInterval(() => {
+            window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+            document.documentElement.scrollTop = 0;
+            document.body.scrollTop = 0;
+        }, 50);
+
+        // Release the lock right as the whiteout flash disappears
+        const timer = setTimeout(() => {
+            clearInterval(interval);
+        }, 600);
+
+        return () => {
+            clearInterval(interval);
+            clearTimeout(timer);
+        };
     }, [pathname]);
 
     useEffect(() => {
