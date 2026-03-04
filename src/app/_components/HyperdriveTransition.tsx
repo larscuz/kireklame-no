@@ -37,7 +37,7 @@ export default function HyperdriveTransition() {
             const timer = setTimeout(() => {
                 setIsActive(false);
                 if (containerRef.current) containerRef.current.innerHTML = "";
-            }, 800);
+            }, 1200);
             return () => clearTimeout(timer);
         }
     }, [isActive]);
@@ -125,13 +125,13 @@ export default function HyperdriveTransition() {
                 core.style.left = `${cx - massiveSize / 2}px`;
                 core.style.top = `${cy - massiveSize / 2}px`;
                 core.style.boxShadow = "0 0 0px transparent"; // Lose the distinct shadow as it floods the screen
-            }, 350);
+            }, 420);
         });
 
         // Step 5: Route
         setTimeout(() => {
             router.push(href);
-        }, 350);
+        }, 500);
     };
 
     return (
