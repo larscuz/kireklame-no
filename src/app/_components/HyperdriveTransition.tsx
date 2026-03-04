@@ -128,9 +128,10 @@ export default function HyperdriveTransition() {
             }, 420);
         });
 
-        // Step 5: Route
+        // Step 5: Route and reset scroll position under the white flash
         setTimeout(() => {
-            router.push(href);
+            window.scrollTo(0, 0);
+            router.push(href, { scroll: true });
         }, 500);
     };
 
