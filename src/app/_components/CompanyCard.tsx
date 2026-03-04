@@ -45,6 +45,12 @@ export default async function CompanyCard({ company }: { company: CompanyCardMod
               </>
             )}
           </div>
+
+          {company.short_description && (
+            <p className="mt-3 text-sm text-white/50 line-clamp-2 leading-relaxed">
+              {company.short_description}
+            </p>
+          )}
         </div>
 
       </Link>
