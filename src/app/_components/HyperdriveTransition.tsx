@@ -83,7 +83,8 @@ export default function HyperdriveTransition() {
         core.style.opacity = "0"; // Invisible until things hit it
         container.appendChild(core);
 
-        const starCount = 300; // Number of standalone DOM particles to generate
+        const isMobile = w < 768;
+        const starCount = isMobile ? 60 : 300; // Drastically reduce DOM nodes for mobile GPU performance
 
         // Step 2: Generate brand new random DOM stars scattered across the whole screen monitor
         for (let i = 0; i < starCount; i++) {
@@ -94,7 +95,7 @@ export default function HyperdriveTransition() {
             const startY = Math.random() * h;
             // The further they are from the center, the smaller and dimmer they are
             const distFromCenter = Math.sqrt(Math.pow((w / 2) - startX, 2) + Math.pow((h / 2) - startY, 2));
-            const maxRadius = 4;
+            const maxRadius = isMobile ? 3 : 4;
             const starRadius = Math.max(1, maxRadius - (distFromCenter / 400));
             const starOpacity = Math.max(0.2, 1 - (distFromCenter / 800));
 
@@ -106,7 +107,6 @@ export default function HyperdriveTransition() {
             drop.style.opacity = `${starOpacity}`;
 
             container.appendChild(drop);
-            void drop.offsetWidth; // Reflow
 
             // Step 3: Animate them slamming into the supernova center exactly where the cursor is
             requestAnimationFrame(() => {
@@ -125,6 +125,9 @@ export default function HyperdriveTransition() {
                 }, delay);
             });
         }
+
+        // Single reflow for all elements at once to prevent layout thrashing
+        void container.offsetWidth;
 
         // Make supernova core active as stars start arriving
         void core.offsetWidth;
