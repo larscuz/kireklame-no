@@ -1,12 +1,18 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 
 export default function HyperdriveTransition() {
     const router = useRouter();
+    const pathname = usePathname();
     const [isActive, setIsActive] = useState(false);
     const containerRef = useRef<HTMLDivElement>(null);
+
+    // Aggressively force scroll to top the exact moment the Next.js route swap finishes
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, [pathname]);
 
     useEffect(() => {
         const handleClick = (e: MouseEvent) => {
@@ -130,7 +136,6 @@ export default function HyperdriveTransition() {
 
         // Step 5: Route and reset scroll position under the white flash
         setTimeout(() => {
-            window.scrollTo(0, 0);
             router.push(href, { scroll: true });
         }, 500);
     };
