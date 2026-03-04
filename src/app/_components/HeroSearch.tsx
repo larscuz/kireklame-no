@@ -38,8 +38,8 @@ export default function HeroSearch({
       <div
         className={
           sponsorAd || sponsorMiniAd
-            ? "grid gap-6 lg:grid-cols-[1fr_360px] mb-20"
-            : "grid gap-6 mb-20"
+            ? "grid gap-6 lg:grid-cols-[1fr_360px] mb-8"
+            : "grid gap-6 mb-8"
         }
       >
         {/* FLUID HERO */}
