@@ -3,7 +3,6 @@ import "./globals.css";
 import { ThemeProvider } from "next-themes";
 import Topbar from "./_components/Topbar";
 import Footer from "./_components/Footer";
-import StarfieldOverlay from "./_components/StarfieldOverlay";
 import HyperdriveTransition from "./_components/HyperdriveTransition";
 import { siteMeta } from "@/lib/seo";
 import { Analytics } from "@vercel/analytics/react";
@@ -62,7 +61,6 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           enableSystem={false}
           storageKey="kireklame-theme-v2"
         >
-          <StarfieldOverlay />
           <HyperdriveTransition />
           <div className="min-h-screen flex flex-col bg-deep-space">
             <Topbar />
