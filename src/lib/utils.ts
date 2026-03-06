@@ -2,6 +2,7 @@ import { clsx as cx } from "clsx";
 import type { Locale } from "./i18n";
 
 export const clsx = cx;
+export const cn = cx;
 
 export type SearchParamsV1 = {
   q?: string;
@@ -119,4 +120,3 @@ export function typeLabel(type: string, locale: Locale = "no") {
         };
   return map[key] || type;
 }
-
