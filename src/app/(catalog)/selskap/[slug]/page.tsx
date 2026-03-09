@@ -92,6 +92,73 @@ function isWebsiteKind(kind: string): boolean {
   return ["website", "site", "homepage"].includes(kind);
 }
 
+function readFrameAncestorsDirective(csp: string | null): string | null {
+  if (!csp) return null;
+  const match = csp.match(/(?:^|;)\s*frame-ancestors\s+([^;]+)/i);
+  if (!match) return null;
+  return match[1]?.trim() || null;
+}
+
+function hasStrictXFrameOptions(xFrameOptions: string | null): boolean {
+  if (!xFrameOptions) return false;
+  const value = xFrameOptions.toLowerCase();
+  if (value.includes("deny")) return true;
+  if (value.includes("sameorigin")) return true;
+  if (value.includes("allow-from")) {
+    return !/(kireklame\.no|localhost)/i.test(value);
+  }
+  return false;
+}
+
+function hasStrictFrameAncestors(csp: string | null): boolean {
+  const frameAncestors = readFrameAncestorsDirective(csp);
+  if (!frameAncestors) return false;
+
+  const policy = frameAncestors.toLowerCase();
+  if (policy.includes("'none'")) return true;
+  if (policy.includes("*")) return false;
+  if (/\bhttps:\b|\bhttp:\b/.test(policy)) return false;
+
+  const allowsKnownEmbedOrigin = /(kireklame\.no|localhost)/.test(policy);
+  if (policy.includes("'self'") && !allowsKnownEmbedOrigin) return true;
+  if (!allowsKnownEmbedOrigin) return true;
+
+  return false;
+}
+
+async function isLikelyStrictFrameBlocked(url: string | null): Promise<boolean> {
+  if (!url || !/^https?:\/\//i.test(url)) return false;
+
+  const request = async (method: "HEAD" | "GET") => {
+    const abort = new AbortController();
+    const timeout = setTimeout(() => abort.abort(), 2500);
+    try {
+      return await fetch(url, {
+        method,
+        redirect: "follow",
+        signal: abort.signal,
+        next: { revalidate: 3600 },
+      });
+    } finally {
+      clearTimeout(timeout);
+    }
+  };
+
+  try {
+    let response = await request("HEAD");
+    if (response.status === 405 || response.status === 501) {
+      response = await request("GET");
+    }
+
+    const xFrameOptions = response.headers.get("x-frame-options");
+    const csp = response.headers.get("content-security-policy");
+    return hasStrictXFrameOptions(xFrameOptions) || hasStrictFrameAncestors(csp);
+  } catch {
+    // Hvis vi ikke får lest headere, prøv iframe først.
+    return false;
+  }
+}
+
 function isKnownSocialHost(host: string): boolean {
   const h = host.toLowerCase();
   const domains = [
@@ -453,6 +520,27 @@ export default async function CompanyPage({
     .slice(0, 8);
 
   const secondaryMediaEmbedSrc = secondaryMediaUrl ? normalizeVideoUrl(secondaryMediaUrl) : null;
+  const hasHeroVideo = mp4 || !!embedSrc;
+  const heroFallbackSecondaryMediaUrl = !hasHeroVideo ? secondaryMediaUrl : null;
+  const heroFallbackSecondaryMediaEmbedSrc = heroFallbackSecondaryMediaUrl
+    ? normalizeVideoUrl(heroFallbackSecondaryMediaUrl)
+    : null;
+  const heroFallbackSecondaryMediaHost = hostFromUrl(heroFallbackSecondaryMediaUrl);
+  const heroFallbackWebsiteUrl =
+    !hasHeroVideo && !heroFallbackSecondaryMediaUrl ? websiteUrl : null;
+  const heroFallbackSecondaryMediaIframeUrl =
+    heroFallbackSecondaryMediaUrl &&
+    !isImageUrl(heroFallbackSecondaryMediaUrl) &&
+    !isMp4Url(heroFallbackSecondaryMediaUrl) &&
+    !heroFallbackSecondaryMediaEmbedSrc
+      ? heroFallbackSecondaryMediaUrl
+      : null;
+  const [heroFallbackSecondaryMediaIsStrictBlocked, heroFallbackWebsiteIsStrictBlocked] =
+    await Promise.all([
+      isLikelyStrictFrameBlocked(heroFallbackSecondaryMediaIframeUrl),
+      isLikelyStrictFrameBlocked(heroFallbackWebsiteUrl),
+    ]);
+  const showSecondaryMediaBelow = !!secondaryMediaUrl && hasHeroVideo;
 
   // --- JSON-LD (Organization) ---
   const canonicalUrl = `https://kireklame.no/selskap/${slug}`;
@@ -499,27 +587,98 @@ export default async function CompanyPage({
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-5 lg:items-start">
         <div className="space-y-5 lg:col-span-3">
           <div className="relative aspect-[16/10] overflow-hidden rounded-2xl border border-[rgb(var(--border))] bg-black">
-            {!rawVideo ? (
-              <div className="absolute inset-0 flex items-center justify-center text-sm text-[rgb(var(--muted))]">
-                {locale === "en" ? "No video" : "Ingen video"}
-              </div>
-            ) : mp4 ? (
-              <video
-                src={rawVideo}
-                controls
-                playsInline
-                className="absolute inset-0 h-full w-full object-cover"
-              />
-            ) : embedSrc ? (
-              <iframe
-                src={embedSrc}
-                className="absolute inset-0 h-full w-full"
-                loading="lazy"
-                allowFullScreen
-              />
+            {hasHeroVideo ? (
+              mp4 ? (
+                <video
+                  src={rawVideo!}
+                  controls
+                  playsInline
+                  className="absolute inset-0 h-full w-full object-cover"
+                />
+              ) : (
+                <iframe
+                  src={embedSrc!}
+                  className="absolute inset-0 h-full w-full"
+                  loading="lazy"
+                  allowFullScreen
+                />
+              )
+            ) : heroFallbackSecondaryMediaUrl ? (
+              isImageUrl(heroFallbackSecondaryMediaUrl) ? (
+                <img
+                  src={heroFallbackSecondaryMediaUrl}
+                  alt={company.name}
+                  className="absolute inset-0 h-full w-full object-cover"
+                  loading="lazy"
+                />
+              ) : isMp4Url(heroFallbackSecondaryMediaUrl) ? (
+                <video
+                  src={heroFallbackSecondaryMediaUrl}
+                  controls
+                  playsInline
+                  className="absolute inset-0 h-full w-full object-cover"
+                />
+              ) : heroFallbackSecondaryMediaEmbedSrc ? (
+                <iframe
+                  src={heroFallbackSecondaryMediaEmbedSrc}
+                  className="absolute inset-0 h-full w-full"
+                  loading="lazy"
+                  allowFullScreen
+                />
+              ) : heroFallbackSecondaryMediaIframeUrl && !heroFallbackSecondaryMediaIsStrictBlocked ? (
+                <iframe
+                  src={heroFallbackSecondaryMediaIframeUrl}
+                  className="absolute inset-0 h-full w-full"
+                  loading="lazy"
+                  allowFullScreen
+                />
+              ) : (
+                <a
+                  href={heroFallbackSecondaryMediaUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-gradient-to-br from-[#0f1730] via-[#111827] to-black p-6 text-white"
+                >
+                  <span className="rounded-full border border-white/25 bg-white/10 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-white/85">
+                    {locale === "en" ? "Media" : "Media"}
+                  </span>
+                  <span className="text-center text-lg font-semibold leading-tight sm:text-2xl">
+                    {heroFallbackSecondaryMediaHost ?? company.name}
+                  </span>
+                  <span className="inline-flex items-center rounded-lg border border-white/35 bg-black/35 px-4 py-2 text-sm font-semibold text-white transition hover:bg-black/55">
+                    {locale === "en" ? "Open media ↗" : "Åpne media ↗"}
+                  </span>
+                </a>
+              )
+            ) : heroFallbackWebsiteUrl ? (
+              heroFallbackWebsiteIsStrictBlocked ? (
+                <a
+                  href={localizePath(locale, `/go/${slug}`)}
+                  target="_blank"
+                  rel="noopener"
+                  className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-gradient-to-br from-[#0f1730] via-[#111827] to-black p-6 text-white"
+                >
+                  <span className="rounded-full border border-white/25 bg-white/10 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-white/85">
+                    {locale === "en" ? "Website" : "Nettside"}
+                  </span>
+                  <span className="text-center text-lg font-semibold leading-tight sm:text-2xl">
+                    {websiteHost ?? company.name}
+                  </span>
+                  <span className="inline-flex items-center rounded-lg border border-white/35 bg-black/35 px-4 py-2 text-sm font-semibold text-white transition hover:bg-black/55">
+                    {locale === "en" ? "Open website ↗" : "Åpne nettside ↗"}
+                  </span>
+                </a>
+              ) : (
+                <iframe
+                  src={heroFallbackWebsiteUrl}
+                  className="absolute inset-0 h-full w-full"
+                  loading="lazy"
+                  allowFullScreen
+                />
+              )
             ) : (
               <div className="absolute inset-0 flex items-center justify-center text-sm text-[rgb(var(--muted))]">
-                {locale === "en" ? "Video unavailable" : "Video utilgjengelig"}
+                {locale === "en" ? "No video or website" : "Ingen video eller nettside"}
               </div>
             )}
           </div>
@@ -748,7 +907,7 @@ export default async function CompanyPage({
         </aside>
       </div>
 
-      {secondaryMediaUrl ? (
+      {showSecondaryMediaBelow ? (
         <section className="mt-5 rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] p-3 sm:p-4">
           <div className="mb-3 text-xs font-semibold uppercase tracking-wide text-[rgb(var(--muted))]">
             {locale === "en" ? "More from the company" : "Mer fra bedriften"}
