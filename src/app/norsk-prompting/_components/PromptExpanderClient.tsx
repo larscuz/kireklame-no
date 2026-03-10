@@ -1,14 +1,34 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import type { PromptDomain, PromptLength, PromptOutputType, PromptStyle } from "@/data/norskPrompting/types";
 import { buildPrompt, type BuildPromptInput, type PromptBlock } from "@/lib/norsk-prompting/builder";
+import { postKiExercise, type LlmProviderInfo } from "@/components/ki-opplaring/mdx/exerciseApi";
+import WorkshopPassPanel from "@/components/ki-opplaring/WorkshopPassPanel";
 import { outputTypeOptions } from "@/lib/norsk-prompting/constants";
 import CopyTextButton from "./CopyTextButton";
 
 type StudentStyle = "noktern" | "filmisk" | "kreativ";
 type FormatOption = "" | "16:9" | "9:16" | "1:1";
+
+type PromptAssistResponse = {
+  summary: string;
+  chosen_terms: Array<{
+    slug: string;
+    term_no: string;
+    relevance_pct: number;
+    why: string;
+    how_to_use: string;
+  }>;
+  expanded_prompt: string;
+  issues: Array<{
+    issue: string;
+    fix: string;
+  }>;
+  follow_up?: string;
+};
 
 function toOutputType(value: string | null): PromptOutputType {
   if (value === "video" || value === "text") return value;
@@ -117,6 +137,10 @@ export default function PromptExpanderClient() {
   const [hasGenerated, setHasGenerated] = useState<boolean>(hasInitialInput);
   const [editableSections, setEditableSections] = useState<PromptBlock[]>(hasInitialInput ? result.sections : []);
   const [showInjectedTerms, setShowInjectedTerms] = useState(true);
+  const [assistLoading, setAssistLoading] = useState(false);
+  const [assistError, setAssistError] = useState<string | null>(null);
+  const [assistResult, setAssistResult] = useState<PromptAssistResponse | null>(null);
+  const [assistProvider, setAssistProvider] = useState<LlmProviderInfo | null>(null);
   const hasDraftChanges = !sameRequest(draftRequest, activeRequest);
   const canGenerate = (!hasGenerated && input.trim().length > 0) || (hasGenerated && hasDraftChanges);
   const visibleInjectedTerms = hasGenerated ? result.injectedTerms : [];
@@ -133,6 +157,10 @@ export default function PromptExpanderClient() {
   const hasEditableSections = editableSections.length > 0;
   const hasInjectedTerms = visibleInjectedTerms.length > 0;
   const hasLearningPoints = visibleLearningPoints.length > 0;
+  const candidateSlugs = useMemo(
+    () => visibleInjectedTerms.map((term) => term.slug).slice(0, 12),
+    [visibleInjectedTerms]
+  );
 
   useEffect(() => {
     if (!hasGenerated) {
@@ -153,6 +181,43 @@ export default function PromptExpanderClient() {
     setHasGenerated(true);
   }
 
+  async function runPromptAssist() {
+    if (!hasPromptOutput || candidateSlugs.length === 0 || assistLoading) return;
+
+    setAssistError(null);
+    setAssistLoading(true);
+
+    const response = await postKiExercise<PromptAssistResponse>("prompt_assist", {
+      user_input: input.slice(0, 1200),
+      output_type: activeRequest.outputType,
+      domain: activeRequest.domain,
+      draft_prompt: fullPrompt.slice(0, 2200),
+      candidate_slugs: candidateSlugs,
+    });
+
+    setAssistLoading(false);
+
+    if (!response.ok || !response.data) {
+      setAssistError(response.error || "Klarte ikke hente KI-forslag.");
+      return;
+    }
+
+    setAssistProvider(response.provider ?? null);
+    setAssistResult(response.data);
+  }
+
+  function useAssistPrompt() {
+    if (!assistResult?.expanded_prompt) return;
+
+    const first = editableSections[0];
+    const next: PromptBlock = {
+      id: first?.id ?? "ki-assist",
+      title: first?.title ?? "Utvidet prompt",
+      content: assistResult.expanded_prompt,
+    };
+    setEditableSections([next]);
+  }
+
   return (
     <section className="np-node-surface rounded-3xl border border-[rgb(var(--border))] bg-[rgb(var(--card))]/92 p-4 pt-7 shadow-[0_18px_60px_rgba(2,6,23,0.3)] sm:p-6">
       <div>
@@ -167,6 +232,7 @@ export default function PromptExpanderClient() {
           Start med en enkel tekst. Vi legger til mediefaglige begreper som hjelper ChatGPT, Gemini, Claude og DeepSeek med å lage bedre prompter.
         </p>
       </div>
+      <WorkshopPassPanel className="mt-4" />
 
       <div className="mt-4 grid gap-4 lg:grid-cols-3 lg:items-start">
         <aside className="space-y-3 lg:col-span-1">
@@ -294,34 +360,152 @@ export default function PromptExpanderClient() {
 
         <div className="space-y-3 lg:col-span-2">
           <div className="grid gap-3 lg:grid-cols-2">
-            <div className="rounded-2xl border border-zinc-300/30 bg-gradient-to-br from-zinc-500/20 via-zinc-500/5 to-sky-400/12 p-4">
-              <div className="flex flex-wrap items-center justify-between gap-2">
-                <p className="text-sm font-semibold text-black">Kopier oppdatert tekst</p>
-                <div className="flex flex-wrap items-center gap-2">
-                  <button
-                    type="button"
-                    onClick={generatePrompt}
-                    className="np-action-btn inline-flex items-center justify-center rounded-lg border border-zinc-300/40 bg-zinc-300/15 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.11em] text-black transition hover:bg-zinc-300/25 disabled:cursor-not-allowed disabled:opacity-100"
-                    disabled={!canGenerate}
-                  >
-                    Oppdater tekst
-                  </button>
-                  <CopyTextButton
-                    value={fullPrompt}
-                    label="Kopier tekst"
-                    disabled={!hasPromptOutput}
-                    className="text-black disabled:opacity-100"
-                  />
+            <div className="space-y-3">
+              <div className="rounded-2xl border border-zinc-300/30 bg-gradient-to-br from-zinc-500/20 via-zinc-500/5 to-sky-400/12 p-4">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <p className="text-sm font-semibold text-black">Kopier oppdatert tekst</p>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={generatePrompt}
+                      className="np-action-btn inline-flex items-center justify-center rounded-lg border border-zinc-300/40 bg-zinc-300/15 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.11em] text-black transition hover:bg-zinc-300/25 disabled:cursor-not-allowed disabled:opacity-100"
+                      disabled={!canGenerate}
+                    >
+                      Oppdater tekst
+                    </button>
+                    <button
+                      type="button"
+                      onClick={runPromptAssist}
+                      disabled={!hasPromptOutput || candidateSlugs.length === 0 || assistLoading}
+                      className="np-action-btn inline-flex items-center justify-center rounded-lg border border-sky-300/40 bg-sky-300/12 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.11em] text-black transition hover:bg-sky-300/25 disabled:cursor-not-allowed disabled:opacity-100"
+                    >
+                      {assistLoading ? "Henter..." : "KI-forslag"}
+                    </button>
+                    <CopyTextButton
+                      value={fullPrompt}
+                      label="Kopier tekst"
+                      disabled={!hasPromptOutput}
+                      className="text-black disabled:opacity-100"
+                    />
+                  </div>
                 </div>
+                <pre className="np-dynamic-text mt-3 max-h-[36rem] overflow-auto whitespace-pre-wrap rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/70 p-3 text-sm">
+                  {fullPrompt}
+                </pre>
+                <p className="mt-2 text-xs text-black">
+                  {hasPromptOutput
+                    ? "Lim inn i ChatGPT, Gemini, Claude, DeepSeek eller annen chatmodell."
+                    : "Den oppdaterte teksten vises her etter at du trykker \"Oppdater tekst\"."}
+                </p>
               </div>
-              <pre className="np-dynamic-text mt-3 max-h-[36rem] overflow-auto whitespace-pre-wrap rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/70 p-3 text-sm">
-                {fullPrompt}
-              </pre>
-              <p className="mt-2 text-xs text-black">
-                {hasPromptOutput
-                  ? "Lim inn i ChatGPT, Gemini, Claude, DeepSeek eller annen chatmodell."
-                  : "Den oppdaterte teksten vises her etter at du trykker \"Oppdater tekst\"."}
-              </p>
+
+              <article className="rounded-2xl border border-sky-300/30 bg-gradient-to-br from-sky-300/18 via-sky-300/6 to-zinc-500/8 p-4">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <p className="text-sm font-semibold text-black">KI-forslag (ordforråd + struktur)</p>
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={runPromptAssist}
+                      disabled={!hasPromptOutput || candidateSlugs.length === 0 || assistLoading}
+                      className="rounded-lg border border-sky-300/40 bg-sky-300/15 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.11em] text-black transition hover:bg-sky-300/25 disabled:cursor-not-allowed disabled:opacity-100"
+                    >
+                      {assistLoading ? "Jobber..." : "Oppdater KI-forslag"}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={useAssistPrompt}
+                      disabled={!assistResult?.expanded_prompt}
+                      className="rounded-lg border border-zinc-300/35 bg-zinc-300/10 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.11em] text-black transition hover:bg-zinc-300/20 disabled:cursor-not-allowed disabled:opacity-100"
+                    >
+                      Bruk forslag
+                    </button>
+                    <CopyTextButton
+                      value={assistResult?.expanded_prompt ?? ""}
+                      label="Kopier forslag"
+                      disabled={!assistResult?.expanded_prompt}
+                      className="text-black disabled:opacity-100"
+                    />
+                  </div>
+                </div>
+
+                {assistError ? (
+                  <p className="mt-3 rounded-xl border border-rose-400/30 bg-rose-400/10 px-3 py-2 text-xs text-rose-300">
+                    {assistError}
+                  </p>
+                ) : null}
+
+                {assistResult ? (
+                  <div className="mt-3 space-y-3">
+                    <p className="text-xs text-black/90">{assistResult.summary}</p>
+
+                    <div className="rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/70 p-3">
+                      <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">
+                        Valgte ordforråds-termer
+                      </p>
+                      <div className="mt-2 space-y-2">
+                        {assistResult.chosen_terms.map((term) => (
+                          <article key={term.slug} className="rounded-lg border border-[rgb(var(--border))]/80 bg-[rgb(var(--card))]/70 p-2">
+                            <div className="flex items-center justify-between gap-2">
+                              <Link
+                                href={`/norsk-prompting/ordforrad/${term.slug}`}
+                                className="text-xs font-semibold text-zinc-100 underline underline-offset-4"
+                              >
+                                {term.term_no}
+                              </Link>
+                              <span className="text-[11px] font-semibold text-sky-200">{term.relevance_pct}%</span>
+                            </div>
+                            <p className="mt-1 text-xs text-[rgb(var(--muted))]">
+                              <span className="font-semibold text-zinc-100">Hvorfor:</span> {term.why}
+                            </p>
+                            <p className="mt-1 text-xs text-[rgb(var(--muted))]">
+                              <span className="font-semibold text-zinc-100">Bruk:</span> {term.how_to_use}
+                            </p>
+                          </article>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/70 p-3">
+                      <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">
+                        Oppdagede svakheter
+                      </p>
+                      <ul className="mt-2 space-y-2 text-xs text-[rgb(var(--muted))]">
+                        {assistResult.issues.map((issue, idx) => (
+                          <li key={`${issue.issue}-${idx}`} className="rounded-lg border border-[rgb(var(--border))]/70 bg-[rgb(var(--card))]/60 p-2">
+                            <p>
+                              <span className="font-semibold text-zinc-100">Svakhet:</span> {issue.issue}
+                            </p>
+                            <p className="mt-1">
+                              <span className="font-semibold text-zinc-100">Fiks:</span> {issue.fix}
+                            </p>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    {assistResult.follow_up ? (
+                      <p className="rounded-xl border border-sky-300/30 bg-sky-300/12 px-3 py-2 text-xs text-black/90">
+                        Oppfølgingsspørsmål: {assistResult.follow_up}
+                      </p>
+                    ) : null}
+
+                    {assistProvider ? (
+                      <p className="text-[11px] text-black/70">
+                        {assistProvider.name === "openrouter"
+                          ? `Motor: OpenRouter (${assistProvider.model})`
+                          : assistProvider.name === "gemini"
+                            ? `Motor: Gemini (${assistProvider.model})`
+                            : "Motor: Lokal fallback"}
+                      </p>
+                    ) : null}
+                  </div>
+                ) : (
+                  <p className="mt-3 text-xs text-black/80">
+                    KI-forslag bruker valgte ordforråds-termer fra utvideren, peker på svakheter i prompten og foreslår en
+                    forbedret versjon.
+                  </p>
+                )}
+              </article>
             </div>
 
             <article className="rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/65 p-3">

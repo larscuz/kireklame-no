@@ -1,10 +1,12 @@
 import crypto from "node:crypto";
 import type { NextRequest } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase/admin";
-import { getUserOrNull } from "@/lib/supabase/server";
+import { getUserOrNull, isAdminUser } from "@/lib/supabase/server";
 
+export type QuotaTier = "anon" | "workshop" | "user" | "admin";
 export type QuotaMode = "anon" | "user";
 export type QuotaBucket = "llm_text" | "media_image" | "media_video";
+type LimitedQuotaTier = Exclude<QuotaTier, "admin">;
 
 export type QuotaUsage = {
   remaining: number;
@@ -18,6 +20,8 @@ export type QuotaSubject = {
   type: QuotaMode;
   id: string;
   mode: QuotaMode;
+  tier: QuotaTier;
+  isUnlimited: boolean;
   rateWindowSeconds: number;
   rateBurst: number;
 };
@@ -29,9 +33,16 @@ export type QuotaResult = {
 };
 
 export const QUOTA_FALLBACK_COOKIE_NAME = "kir_quota_fb_v1";
+export const WORKSHOP_PASS_COOKIE_NAME = "kir_workshop_pass_v1";
 
 const QUOTA_FEATURE_FLAG = "QUOTA_ENABLED";
-const QUOTA_LIMITS: Record<QuotaBucket, Record<QuotaMode, number>> = {
+const QUOTA_DEV_FEATURE_FLAG = "QUOTA_ENABLED_IN_DEV";
+const UNLIMITED_USAGE_LIMIT = 999_999;
+const DEFAULT_WORKSHOP_PASS_TTL_HOURS = 24;
+const WORKSHOP_PASS_MIN_TTL_SECONDS = 60;
+const WORKSHOP_PASS_MAX_TTL_SECONDS = 60 * 60 * 24 * 30;
+
+const DEFAULT_LIMITS: Record<QuotaBucket, Record<QuotaMode, number>> = {
   llm_text: {
     anon: 3,
     user: 20,
@@ -46,25 +57,36 @@ const QUOTA_LIMITS: Record<QuotaBucket, Record<QuotaMode, number>> = {
   },
 };
 
-const DEGRADE_LIMITS: Record<QuotaBucket, Record<QuotaMode, number>> = {
+const DEFAULT_WORKSHOP_LIMITS: Record<QuotaBucket, number> = {
+  llm_text: 50,
+  media_image: 8,
+  media_video: 2,
+};
+
+const DEFAULT_DEGRADE_LIMITS: Record<QuotaBucket, Record<LimitedQuotaTier, number>> = {
   llm_text: {
     anon: 1,
+    workshop: 8,
     user: 3,
   },
   media_image: {
     anon: 1,
+    workshop: 2,
     user: 1,
   },
   media_video: {
     anon: 0,
+    workshop: 1,
     user: 1,
   },
 };
 
 const ANON_RATE_WINDOW_SECONDS = 20;
 const USER_RATE_WINDOW_SECONDS = 8;
+const WORKSHOP_RATE_WINDOW_SECONDS = 8;
 const ANON_RATE_BURST = 2;
 const USER_RATE_BURST = 4;
+const WORKSHOP_RATE_BURST = 5;
 
 type RateBucket = {
   tokens: number;
@@ -76,9 +98,27 @@ type RateStore = Map<string, RateBucket>;
 type DegradeCookiePayload = {
   d: string;
   m: QuotaMode;
+  t?: LimitedQuotaTier;
   b: QuotaBucket;
   s: string;
   c: number;
+};
+
+type WorkshopPassPayload = {
+  v: 1;
+  id: string;
+  exp: number;
+};
+
+export type WorkshopPassStatus = {
+  id: string;
+  expiresAtEpochSeconds: number;
+};
+
+export type WorkshopPassIssue = {
+  cookieValue: string;
+  expiresAtEpochSeconds: number;
+  maxAgeSeconds: number;
 };
 
 declare global {
@@ -104,7 +144,47 @@ function boolFromEnv(value: string | undefined, fallback = false): boolean {
   return normalized === "1" || normalized === "true" || normalized === "yes" || normalized === "on";
 }
 
+function intFromEnv(name: string, fallback: number, min = 0, max = Number.MAX_SAFE_INTEGER): number {
+  const raw = toText(process.env[name]);
+  if (!raw) return fallback;
+  const parsed = Number(raw);
+  if (!Number.isFinite(parsed)) return fallback;
+  const truncated = Math.trunc(parsed);
+  return Math.max(min, Math.min(max, truncated));
+}
+
+function splitCsv(raw: string | undefined): string[] {
+  return toText(raw)
+    .split(/[,;\n]/g)
+    .map((item) => item.trim())
+    .filter(Boolean);
+}
+
+function toEnvBucket(bucket: QuotaBucket): string {
+  if (bucket === "llm_text") return "LLM_TEXT";
+  if (bucket === "media_image") return "MEDIA_IMAGE";
+  return "MEDIA_VIDEO";
+}
+
+function safeEqual(left: string, right: string): boolean {
+  try {
+    const leftBuffer = Buffer.from(left);
+    const rightBuffer = Buffer.from(right);
+    if (leftBuffer.length !== rightBuffer.length) return false;
+    return crypto.timingSafeEqual(leftBuffer, rightBuffer);
+  } catch {
+    return false;
+  }
+}
+
+function nonAdminTierForMode(mode: QuotaMode): LimitedQuotaTier {
+  return mode === "user" ? "user" : "anon";
+}
+
 export function quotaEnabled(): boolean {
+  if (process.env.NODE_ENV === "development") {
+    return boolFromEnv(process.env[QUOTA_DEV_FEATURE_FLAG], false);
+  }
   return boolFromEnv(process.env[QUOTA_FEATURE_FLAG], false);
 }
 
@@ -166,6 +246,7 @@ function decodeDegradeCookie(raw: string | undefined): DegradeCookiePayload | nu
   if (
     typeof parsed.d !== "string" ||
     (parsed.m !== "anon" && parsed.m !== "user") ||
+    (parsed.t !== undefined && parsed.t !== "anon" && parsed.t !== "workshop" && parsed.t !== "user") ||
     (parsed.b !== "llm_text" && parsed.b !== "media_image" && parsed.b !== "media_video") ||
     typeof parsed.s !== "string" ||
     typeof parsed.c !== "number" ||
@@ -177,9 +258,53 @@ function decodeDegradeCookie(raw: string | undefined): DegradeCookiePayload | nu
   return {
     d: parsed.d,
     m: parsed.m,
+    t: parsed.t,
     b: parsed.b,
     s: parsed.s,
     c: Math.max(0, Math.floor(parsed.c)),
+  };
+}
+
+function encodeWorkshopPass(payload: WorkshopPassPayload): string {
+  const encoded = Buffer.from(JSON.stringify(payload), "utf8").toString("base64url");
+  return `${encoded}.${signPayload(encoded)}`;
+}
+
+function decodeWorkshopPass(raw: string | undefined): WorkshopPassPayload | null {
+  const value = toText(raw);
+  if (!value) return null;
+
+  const splitIndex = value.lastIndexOf(".");
+  if (splitIndex < 1) return null;
+
+  const encoded = value.slice(0, splitIndex);
+  const signature = value.slice(splitIndex + 1);
+  const expected = signPayload(encoded);
+
+  if (!safeEqual(signature, expected)) return null;
+
+  const parsed = safeJsonParse<WorkshopPassPayload>(Buffer.from(encoded, "base64url").toString("utf8"));
+  if (!parsed) return null;
+
+  if (
+    parsed.v !== 1 ||
+    typeof parsed.id !== "string" ||
+    parsed.id.length < 8 ||
+    parsed.id.length > 80 ||
+    typeof parsed.exp !== "number" ||
+    !Number.isFinite(parsed.exp)
+  ) {
+    return null;
+  }
+
+  const exp = Math.max(0, Math.floor(parsed.exp));
+  const nowEpoch = Math.floor(Date.now() / 1000);
+  if (exp <= nowEpoch) return null;
+
+  return {
+    v: 1,
+    id: parsed.id,
+    exp,
   };
 }
 
@@ -201,34 +326,130 @@ function getSubjectSalt(): string {
 }
 
 export function quotaLimit(mode: QuotaMode, bucket: QuotaBucket): number {
-  return QUOTA_LIMITS[bucket][mode];
+  const envKey = `QUOTA_${mode.toUpperCase()}_${toEnvBucket(bucket)}_LIMIT`;
+  return intFromEnv(envKey, DEFAULT_LIMITS[bucket][mode], 0);
 }
 
-function degradeLimit(mode: QuotaMode, bucket: QuotaBucket): number {
-  return DEGRADE_LIMITS[bucket][mode];
+function workshopLimit(bucket: QuotaBucket): number {
+  const envKey = `QUOTA_WORKSHOP_${toEnvBucket(bucket)}_LIMIT`;
+  return intFromEnv(envKey, DEFAULT_WORKSHOP_LIMITS[bucket], 0);
+}
+
+export function quotaLimitForSubject(subject: QuotaSubject, bucket: QuotaBucket): number {
+  if (subject.isUnlimited) {
+    return UNLIMITED_USAGE_LIMIT;
+  }
+
+  if (subject.tier === "workshop") {
+    return workshopLimit(bucket);
+  }
+
+  return quotaLimit(subject.mode, bucket);
+}
+
+function degradeLimitForTier(tier: LimitedQuotaTier, bucket: QuotaBucket): number {
+  const envKey = `QUOTA_DEGRADE_${tier.toUpperCase()}_${toEnvBucket(bucket)}_LIMIT`;
+  return intFromEnv(envKey, DEFAULT_DEGRADE_LIMITS[bucket][tier], 0);
+}
+
+function degradeLimit(subject: QuotaSubject, bucket: QuotaBucket): number {
+  if (subject.isUnlimited) return UNLIMITED_USAGE_LIMIT;
+  const tier = subject.tier === "admin" ? nonAdminTierForMode(subject.mode) : subject.tier;
+  return degradeLimitForTier(tier, bucket);
+}
+
+function workshopPassTtlSeconds(): number {
+  const ttlHours = intFromEnv("QUOTA_WORKSHOP_PASS_TTL_HOURS", DEFAULT_WORKSHOP_PASS_TTL_HOURS, 1, 24 * 30);
+  return ttlHours * 60 * 60;
+}
+
+function workshopCodeList(): string[] {
+  const single = splitCsv(process.env.QUOTA_WORKSHOP_CODE);
+  const many = splitCsv(process.env.QUOTA_WORKSHOP_CODES);
+  return Array.from(new Set([...single, ...many]));
+}
+
+export function workshopCodesConfigured(): boolean {
+  return workshopCodeList().length > 0;
+}
+
+export function workshopCodeIsValid(rawCode: string): boolean {
+  const candidate = toText(rawCode);
+  if (!candidate) return false;
+
+  const codes = workshopCodeList();
+  if (codes.length === 0) return false;
+
+  return codes.some((code) => safeEqual(code, candidate));
+}
+
+export function issueWorkshopPass(ttlSeconds: number = workshopPassTtlSeconds()): WorkshopPassIssue {
+  const safeTtl = Math.max(
+    WORKSHOP_PASS_MIN_TTL_SECONDS,
+    Math.min(WORKSHOP_PASS_MAX_TTL_SECONDS, Math.trunc(ttlSeconds))
+  );
+  const expiresAtEpochSeconds = Math.floor(Date.now() / 1000) + safeTtl;
+  const payload: WorkshopPassPayload = {
+    v: 1,
+    id: crypto.randomUUID().replace(/-/g, ""),
+    exp: expiresAtEpochSeconds,
+  };
+
+  return {
+    cookieValue: encodeWorkshopPass(payload),
+    expiresAtEpochSeconds,
+    maxAgeSeconds: safeTtl,
+  };
+}
+
+export function readWorkshopPassFromRequest(req: NextRequest): WorkshopPassStatus | null {
+  const workshopPass = decodeWorkshopPass(req.cookies.get(WORKSHOP_PASS_COOKIE_NAME)?.value);
+  if (!workshopPass) return null;
+  return {
+    id: workshopPass.id,
+    expiresAtEpochSeconds: workshopPass.exp,
+  };
 }
 
 export async function resolveQuotaSubject(req: NextRequest): Promise<QuotaSubject> {
   const user = await getUserOrNull().catch(() => null);
 
   if (user?.id) {
+    const isAdmin = isAdminUser(user.email);
     return {
       type: "user",
       id: user.id,
       mode: "user",
+      tier: isAdmin ? "admin" : "user",
+      isUnlimited: isAdmin,
       rateWindowSeconds: USER_RATE_WINDOW_SECONDS,
-      rateBurst: USER_RATE_BURST,
+      rateBurst: isAdmin ? Math.max(USER_RATE_BURST, 20) : USER_RATE_BURST,
     };
   }
 
   const ip = getRequestIp(req);
   const ua = toText(req.headers.get("user-agent")) || "unknown-agent";
   const anonId = sha256(`${ip}|${ua}|${getSubjectSalt()}`).slice(0, 48);
+  const workshopPass = readWorkshopPassFromRequest(req);
+
+  if (workshopPass) {
+    return {
+      type: "anon",
+      id: sha256(`${workshopPass.id}|${anonId}|${getSubjectSalt()}`).slice(0, 48),
+      mode: "anon",
+      tier: "workshop",
+      isUnlimited: false,
+      rateWindowSeconds: intFromEnv("QUOTA_WORKSHOP_RATE_WINDOW_SECONDS", WORKSHOP_RATE_WINDOW_SECONDS, 1, 120),
+      rateBurst: intFromEnv("QUOTA_WORKSHOP_RATE_BURST", WORKSHOP_RATE_BURST, 1, 50),
+    };
+  }
 
   return {
     type: "anon",
     id: anonId,
     mode: "anon",
+    tier: "anon",
+    isUnlimited: false,
     rateWindowSeconds: ANON_RATE_WINDOW_SECONDS,
     rateBurst: ANON_RATE_BURST,
   };
@@ -249,7 +470,7 @@ function limitedUsage(mode: QuotaMode, limit: number, status: QuotaUsage["status
 }
 
 function consumeDegradedQuota(subject: QuotaSubject, bucket: QuotaBucket, rawCookie: string | undefined): QuotaResult {
-  const limit = degradeLimit(subject.mode, bucket);
+  const limit = degradeLimit(subject, bucket);
 
   if (limit <= 0) {
     return {
@@ -262,8 +483,14 @@ function consumeDegradedQuota(subject: QuotaSubject, bucket: QuotaBucket, rawCoo
   const token = degradeSubjectToken(subject, bucket);
 
   const parsed = decodeDegradeCookie(rawCookie);
+  const parsedTier = parsed?.t ?? nonAdminTierForMode(parsed?.m ?? "anon");
   const baseCount =
-    parsed && parsed.d === day && parsed.m === subject.mode && parsed.b === bucket && parsed.s === token
+    parsed &&
+    parsed.d === day &&
+    parsed.m === subject.mode &&
+    parsedTier === (subject.tier === "admin" ? nonAdminTierForMode(subject.mode) : subject.tier) &&
+    parsed.b === bucket &&
+    parsed.s === token
       ? parsed.c
       : 0;
 
@@ -284,6 +511,7 @@ function consumeDegradedQuota(subject: QuotaSubject, bucket: QuotaBucket, rawCoo
   const payload: DegradeCookiePayload = {
     d: day,
     m: subject.mode,
+    t: subject.tier === "admin" ? nonAdminTierForMode(subject.mode) : subject.tier,
     b: bucket,
     s: token,
     c: used,
@@ -321,6 +549,13 @@ async function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
 }
 
 export function consumeRateLimit(subject: QuotaSubject): { allowed: boolean; retryAfterSeconds: number } {
+  if (subject.isUnlimited) {
+    return {
+      allowed: true,
+      retryAfterSeconds: 0,
+    };
+  }
+
   const store = getRateStore();
   const key = `${subject.type}:${subject.id}`;
   const now = Date.now();
@@ -368,7 +603,20 @@ export async function tryConsumeDailyQuota(
   bucket: QuotaBucket,
   rawDegradeCookie: string | undefined
 ): Promise<QuotaResult> {
-  const limit = quotaLimit(subject.mode, bucket);
+  const limit = quotaLimitForSubject(subject, bucket);
+
+  if (subject.isUnlimited) {
+    return {
+      allowed: true,
+      usage: {
+        mode: subject.mode,
+        used: 0,
+        limit,
+        remaining: limit,
+        status: "ok",
+      },
+    };
+  }
 
   if (limit <= 0) {
     return {

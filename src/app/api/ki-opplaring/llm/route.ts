@@ -2,15 +2,21 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import {
   runKiOpplaringTask,
+  runCampaignChat,
+  setCampaignSkillCatalog,
   type BuildScript10sPayload,
+  type CampaignChatPayload,
+  type CampaignRecommendPayload,
   type ExerciseComparePayload,
   type LlmTask,
+  type PromptAssistPayload,
   type TransformPromptPayload,
 } from "@/lib/ki-opplaring/llm";
+import { glossaryBySlug, marketingSkills } from "@/data/norskPrompting/runtime";
 import {
   consumeRateLimit,
   QUOTA_FALLBACK_COOKIE_NAME,
-  quotaLimit,
+  quotaLimitForSubject,
   resolveQuotaSubject,
   tryConsumeDailyQuota,
   type QuotaBucket,
@@ -30,6 +36,9 @@ const TASKS = [
   "transform_prompt",
   "exercise_compare",
   "build_script_10s",
+  "campaign_recommend",
+  "campaign_chat",
+  "prompt_assist",
   "image_compare_generate",
   "video_compare_generate",
 ] as const;
@@ -63,6 +72,41 @@ const scriptPayloadSchema = z.object({
   format: z.enum(["9:16", "16:9"]),
 });
 
+const campaignRecommendPayloadSchema = z.object({
+  brief: z.string().trim().min(10).max(3000),
+});
+
+const campaignChatPayloadSchema = z.object({
+  messages: z
+    .array(
+      z.object({
+        role: z.enum(["user", "assistant"]),
+        content: z.string().min(1).max(4000),
+      })
+    )
+    .min(1)
+    .max(20),
+});
+
+const promptAssistPayloadSchema = z.object({
+  user_input: z.string().trim().min(1).max(1200),
+  output_type: z.enum(["image", "video", "text"]),
+  domain: z.enum([
+    "film-vfx",
+    "arkitektur",
+    "produkt",
+    "dokumentar",
+    "sosiale-medier",
+    "historisk",
+    "redaksjonell",
+    "design-system",
+    "surreal_absurd",
+    "animated",
+  ]),
+  draft_prompt: z.string().trim().min(40).max(2500),
+  candidate_slugs: z.array(z.string().trim().min(1).max(120)).min(1).max(20),
+});
+
 const imageComparePayloadSchema = z.object({
   prompt: z.string().trim().min(1).max(1200),
   aspectRatio: z.enum(["1:1", "16:9"]).optional().default("1:1"),
@@ -77,6 +121,9 @@ type ParsedPayload =
   | TransformPromptPayload
   | ExerciseComparePayload
   | BuildScript10sPayload
+  | CampaignRecommendPayload
+  | CampaignChatPayload
+  | z.infer<typeof promptAssistPayloadSchema>
   | ImageComparePayload
   | VideoComparePayload;
 
@@ -94,6 +141,23 @@ function parsePayload(task: ApiTask, payload: unknown): { ok: true; data: Parsed
   if (task === "build_script_10s") {
     const parsed = scriptPayloadSchema.safeParse(payload ?? {});
     return parsed.success ? { ok: true, data: parsed.data } : { ok: false, error: "Ugyldig payload for build_script_10s." };
+  }
+
+  if (task === "campaign_recommend") {
+    const parsed = campaignRecommendPayloadSchema.safeParse(payload ?? {});
+    return parsed.success ? { ok: true, data: parsed.data } : { ok: false, error: "Ugyldig payload for campaign_recommend. Brief må være minst 10 tegn." };
+  }
+
+  if (task === "campaign_chat") {
+    const parsed = campaignChatPayloadSchema.safeParse(payload ?? {});
+    return parsed.success ? { ok: true, data: parsed.data } : { ok: false, error: "Ugyldig payload for campaign_chat. Meldinger mangler." };
+  }
+
+  if (task === "prompt_assist") {
+    const parsed = promptAssistPayloadSchema.safeParse(payload ?? {});
+    return parsed.success
+      ? { ok: true, data: parsed.data }
+      : { ok: false, error: "Ugyldig payload for prompt_assist." };
   }
 
   if (task === "image_compare_generate") {
@@ -183,13 +247,16 @@ export async function POST(req: NextRequest) {
 
     const subject = await resolveQuotaSubject(req);
     const bucket = taskBucket(task);
-    const limit = quotaLimit(subject.mode, bucket);
+    const limit = quotaLimitForSubject(subject, bucket);
+    const isStrictAnonTier = subject.tier === "anon";
 
-    if (subject.mode === "anon" && payloadSize(parsedPayload.data) > 1200) {
+    const anonPayloadLimit = task === "prompt_assist" ? 2600 : 1200;
+
+    if (isStrictAnonTier && payloadSize(parsedPayload.data) > anonPayloadLimit) {
       return NextResponse.json(
         {
           ok: false,
-          error: "Anonym forespørsel er for stor (maks 1200 tegn).",
+          error: `Anonym forespørsel er for stor (maks ${anonPayloadLimit} tegn).`,
           usage: {
             mode: subject.mode,
             used: 0,
@@ -270,8 +337,73 @@ export async function POST(req: NextRequest) {
       const generated = await runVideoCompareGenerate(parsedPayload.data as VideoComparePayload);
       taskResult = generated.result;
       provider = generated.provider;
+    } else if (task === "campaign_chat") {
+      setCampaignSkillCatalog(
+        marketingSkills.map((skill) => ({
+          slug: skill.slug,
+          name: skill.name,
+          title_no: skill.title_no,
+          category: skill.category,
+          description_en: skill.description_en.slice(0, 160),
+        }))
+      );
+      const generated = await runCampaignChat(parsedPayload.data as CampaignChatPayload, {
+        maxTokens: 4096,
+      });
+      taskResult = generated.result.data;
+      provider = generated.provider;
+    } else if (task === "prompt_assist") {
+      const parsedAssist = parsedPayload.data as z.infer<typeof promptAssistPayloadSchema>;
+      const candidateTerms = Array.from(new Set(parsedAssist.candidate_slugs))
+        .map((slug) => glossaryBySlug[slug])
+        .filter(Boolean)
+        .slice(0, 12)
+        .map((term) => ({
+          slug: term.slug,
+          term_no: term.term_no,
+          definition_no: term.definition_no,
+          promptImpact: term.promptImpact,
+        }));
+
+      if (candidateTerms.length === 0) {
+        return NextResponse.json(
+          {
+            ok: false,
+            error: "Fant ingen gyldige ordforråds-termer for prompt_assist.",
+            usage: quota.usage,
+          },
+          { status: 400 }
+        );
+      }
+
+      const assistPayload: PromptAssistPayload = {
+        user_input: parsedAssist.user_input,
+        output_type: parsedAssist.output_type,
+        domain: parsedAssist.domain,
+        draft_prompt: parsedAssist.draft_prompt,
+        candidate_terms: candidateTerms,
+      };
+
+      const maxTokens = isStrictAnonTier ? 1000 : 1400;
+      const generated = await runKiOpplaringTask("prompt_assist", assistPayload, {
+        maxTokens,
+      });
+      taskResult = generated.result.data;
+      provider = generated.provider;
     } else {
-      const maxTokens = subject.mode === "anon" ? 700 : 900;
+      if (task === "campaign_recommend") {
+        setCampaignSkillCatalog(
+          marketingSkills.map((skill) => ({
+            slug: skill.slug,
+            name: skill.name,
+            title_no: skill.title_no,
+            category: skill.category,
+            description_en: skill.description_en.slice(0, 160),
+          }))
+        );
+      }
+
+      const maxTokens = isStrictAnonTier ? 700 : (task === "campaign_recommend" ? 1200 : 900);
       const generated = await runKiOpplaringTask(task as LlmTask, parsedPayload.data, {
         maxTokens,
       });

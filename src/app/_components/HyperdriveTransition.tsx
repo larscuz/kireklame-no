@@ -1,169 +1,206 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
-import { useRouter, usePathname } from "next/navigation";
+import { useEffect, useId, useRef, useState } from "react";
+
+type TrailPoint = {
+  x: number;
+  y: number;
+  t: number;
+};
+
+type TrailRenderState = {
+  visible: boolean;
+  tailPath: string;
+  headPath: string;
+  headX: number;
+  headY: number;
+};
+
+const TRAIL_LIFETIME_MS = 360;
+const HEAD_WINDOW_MS = 105;
+const STALE_HIDE_MS = 700;
+const MIN_POINT_DISTANCE_PX = 0.75;
+
+function buildSmoothPath(points: TrailPoint[]): string {
+  if (points.length < 2) return "";
+  if (points.length === 2) {
+    const [a, b] = points;
+    return `M ${a.x.toFixed(2)} ${a.y.toFixed(2)} L ${b.x.toFixed(2)} ${b.y.toFixed(2)}`;
+  }
+
+  let d = `M ${points[0].x.toFixed(2)} ${points[0].y.toFixed(2)}`;
+  for (let i = 1; i < points.length - 1; i += 1) {
+    const current = points[i];
+    const next = points[i + 1];
+    const mx = (current.x + next.x) / 2;
+    const my = (current.y + next.y) / 2;
+    d += ` Q ${current.x.toFixed(2)} ${current.y.toFixed(2)} ${mx.toFixed(2)} ${my.toFixed(2)}`;
+  }
+
+  const penultimate = points[points.length - 2];
+  const last = points[points.length - 1];
+  d += ` Q ${penultimate.x.toFixed(2)} ${penultimate.y.toFixed(2)} ${last.x.toFixed(2)} ${last.y.toFixed(2)}`;
+  return d;
+}
 
 export default function HyperdriveTransition() {
-    const router = useRouter();
-    const pathname = usePathname();
-    const [isActive, setIsActive] = useState(false);
-    const containerRef = useRef<HTMLDivElement>(null);
+  const [isEnabled, setIsEnabled] = useState(false);
+  const [trail, setTrail] = useState<TrailRenderState>({
+    visible: false,
+    tailPath: "",
+    headPath: "",
+    headX: 0,
+    headY: 0,
+  });
 
-    // Aggressively force scroll to top the exact moment the Next.js route swap finishes.
-    // Next.js App Router can aggressively restore scroll positions async after the DOM paints, 
-    // so we lock it to the top continuously during the whiteout blind transition.
-    useEffect(() => {
-        const interval = setInterval(() => {
-            window.scrollTo({ top: 0, left: 0, behavior: "instant" });
-            document.documentElement.scrollTop = 0;
-            document.body.scrollTop = 0;
-        }, 50);
+  const pointsRef = useRef<TrailPoint[]>([]);
+  const pointerRef = useRef({ x: 0, y: 0 });
+  const hasPointerRef = useRef(false);
+  const lastMoveRef = useRef(0);
+  const rafRef = useRef<number | null>(null);
+  const idPrefix = useId().replace(/:/g, "");
 
-        // Release the lock right as the whiteout flash disappears
-        const timer = setTimeout(() => {
-            clearInterval(interval);
-        }, 600);
+  useEffect(() => {
+    const hasFinePointer = window.matchMedia("(pointer: fine)").matches;
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (!hasFinePointer || prefersReducedMotion) return;
 
-        return () => {
-            clearInterval(interval);
-            clearTimeout(timer);
-        };
-    }, [pathname]);
+    setIsEnabled(true);
 
-    useEffect(() => {
-        const handleClick = (e: MouseEvent) => {
-            const target = e.target as HTMLElement;
-            const anchor = target.closest("a");
+    const pushPoint = (x: number, y: number, now: number) => {
+      const points = pointsRef.current;
+      const last = points[points.length - 1];
 
-            if (anchor && anchor.href) {
-                const url = new URL(anchor.href, window.location.origin);
-                if (url.hostname === window.location.hostname && anchor.target !== "_blank") {
-                    e.preventDefault();
-
-                    // Step 1: Tell the transition engine to spawn new random stars and collapse them
-                    setIsActive(true);
-                    setTimeout(() => {
-                        spawnHyperdriveSwarm(e.clientX, e.clientY, anchor.href);
-                    }, 10);
-                }
-            }
-        };
-
-        document.addEventListener("click", handleClick, { capture: true });
-        return () => document.removeEventListener("click", handleClick, { capture: true });
-    }, [router]);
-
-    // Keep active long enough for route, then wipe
-    useEffect(() => {
-        if (isActive) {
-            const timer = setTimeout(() => {
-                setIsActive(false);
-                if (containerRef.current) containerRef.current.innerHTML = "";
-            }, 1200);
-            return () => clearTimeout(timer);
+      if (last) {
+        const dx = x - last.x;
+        const dy = y - last.y;
+        if (dx * dx + dy * dy < MIN_POINT_DISTANCE_PX * MIN_POINT_DISTANCE_PX) {
+          last.x = x;
+          last.y = y;
+          last.t = now;
+          return;
         }
-    }, [isActive]);
+      }
 
-    const spawnHyperdriveSwarm = (cx: number, cy: number, href: string) => {
-        if (!containerRef.current) return;
-
-        const container = containerRef.current;
-        container.innerHTML = "";
-
-        const w = window.innerWidth;
-        const h = window.innerHeight;
-
-        // Create the massive supernova core
-        const core = document.createElement("div");
-        core.className = "star-particle";
-        core.style.left = `${cx - 5}px`;
-        core.style.top = `${cy - 5}px`;
-        core.style.width = "10px";
-        core.style.height = "10px";
-        core.style.opacity = "0"; // Invisible until things hit it
-        container.appendChild(core);
-
-        const isMobile = w < 768;
-        const starCount = isMobile ? 60 : 300; // Drastically reduce DOM nodes for mobile GPU performance
-
-        // Step 2: Generate brand new random DOM stars scattered across the whole screen monitor
-        for (let i = 0; i < starCount; i++) {
-            const drop = document.createElement("div");
-
-            // Randomly scatter them entirely across the viewport width and height
-            const startX = Math.random() * w;
-            const startY = Math.random() * h;
-            // The further they are from the center, the smaller and dimmer they are
-            const distFromCenter = Math.sqrt(Math.pow((w / 2) - startX, 2) + Math.pow((h / 2) - startY, 2));
-            const maxRadius = isMobile ? 3 : 4;
-            const starRadius = Math.max(1, maxRadius - (distFromCenter / 400));
-            const starOpacity = Math.max(0.2, 1 - (distFromCenter / 800));
-
-            drop.className = "star-particle";
-            drop.style.left = `${startX}px`;
-            drop.style.top = `${startY}px`;
-            drop.style.width = `${starRadius * 2}px`;
-            drop.style.height = `${starRadius * 2}px`;
-            drop.style.opacity = `${starOpacity}`;
-
-            container.appendChild(drop);
-
-            // Step 3: Animate them slamming into the supernova center exactly where the cursor is
-            requestAnimationFrame(() => {
-                const distToCursor = Math.sqrt(Math.pow(cx - startX, 2) + Math.pow(cy - startY, 2));
-                const delay = distToCursor * 0.15 + (Math.random() * 50);
-
-                setTimeout(() => {
-                    drop.style.left = `${cx - starRadius}px`;
-                    drop.style.top = `${cy - starRadius}px`;
-                    drop.style.transform = `scale(0.5)`; // shrink as they hit the core
-
-                    // Fade it into the supernova when it arrives
-                    setTimeout(() => {
-                        drop.style.opacity = "0";
-                    }, 400);
-                }, delay);
-            });
-        }
-
-        // Single reflow for all elements at once to prevent layout thrashing
-        void container.offsetWidth;
-
-        // Make supernova core active as stars start arriving
-        void core.offsetWidth;
-        setTimeout(() => {
-            core.style.opacity = "1";
-            core.style.width = "100px";
-            core.style.height = "100px";
-            core.style.left = `${cx - 50}px`;
-            core.style.top = `${cy - 50}px`;
-            // Intense brightness right before detonation
-            core.style.boxShadow = "0 0 50px rgba(255,255,255,1), 0 0 100px rgba(255,255,255,0.8)";
-        }, 100);
-
-        // Step 4: Detonate the supernova
-        requestAnimationFrame(() => {
-            setTimeout(() => {
-                const massiveSize = Math.max(w, h) * 3; // Whiteout
-                core.style.width = `${massiveSize}px`;
-                core.style.height = `${massiveSize}px`;
-                core.style.left = `${cx - massiveSize / 2}px`;
-                core.style.top = `${cy - massiveSize / 2}px`;
-                core.style.boxShadow = "0 0 0px transparent"; // Lose the distinct shadow as it floods the screen
-            }, 420);
-        });
-
-        // Step 5: Route and reset scroll position under the white flash
-        setTimeout(() => {
-            router.push(href, { scroll: true });
-        }, 500);
+      points.push({ x, y, t: now });
     };
 
-    return (
-        <div
-            className={`fixed inset-0 z-[99999] pointer-events-none ${isActive ? '' : 'hidden'}`}
-        >
-            <div ref={containerRef} className="absolute inset-0 w-full h-full" />
-        </div>
-    );
+    const handlePointerMove = (event: PointerEvent) => {
+      if (event.pointerType && event.pointerType !== "mouse" && event.pointerType !== "pen") return;
+
+      const now = performance.now();
+      const x = event.clientX;
+      const y = event.clientY;
+
+      pointerRef.current = { x, y };
+      lastMoveRef.current = now;
+      hasPointerRef.current = true;
+      pushPoint(x, y, now);
+    };
+
+    const handlePointerLeave = () => {
+      hasPointerRef.current = false;
+    };
+
+    const animate = () => {
+      const now = performance.now();
+      const points = pointsRef.current;
+      const cutoff = now - TRAIL_LIFETIME_MS;
+
+      while (points.length > 0 && points[0].t < cutoff) {
+        points.shift();
+      }
+
+      if (!hasPointerRef.current && now - lastMoveRef.current > STALE_HIDE_MS) {
+        points.length = 0;
+      }
+
+      if (points.length < 2) {
+        setTrail((previous) =>
+          previous.visible
+            ? {
+                visible: false,
+                tailPath: "",
+                headPath: "",
+                headX: previous.headX,
+                headY: previous.headY,
+              }
+            : previous,
+        );
+        rafRef.current = window.requestAnimationFrame(animate);
+        return;
+      }
+
+      const headCutoff = now - HEAD_WINDOW_MS;
+      const headPoints = points.filter((point) => point.t >= headCutoff);
+      const safeHeadPoints = headPoints.length >= 2 ? headPoints : points.slice(-3);
+      const head = points[points.length - 1];
+      const tailPath = buildSmoothPath(points);
+      const headPath = buildSmoothPath(safeHeadPoints);
+
+      setTrail((previous) => {
+        if (
+          previous.visible &&
+          previous.tailPath === tailPath &&
+          previous.headPath === headPath &&
+          previous.headX === head.x &&
+          previous.headY === head.y
+        ) {
+          return previous;
+        }
+
+        return {
+          visible: true,
+          tailPath,
+          headPath,
+          headX: head.x,
+          headY: head.y,
+        };
+      });
+
+      rafRef.current = window.requestAnimationFrame(animate);
+    };
+
+    rafRef.current = window.requestAnimationFrame(animate);
+    window.addEventListener("pointermove", handlePointerMove, { passive: true });
+    window.addEventListener("pointerleave", handlePointerLeave);
+    window.addEventListener("blur", handlePointerLeave);
+
+    return () => {
+      if (rafRef.current) window.cancelAnimationFrame(rafRef.current);
+      pointsRef.current = [];
+      window.removeEventListener("pointermove", handlePointerMove);
+      window.removeEventListener("pointerleave", handlePointerLeave);
+      window.removeEventListener("blur", handlePointerLeave);
+    };
+  }, []);
+
+  if (!isEnabled) return null;
+
+  const trailGlowId = `${idPrefix}-trail-glow`;
+
+  return (
+    <div className="pointer-events-none fixed inset-0 z-40 select-none" aria-hidden>
+      <svg className={`h-full w-full transition-opacity duration-150 ${trail.visible ? "opacity-100" : "opacity-0"}`}>
+        <defs>
+          <filter id={trailGlowId} x="-40%" y="-40%" width="180%" height="180%">
+            <feGaussianBlur stdDeviation="1.1" result="blur" />
+            <feMerge>
+              <feMergeNode in="blur" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+        </defs>
+
+        <g filter={`url(#${trailGlowId})`} fill="none" strokeLinecap="round" strokeLinejoin="round">
+          <path d={trail.tailPath} stroke="#67e8f9" strokeWidth="3.2" strokeOpacity="0.1" />
+          <path d={trail.tailPath} stroke="#7dd3fc" strokeWidth="2.1" strokeOpacity="0.2" />
+          <path d={trail.tailPath} stroke="#bae6fd" strokeWidth="1.3" strokeOpacity="0.35" />
+          <path d={trail.headPath} stroke="#f8fafc" strokeWidth="1.6" strokeOpacity="0.92" />
+        </g>
+
+        <circle cx={trail.headX} cy={trail.headY} r="1.7" fill="#f8fafc" fillOpacity="0.92" />
+      </svg>
+    </div>
+  );
 }

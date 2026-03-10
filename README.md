@@ -127,6 +127,20 @@ Env:
 
 Hvis API-nøkkel mangler, faller øvelsene tilbake til lokal mock-respons for utvikling.
 
+Kvote-tier (prod når `QUOTA_ENABLED=true`):
+- `admin` (innlogget e-post i `ADMIN_EMAILS`): ubegrenset bruk
+- `user` (innlogget): standard innlogget kvote
+- `anon`: lav dagskvote
+- `workshop` (anonym med gyldig workshop-pass cookie): forhøyet dagskvote i valgt tidsrom (standard 24t)
+- Lokal testing: sett `QUOTA_ENABLED_IN_DEV=true` (ellers er kvote av i `next dev`)
+
+Workshop-pass endpoint:
+- `GET /api/ki-opplaring/workshop-pass` viser aktiv status (`active`, `tier`, `expiresAt`)
+- `POST /api/ki-opplaring/workshop-pass` med body `{ "code": "<workshop-kode>" }`
+- Server forventer `QUOTA_WORKSHOP_CODE` eller `QUOTA_WORKSHOP_CODES` (kommaseparert)
+- `POST` er ment for anonyme workshop-deltakere (innloggede brukere får vanlig user/admin-kvote)
+- `DELETE /api/ki-opplaring/workshop-pass` nullstiller pass-cookie i nettleseren
+
 ### KI-verktøy (sekundærkatalog)
 
 For ny verktøykatalog på `/ki-verktoy`:

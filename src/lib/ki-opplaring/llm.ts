@@ -1,6 +1,12 @@
 import { z } from "zod";
 
-export type LlmTask = "transform_prompt" | "exercise_compare" | "build_script_10s";
+export type LlmTask =
+  | "transform_prompt"
+  | "exercise_compare"
+  | "build_script_10s"
+  | "campaign_recommend"
+  | "campaign_chat"
+  | "prompt_assist";
 
 export type TransformPromptPayload = {
   prompt: string;
@@ -24,6 +30,44 @@ export type BuildScript10sPayload = {
   format: "9:16" | "16:9";
 };
 
+export type CampaignRecommendPayload = {
+  brief: string;
+};
+
+export type CampaignChatMessage = {
+  role: "user" | "assistant";
+  content: string;
+};
+
+export type CampaignChatPayload = {
+  messages: CampaignChatMessage[];
+};
+
+export type PromptAssistCandidateTerm = {
+  slug: string;
+  term_no: string;
+  definition_no: string;
+  promptImpact: string;
+};
+
+export type PromptAssistPayload = {
+  user_input: string;
+  output_type: "image" | "video" | "text";
+  domain:
+    | "film-vfx"
+    | "arkitektur"
+    | "produkt"
+    | "dokumentar"
+    | "sosiale-medier"
+    | "historisk"
+    | "redaksjonell"
+    | "design-system"
+    | "surreal_absurd"
+    | "animated";
+  draft_prompt: string;
+  candidate_terms: PromptAssistCandidateTerm[];
+};
+
 const transformPromptResponseSchema = z.object({
   improved_prompt: z.string().min(1),
   changes: z
@@ -44,6 +88,77 @@ const exerciseCompareResponseSchema = z.object({
   good_result: z.string().min(1),
   diff_summary: z.array(z.string().min(1)).min(1),
   why_good_wins: z.array(z.string().min(1)).min(1),
+});
+
+const campaignChatResponseSchema = z.object({
+  message: z.string().min(1),
+  skills: z
+    .array(
+      z.object({
+        slug: z.string().min(1),
+        relevance_pct: z.number().int().min(0).max(100),
+        reasoning: z.string().min(1),
+        tips: z.array(z.string().min(1)).min(1).max(4),
+        free: z.boolean(),
+      })
+    )
+    .optional()
+    .default([]),
+  focus_areas: z
+    .array(
+      z.object({
+        area: z.string().min(1),
+        effort: z.enum(["low", "medium", "high"]),
+        impact: z.enum(["low", "medium", "high"]),
+        free: z.boolean(),
+        action: z.string().min(1),
+      })
+    )
+    .optional()
+    .default([]),
+  follow_up: z.string().optional(),
+});
+
+const campaignRecommendResponseSchema = z.object({
+  summary: z.string().min(1),
+  skills: z
+    .array(
+      z.object({
+        slug: z.string().min(1),
+        relevance_pct: z.number().int().min(0).max(100),
+        reasoning: z.string().min(1),
+        tips: z.array(z.string().min(1)).min(1).max(4),
+      })
+    )
+    .min(1)
+    .max(8),
+});
+
+const promptAssistResponseSchema = z.object({
+  summary: z.string().min(1),
+  chosen_terms: z
+    .array(
+      z.object({
+        slug: z.string().min(1),
+        term_no: z.string().min(1),
+        relevance_pct: z.number().int().min(0).max(100),
+        why: z.string().min(1),
+        how_to_use: z.string().min(1),
+      })
+    )
+    .min(1)
+    .max(8),
+  expanded_prompt: z.string().min(1),
+  issues: z
+    .array(
+      z.object({
+        issue: z.string().min(1),
+        fix: z.string().min(1),
+      })
+    )
+    .min(1)
+    .max(6),
+  follow_up: z.string().optional(),
 });
 
 const buildScript10sResponseSchema = z.object({
@@ -79,14 +194,20 @@ const buildScript10sResponseSchema = z.object({
 export type TransformPromptResponse = z.infer<typeof transformPromptResponseSchema>;
 export type ExerciseCompareResponse = z.infer<typeof exerciseCompareResponseSchema>;
 export type BuildScript10sResponse = z.infer<typeof buildScript10sResponseSchema>;
+export type CampaignRecommendResponse = z.infer<typeof campaignRecommendResponseSchema>;
+export type CampaignChatResponse = z.infer<typeof campaignChatResponseSchema>;
+export type PromptAssistResponse = z.infer<typeof promptAssistResponseSchema>;
 
 export type LlmResult =
   | { task: "transform_prompt"; data: TransformPromptResponse }
   | { task: "exercise_compare"; data: ExerciseCompareResponse }
-  | { task: "build_script_10s"; data: BuildScript10sResponse };
+  | { task: "build_script_10s"; data: BuildScript10sResponse }
+  | { task: "campaign_recommend"; data: CampaignRecommendResponse }
+  | { task: "campaign_chat"; data: CampaignChatResponse }
+  | { task: "prompt_assist"; data: PromptAssistResponse };
 
 export type LlmProviderInfo = {
-  name: "openrouter" | "mock" | "cloudflare" | "fal" | "pollinations";
+  name: "openrouter" | "gemini" | "mock" | "cloudflare" | "fal" | "pollinations";
   model: string;
   cached: boolean;
 };
@@ -107,7 +228,7 @@ const syntaxProtocolRewriteSchema = z.object({
 export type SyntaxProtocolRewrite = z.infer<typeof syntaxProtocolRewriteSchema>;
 
 type ChatMessage = {
-  role: "system" | "user";
+  role: "system" | "user" | "assistant";
   content: string;
 };
 
@@ -118,6 +239,14 @@ const OPENROUTER_URL =
 const OPENROUTER_MODEL =
   process.env.OPENROUTER_MODEL?.trim() ||
   "qwen/qwen2.5-7b-instruct:free";
+
+const GEMINI_MODEL =
+  process.env.GEMINI_MODEL?.trim() ||
+  "gemini-2.5-flash";
+
+const GEMINI_URL =
+  process.env.GEMINI_API_URL?.trim() ||
+  "https://generativelanguage.googleapis.com/v1beta/models";
 
 function toText(value: unknown): string {
   return String(value ?? "").trim();
@@ -209,7 +338,105 @@ function syntaxProtocolUserPrompt(prompt: string, context?: string): string {
   ].join("\n");
 }
 
+export type CampaignSkillSummary = {
+  slug: string;
+  name: string;
+  title_no: string;
+  category: string;
+  description_en: string;
+};
+
+let _skillCatalog: CampaignSkillSummary[] = [];
+
+export function setCampaignSkillCatalog(skills: CampaignSkillSummary[]) {
+  _skillCatalog = skills;
+}
+
+function buildSkillCatalogBlock(): string {
+  if (_skillCatalog.length === 0) return "No skills loaded.";
+  return _skillCatalog
+    .map(
+      (skill) =>
+        `- ${skill.slug} | ${skill.name} | ${skill.category} | ${skill.description_en.slice(0, 120)}`
+    )
+    .join("\n");
+}
+
+function makeCampaignChatSystemPrompt(): string {
+  return [
+    "Du er en pedagogisk markedsføringsrådgiver som snakker norsk.",
+    "Du hjelper studenter med å forstå og planlegge digitale kampanjer.",
+    "Du skal alltid returnere gyldig JSON.",
+    "",
+    "Oppførsel:",
+    "- Snakk direkte og konkret. Ikke vær vag.",
+    "- Still oppfølgingsspørsmål for å spisse anbefalingene.",
+    "- Prioriter GRATIS taktikker og organiske strategier over betalte.",
+    "- Forklar HVORFOR en ferdighet er viktig, ikke bare HVA den er.",
+    "- Vis tydelig hvor studenten bør fokusere innsatsen sin.",
+    "- Vær ærlig om hva som krever budsjett vs. hva som er gratis.",
+    "",
+    "SKILL-KATALOG (slug | name | category | trigger):",
+    buildSkillCatalogBlock(),
+    "",
+    "I hvert svar, inkluder:",
+    '- "message": Din samtaletekst (norsk, pedagogisk, direkte)',
+    '- "skills": (valgfritt) Array med anbefalte ferdigheter når relevant',
+    '- "focus_areas": (valgfritt) Array med fokusområder som viser effort/impact og om det er gratis',
+    '- "follow_up": (valgfritt) Et oppfølgingsspørsmål for å spisse anbefalingene',
+    "",
+    "Schema:",
+    '{"message":"...","skills":[{"slug":"...","relevance_pct":85,"reasoning":"...","tips":["..."],"free":true}],"focus_areas":[{"area":"...","effort":"low","impact":"high","free":true,"action":"..."}],"follow_up":"..."}',
+    "",
+    "Regler for focus_areas:",
+    "- effort: low/medium/high (hvor mye arbeid kreves)",
+    "- impact: low/medium/high (forventet effekt)",
+    "- free: true hvis det kan gjøres uten budsjett",
+    "- Prioriter alltid high-impact + low-effort + free tiltak først",
+    "- Maks 6 focus_areas per svar",
+  ].join("\n");
+}
+
 function makeSystemPrompt(task: LlmTask): string {
+  if (task === "prompt_assist") {
+    return [
+      "Du er en norsk prompt-veileder for prompt-utvider og ordforråd.",
+      "Du skal kun returnere gyldig JSON.",
+      "Ingen markdown, ingen tekst utenfor JSON.",
+      "",
+      "Regler:",
+      "- Bruk KUN term-slugs som finnes i candidate_terms.",
+      "- Prioriter presise, forklarte termvalg fremfor mange termvalg.",
+      "- Forbedre draft_prompt uten å fjerne brukerens kjerneintensjon.",
+      "- Vær konkret om svakheter og konkrete rettinger i issues.",
+      "",
+      "Schema:",
+      '{"summary":"...","chosen_terms":[{"slug":"...","term_no":"...","relevance_pct":85,"why":"...","how_to_use":"..."}],"expanded_prompt":"...","issues":[{"issue":"...","fix":"..."}],"follow_up":"..."}',
+    ].join("\n");
+  }
+
+  if (task === "campaign_recommend") {
+    return [
+      "Du er en norsk markedsføringskonsulent med ekspertise innen digital markedsføring.",
+      "Du analyserer kampanjebriefs og anbefaler relevante marketing-ferdigheter fra katalogen under.",
+      "Du skal kun returnere gyldig JSON.",
+      "Ingen markdown, ingen forklarende tekst utenfor JSON.",
+      "",
+      "SKILL-KATALOG (slug | name | category | trigger):",
+      buildSkillCatalogBlock(),
+      "",
+      "Regler:",
+      "- Velg 3-6 ferdigheter som er mest relevante for brukerens kampanjebrief.",
+      "- Gi en relevance_pct (0-100) basert på hvor viktig ferdigheten er for kampanjen.",
+      "- Skriv reasoning og tips på norsk.",
+      "- Tips skal være konkrete og handlingsorienterte for denne spesifikke kampanjen.",
+      "- summary skal oppsummere kampanjens behov i 1-2 setninger på norsk.",
+      "",
+      "Schema:",
+      '{"summary":"...","skills":[{"slug":"...","relevance_pct":85,"reasoning":"...","tips":["...","..."]}]}',
+    ].join("\n");
+  }
+
   if (task === "transform_prompt") {
     return [
       "Du er en norsk prompt-coach for kreativ kommersiell produksjon.",
@@ -242,6 +469,43 @@ function makeSystemPrompt(task: LlmTask): string {
 }
 
 function makeUserPrompt(task: LlmTask, payload: unknown): string {
+  if (task === "prompt_assist") {
+    const input = payload as PromptAssistPayload;
+    const candidateLines = input.candidate_terms
+      .slice(0, 16)
+      .map(
+        (term) =>
+          `- ${term.slug} | ${term.term_no} | ${term.definition_no.slice(0, 120)} | ${term.promptImpact.slice(0, 120)}`
+      )
+      .join("\n");
+
+    return [
+      "Forbedre prompten med målrettet ordforråd.",
+      `Brukerinput: ${toText(input.user_input)}`,
+      `Outputtype: ${toText(input.output_type)}`,
+      `Domene: ${toText(input.domain)}`,
+      "",
+      "Eksisterende draft_prompt:",
+      toText(input.draft_prompt),
+      "",
+      "Candidate_terms (slug | term | definisjon | effekt):",
+      candidateLines || "- (ingen)",
+      "",
+      "Velg 3-6 terms fra listen. Returner kun JSON i schemaet.",
+    ].join("\n");
+  }
+
+  if (task === "campaign_recommend") {
+    const input = payload as CampaignRecommendPayload;
+    return [
+      "Analyser denne kampanjebriéfen og anbefal relevante marketing-ferdigheter fra katalogen.",
+      "",
+      `Kampanjebrief: ${toText(input.brief)}`,
+      "",
+      "Velg 3-6 ferdigheter. Svar pa norsk. Returner kun JSON i schemaet.",
+    ].join("\n");
+  }
+
   if (task === "transform_prompt") {
     const input = payload as TransformPromptPayload;
     return [
@@ -299,7 +563,7 @@ async function callOpenRouter(messages: ChatMessage[], maxTokens: number): Promi
     body: JSON.stringify({
       model: OPENROUTER_MODEL,
       temperature: 0.2,
-      max_tokens: Math.max(300, Math.min(1200, Math.trunc(maxTokens))),
+      max_tokens: Math.max(300, Math.min(2200, Math.trunc(maxTokens))),
       messages,
       response_format: {
         type: "json_object",
@@ -333,7 +597,181 @@ async function callOpenRouter(messages: ChatMessage[], maxTokens: number): Promi
   return content;
 }
 
+async function callGemini(messages: ChatMessage[], maxTokens: number): Promise<string> {
+  const apiKey = process.env.GEMINI_API_KEY?.trim();
+  if (!apiKey) {
+    throw new Error("GEMINI_API_KEY mangler");
+  }
+
+  // Separate system instruction from conversation messages
+  const systemParts = messages
+    .filter((m) => m.role === "system")
+    .map((m) => ({ text: m.content }));
+
+  const contents = messages
+    .filter((m) => m.role !== "system")
+    .map((m) => ({
+      role: m.role === "assistant" ? "model" : "user",
+      parts: [{ text: m.content }],
+    }));
+
+  const url = `${GEMINI_URL}/${GEMINI_MODEL}:generateContent?key=${apiKey}`;
+
+  const body: Record<string, unknown> = {
+    contents,
+    generationConfig: {
+      maxOutputTokens: Math.max(300, Math.min(8192, Math.trunc(maxTokens))),
+      temperature: 0.2,
+      responseMimeType: "application/json",
+    },
+  };
+
+  if (systemParts.length > 0) {
+    body.systemInstruction = { parts: systemParts };
+  }
+
+  const response = await fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  });
+
+  const json = (await response.json().catch(() => null)) as
+    | {
+        candidates?: Array<{
+          content?: {
+            parts?: Array<{ text?: string }>;
+          };
+        }>;
+        error?: { message?: string };
+      }
+    | null;
+
+  if (!response.ok) {
+    const message = json?.error?.message || `Gemini-feil (${response.status})`;
+    throw new Error(message);
+  }
+
+  const content = json?.candidates?.[0]?.content?.parts?.[0]?.text;
+  if (!content) {
+    throw new Error("Tomt svar fra Gemini");
+  }
+
+  return content;
+}
+
+type LlmProvider = "openrouter" | "gemini";
+
+async function callLlm(
+  messages: ChatMessage[],
+  maxTokens: number
+): Promise<{ content: string; provider: LlmProvider; model: string }> {
+  // Try OpenRouter first if key exists
+  const orKey = process.env.OPENROUTER_API_KEY?.trim();
+  if (orKey) {
+    const content = await callOpenRouter(messages, maxTokens);
+    return { content, provider: "openrouter", model: OPENROUTER_MODEL };
+  }
+
+  // Try Gemini if key exists
+  const geminiKey = process.env.GEMINI_API_KEY?.trim();
+  if (geminiKey) {
+    const content = await callGemini(messages, maxTokens);
+    return { content, provider: "gemini", model: GEMINI_MODEL };
+  }
+
+  throw new Error("Ingen LLM API-nøkkel konfigurert (OPENROUTER_API_KEY eller GEMINI_API_KEY)");
+}
+
 function makeMockResult(task: LlmTask, payload: unknown): LlmResult {
+  if (task === "prompt_assist") {
+    const input = payload as PromptAssistPayload;
+    const picked = input.candidate_terms.slice(0, 3);
+    return {
+      task,
+      data: {
+        summary:
+          "Forslaget strammer inn prompten med tydeligere visuelle føringer og konkrete begrep fra ordforrådet.",
+        chosen_terms: picked.map((term, index) => ({
+          slug: term.slug,
+          term_no: term.term_no,
+          relevance_pct: Math.max(65, 90 - index * 10),
+          why: `${term.term_no} gjør prompten mer styrbar og reduserer tolkning.`,
+          how_to_use: `Bruk ${term.term_no} i beskrivelse av scene, lys eller komposisjon med tydelig effektmål.`,
+        })),
+        expanded_prompt: [
+          toText(input.draft_prompt),
+          "Stram inn: definer tydelig motiv, komposisjon, lyslogikk og avgrensning mot uønskede variasjoner.",
+          "Lås kontinuitet mellom elementer og unngå diffuse stilord uten fysisk forklaring.",
+        ]
+          .filter(Boolean)
+          .join("\n\n"),
+        issues: [
+          {
+            issue: "Prompten er delvis generell i visualisering og mangler styringspunkter.",
+            fix: "Legg til klare begrensninger for komposisjon, kameravinkel og hva som ikke skal endres.",
+          },
+          {
+            issue: "Sammenheng mellom ønsket effekt og valgte begrep er ikke eksplisitt.",
+            fix: "Knytt hvert fagbegrep til en konkret effekt i output (f.eks. lys, dybde, rytme).",
+          },
+        ],
+        follow_up: "Vil du at forslagene skal vekte realisme, dramatikk eller produktfokus sterkest?",
+      },
+    };
+  }
+
+  if (task === "campaign_chat") {
+    return {
+      task,
+      data: {
+        message: "Hei! Jeg er kampanje-assistenten din. Fortell meg om kampanjen du planlegger – hva er målet, hvem er målgruppen, og hvilke kanaler vurderer du? Jo mer du forteller, jo bedre råd kan jeg gi deg.",
+        skills: [],
+        focus_areas: [],
+        follow_up: "Hva er hovedmålet med kampanjen din?",
+      },
+    };
+  }
+
+  if (task === "campaign_recommend") {
+    const input = payload as CampaignRecommendPayload;
+    return {
+      task,
+      data: {
+        summary: `Kampanjebriéfen handler om: ${toText(input.brief).slice(0, 80)}. Her er anbefalte ferdigheter.`,
+        skills: [
+          {
+            slug: "positioning",
+            relevance_pct: 90,
+            reasoning: "Posisjonering er grunnleggende for enhver kampanje. Du må definere hvordan merkevaren skiller seg fra konkurrentene.",
+            tips: [
+              "Definer din unike verdiposisjon først.",
+              "Identifiser 2-3 differensieringspunkter.",
+            ],
+          },
+          {
+            slug: "landing-page-optimization",
+            relevance_pct: 80,
+            reasoning: "Landingssiden er der konverteringen skjer. Optimaliser for tydelig budskap og handling.",
+            tips: [
+              "Bruk én tydelig CTA over folden.",
+              "Match budskapet med annonsen som sender trafikk.",
+            ],
+          },
+          {
+            slug: "content-strategy",
+            relevance_pct: 70,
+            reasoning: "En god innholdsstrategi sikrer konsistent kommunikasjon gjennom kampanjen.",
+            tips: [
+              "Planlegg innhold for alle stadier i kundereisen.",
+              "Gjenbruk kjernebudskap i ulike formater.",
+            ],
+          },
+        ],
+      },
+    };
+  }
+
   if (task === "transform_prompt") {
     const input = payload as TransformPromptPayload;
     return {
@@ -443,6 +881,11 @@ function makeMockResult(task: LlmTask, payload: unknown): LlmResult {
 function validateResult(task: LlmTask, parsed: Record<string, unknown> | null): LlmResult | null {
   if (!parsed) return null;
 
+  if (task === "prompt_assist") {
+    const validated = promptAssistResponseSchema.safeParse(parsed);
+    return validated.success ? { task, data: validated.data } : null;
+  }
+
   if (task === "transform_prompt") {
     const validated = transformPromptResponseSchema.safeParse(parsed);
     return validated.success ? { task, data: validated.data } : null;
@@ -450,6 +893,16 @@ function validateResult(task: LlmTask, parsed: Record<string, unknown> | null): 
 
   if (task === "exercise_compare") {
     const validated = exerciseCompareResponseSchema.safeParse(parsed);
+    return validated.success ? { task, data: validated.data } : null;
+  }
+
+  if (task === "campaign_recommend") {
+    const validated = campaignRecommendResponseSchema.safeParse(parsed);
+    return validated.success ? { task, data: validated.data } : null;
+  }
+
+  if (task === "campaign_chat") {
+    const validated = campaignChatResponseSchema.safeParse(parsed);
     return validated.success ? { task, data: validated.data } : null;
   }
 
@@ -482,11 +935,11 @@ export async function rewritePromptWithSyntaxProtocol(
   const maxTokens = Math.max(250, Math.min(1200, options.maxTokens ?? 700));
 
   try {
-    const firstRaw = await callOpenRouter(messages, maxTokens);
-    let validated = syntaxProtocolRewriteSchema.safeParse(parseJsonObject(firstRaw));
+    const first = await callLlm(messages, maxTokens);
+    let validated = syntaxProtocolRewriteSchema.safeParse(parseJsonObject(first.content));
 
     if (!validated.success) {
-      const retryRaw = await callOpenRouter(
+      const retry = await callLlm(
         [
           ...messages,
           {
@@ -497,7 +950,7 @@ export async function rewritePromptWithSyntaxProtocol(
         ],
         maxTokens
       );
-      validated = syntaxProtocolRewriteSchema.safeParse(parseJsonObject(retryRaw));
+      validated = syntaxProtocolRewriteSchema.safeParse(parseJsonObject(retry.content));
     }
 
     if (!validated.success) {
@@ -514,12 +967,13 @@ export async function rewritePromptWithSyntaxProtocol(
     return {
       data: validated.data,
       provider: {
-        name: "openrouter",
-        model: OPENROUTER_MODEL,
+        name: first.provider,
+        model: first.model,
         cached: false,
       },
     };
-  } catch {
+  } catch (err) {
+    console.error("[syntax_rewrite] LLM error:", err instanceof Error ? err.message : err);
     return {
       data: fallbackSyntaxRewrite(sourcePrompt),
       provider: {
@@ -527,6 +981,54 @@ export async function rewritePromptWithSyntaxProtocol(
         model: "syntax-fallback-v1",
         cached: false,
       },
+    };
+  }
+}
+
+export async function runCampaignChat(
+  payload: CampaignChatPayload,
+  options: { maxTokens?: number } = {}
+): Promise<{ result: LlmResult; provider: LlmProviderInfo }> {
+  const systemMsg: ChatMessage = { role: "system", content: makeCampaignChatSystemPrompt() };
+  const history: ChatMessage[] = payload.messages.map((m) => ({
+    role: m.role,
+    content: m.content,
+  }));
+  const messages: ChatMessage[] = [systemMsg, ...history];
+  const maxTokens = Math.max(300, Math.min(4096, options.maxTokens ?? 2500));
+
+  try {
+    const first = await callLlm(messages, maxTokens);
+    let validated = validateResult("campaign_chat", parseJsonObject(first.content));
+
+    if (!validated) {
+      const retryMessages: ChatMessage[] = [
+        ...messages,
+        {
+          role: "user",
+          content: "Forrige svar var ikke gyldig JSON. Svar med KUN gyldig JSON i riktig schema.",
+        },
+      ];
+      const retry = await callLlm(retryMessages, maxTokens);
+      validated = validateResult("campaign_chat", parseJsonObject(retry.content));
+    }
+
+    if (!validated) {
+      return {
+        result: makeMockResult("campaign_chat", payload),
+        provider: { name: "mock", model: "local-mock-v1", cached: false },
+      };
+    }
+
+    return {
+      result: validated,
+      provider: { name: first.provider, model: first.model, cached: false },
+    };
+  } catch (err) {
+    console.error("[campaign_chat] LLM error:", err instanceof Error ? err.message : err);
+    return {
+      result: makeMockResult("campaign_chat", payload),
+      provider: { name: "mock", model: "local-mock-v1", cached: false },
     };
   }
 }
@@ -541,11 +1043,14 @@ export async function runKiOpplaringTask(
     { role: "user", content: makeUserPrompt(task, payload) },
   ];
 
-  const maxTokens = Math.max(300, Math.min(1200, options.maxTokens ?? 900));
+  const defaultMaxTokens =
+    task === "campaign_recommend" ? 1200 : task === "prompt_assist" ? 1400 : 900;
+  const maxTokensCap = task === "prompt_assist" ? 2200 : 1200;
+  const maxTokens = Math.max(300, Math.min(maxTokensCap, options.maxTokens ?? defaultMaxTokens));
 
   try {
-    const firstRaw = await callOpenRouter(messages, maxTokens);
-    let validated = validateResult(task, parseJsonObject(firstRaw));
+    const first = await callLlm(messages, maxTokens);
+    let validated = validateResult(task, parseJsonObject(first.content));
 
     if (!validated) {
       const retryMessages: ChatMessage[] = [
@@ -557,8 +1062,8 @@ export async function runKiOpplaringTask(
         },
       ];
 
-      const retryRaw = await callOpenRouter(retryMessages, maxTokens);
-      validated = validateResult(task, parseJsonObject(retryRaw));
+      const retry = await callLlm(retryMessages, maxTokens);
+      validated = validateResult(task, parseJsonObject(retry.content));
     }
 
     if (!validated) {
@@ -575,12 +1080,13 @@ export async function runKiOpplaringTask(
     return {
       result: validated,
       provider: {
-        name: "openrouter",
-        model: OPENROUTER_MODEL,
+        name: first.provider,
+        model: first.model,
         cached: false,
       },
     };
-  } catch {
+  } catch (err) {
+    console.error(`[${task}] LLM error:`, err instanceof Error ? err.message : err);
     return {
       result: makeMockResult(task, payload),
       provider: {

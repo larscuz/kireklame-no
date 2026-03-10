@@ -142,14 +142,15 @@ export default function NorskPromptingHubPage() {
         </Link>
 
         <Link
-          href="/norsk-prompting/ordforrad"
+          href="/norsk-prompting/marketing-skills/kampanje-assistent"
           className="np-node-surface rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))]/86 p-5 transition hover:border-zinc-300/30"
         >
           <h3 className="text-lg font-semibold">For mediefag</h3>
           <p className="mt-2 text-sm leading-relaxed text-[rgb(var(--muted))]">
-            Bygg bedre KI i mediefag med ordforråd for produksjon, lys/komposisjon,
-            film/VFX og profesjonell prompting. Dette er laget for elever og lærere
-            som vil knytte språk direkte til kvalitet i visuell produksjon.
+            Start i kampanje-assistenten for mediefag: få prioriterte tiltak,
+            ferdighetsforslag og konkret planlegging basert på Marketing Skills.
+            Dette er laget for elever og lærere som vil koble strategi direkte
+            til praktisk produksjon.
           </p>
         </Link>
       </section>

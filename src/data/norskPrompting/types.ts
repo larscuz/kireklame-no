@@ -124,6 +124,30 @@ export type NorskPromptingGovernanceRule = {
   negativeAdd: string;
 };
 
+export type MarketingSkillCategory =
+  | "cro"
+  | "content"
+  | "seo"
+  | "paid"
+  | "analytics"
+  | "retention"
+  | "growth"
+  | "strategy"
+  | "sales"
+  | "foundation";
+
+export type MarketingSkill = {
+  slug: string;
+  name: string;
+  title_no: string;
+  description_no: string;
+  description_en: string;
+  category: MarketingSkillCategory;
+  content_md: string;
+  version: string;
+  relatedSkills: string[];
+};
+
 export type SemantiskDuplikatAction =
   | "forkast"
   | "sla_sammen"

@@ -1,11 +1,13 @@
 import { promptExamples as staticExamples, examplesBySlug as staticExamplesBySlug } from "./examples";
 import { glossaryTerms as staticGlossary, glossaryBySlug as staticGlossaryBySlug } from "./glossary";
+import { marketingSkills as staticMarketingSkills, marketingSkillsBySlug as staticMarketingSkillsBySlug } from "./marketingSkills";
 import { negativePresets as staticNegativePresets, negativePresetsById as staticNegativePresetsById } from "./negativePresets";
 import { norskPromptingRules as staticRules, rulesById as staticRulesById } from "./rules";
 import { promptTemplates as staticTemplates, templatesById as staticTemplatesById } from "./templates";
-import type { GlossaryTerm, NorskPromptingRule, PromptExample, PromptTemplate } from "./types";
+import type { GlossaryTerm, MarketingSkill, NorskPromptingRule, PromptExample, PromptTemplate } from "./types";
 import { examplesGenerated } from "./generated/examples.generated";
 import { glossaryGenerated } from "./generated/glossary.generated";
+import { marketingSkillsGenerated } from "./generated/marketingSkills.generated";
 import { negativePresetsGenerated } from "./generated/negativePresets.generated";
 import { rulesGenerated } from "./generated/rules.generated";
 import { templatesGenerated } from "./generated/templates.generated";
@@ -86,12 +88,23 @@ export const negativePresetsById = Object.fromEntries(
   negativePresets.map((entry) => [entry.id, entry])
 ) as Record<string, NegativePreset>;
 
+export const marketingSkills: MarketingSkill[] = selectDataset(
+  marketingSkillsGenerated,
+  staticMarketingSkills,
+  (item) => item.slug
+).sort((a, b) => a.title_no.localeCompare(b.title_no, "nb-NO"));
+
+export const marketingSkillsBySlug = Object.fromEntries(
+  marketingSkills.map((entry) => [entry.slug, entry])
+) as Record<string, MarketingSkill>;
+
 export const usingGeneratedDatasets = {
   glossary: glossaryGenerated.length > 0,
   rules: rulesGenerated.length > 0,
   templates: templatesGenerated.length > 0,
   examples: examplesGenerated.length > 0,
   negativePresets: negativePresetsGenerated.length > 0,
+  marketingSkills: marketingSkillsGenerated.length > 0,
 };
 
 export const runtimeCounts = {
@@ -103,6 +116,8 @@ export const runtimeCounts = {
   templatesRegistered: templatesGenerated.length > 0 ? templatesGenerated.length : staticTemplates.length,
   examplesDisplayed: promptExamples.length,
   examplesRegistered: examplesGenerated.length > 0 ? examplesGenerated.length : staticExamples.length,
+  marketingSkillsDisplayed: marketingSkills.length,
+  marketingSkillsRegistered: marketingSkillsGenerated.length > 0 ? marketingSkillsGenerated.length : staticMarketingSkills.length,
 };
 
 // Keep static references exported for debugging or comparisons in admin tooling.
@@ -112,4 +127,5 @@ export const _staticDatasetCounts = {
   templates: Object.keys(staticTemplatesById).length,
   examples: Object.keys(staticExamplesBySlug).length,
   negativePresets: Object.keys(staticNegativePresetsById).length,
+  marketingSkills: Object.keys(staticMarketingSkillsBySlug).length,
 };

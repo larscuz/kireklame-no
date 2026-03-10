@@ -1,7 +1,7 @@
 import { persistUsageSnapshot } from "@/hooks/ki-opplaring/useUsage";
 
 export type LlmProviderInfo = {
-  name: "openrouter" | "mock" | "cloudflare" | "fal" | "pollinations";
+  name: "openrouter" | "gemini" | "mock" | "cloudflare" | "fal" | "pollinations";
   model: string;
   cached: boolean;
 };

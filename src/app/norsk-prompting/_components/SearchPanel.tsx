@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import InfoHint from "./InfoHint";
 
 type SearchItem = {
-  type: "ordforråd" | "mal" | "eksempel";
+  type: "ordforråd" | "mal" | "eksempel" | "marketing";
   title: string;
   description: string;
   href: string;
