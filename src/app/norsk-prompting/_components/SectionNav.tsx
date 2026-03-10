@@ -2,9 +2,9 @@ import Link from "next/link";
 
 const links = [
   { href: "/norsk-prompting/prompt-utvider", label: "Prompt-utvider" },
-  { href: "/norsk-prompting/ordforrad", label: "Ordforråd" },
   { href: "/norsk-prompting/marketing-skills/kampanje-assistent", label: "Kampanje-assistent" },
-  { href: "/norsk-prompting/maler", label: "Maler" },
+  { href: "/norsk-prompting/algoritmer", label: "Algoritmer" },
+  { href: "/norsk-prompting/ordforrad", label: "Ordforråd" },
   { href: "/norsk-prompting/changelog", label: "KI-verktøy" },
 ];
 

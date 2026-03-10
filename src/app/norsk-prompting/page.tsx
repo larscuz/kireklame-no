@@ -1,7 +1,11 @@
 import Link from "next/link";
 import { glossaryTerms, runtimeCounts } from "@/data/norskPrompting/runtime";
-import { modelTemplateCategories } from "@/data/norskPrompting/modelPlaybooks";
 import { operativeExamples } from "@/data/norskPrompting/operativeExamples";
+import {
+  algorithmConcepts,
+  algorithmDiagnostics,
+  algorithmPlaybooks,
+} from "@/data/norskPrompting/algorithmsKnowledge";
 import SearchPanel from "./_components/SearchPanel";
 import NorskPromptingShell from "./_components/NorskPromptingShell";
 import PromptExpanderClient from "./_components/PromptExpanderClient";
@@ -30,16 +34,24 @@ export default function NorskPromptingHubPage() {
       description: term.definition_no,
       href: `/norsk-prompting/ordforrad/${term.slug}`,
     })),
-    ...modelTemplateCategories.flatMap((category) =>
-      category.models
-        .filter((model) => model.status === "documented")
-        .map((model) => ({
-          type: "mal" as const,
-          title: model.modelName,
-          description: `${category.title}: ${model.summary}`,
-          href: "/norsk-prompting/maler",
-        }))
-    ),
+    ...algorithmPlaybooks.map((playbook) => ({
+      type: "algoritmer" as const,
+      title: playbook.goal_type,
+      description: `Planleggingsspor: ${playbook.audience_stage}`,
+      href: "/norsk-prompting/algoritmer",
+    })),
+    ...algorithmDiagnostics.map((diagnostic) => ({
+      type: "algoritmer" as const,
+      title: diagnostic.symptom,
+      description: diagnostic.likely_causes[0] ?? "Diagnostikk for svak ytelse",
+      href: "/norsk-prompting/algoritmer",
+    })),
+    ...algorithmConcepts.slice(0, 12).map((concept) => ({
+      type: "algoritmer" as const,
+      title: concept.term,
+      description: concept.definition_plain,
+      href: "/norsk-prompting/algoritmer",
+    })),
     ...operativeExamples.map((example) => ({
       type: "eksempel" as const,
       title: example.title,
@@ -243,15 +255,15 @@ export default function NorskPromptingHubPage() {
         </article>
 
         <Link
-          href="/norsk-prompting/maler"
+          href="/norsk-prompting/algoritmer"
           className="np-node-surface lg:col-span-4 rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))]/86 p-4 pt-7 shadow-[0_8px_18px_rgba(2,6,23,0.14)] hover:border-zinc-300/30"
         >
           <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[rgb(var(--muted))]">
-            Modellbibliotek
+            Sosiale medier
           </p>
-          <h2 className="mt-2 text-xl font-semibold">Maler</h2>
+          <h2 className="mt-2 text-xl font-semibold">Algoritmer</h2>
           <p className="mt-2 text-sm text-[rgb(var(--muted))]">
-            Interne faner for bilde, video og lyd med modellspesifikke oppskrifter.
+            Evidensbasert planner og diagnostikk for discovery, kampanjer og myter i Instagram, YouTube, TikTok, Facebook og LinkedIn.
           </p>
         </Link>
 

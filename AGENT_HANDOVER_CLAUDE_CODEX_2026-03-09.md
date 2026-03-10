@@ -198,3 +198,154 @@ Implemented:
   - `src/app/norsk-prompting/marketing-skills/kampanje-assistent/_components/CampaignAssistentClient.tsx`
 - Added README note for the new `GET` status endpoint.
 - Added guard: workshop-pass redeem (`POST`) rejects logged-in users (workshop-pass is for anonymous workshop participants).
+
+## Follow-up Extension 8 (Codex, 2026-03-10)
+
+User requested replacing `Maler` with a new `Algoritmer` product area in KI-skole, plus a concrete evidence-based system for social media discovery and campaign planning.
+
+Implemented:
+
+- Navigation IA updated in `SectionNav`:
+  1. Prompt-utvider
+  2. Kampanje-assistent
+  3. Algoritmer
+  4. Ordforråd
+  5. KI-verktøy
+- Added new route:
+  - `src/app/norsk-prompting/algoritmer/page.tsx`
+- Added full tool/workbench:
+  - `src/app/norsk-prompting/_components/AlgorithmsWorkbench.tsx`
+  - Modules included:
+    - How discovery works now
+    - Instagram card
+    - YouTube card
+    - TikTok card
+    - Campaign planner
+    - Diagnose weak performance
+    - Myth vs reality
+    - Glossary
+    - Source registry / claim traceability view
+- Added maintainable knowledge data model + seed content:
+  - `src/data/norskPrompting/algorithmsKnowledge.ts`
+  - Collections:
+    - `sources`
+    - `claims`
+    - `concepts`
+    - `playbooks`
+    - `diagnostics`
+  - Every seeded claim links to one or more source IDs.
+- Added shared algorithm type definitions in:
+  - `src/data/norskPrompting/types.ts`
+- Updated KI-skole hub and search integration:
+  - `src/app/norsk-prompting/page.tsx`
+  - `src/app/norsk-prompting/_components/SearchPanel.tsx`
+- Kept legacy path safe:
+  - `src/app/norsk-prompting/maler/page.tsx` now redirects to `/norsk-prompting/algoritmer`.
+
+## Follow-up Extension 9 (Codex, 2026-03-10)
+
+Refinement based on user feedback for practical priority and business-platform coverage.
+
+Implemented:
+
+- `Kampanjeplanlegger` moved to the top of the `Algoritmer` tool layout.
+- Added `Facebook` and `LinkedIn` as first-class platforms in the algorithm model:
+  - extended `AlgorithmPlatform` type
+  - added official-source seed entries for both platforms
+  - added platform-specific stable/volatile claims
+  - added platform cards for both in the UI
+  - included both options in planner platform selector
+- Updated key copy to reflect platform scope:
+  - now explicitly includes Instagram, YouTube, TikTok, Facebook, LinkedIn.
+
+## Follow-up Extension 10 (Codex, 2026-03-10)
+
+Refinement based on user feedback for a simpler on-ramp, plus Supabase-ready persistence for the new algorithms learning model.
+
+Implemented:
+
+- Added a compact first module in `Algoritmer`:
+  - `KPI-start (intro)` at the top of the workbench.
+  - Focuses on four core KPIs for social video:
+    - `3s Hold`
+    - `Average Watch Time`
+    - `Saves`
+    - `Shares`
+  - Includes:
+    - small input form (views, 3s holds, watch seconds, video length, saves, shares)
+    - computed KPI snapshot
+    - summary table (focus + what each KPI indicates)
+  - Existing modules were kept intact and shifted down in order.
+- Added Supabase SQL schema for exact algorithms model:
+  - `supabase/np-algorithms-knowledge-2026-03-10.sql`
+  - Tables:
+    - `np_algo_sources`
+    - `np_algo_claims`
+    - `np_algo_concepts`
+    - `np_algo_playbooks`
+    - `np_algo_diagnostics`
+  - Includes enums, indexes, updated_at triggers, RLS and public-read policies.
+- Added canonical seed JSON (generated from current `algorithmsKnowledge.ts` content):
+  - `data/norskPrompting/engine-seeds/algorithms-knowledge-v1.json`
+  - Buckets:
+    - `sources` (10)
+    - `claims` (20)
+    - `concepts` (12)
+    - `playbooks` (5)
+    - `diagnostics` (5)
+- Added importer script for Supabase upsert:
+  - `scripts/norsk-prompting-engine/import-algorithms-knowledge-seed.mjs`
+  - Supports:
+    - `--file <path>`
+    - `--dry-run`
+    - `--truncate` (optional full replace before upsert)
+  - Validates required shape and upserts by `id`.
+- Added npm command:
+  - `npm run np:algorithms:seed`
+
+## Follow-up Extension 11 (Codex, 2026-03-10)
+
+User refinement: `Algoritmer` should behave as an assistant (not only reference content), helping students justify choices to clients with a concise output and optional depth.
+
+Implemented:
+
+- Reframed top-right module from planner-only to assistant behavior:
+  - section heading now `Algoritme-assistent`.
+  - still uses campaign planner framework as structured input.
+- Added assistant output panel in `AlgorithmsWorkbench`:
+  - short client-ready recommendation at the top
+  - `Viktigste prioriteringer nå` (simplified priority block)
+  - KPI focus chips from selected playbook
+  - expandable detailed section (`Vis detaljert plan og pedagogisk begrunnelse`) with:
+    - full step-by-step plan
+    - playbook signals
+    - evidence-linked claims
+- Added PDF export action:
+  - `Eksporter PDF` button generates printable client brief in a new window:
+    - short recommendation
+    - priorities
+    - KPI focus
+    - detailed plan
+    - evidence-based rationale
+- Kept existing modules intact and preserved the two-column top layout:
+  - left: `KPI-start`
+  - right: `Algoritme-assistent`
+
+## Follow-up Extension 12 (Codex, 2026-03-10)
+
+User requested export support for `Kampanje-assistent` so strategy output can be saved outside the page.
+
+Implemented:
+
+- Added PDF export function in:
+  - `src/app/norsk-prompting/marketing-skills/kampanje-assistent/_components/CampaignAssistentClient.tsx`
+- Added `Eksporter PDF` button in `Signalpanel` (right column):
+  - enabled when at least one assistant strategy output exists
+  - disabled while no assistant insight is available
+- Export now includes:
+  - latest user campaign description
+  - assistant strategic recommendation text
+  - prioritized focus areas (impact/effort/free-vs-budget + action)
+  - recommended skills (relevance + reasoning + tips)
+  - follow-up question (if present)
+- Uses print-to-PDF flow (`window.print`) in a generated clean document for workshop/client handoff.

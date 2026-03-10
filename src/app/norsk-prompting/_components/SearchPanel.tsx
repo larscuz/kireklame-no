@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import InfoHint from "./InfoHint";
 
 type SearchItem = {
-  type: "ordforråd" | "mal" | "eksempel" | "marketing";
+  type: "ordforråd" | "algoritmer" | "eksempel" | "marketing";
   title: string;
   description: string;
   href: string;
@@ -37,7 +37,7 @@ export default function SearchPanel({ items, showResultsOnEmptyQuery = true }: P
     <section className="np-node-surface np-template-card rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))]/92 p-4 pt-7 shadow-[0_10px_26px_rgba(2,6,23,0.2)]">
       <div className="flex items-center gap-2">
         <label htmlFor="norsk-prompting-search" className="text-xs font-semibold uppercase tracking-[0.14em] text-[rgb(var(--muted))]">
-          Søk i ordforråd, maler og eksempler
+          Søk i ordforråd, algoritmer og eksempler
         </label>
         <InfoHint text="Søk filtrerer i innholdet for denne siden. Skriv begrep, brukstilfelle eller eksempelnavn." />
       </div>

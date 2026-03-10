@@ -204,6 +204,15 @@ function scoreFocusArea(area: FocusArea): number {
   return impactScore - effortPenalty + (area.free ? 1 : 0);
 }
 
+function escapeHtml(value: string): string {
+  return value
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
+}
+
 function BriefColumn({
   onUseSuggestion,
 }: {
@@ -529,23 +538,133 @@ export default function CampaignAssistentClient({ skillLookup }: Props) {
     inputRef.current?.focus();
   }, [loading]);
 
-  const latestAssistantInsight = useMemo(() => {
+  const latestAssistantMessage = useMemo(() => {
     for (let i = messages.length - 1; i >= 0; i -= 1) {
-      const msg = messages[i];
-      if (msg.role === "assistant") {
-        return {
-          focusAreas: msg.focus_areas ?? [],
-          skills: msg.skills ?? [],
-          followUp: msg.follow_up,
-        };
-      }
+      if (messages[i].role === "assistant") return messages[i];
     }
-    return {
-      focusAreas: [],
-      skills: [],
-      followUp: undefined,
-    };
+    return null;
   }, [messages]);
+
+  const latestUserMessage = useMemo(() => {
+    for (let i = messages.length - 1; i >= 0; i -= 1) {
+      if (messages[i].role === "user") return messages[i];
+    }
+    return null;
+  }, [messages]);
+
+  const latestAssistantInsight = useMemo(() => {
+    if (!latestAssistantMessage) {
+      return {
+        message: "",
+        focusAreas: [],
+        skills: [],
+        followUp: undefined,
+      };
+    }
+
+    return {
+      message: latestAssistantMessage.text,
+      focusAreas: latestAssistantMessage.focus_areas ?? [],
+      skills: latestAssistantMessage.skills ?? [],
+      followUp: latestAssistantMessage.follow_up,
+    };
+  }, [latestAssistantMessage]);
+
+  const canExportStrategy =
+    latestAssistantInsight.message.trim().length > 0 ||
+    latestAssistantInsight.focusAreas.length > 0 ||
+    latestAssistantInsight.skills.length > 0;
+
+  const exportStrategyPdf = () => {
+    if (!canExportStrategy) return;
+
+    const win = window.open("", "_blank", "noopener,noreferrer");
+    if (!win) return;
+
+    const dateLabel = new Intl.DateTimeFormat("nb-NO", { dateStyle: "long", timeStyle: "short" }).format(new Date());
+    const sortedFocusAreas = [...latestAssistantInsight.focusAreas].sort((a, b) => scoreFocusArea(b) - scoreFocusArea(a));
+    const sortedSkills = [...latestAssistantInsight.skills].sort((a, b) => b.relevance_pct - a.relevance_pct);
+
+    const focusAreaHtml =
+      sortedFocusAreas.length > 0
+        ? sortedFocusAreas
+            .map(
+              (area, index) =>
+                `<li><strong>${index + 1}. ${escapeHtml(area.area)}</strong> (${escapeHtml(IMPACT_LABELS[area.impact])} effekt · ${escapeHtml(EFFORT_LABELS[area.effort])} innsats · ${area.free ? "Gratis" : "Budsjett"})<br>${escapeHtml(area.action)}</li>`
+            )
+            .join("")
+        : "<li>Ingen prioriteringsområder generert ennå.</li>";
+
+    const skillsHtml =
+      sortedSkills.length > 0
+        ? sortedSkills
+            .map((skill) => {
+              const meta = skillLookup[skill.slug];
+              const title = meta?.title_no || skill.slug;
+              const tipsHtml =
+                skill.tips.length > 0
+                  ? `<ul>${skill.tips.map((tip) => `<li>${escapeHtml(tip)}</li>`).join("")}</ul>`
+                  : "";
+              return `<li><strong>${escapeHtml(title)}</strong> (${skill.relevance_pct}% relevans)<br>${escapeHtml(skill.reasoning)}${tipsHtml}</li>`;
+            })
+            .join("")
+        : "<li>Ingen ferdighetsforslag generert ennå.</li>";
+
+    const html = `
+      <!doctype html>
+      <html lang="nb">
+        <head>
+          <meta charset="utf-8" />
+          <title>Kampanje-assistent strategi</title>
+          <style>
+            body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; margin: 32px; color: #111827; line-height: 1.45; }
+            h1,h2,h3 { margin: 0 0 10px 0; }
+            h1 { font-size: 24px; }
+            h2 { font-size: 18px; margin-top: 22px; }
+            p { margin: 0 0 12px 0; }
+            ol, ul { margin: 0 0 12px 20px; padding: 0; }
+            li { margin: 0 0 8px 0; }
+            .meta { color: #4b5563; font-size: 13px; margin-bottom: 16px; }
+            .panel { border: 1px solid #d1d5db; border-radius: 10px; padding: 14px; margin-bottom: 12px; }
+            .muted { color: #4b5563; }
+          </style>
+        </head>
+        <body>
+          <h1>Kampanje-assistent: Strategiutkast</h1>
+          <p class="meta">Generert: ${escapeHtml(dateLabel)}</p>
+
+          ${
+            latestUserMessage?.text
+              ? `<div class="panel"><h2>Kampanjebeskrivelse</h2><p>${escapeHtml(latestUserMessage.text)}</p></div>`
+              : ""
+          }
+
+          <div class="panel">
+            <h2>Strategisk anbefaling</h2>
+            <p>${escapeHtml(latestAssistantInsight.message || "Ingen hovedtekst mottatt.")}</p>
+          </div>
+
+          <h2>Prioriterte tiltak</h2>
+          <ol>${focusAreaHtml}</ol>
+
+          <h2>Anbefalte ferdigheter</h2>
+          <ul>${skillsHtml}</ul>
+
+          ${
+            latestAssistantInsight.followUp
+              ? `<h2>Oppfølgingsspørsmål</h2><p class="muted">${escapeHtml(latestAssistantInsight.followUp)}</p>`
+              : ""
+          }
+        </body>
+      </html>
+    `;
+
+    win.document.open();
+    win.document.write(html);
+    win.document.close();
+    win.focus();
+    win.print();
+  };
 
   const sendMessage = async () => {
     const text = input.trim();
@@ -701,9 +820,19 @@ export default function CampaignAssistentClient({ skillLookup }: Props) {
 
       <aside className="space-y-3 lg:col-span-1">
         <section className="rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))]/90 p-3">
-          <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[rgb(var(--muted))]">
-            Signalpanel
-          </p>
+          <div className="flex items-center justify-between gap-2">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[rgb(var(--muted))]">
+              Signalpanel
+            </p>
+            <button
+              type="button"
+              onClick={exportStrategyPdf}
+              disabled={!canExportStrategy}
+              className="rounded-lg border border-[rgb(var(--border))] bg-[rgb(var(--bg))]/65 px-2 py-1 text-[9px] font-semibold uppercase tracking-[0.1em] text-[rgb(var(--fg))]/88 transition hover:border-cyan-400/35 hover:bg-cyan-400/8 disabled:cursor-not-allowed disabled:opacity-45"
+            >
+              Eksporter PDF
+            </button>
+          </div>
           {latestAssistantInsight.followUp ? (
             <p className="mt-2 rounded-lg border border-cyan-400/25 bg-cyan-400/10 px-2.5 py-2 text-[11px] text-[rgb(var(--fg))]/90">
               {SYMBOLS.follow} {latestAssistantInsight.followUp}

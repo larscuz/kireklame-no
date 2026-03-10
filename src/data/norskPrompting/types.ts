@@ -162,3 +162,81 @@ export type SemantiskDuplikatMetrikk = {
   negativeSimilarity: number;
   samletOverlap: number;
 };
+
+export type AlgorithmSourceType =
+  | "official_platform"
+  | "official_research"
+  | "academic_paper"
+  | "editorial";
+
+export type AlgorithmPlatform =
+  | "instagram"
+  | "youtube"
+  | "tiktok"
+  | "facebook"
+  | "linkedin"
+  | "cross-platform";
+
+export type AlgorithmSourceStatus = "active" | "needs_review" | "archived";
+
+export type AlgorithmConfidence = "high" | "medium" | "low";
+
+export type AlgorithmClaimType = "stable" | "volatile" | "myth" | "interpretation";
+
+export type AlgorithmTeachingUse = "planner" | "diagnosis" | "glossary" | "myth_vs_reality";
+
+export type AlgorithmSource = {
+  id: string;
+  title: string;
+  url: string;
+  source_type: AlgorithmSourceType;
+  platform: AlgorithmPlatform;
+  published_at: string;
+  checked_at: string;
+  status: AlgorithmSourceStatus;
+  summary: string;
+  notes: string;
+  confidence: AlgorithmConfidence;
+};
+
+export type AlgorithmClaim = {
+  id: string;
+  claim_text: string;
+  plain_language: string;
+  claim_type: AlgorithmClaimType;
+  platform: AlgorithmPlatform;
+  confidence: AlgorithmConfidence;
+  last_reviewed_at: string;
+  teaching_use: AlgorithmTeachingUse;
+  source_ids: string[];
+};
+
+export type AlgorithmConcept = {
+  id: string;
+  term: string;
+  definition_plain: string;
+  definition_technical: string;
+  platform_notes: string;
+  source_ids: string[];
+};
+
+export type AlgorithmPlaybook = {
+  id: string;
+  goal_type: string;
+  audience_stage: string;
+  recommended_formats: string[];
+  hook_patterns: string[];
+  retention_patterns: string[];
+  cta_patterns: string[];
+  success_metrics: string[];
+  related_claim_ids: string[];
+};
+
+export type AlgorithmDiagnostic = {
+  id: string;
+  symptom: string;
+  likely_causes: string[];
+  evidence_based_checks: string[];
+  recommended_changes: string[];
+  related_claim_ids: string[];
+};

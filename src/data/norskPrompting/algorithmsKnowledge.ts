@@ -1,0 +1,781 @@
+import type {
+  AlgorithmClaim,
+  AlgorithmClaimType,
+  AlgorithmConcept,
+  AlgorithmDiagnostic,
+  AlgorithmPlaybook,
+  AlgorithmPlatform,
+  AlgorithmSource,
+} from "./types";
+
+export const algorithmSources: AlgorithmSource[] = [
+  {
+    id: "src-instagram-ranking",
+    title: "Instagram Creators: Hvordan rangering fungerer",
+    url: "https://creators.instagram.com/",
+    source_type: "official_platform",
+    platform: "instagram",
+    published_at: "2025-09-01",
+    checked_at: "2026-03-10",
+    status: "active",
+    summary:
+      "Instagram beskriver discovery som personlig anbefaling og rangering, ikke ren follower-distribusjon.",
+    notes:
+      "Brukes som hovedkilde for hvordan kontoer med få følgere kan nå nye målgrupper gjennom anbefaling.",
+    confidence: "high",
+  },
+  {
+    id: "src-meta-trial-reels",
+    title: "Meta/Instagram: Trial Reels",
+    url: "https://about.fb.com/news/",
+    source_type: "official_platform",
+    platform: "instagram",
+    published_at: "2025-12-10",
+    checked_at: "2026-03-10",
+    status: "active",
+    summary:
+      "Trial Reels viser eksplisitt ikke-følger-testing: innhold kan testes mot nye publikum før bredere distribusjon.",
+    notes:
+      "Sterk støtte for undervisningspoeng om at små kontoer kan få reach når innholdet treffer.",
+    confidence: "high",
+  },
+  {
+    id: "src-youtube-help-discovery",
+    title: "YouTube Help: Search, Discovery og anbefalinger",
+    url: "https://support.google.com/youtube/",
+    source_type: "official_platform",
+    platform: "youtube",
+    published_at: "2025-11-01",
+    checked_at: "2026-03-10",
+    status: "active",
+    summary:
+      "YouTube forklarer discovery med sannsynlighet for visning, seerrespons og tilfredshet over tid.",
+    notes:
+      "Brukes for å understreke at vanity metrics alene ikke er nok.",
+    confidence: "high",
+  },
+  {
+    id: "src-youtube-blog-recommendation",
+    title: "YouTube Blog: Hvordan anbefalinger fungerer",
+    url: "https://blog.youtube/",
+    source_type: "official_platform",
+    platform: "youtube",
+    published_at: "2025-08-01",
+    checked_at: "2026-03-10",
+    status: "active",
+    summary:
+      "YouTube beskriver anbefaling som personalisert matching mellom video-egenskaper og seerinteresse.",
+    notes:
+      "Brukes som bro mellom praktisk undervisning og teknisk forståelse.",
+    confidence: "high",
+  },
+  {
+    id: "src-tiktok-support-foryou",
+    title: "TikTok Support: Hvordan For You anbefaler innhold",
+    url: "https://support.tiktok.com/",
+    source_type: "official_platform",
+    platform: "tiktok",
+    published_at: "2025-10-01",
+    checked_at: "2026-03-10",
+    status: "active",
+    summary:
+      "TikTok beskriver For You som interessebasert, med signaler fra seerinteraksjon og forbruksmønstre.",
+    notes:
+      "Brukes for å lære topic fit og tidlig relevans i første sekunder.",
+    confidence: "high",
+  },
+  {
+    id: "src-tiktok-newsroom-discovery",
+    title: "TikTok Newsroom: For You, kontroll og discovery",
+    url: "https://newsroom.tiktok.com/",
+    source_type: "official_platform",
+    platform: "tiktok",
+    published_at: "2025-07-01",
+    checked_at: "2026-03-10",
+    status: "active",
+    summary:
+      "TikTok beskriver hvordan brukere får mer av det de viser interesse for, og mindre av irrelevant innhold.",
+    notes:
+      "Brukes i diagnosemodul for å forklare mismatch mellom tema og publikum.",
+    confidence: "high",
+  },
+  {
+    id: "src-facebook-business-distribution",
+    title: "Meta Business Help Center: Distribution og feed-relevans",
+    url: "https://www.facebook.com/business/help",
+    source_type: "official_platform",
+    platform: "facebook",
+    published_at: "2025-10-01",
+    checked_at: "2026-03-10",
+    status: "active",
+    summary:
+      "Facebook-distribusjon beskrives som signaldrevet relevansvurdering fremfor ren kronologisk visning.",
+    notes:
+      "Brukes i undervisning for bedrifter som jobber med organisk og betalt synlighet i samme økosystem.",
+    confidence: "high",
+  },
+  {
+    id: "src-linkedin-feed-guidance",
+    title: "LinkedIn Help: Feed, relevans og innholdsdistribusjon",
+    url: "https://www.linkedin.com/help/linkedin",
+    source_type: "official_platform",
+    platform: "linkedin",
+    published_at: "2025-10-01",
+    checked_at: "2026-03-10",
+    status: "active",
+    summary:
+      "LinkedIn beskriver feed-distribusjon gjennom relevans mellom innhold, nettverk og medlemssignaler.",
+    notes:
+      "Brukes for B2B-kampanjeplanlegging og arbeidslivsnær innholdsstrategi.",
+    confidence: "high",
+  },
+  {
+    id: "src-youtube-dnn-paper",
+    title: "Deep Neural Networks for YouTube Recommendations",
+    url: "https://research.google/pubs/deep-neural-networks-for-youtube-recommendations/",
+    source_type: "official_research",
+    platform: "cross-platform",
+    published_at: "2016-09-01",
+    checked_at: "2026-03-10",
+    status: "active",
+    summary:
+      "Kandidatgenerering + rangering gir en stabil modell for å forklare moderne anbefalingssystemer.",
+    notes:
+      "Brukes som systemlogikk i KI-skole for å unngå folkloreforklaringer.",
+    confidence: "high",
+  },
+  {
+    id: "src-kireklame-editorial-framework",
+    title: "KI-skole redaksjonell ramme: Algoritmer og kampanjeplanlegging",
+    url: "https://kireklame.no/norsk-prompting/algoritmer",
+    source_type: "editorial",
+    platform: "cross-platform",
+    published_at: "2026-03-10",
+    checked_at: "2026-03-10",
+    status: "active",
+    summary:
+      "Pedagogisk oversettelse av offisiell dokumentasjon til elevvennlig kampanjeplanlegging og diagnose.",
+    notes:
+      "Alle redaksjonelle påstander må peke tilbake til minst én offisiell kilde.",
+    confidence: "medium",
+  },
+];
+
+export const algorithmClaims: AlgorithmClaim[] = [
+  {
+    id: "clm-rec-based-discovery",
+    claim_text:
+      "Discovery på tvers av plattformer er i hovedsak anbefalingsdrevet, ikke kun follower-feed.",
+    plain_language:
+      "Innhold vises først og fremst til personer som systemet tror er interessert, ikke bare dine følgere.",
+    claim_type: "stable",
+    platform: "cross-platform",
+    confidence: "high",
+    last_reviewed_at: "2026-03-10",
+    teaching_use: "planner",
+    source_ids: ["src-instagram-ranking", "src-youtube-help-discovery", "src-tiktok-support-foryou"],
+  },
+  {
+    id: "clm-viewer-behavior-matters",
+    claim_text: "Seeratferd som visning, avbrudd, interaksjon og tilfredshet påvirker rangering.",
+    plain_language:
+      "Algoritmen ser hva folk faktisk gjør med videoen din. Blir de, hopper de av, deler de, eller ignorerer de?",
+    claim_type: "stable",
+    platform: "cross-platform",
+    confidence: "high",
+    last_reviewed_at: "2026-03-10",
+    teaching_use: "diagnosis",
+    source_ids: ["src-youtube-help-discovery", "src-tiktok-support-foryou", "src-instagram-ranking"],
+  },
+  {
+    id: "clm-small-account-can-breakthrough",
+    claim_text: "Små kontoer kan få distribusjon når tema, pakking og respons matcher publikum.",
+    plain_language:
+      "Du trenger ikke stor konto for å få visninger. God match mellom innhold og rett publikum er viktigere tidlig.",
+    claim_type: "stable",
+    platform: "cross-platform",
+    confidence: "high",
+    last_reviewed_at: "2026-03-10",
+    teaching_use: "planner",
+    source_ids: ["src-meta-trial-reels", "src-tiktok-support-foryou", "src-youtube-help-discovery"],
+  },
+  {
+    id: "clm-topic-fit-over-follower-count",
+    claim_text: "Topic fit og tidlig relevans veier ofte tyngre enn ren follower-størrelse i første testing.",
+    plain_language:
+      "Hvis temaet ditt er tydelig og relevant for rett målgruppe, kan innholdet testes bredere selv fra små kontoer.",
+    claim_type: "stable",
+    platform: "cross-platform",
+    confidence: "high",
+    last_reviewed_at: "2026-03-10",
+    teaching_use: "planner",
+    source_ids: ["src-instagram-ranking", "src-tiktok-newsroom-discovery", "src-youtube-blog-recommendation"],
+  },
+  {
+    id: "clm-candidate-generation-ranking",
+    claim_text:
+      "Anbefaling fungerer ofte i to trinn: kandidatgenerering (hva kan passe?) og rangering (hva er best nå?).",
+    plain_language:
+      "Systemet finner først relevante kandidater, deretter rangerer det hva som bør vises til denne seeren akkurat nå.",
+    claim_type: "stable",
+    platform: "cross-platform",
+    confidence: "high",
+    last_reviewed_at: "2026-03-10",
+    teaching_use: "glossary",
+    source_ids: ["src-youtube-dnn-paper", "src-youtube-blog-recommendation"],
+  },
+  {
+    id: "clm-satisfaction-over-raw-views",
+    claim_text: "Langsiktig seertilfredshet er viktigere enn rå visningstall alene.",
+    plain_language:
+      "Høye views hjelper lite hvis folk ikke opplever verdi eller faller raskt av. Kvalitet på opplevelsen teller.",
+    claim_type: "stable",
+    platform: "youtube",
+    confidence: "high",
+    last_reviewed_at: "2026-03-10",
+    teaching_use: "diagnosis",
+    source_ids: ["src-youtube-help-discovery", "src-youtube-blog-recommendation"],
+  },
+  {
+    id: "clm-trial-reels-non-follower-test",
+    claim_text: "Trial Reels er et offisielt eksempel på ikke-følger-testing.",
+    plain_language:
+      "Instagram kan teste en reel mot personer som ikke følger deg for å måle tidlig respons.",
+    claim_type: "stable",
+    platform: "instagram",
+    confidence: "high",
+    last_reviewed_at: "2026-03-10",
+    teaching_use: "planner",
+    source_ids: ["src-meta-trial-reels", "src-instagram-ranking"],
+  },
+  {
+    id: "clm-facebook-relevance-distribution",
+    claim_text: "Facebook distribuerer innhold basert på relevanssignal, ikke bare sidefølgere.",
+    plain_language:
+      "På Facebook må innholdet fortsatt vise verdi for riktig publikum; antall følgere alene gir ikke stabil rekkevidde.",
+    claim_type: "stable",
+    platform: "facebook",
+    confidence: "high",
+    last_reviewed_at: "2026-03-10",
+    teaching_use: "planner",
+    source_ids: ["src-facebook-business-distribution"],
+  },
+  {
+    id: "clm-linkedin-professional-interest-fit",
+    claim_text: "LinkedIn-rekkevidde er tett knyttet til profesjonell relevans og engasjement i nettverket.",
+    plain_language:
+      "For B2B virker innhold best når temaet treffer faglige behov i målgruppen og utløser meningsfull respons.",
+    claim_type: "stable",
+    platform: "linkedin",
+    confidence: "high",
+    last_reviewed_at: "2026-03-10",
+    teaching_use: "planner",
+    source_ids: ["src-linkedin-feed-guidance"],
+  },
+  {
+    id: "clm-200-view-jail-myth",
+    claim_text: "\"200 view jail\" er ikke en offisiell plattform-definisjon.",
+    plain_language:
+      "Et stopp rundt 200 visninger forklares bedre med tidlig test, lav topic fit, svak hook eller lav retention.",
+    claim_type: "myth",
+    platform: "cross-platform",
+    confidence: "high",
+    last_reviewed_at: "2026-03-10",
+    teaching_use: "myth_vs_reality",
+    source_ids: ["src-instagram-ranking", "src-youtube-help-discovery", "src-tiktok-support-foryou"],
+  },
+  {
+    id: "clm-hashtag-trick-myth",
+    claim_text: "Det finnes ingen dokumentert universell hashtag-triks som alltid gir distribusjon.",
+    plain_language:
+      "Hashtags kan gi kontekst, men de kan ikke alene kompensere for dårlig relevans og lav seerrespons.",
+    claim_type: "myth",
+    platform: "cross-platform",
+    confidence: "medium",
+    last_reviewed_at: "2026-03-10",
+    teaching_use: "myth_vs_reality",
+    source_ids: ["src-instagram-ranking", "src-tiktok-newsroom-discovery"],
+  },
+  {
+    id: "clm-followers-are-everything-myth",
+    claim_text: "Follower-antall alene avgjør ikke om nytt innhold får reach.",
+    plain_language:
+      "Stor konto hjelper ikke hvis innholdet ikke treffer. Små kontoer kan lykkes med riktig tema og levering.",
+    claim_type: "myth",
+    platform: "cross-platform",
+    confidence: "high",
+    last_reviewed_at: "2026-03-10",
+    teaching_use: "myth_vs_reality",
+    source_ids: ["src-meta-trial-reels", "src-youtube-help-discovery", "src-tiktok-support-foryou"],
+  },
+  {
+    id: "clm-perfect-video-length-volatile",
+    claim_text: "Det finnes ingen universell perfekt videolengde som alltid fungerer.",
+    plain_language:
+      "Optimal lengde varierer med mål, tema, format og plattform. Test og lær er viktigere enn faste regler.",
+    claim_type: "volatile",
+    platform: "cross-platform",
+    confidence: "medium",
+    last_reviewed_at: "2026-03-10",
+    teaching_use: "planner",
+    source_ids: ["src-youtube-help-discovery", "src-instagram-ranking", "src-tiktok-support-foryou"],
+  },
+  {
+    id: "clm-exact-thresholds-volatile",
+    claim_text: "Eksakte terskler for distribusjon/rangering er ikke stabile undervisningssannheter.",
+    plain_language:
+      "Ikke bygg strategi på påstander om faste tall. Bruk observasjon, testing og dokumenterte signaler.",
+    claim_type: "volatile",
+    platform: "cross-platform",
+    confidence: "high",
+    last_reviewed_at: "2026-03-10",
+    teaching_use: "diagnosis",
+    source_ids: ["src-instagram-ranking", "src-youtube-help-discovery", "src-tiktok-newsroom-discovery"],
+  },
+  {
+    id: "clm-post-frequency-volatile",
+    claim_text: "Publiseringsfrekvens uten kvalitetssikring kan svekke kampanjeeffekt.",
+    plain_language:
+      "Det er bedre å publisere færre innlegg med tydelig hook og verdi enn å poste ofte uten retning.",
+    claim_type: "volatile",
+    platform: "cross-platform",
+    confidence: "medium",
+    last_reviewed_at: "2026-03-10",
+    teaching_use: "planner",
+    source_ids: ["src-kireklame-editorial-framework", "src-youtube-help-discovery"],
+  },
+  {
+    id: "clm-facebook-format-mix-volatile",
+    claim_text: "Optimal miks mellom video, bilde og tekst på Facebook er kontekst- og målavhengig.",
+    plain_language:
+      "Det finnes ikke én publiseringsoppskrift som alltid virker på Facebook; test format mot kampanjemål.",
+    claim_type: "volatile",
+    platform: "facebook",
+    confidence: "medium",
+    last_reviewed_at: "2026-03-10",
+    teaching_use: "planner",
+    source_ids: ["src-facebook-business-distribution", "src-kireklame-editorial-framework"],
+  },
+  {
+    id: "clm-linkedin-post-style-volatile",
+    claim_text: "Riktig poststil på LinkedIn varierer med bransje, målgruppe og kjøpsfase.",
+    plain_language:
+      "Lang faglig tekst, kort innsiktspost og video kan alle fungere, men effekten må testes i riktig segment.",
+    claim_type: "volatile",
+    platform: "linkedin",
+    confidence: "medium",
+    last_reviewed_at: "2026-03-10",
+    teaching_use: "diagnosis",
+    source_ids: ["src-linkedin-feed-guidance", "src-kireklame-editorial-framework"],
+  },
+  {
+    id: "clm-campaign-first-thinking",
+    claim_text:
+      "Kampanjeplanlegging bør følge: mål → publikum → vinkel → format → hook → verdi → retention → CTA → iterasjon.",
+    plain_language:
+      "Start med hvorfor og hvem, ikke med trendlyd. Bygg innholdet i en tydelig rekkefølge.",
+    claim_type: "interpretation",
+    platform: "cross-platform",
+    confidence: "high",
+    last_reviewed_at: "2026-03-10",
+    teaching_use: "planner",
+    source_ids: [
+      "src-kireklame-editorial-framework",
+      "src-youtube-help-discovery",
+      "src-instagram-ranking",
+      "src-tiktok-support-foryou",
+    ],
+  },
+  {
+    id: "clm-diagnose-over-blame",
+    claim_text: "Diagnose av symptom er bedre enn å skylde på en skjult straffemekanisme.",
+    plain_language:
+      "Når noe stopper opp, se på opening, tema-match, retention, payoff og CTA før du konkluderer med suppression.",
+    claim_type: "interpretation",
+    platform: "cross-platform",
+    confidence: "high",
+    last_reviewed_at: "2026-03-10",
+    teaching_use: "diagnosis",
+    source_ids: ["src-kireklame-editorial-framework", "src-youtube-help-discovery", "src-tiktok-support-foryou"],
+  },
+  {
+    id: "clm-value-density-interpretation",
+    claim_text: "Høy verdetetthet i første del av innholdet forbedrer ofte tidlig seerrespons.",
+    plain_language:
+      "Gi konkret verdi tidlig: et løfte, en demonstrasjon eller et klart før/etter-bilde.",
+    claim_type: "interpretation",
+    platform: "cross-platform",
+    confidence: "medium",
+    last_reviewed_at: "2026-03-10",
+    teaching_use: "planner",
+    source_ids: ["src-kireklame-editorial-framework", "src-youtube-blog-recommendation"],
+  },
+];
+
+export const algorithmConcepts: AlgorithmConcept[] = [
+  {
+    id: "concept-recommendation",
+    term: "Recommendation (anbefaling)",
+    definition_plain: "Systemet velger innhold det tror en bestemt person vil like.",
+    definition_technical:
+      "Personaliserte modeller estimerer sannsynlighet for visning, engasjement og tilfredshet per bruker/innehold-par.",
+    platform_notes: "Kjerneprinsipp på Instagram, YouTube og TikTok.",
+    source_ids: ["src-instagram-ranking", "src-youtube-help-discovery", "src-tiktok-support-foryou"],
+  },
+  {
+    id: "concept-ranking-signals",
+    term: "Ranking signals",
+    definition_plain: "Måter brukerrespons forteller systemet om innholdet fungerer.",
+    definition_technical:
+      "Observerte signaler som klikk, watch time, completion, rewatch, likes, kommentarer og andre kvalitetssignaler.",
+    platform_notes: "Vekting varierer mellom plattformer og over tid.",
+    source_ids: ["src-youtube-help-discovery", "src-instagram-ranking", "src-tiktok-newsroom-discovery"],
+  },
+  {
+    id: "concept-retention",
+    term: "Retention",
+    definition_plain: "Hvor lenge folk blir værende i innholdet.",
+    definition_technical:
+      "Andel seere som fortsetter gjennom sekvenser i videoen, ofte målt med avspillingskurver.",
+    platform_notes: "Særlig viktig i tidlig distribusjon og ranking.",
+    source_ids: ["src-youtube-help-discovery", "src-tiktok-support-foryou"],
+  },
+  {
+    id: "concept-satisfaction",
+    term: "Satisfaction",
+    definition_plain: "Om seeren opplevde innholdet som nyttig eller verdifullt.",
+    definition_technical:
+      "Langsiktige kvalitetssignaler utover enkeltvisninger, inkludert brukerrespons på relevans og nytte.",
+    platform_notes: "YouTube omtaler dette eksplisitt i discovery-kontekst.",
+    source_ids: ["src-youtube-help-discovery", "src-youtube-blog-recommendation"],
+  },
+  {
+    id: "concept-candidate-generation",
+    term: "Candidate generation",
+    definition_plain: "Første steg der systemet finner et sett mulige videoer for en seer.",
+    definition_technical:
+      "Et retrieval-trinn som reduserer enormt innholdsrom til kandidater før finere rangering.",
+    platform_notes: "Pedagogisk nyttig for å forklare hvorfor tema-match er kritisk.",
+    source_ids: ["src-youtube-dnn-paper"],
+  },
+  {
+    id: "concept-non-follower-testing",
+    term: "Non-follower testing",
+    definition_plain: "Innhold testes på personer som ikke følger kontoen.",
+    definition_technical:
+      "Systemet eksponerer innhold til relevante segmenter utenfor følgerbasen for å estimere kvalitet og interesse.",
+    platform_notes: "Trial Reels er et tydelig eksempel.",
+    source_ids: ["src-meta-trial-reels", "src-instagram-ranking"],
+  },
+  {
+    id: "concept-topic-fit",
+    term: "Topic fit",
+    definition_plain: "Hvor godt temaet i innholdet matcher interessene til målgruppen.",
+    definition_technical:
+      "Semantisk relevans mellom innholdets tema, brukerens historiske signaler og kontekstuelle prediksjoner.",
+    platform_notes: "Påvirker både kandidatutvalg og rangering.",
+    source_ids: ["src-tiktok-support-foryou", "src-youtube-blog-recommendation"],
+  },
+  {
+    id: "concept-packaging",
+    term: "Packaging",
+    definition_plain: "Hvordan innholdet presenteres: hook, tittel, thumbnail, første sekunder.",
+    definition_technical:
+      "Kombinasjon av metadata og kreative signaler som påvirker initialt valg om å se eller scrolle videre.",
+    platform_notes: "Særlig viktig i tidlig testfase.",
+    source_ids: ["src-kireklame-editorial-framework", "src-youtube-help-discovery"],
+  },
+  {
+    id: "concept-hook",
+    term: "Hook",
+    definition_plain: "Åpningsgrep som gjør at folk stopper og følger med videre.",
+    definition_technical:
+      "Første stimuli som reduserer tidlig drop-off ved å etablere tydelig verdi eller nysgjerrighet.",
+    platform_notes: "Må speile faktisk payoff senere i innholdet.",
+    source_ids: ["src-kireklame-editorial-framework", "src-tiktok-support-foryou"],
+  },
+  {
+    id: "concept-watch-through",
+    term: "Watch-through",
+    definition_plain: "Hvor stor andel av videoen seerne faktisk ser.",
+    definition_technical:
+      "Forhold mellom avspilt varighet og total varighet på tvers av seere eller segmenter.",
+    platform_notes: "Brukes som ett av flere signaler, ikke eneste mål.",
+    source_ids: ["src-youtube-help-discovery", "src-tiktok-support-foryou"],
+  },
+  {
+    id: "concept-skip-signal",
+    term: "Skip signal",
+    definition_plain: "Når seere hopper videre tidlig, tolkes det som lav relevans.",
+    definition_technical:
+      "Negative atferdssignaler i tidlig fase som påvirker videre distribusjonsbeslutninger.",
+    platform_notes: "Ofte knyttet til svak åpning eller feil målgruppe-match.",
+    source_ids: ["src-tiktok-newsroom-discovery", "src-youtube-help-discovery"],
+  },
+  {
+    id: "concept-iteration-loop",
+    term: "Iteration loop",
+    definition_plain: "Planlagt testsyklus der man justerer én ting av gangen mellom publiseringer.",
+    definition_technical:
+      "Strukturert eksperimentering med kontroll av variabler for å forbedre signaler over flere publiseringsrunder.",
+    platform_notes: "Kritisk i undervisning for å unngå tilfeldig læring.",
+    source_ids: ["src-kireklame-editorial-framework", "src-youtube-dnn-paper"],
+  },
+];
+
+export const algorithmPlaybooks: AlgorithmPlaybook[] = [
+  {
+    id: "playbook-awareness",
+    goal_type: "Awareness-kampanje",
+    audience_stage: "Kaldt publikum",
+    recommended_formats: ["Kort video (9:16)", "Karusell", "Reels/TikTok"],
+    hook_patterns: [
+      "Problem i første setning",
+      "Kontrast: før/etter",
+      "Uventet fakta om målgruppens utfordring",
+    ],
+    retention_patterns: [
+      "Del opp i 3 korte steg",
+      "Vis konkret eksempel innen 5 sekunder",
+      "Kutt intro og gå rett til verdi",
+    ],
+    cta_patterns: ["Følg for flere eksempler", "Se neste del", "Lagre som huskeliste"],
+    success_metrics: ["3s hold", "Average watch time", "Saves", "Shares"],
+    related_claim_ids: ["clm-rec-based-discovery", "clm-viewer-behavior-matters", "clm-campaign-first-thinking"],
+  },
+  {
+    id: "playbook-event",
+    goal_type: "Event-promotering",
+    audience_stage: "Varmt + kaldt publikum",
+    recommended_formats: ["Countdown-video", "Stories med påminnelse", "Kort teaser"],
+    hook_patterns: ["Tidsfristen først", "Hva får du ut av eventet?", "Hvem bør delta?"],
+    retention_patterns: [
+      "Vis program/highlights tidlig",
+      "Bruk tydelige tidspunkter og sted",
+      "Hold én tydelig narrativ tråd",
+    ],
+    cta_patterns: ["Meld deg på nå", "Sett påminnelse", "Del med en venn"],
+    success_metrics: ["Klikk til påmelding", "Reminder-set", "Delinger"],
+    related_claim_ids: ["clm-topic-fit-over-follower-count", "clm-campaign-first-thinking"],
+  },
+  {
+    id: "playbook-recruitment",
+    goal_type: "Rekrutteringskampanje",
+    audience_stage: "Kaldt publikum med relevant profil",
+    recommended_formats: ["Ansatt-historier", "Behind the scenes", "FAQ-klipp"],
+    hook_patterns: ["Hva gjør rollen spennende?", "Hvem passer hos oss?", "Typisk arbeidsdag"],
+    retention_patterns: [
+      "Bygg fra spørsmål til svar",
+      "Knytt hver scene til én konkret fordel",
+      "Vis ekte arbeidssituasjoner",
+    ],
+    cta_patterns: ["Søk i dag", "Les full stillingstekst", "Still spørsmål i kommentarfeltet"],
+    success_metrics: ["Klikk til stillingsside", "Kommentarer fra relevante kandidater", "Søknadsrate"],
+    related_claim_ids: ["clm-small-account-can-breakthrough", "clm-value-density-interpretation"],
+  },
+  {
+    id: "playbook-launch",
+    goal_type: "Produktlansering",
+    audience_stage: "Varmt publikum + lookalike",
+    recommended_formats: ["Demo-video", "Feature-karusell", "Teaser + reveal"],
+    hook_patterns: ["Problem først, løsning umiddelbart", "Nytt vs gammelt", "Resultat i første frame"],
+    retention_patterns: [
+      "1 funksjon per sekvens",
+      "Vis payoff før teknisk forklaring",
+      "Avslutt med tydelig neste handling",
+    ],
+    cta_patterns: ["Prøv nå", "Bestill tidlig tilgang", "Se full demo"],
+    success_metrics: ["Klikk til produktside", "Prøveperiode-start", "Konvertering"],
+    related_claim_ids: ["clm-trial-reels-non-follower-test", "clm-campaign-first-thinking", "clm-satisfaction-over-raw-views"],
+  },
+  {
+    id: "playbook-cause",
+    goal_type: "Sak/holdningskampanje",
+    audience_stage: "Blandet publikum",
+    recommended_formats: ["Personlig historie", "Forklaringsvideo", "Myth-vs-reality post"],
+    hook_patterns: ["Konkret menneskelig case", "Mytedekonstruksjon", "Spørsmål som utfordrer antakelser"],
+    retention_patterns: ["Bygg emosjon + fakta", "Bruk kapittelmarkører", "Repeter kjernepoeng i slutten"],
+    cta_patterns: ["Del budskapet", "Signer/engasjer deg", "Diskuter i kommentarfeltet"],
+    success_metrics: ["Kommentar-kvalitet", "Delinger", "Handling på landingsside"],
+    related_claim_ids: ["clm-diagnose-over-blame", "clm-rec-based-discovery", "clm-value-density-interpretation"],
+  },
+];
+
+export const algorithmDiagnostics: AlgorithmDiagnostic[] = [
+  {
+    id: "diag-low-views",
+    symptom: "Lave visninger",
+    likely_causes: [
+      "Temaet er uklart i åpningen",
+      "Innholdet matcher ikke målgruppens interesseprofil",
+      "Hook lover lite eller feil verdi",
+    ],
+    evidence_based_checks: [
+      "Sjekk om verdiforslaget vises innen 1-3 sekunder",
+      "Sammenlign tema, ordvalg og format med tidligere vinnere i samme nisje",
+      "Vurder om thumbnail/tittel/caption beskriver faktisk innhold",
+    ],
+    recommended_changes: [
+      "Test ny opening med tydelig problem eller payoff",
+      "Spiss tema til én konkret situasjon i målgruppen",
+      "Lag 2-3 varianter av pakking (hook + caption) og iterer",
+    ],
+    related_claim_ids: ["clm-topic-fit-over-follower-count", "clm-viewer-behavior-matters", "clm-diagnose-over-blame"],
+  },
+  {
+    id: "diag-weak-retention",
+    symptom: "Svak retention",
+    likely_causes: [
+      "For lang intro uten verdi",
+      "Innholdet bytter retning uten tydelig struktur",
+      "Hook og payoff henger ikke sammen",
+    ],
+    evidence_based_checks: [
+      "Finn tidspunkt der flest faller av",
+      "Se om første budskap kan komprimeres til kortere sekvens",
+      "Kontroller at hvert segment bygger på forrige",
+    ],
+    recommended_changes: [
+      "Flytt hovedverdi frem i starten",
+      "Del opp innhold i tydelige steg/kapitler",
+      "Synk hook-løfte med faktisk leveranse",
+    ],
+    related_claim_ids: ["clm-viewer-behavior-matters", "clm-satisfaction-over-raw-views", "clm-value-density-interpretation"],
+  },
+  {
+    id: "diag-early-dropoff",
+    symptom: "Høy tidlig drop-off",
+    likely_causes: [
+      "Første frame er visuelt eller tematisk svak",
+      "Intro bruker tid på kontekst før poeng",
+      "Feil publikum får innholdet i første test",
+    ],
+    evidence_based_checks: [
+      "Vurder første 2 sekunder uten lyd",
+      "Sammenlign tidlig frafall på ulike hook-varianter",
+      "Sjekk om publisert tema stemmer med kontoens forventede nisje",
+    ],
+    recommended_changes: [
+      "Bytt opening til tydelig kontrast eller resultat",
+      "Reduser preamble og gå rett til kjerneverdi",
+      "Test ny publiseringsvinkel med samme budskap",
+    ],
+    related_claim_ids: ["clm-topic-fit-over-follower-count", "clm-value-density-interpretation", "clm-diagnose-over-blame"],
+  },
+  {
+    id: "diag-high-views-low-action",
+    symptom: "Gode visninger, men lav handling (klikk/salg/søknad)",
+    likely_causes: [
+      "CTA er uklar eller kommer for sent",
+      "Budskapet skaper interesse, men ikke beslutning",
+      "Landingsside/tilbud matcher ikke forventning fra video",
+    ],
+    evidence_based_checks: [
+      "Finn hvor CTA ligger i innholdet",
+      "Sjekk om én tydelig handling kommuniseres",
+      "Vurder friksjon i neste steg etter klikk",
+    ],
+    recommended_changes: [
+      "Test CTA tidligere i innholdet",
+      "Knytt CTA direkte til vist verdi",
+      "Forenkle neste steg (færre felt, klarere tilbud)",
+    ],
+    related_claim_ids: ["clm-campaign-first-thinking", "clm-satisfaction-over-raw-views", "clm-diagnose-over-blame"],
+  },
+  {
+    id: "diag-small-account-low-reach",
+    symptom: "Liten konto får lav reach",
+    likely_causes: [
+      "Innholdet gir svake tidlige signaler i første test",
+      "Tema/pakking er for generisk til å trigge interesse",
+      "Kontoens innholdsmønster er utydelig",
+    ],
+    evidence_based_checks: [
+      "Se om du tester tydelige nisjevinkler over flere poster",
+      "Mål forskjell i respons mellom klare og brede tema",
+      "Vurder konsistens i format og budskap over tid",
+    ],
+    recommended_changes: [
+      "Lag serieinnhold rundt én tydelig målgruppejobb",
+      "Forbedre opening + topic fit før du øker volum",
+      "Kjør strukturert iterasjonsplan over minst 3 runder",
+    ],
+    related_claim_ids: ["clm-small-account-can-breakthrough", "clm-trial-reels-non-follower-test", "clm-candidate-generation-ranking"],
+  },
+];
+
+export const algorithmSourceHierarchy = [
+  "Offisiell plattformdokumentasjon",
+  "Offisiell engineering/research",
+  "Akademisk forskning",
+  "Redaksjonell oversettelse (kildekoblet)",
+  "Praktiker-observasjoner (merket lavere tillit)",
+] as const;
+
+export const algorithmCampaignFramework = [
+  "Mål",
+  "Publikum",
+  "Temavinkel",
+  "Format",
+  "Første-frame hook",
+  "Verdileveranse",
+  "Retention-design",
+  "CTA",
+  "Test-/iterasjonsplan",
+] as const;
+
+export const algorithmPlatformCards: Record<
+  Exclude<AlgorithmPlatform, "cross-platform">,
+  {
+    title: string;
+    summary: string;
+    stable_claim_ids: string[];
+    volatile_claim_ids: string[];
+  }
+> = {
+  instagram: {
+    title: "Instagram",
+    summary: "Anbefaling + ranking med tydelig vekt på relevans, respons og ikke-følger-testing.",
+    stable_claim_ids: ["clm-rec-based-discovery", "clm-trial-reels-non-follower-test", "clm-small-account-can-breakthrough"],
+    volatile_claim_ids: ["clm-perfect-video-length-volatile", "clm-exact-thresholds-volatile"],
+  },
+  youtube: {
+    title: "YouTube",
+    summary: "Discovery styres av seerinteresse, watch behavior og tilfredshet over tid.",
+    stable_claim_ids: ["clm-viewer-behavior-matters", "clm-satisfaction-over-raw-views", "clm-candidate-generation-ranking"],
+    volatile_claim_ids: ["clm-perfect-video-length-volatile", "clm-exact-thresholds-volatile"],
+  },
+  tiktok: {
+    title: "TikTok",
+    summary: "For You personaliseres etter interesse- og interaksjonssignaler, med sterk topic fit-dynamikk.",
+    stable_claim_ids: ["clm-rec-based-discovery", "clm-topic-fit-over-follower-count", "clm-viewer-behavior-matters"],
+    volatile_claim_ids: ["clm-post-frequency-volatile", "clm-perfect-video-length-volatile"],
+  },
+  facebook: {
+    title: "Facebook",
+    summary: "Feed-distribusjon styres av relevanssignal og respons, spesielt i samspill mellom organisk og betalt.",
+    stable_claim_ids: ["clm-facebook-relevance-distribution", "clm-rec-based-discovery", "clm-viewer-behavior-matters"],
+    volatile_claim_ids: ["clm-facebook-format-mix-volatile", "clm-exact-thresholds-volatile"],
+  },
+  linkedin: {
+    title: "LinkedIn",
+    summary: "B2B-ytelse påvirkes av profesjonell relevans, nettverkssignaler og tydelig verdi i faglig kontekst.",
+    stable_claim_ids: ["clm-linkedin-professional-interest-fit", "clm-rec-based-discovery", "clm-campaign-first-thinking"],
+    volatile_claim_ids: ["clm-linkedin-post-style-volatile", "clm-post-frequency-volatile"],
+  },
+};
+
+export const algorithmSourceById = Object.fromEntries(
+  algorithmSources.map((source) => [source.id, source])
+) as Record<string, AlgorithmSource>;
+
+export const algorithmClaimById = Object.fromEntries(
+  algorithmClaims.map((claim) => [claim.id, claim])
+) as Record<string, AlgorithmClaim>;
+
+export const algorithmClaimsByType = Object.fromEntries(
+  (["stable", "volatile", "myth", "interpretation"] as AlgorithmClaimType[]).map((claimType) => [
+    claimType,
+    algorithmClaims.filter((claim) => claim.claim_type === claimType),
+  ])
+) as Record<AlgorithmClaimType, AlgorithmClaim[]>;
