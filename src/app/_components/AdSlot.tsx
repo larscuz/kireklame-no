@@ -30,6 +30,8 @@ export default function AdSlot({
   const desktopImg = ad.image_url ?? ad.mobile_image_url ?? null;
   const label = normalizeSponsorLabel(ad.label ?? sponsorLabel, locale);
   const title = ad.title ?? (locale === "en" ? "Sponsored" : "Sponset");
+  const mediaHoverClass =
+    "opacity-85 transition-all duration-500 ease-out group-hover:scale-[1.08] group-hover:opacity-100";
 
   return (
     <aside
@@ -50,7 +52,7 @@ export default function AdSlot({
                 <img
                   src={desktopImg}
                   alt={ad.alt}
-                  className="block h-auto w-full object-contain object-center"
+                  className={`block h-auto w-full object-contain object-center ${mediaHoverClass}`}
                   style={{ objectPosition: "center center" }}
                   loading="lazy"
                 />
@@ -75,7 +77,7 @@ export default function AdSlot({
                 <img
                   src={desktopImg}
                   alt={ad.alt}
-                  className="h-full w-full object-contain object-center"
+                  className={`h-full w-full object-contain object-center ${mediaHoverClass}`}
                   style={{ objectPosition: "center center" }}
                   loading="lazy"
                 />
@@ -100,7 +102,7 @@ export default function AdSlot({
                 <img
                   src={desktopImg}
                   alt={ad.alt}
-                  className="h-full w-full object-contain object-center"
+                  className={`h-full w-full object-contain object-center ${mediaHoverClass}`}
                   style={{ objectPosition: "center center" }}
                   loading="lazy"
                 />
@@ -131,7 +133,7 @@ export default function AdSlot({
                 <img
                   src={desktopImg}
                   alt={ad.alt}
-                  className="h-full w-full object-contain object-center"
+                  className={`h-full w-full object-contain object-center ${mediaHoverClass}`}
                   style={{ objectPosition: "center center" }}
                   loading="lazy"
                 />
@@ -157,7 +159,7 @@ export default function AdSlot({
                   <img
                     src={desktopImg}
                     alt={ad.alt}
-                    className="h-full w-full object-cover object-center group-hover:scale-[1.02] transition duration-300"
+                    className={`h-full w-full object-cover object-center ${mediaHoverClass}`}
                     loading="lazy"
                   />
                 </picture>

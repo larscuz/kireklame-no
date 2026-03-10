@@ -41,7 +41,7 @@ export default function HeroInternational({
             : "grid gap-6 items-start"
         }
       >
-        <div className="relative rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] shadow-soft overflow-hidden">
+        <div className="group relative rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] shadow-soft overflow-hidden">
           {/* Background video */}
           <HeroBackgroundVideo
             src={heroVideoUrl}

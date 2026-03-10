@@ -10,7 +10,7 @@ export default function HeroBackgroundVideo({
   return (
     <div className="pointer-events-none absolute inset-0 overflow-hidden rounded-[inherit]">
       <video
-        className="absolute inset-0 block h-full w-full max-w-full object-cover object-center"
+        className="absolute inset-0 block h-full w-full max-w-full object-cover object-center opacity-85 transition-all duration-500 ease-out group-hover:scale-[1.08] group-hover:opacity-100"
         src={src}
         poster={poster ?? undefined}
         autoPlay

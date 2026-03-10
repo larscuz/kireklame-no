@@ -90,7 +90,7 @@ export default async function CompaniesPage({
             : "mt-4"
         }
       >
-        <div className="relative overflow-hidden rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] p-5 shadow-soft">
+        <div className="group relative overflow-hidden rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] p-5 shadow-soft">
           {companiesHeroVideoUrl ? (
             <>
               <HeroBackgroundVideo
