@@ -4,10 +4,13 @@ import { revalidatePath } from "next/cache";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import { requireAdmin } from "@/lib/supabase/server";
 import { AD_PLACEMENT_KEYS } from "@/lib/adPlacements";
+import AdAssetUploadField from "./AdAssetUploadField";
 
 export const dynamic = "force-dynamic";
 
 const placements = AD_PLACEMENT_KEYS;
+
+type UploadMode = "r2" | "endpoint" | "missing";
 
 type AdRow = {
   id: number;
@@ -28,6 +31,62 @@ type AdRow = {
 };
 
 const FALLBACK_OPTION = "__fallback__";
+
+type UploadStatus = {
+  mode: UploadMode;
+  message: string;
+  missing: string[];
+};
+
+function hasEnv(name: string): boolean {
+  return String(process.env[name] ?? "").trim().length > 0;
+}
+
+function resolveUploadStatus(): UploadStatus {
+  const r2Ready =
+    (hasEnv("R2_ACCOUNT_ID") || hasEnv("CLOUDFLARE_ACCOUNT_ID")) &&
+    (hasEnv("ADS_UPLOAD_BUCKET") || hasEnv("R2_BUCKET")) &&
+    hasEnv("R2_ACCESS_KEY_ID") &&
+    hasEnv("R2_SECRET_ACCESS_KEY") &&
+    hasEnv("R2_PUBLIC_BASE_URL");
+
+  if (r2Ready) {
+    return {
+      mode: "r2",
+      message: "Direkte R2-opplasting er aktiv for annonser.",
+      missing: [],
+    };
+  }
+
+  const endpointReady =
+    (hasEnv("ADS_UPLOAD_URL") && hasEnv("ADS_UPLOAD_TOKEN")) ||
+    (hasEnv("ONECOM_UPLOAD_URL") && hasEnv("ONECOM_UPLOAD_TOKEN"));
+
+  if (endpointReady) {
+    return {
+      mode: "endpoint",
+      message: "Endpoint-opplasting er aktiv for annonser.",
+      missing: [],
+    };
+  }
+
+  const missing: string[] = [];
+  if (!(hasEnv("R2_ACCOUNT_ID") || hasEnv("CLOUDFLARE_ACCOUNT_ID"))) {
+    missing.push("R2_ACCOUNT_ID eller CLOUDFLARE_ACCOUNT_ID");
+  }
+  if (!(hasEnv("ADS_UPLOAD_BUCKET") || hasEnv("R2_BUCKET"))) {
+    missing.push("ADS_UPLOAD_BUCKET eller R2_BUCKET");
+  }
+  if (!hasEnv("R2_ACCESS_KEY_ID")) missing.push("R2_ACCESS_KEY_ID");
+  if (!hasEnv("R2_SECRET_ACCESS_KEY")) missing.push("R2_SECRET_ACCESS_KEY");
+  if (!hasEnv("R2_PUBLIC_BASE_URL")) missing.push("R2_PUBLIC_BASE_URL");
+
+  return {
+    mode: "missing",
+    message: "Opplasting er ikke konfigurert ennå.",
+    missing,
+  };
+}
 
 function revalidateAdsPaths() {
   revalidatePath("/");
@@ -274,6 +333,7 @@ function pickEffectiveNowForPlacement(placement: string, ads: AdRow[]) {
 export default async function AdminAdsPage() {
   await requireAdmin();
   const db = supabaseAdmin();
+  const uploadStatus = resolveUploadStatus();
 
   const { data: ads, error } = await db
     .from("ads")
@@ -319,6 +379,18 @@ export default async function AdminAdsPage() {
             Legg til annonser per plassering (placement). Bruk starts/ends for
             planlegging.
           </p>
+          <p
+            className={`mt-2 text-xs ${
+              uploadStatus.mode === "missing" ? "text-amber-400" : "text-emerald-400"
+            }`}
+          >
+            {uploadStatus.message}
+          </p>
+          {uploadStatus.missing.length ? (
+            <p className="mt-1 text-[11px] text-[rgb(var(--muted))]">
+              Mangler: {uploadStatus.missing.join(", ")}
+            </p>
+          ) : null}
         </div>
         <Link className="underline text-sm" href="/admin">
           ← Tilbake
@@ -377,7 +449,14 @@ export default async function AdminAdsPage() {
 
         <div className="grid gap-2">
           <label className="text-sm font-semibold">Bilde URL (påkrevd)</label>
+          <AdAssetUploadField
+            fieldId="ad-image-url"
+            heading="Last opp desktop-bilde"
+            description="Laster opp filen og fyller inn URL-feltet automatisk."
+            disabled={uploadStatus.mode === "missing"}
+          />
           <input
+            id="ad-image-url"
             name="image_url"
             placeholder="/ads/YourImage.png"
             className="w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-4 py-2"
@@ -386,7 +465,14 @@ export default async function AdminAdsPage() {
 
         <div className="grid gap-2">
           <label className="text-sm font-semibold">Mobil bilde URL (valgfri)</label>
+          <AdAssetUploadField
+            fieldId="ad-mobile-image-url"
+            heading="Last opp mobil-bilde"
+            description="Bruk dette hvis du vil ha et eget format for mobil."
+            disabled={uploadStatus.mode === "missing"}
+          />
           <input
+            id="ad-mobile-image-url"
             name="mobile_image_url"
             placeholder="/ads/YourImageMobile.png"
             className="w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-4 py-2"
