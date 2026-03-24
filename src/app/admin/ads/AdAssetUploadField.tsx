@@ -7,6 +7,7 @@ type Props = {
   heading: string;
   description: string;
   disabled?: boolean;
+  submitParentOnSuccess?: boolean;
 };
 
 type UploadResponse = {
@@ -27,13 +28,35 @@ export default function AdAssetUploadField({
   heading,
   description,
   disabled = false,
+  submitParentOnSuccess = false,
 }: Props) {
   const [isUploading, setIsUploading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
 
-  async function handleUpload() {
+  function validateParentFormForCreate(form: HTMLFormElement) {
+    const checks: Array<{ selector: string; label: string }> = [
+      { selector: "select[name='placement']", label: "placement" },
+      { selector: "input[name='href']", label: "lenke" },
+      { selector: "input[name='alt']", label: "alt-tekst" },
+    ];
+
+    const missing = checks
+      .filter(({ selector }) => {
+        const field = form.querySelector(selector);
+        return !(field instanceof HTMLInputElement || field instanceof HTMLSelectElement)
+          ? true
+          : String(field.value ?? "").trim().length === 0;
+      })
+      .map(({ label }) => label);
+
+    if (missing.length) {
+      throw new Error(`Fyll ut ${missing.join(", ")} før du oppretter annonsen.`);
+    }
+  }
+
+  async function handleUpload(options?: { submitAfterUpload?: boolean }) {
     setErrorMessage(null);
     setSuccessMessage(null);
 
@@ -75,6 +98,19 @@ export default function AdAssetUploadField({
       if (inputRef.current) {
         inputRef.current.value = "";
       }
+
+      if (options?.submitAfterUpload) {
+        const form = target.closest("form");
+        if (!(form instanceof HTMLFormElement)) {
+          throw new Error("Fant ikke opprett-skjemaet.");
+        }
+
+        validateParentFormForCreate(form);
+        form.requestSubmit();
+        setSuccessMessage("Fil lastet opp. Oppretter annonse...");
+        return;
+      }
+
       setSuccessMessage("Fil lastet opp. URL-feltet er oppdatert.");
     } catch (error: any) {
       setErrorMessage(String(error?.message ?? "Opplasting feilet."));
@@ -99,12 +135,22 @@ export default function AdAssetUploadField({
         />
         <button
           type="button"
-          onClick={handleUpload}
+          onClick={() => handleUpload()}
           disabled={disabled || isUploading}
           className="inline-flex rounded-lg border border-[rgb(var(--border))] px-3 py-1.5 text-sm font-semibold hover:bg-[rgb(var(--bg))] disabled:cursor-not-allowed disabled:opacity-60"
         >
           {isUploading ? "Laster opp..." : "Last opp fil"}
         </button>
+        {submitParentOnSuccess ? (
+          <button
+            type="button"
+            onClick={() => handleUpload({ submitAfterUpload: true })}
+            disabled={disabled || isUploading}
+            className="inline-flex rounded-lg bg-[rgb(var(--fg))] px-3 py-1.5 text-sm font-semibold text-[rgb(var(--bg))] hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            {isUploading ? "Laster opp..." : "Last opp og legg til annonse"}
+          </button>
+        ) : null}
       </div>
       {successMessage ? (
         <p className="mt-2 text-[11px] text-emerald-400">{successMessage}</p>

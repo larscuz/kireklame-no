@@ -609,8 +609,9 @@ export default async function AdminAdsPage() {
           <AdAssetUploadField
             fieldId="ad-image-url"
             heading="Last opp desktop-bilde"
-            description="Laster opp filen og fyller inn URL-feltet automatisk."
+            description="Laster opp filen og fyller inn URL-feltet automatisk. Du kan også opprette annonsen direkte herfra."
             disabled={uploadStatus.mode === "missing"}
+            submitParentOnSuccess
           />
           <input
             id="ad-image-url"
