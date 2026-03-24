@@ -15,6 +15,8 @@ import AdAssetUploadField from "./AdAssetUploadField";
 export const dynamic = "force-dynamic";
 
 const placements = AD_PLACEMENT_KEYS;
+const DEFAULT_AD_LABEL = "Sponset arrangement";
+const DEFAULT_AD_CTA = "Se event →";
 
 type UploadMode = "r2" | "endpoint" | "missing";
 type ScheduleMode = "supported" | "missing";
@@ -283,8 +285,8 @@ async function createAdAction(formData: FormData) {
   const mobile_image_url = String(formData.get("mobile_image_url") ?? "").trim() || null;
   const href = String(formData.get("href") ?? "").trim();
   const alt = String(formData.get("alt") ?? "").trim();
-  const label = String(formData.get("label") ?? "").trim() || null;
-  const cta_text = String(formData.get("cta_text") ?? "").trim() || null;
+  const label = String(formData.get("label") ?? "").trim() || DEFAULT_AD_LABEL;
+  const cta_text = String(formData.get("cta_text") ?? "").trim() || DEFAULT_AD_CTA;
   const priorityRaw = String(formData.get("priority") ?? "0").trim();
   const priority = Number.isFinite(Number(priorityRaw)) ? Number(priorityRaw) : 0;
   const is_active = formData.get("is_active") === "on";
@@ -427,8 +429,8 @@ async function assignPlacementAction(formData: FormData) {
       mobile_image_url: source.mobile_image_url,
       href: source.href,
       alt: source.alt,
-      label: source.label,
-      cta_text: source.cta_text,
+      label: source.label ?? DEFAULT_AD_LABEL,
+      cta_text: source.cta_text ?? DEFAULT_AD_CTA,
     });
 
     if (insertError) throw new Error(insertError.message);
@@ -659,6 +661,7 @@ export default async function AdminAdsPage() {
           <label className="text-sm font-semibold">Label (valgfri)</label>
           <input
             name="label"
+            defaultValue={DEFAULT_AD_LABEL}
             placeholder="Sponset / Sponsored"
             className="w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-4 py-2"
           />
@@ -668,6 +671,7 @@ export default async function AdminAdsPage() {
           <label className="text-sm font-semibold">CTA‑tekst (valgfri)</label>
           <input
             name="cta_text"
+            defaultValue={DEFAULT_AD_CTA}
             placeholder="f.eks. Les mer"
             className="w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-4 py-2"
           />
