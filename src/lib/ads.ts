@@ -1,4 +1,5 @@
 import { supabaseAdmin } from "@/lib/supabase/admin";
+import { isMissingAdsScheduleColumns } from "@/lib/adsDb";
 
 export type SponsorAd = {
   id: number;
@@ -15,16 +16,30 @@ export type SponsorAd = {
 
 export async function getAdForPlacement(placement: string) {
   const nowIso = new Date().toISOString();
-  const { data } = await supabaseAdmin()
+  const db = supabaseAdmin();
+  const selectColumns =
+    "id, title, meta, description, image_url, mobile_image_url, href, alt, label, cta_text, priority, created_at";
+
+  let { data, error } = await db
     .from("ads")
-    .select(
-      "id, title, meta, description, image_url, mobile_image_url, href, alt, label, cta_text, priority, created_at"
-    )
+    .select(selectColumns)
     .eq("placement", placement)
     .eq("is_active", true)
     .or(`starts_at.is.null,starts_at.lte.${nowIso}`)
     .or(`ends_at.is.null,ends_at.gte.${nowIso}`)
     .order("priority", { ascending: true });
+
+  if (error && isMissingAdsScheduleColumns(error)) {
+    const fallbackQuery = await db
+      .from("ads")
+      .select(selectColumns)
+      .eq("placement", placement)
+      .eq("is_active", true)
+      .order("priority", { ascending: true });
+
+    data = fallbackQuery.data;
+    error = fallbackQuery.error;
+  }
 
   if (data?.length) {
     return pickRotatedAd(

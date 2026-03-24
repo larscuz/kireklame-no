@@ -1,9 +1,15 @@
 // src/app/admin/ads/page.tsx
 import Link from "next/link";
 import { revalidatePath } from "next/cache";
+import type { SupabaseClient } from "@supabase/supabase-js";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import { requireAdmin } from "@/lib/supabase/server";
 import { AD_PLACEMENT_KEYS } from "@/lib/adPlacements";
+import {
+  ADS_SELECT_BASE,
+  ADS_SELECT_WITH_SCHEDULE,
+  isMissingAdsScheduleColumns,
+} from "@/lib/adsDb";
 import AdAssetUploadField from "./AdAssetUploadField";
 
 export const dynamic = "force-dynamic";
@@ -11,6 +17,7 @@ export const dynamic = "force-dynamic";
 const placements = AD_PLACEMENT_KEYS;
 
 type UploadMode = "r2" | "endpoint" | "missing";
+type ScheduleMode = "supported" | "missing";
 
 type AdRow = {
   id: number;
@@ -36,6 +43,12 @@ type UploadStatus = {
   mode: UploadMode;
   message: string;
   missing: string[];
+};
+
+type AdsLoadResult = {
+  rows: AdRow[];
+  error: { message: string } | null;
+  scheduleMode: ScheduleMode;
 };
 
 function hasEnv(name: string): boolean {
@@ -96,6 +109,168 @@ function revalidateAdsPaths() {
   revalidatePath("/admin/ads");
 }
 
+async function insertAdWithOptionalSchedule(
+  db: SupabaseClient,
+  payload: {
+    placement: string;
+    title: string | null;
+    meta: string | null;
+    description: string | null;
+    image_url: string;
+    mobile_image_url: string | null;
+    href: string;
+    alt: string;
+    label: string | null;
+    cta_text: string | null;
+    priority: number;
+    is_active: boolean;
+    starts_at: string | null;
+    ends_at: string | null;
+  }
+) {
+  let { error } = await db.from("ads").insert(payload);
+  if (error && isMissingAdsScheduleColumns(error)) {
+    const { starts_at: _startsAt, ends_at: _endsAt, ...withoutSchedule } = payload;
+    error = (await db.from("ads").insert(withoutSchedule)).error;
+  }
+  return error;
+}
+
+async function updateAdWithOptionalSchedule(
+  db: SupabaseClient,
+  id: number,
+  payload: {
+    placement: string;
+    priority: number;
+    is_active: boolean;
+    starts_at: string | null;
+    ends_at: string | null;
+  }
+) {
+  let { error } = await db.from("ads").update(payload).eq("id", id);
+  if (error && isMissingAdsScheduleColumns(error)) {
+    const { starts_at: _startsAt, ends_at: _endsAt, ...withoutSchedule } = payload;
+    error = (await db.from("ads").update(withoutSchedule).eq("id", id)).error;
+  }
+  return error;
+}
+
+async function promoteAdWithOptionalSchedule(db: SupabaseClient, id: number) {
+  let { error } = await db
+    .from("ads")
+    .update({
+      is_active: true,
+      priority: 0,
+      starts_at: null,
+      ends_at: null,
+    })
+    .eq("id", id);
+
+  if (error && isMissingAdsScheduleColumns(error)) {
+    error = (
+      await db
+        .from("ads")
+        .update({
+          is_active: true,
+          priority: 0,
+        })
+        .eq("id", id)
+    ).error;
+  }
+
+  return error;
+}
+
+async function cloneAdToPlacementWithOptionalSchedule(
+  db: SupabaseClient,
+  payload: {
+    placement: string;
+    title: string | null;
+    meta: string | null;
+    description: string | null;
+    image_url: string;
+    mobile_image_url: string | null;
+    href: string;
+    alt: string;
+    label: string | null;
+    cta_text: string | null;
+  }
+) {
+  let { error } = await db.from("ads").insert({
+    ...payload,
+    is_active: true,
+    priority: 0,
+    starts_at: null,
+    ends_at: null,
+  });
+
+  if (error && isMissingAdsScheduleColumns(error)) {
+    error = (
+      await db.from("ads").insert({
+        ...payload,
+        is_active: true,
+        priority: 0,
+      })
+    ).error;
+  }
+
+  return error;
+}
+
+async function loadAdsForAdmin(db: SupabaseClient): Promise<AdsLoadResult> {
+  const withSchedule = await db
+    .from("ads")
+    .select(ADS_SELECT_WITH_SCHEDULE)
+    .order("id", { ascending: true });
+
+  if (!withSchedule.error) {
+    return {
+      rows: ((withSchedule.data ?? []) as unknown as AdRow[]).map((ad) => ({
+        ...ad,
+        image_url: ad.image_url ?? null,
+        href: ad.href ?? null,
+      })),
+      error: null,
+      scheduleMode: "supported",
+    };
+  }
+
+  if (!isMissingAdsScheduleColumns(withSchedule.error)) {
+    return {
+      rows: [],
+      error: { message: withSchedule.error.message },
+      scheduleMode: "supported",
+    };
+  }
+
+  const withoutSchedule = await db
+    .from("ads")
+    .select(ADS_SELECT_BASE)
+    .order("id", { ascending: true });
+
+  if (withoutSchedule.error) {
+    return {
+      rows: [],
+      error: { message: withoutSchedule.error.message },
+      scheduleMode: "missing",
+    };
+  }
+
+  return {
+    rows: ((withoutSchedule.data ?? []) as unknown as Array<
+      Omit<AdRow, "starts_at" | "ends_at">
+    >).map((ad) => ({
+      ...ad,
+      image_url: ad.image_url ?? null,
+      href: ad.href ?? null,
+      starts_at: null,
+      ends_at: null,
+    })),
+    error: null,
+    scheduleMode: "missing",
+  };
+}
+
 async function createAdAction(formData: FormData) {
   "use server";
   await requireAdmin();
@@ -124,7 +299,7 @@ async function createAdAction(formData: FormData) {
   }
 
   const db = supabaseAdmin();
-  const { error } = await db.from("ads").insert({
+  const error = await insertAdWithOptionalSchedule(db, {
     placement,
     title,
     meta,
@@ -170,16 +345,13 @@ async function updateAdAction(formData: FormData) {
   }
 
   const db = supabaseAdmin();
-  const { error } = await db
-    .from("ads")
-    .update({
-      placement,
-      priority,
-      is_active,
-      starts_at,
-      ends_at,
-    })
-    .eq("id", id);
+  const error = await updateAdWithOptionalSchedule(db, id, {
+    placement,
+    priority,
+    is_active,
+    starts_at,
+    ends_at,
+  });
 
   if (error) throw new Error(error.message);
 
@@ -242,19 +414,11 @@ async function assignPlacementAction(formData: FormData) {
   if (clearError) throw new Error(clearError.message);
 
   if (source.placement === placement) {
-    const { error: promoteError } = await db
-      .from("ads")
-      .update({
-        is_active: true,
-        priority: 0,
-        starts_at: null,
-        ends_at: null,
-      })
-      .eq("id", source.id);
+    const promoteError = await promoteAdWithOptionalSchedule(db, source.id);
 
     if (promoteError) throw new Error(promoteError.message);
   } else {
-    const { error: insertError } = await db.from("ads").insert({
+    const insertError = await cloneAdToPlacementWithOptionalSchedule(db, {
       placement,
       title: source.title,
       meta: source.meta,
@@ -265,10 +429,6 @@ async function assignPlacementAction(formData: FormData) {
       alt: source.alt,
       label: source.label,
       cta_text: source.cta_text,
-      is_active: true,
-      priority: 0,
-      starts_at: null,
-      ends_at: null,
     });
 
     if (insertError) throw new Error(insertError.message);
@@ -334,19 +494,10 @@ export default async function AdminAdsPage() {
   await requireAdmin();
   const db = supabaseAdmin();
   const uploadStatus = resolveUploadStatus();
-
-  const { data: ads, error } = await db
-    .from("ads")
-    .select(
-      "id, placement, title, meta, description, image_url, mobile_image_url, href, alt, label, cta_text, is_active, priority, starts_at, ends_at"
-    )
-    .order("id", { ascending: true });
-
-  const adRows = ((ads ?? []) as AdRow[]).map((ad) => ({
-    ...ad,
-    image_url: ad.image_url ?? null,
-    href: ad.href ?? null,
-  }));
+  const adsState = await loadAdsForAdmin(db);
+  const adRows = adsState.rows;
+  const error = adsState.error;
+  const scheduleMode = adsState.scheduleMode;
 
   const effectiveNow = placements.map((placement) => {
     const chosen = pickEffectiveNowForPlacement(placement, adRows);
@@ -389,6 +540,12 @@ export default async function AdminAdsPage() {
           {uploadStatus.missing.length ? (
             <p className="mt-1 text-[11px] text-[rgb(var(--muted))]">
               Mangler: {uploadStatus.missing.join(", ")}
+            </p>
+          ) : null}
+          {scheduleMode === "missing" ? (
+            <p className="mt-1 text-[11px] text-amber-400">
+              Tidsplan-felter er deaktivert fordi `ads.starts_at` / `ads.ends_at`
+              ikke finnes i databasen ennå.
             </p>
           ) : null}
         </div>
@@ -528,23 +685,27 @@ export default async function AdminAdsPage() {
           </p>
         </div>
 
-        <div className="grid gap-2">
-          <label className="text-sm font-semibold">Start (valgfri)</label>
-          <input
-            name="starts_at"
-            type="datetime-local"
-            className="w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-4 py-2"
-          />
-        </div>
+        {scheduleMode === "supported" ? (
+          <>
+            <div className="grid gap-2">
+              <label className="text-sm font-semibold">Start (valgfri)</label>
+              <input
+                name="starts_at"
+                type="datetime-local"
+                className="w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-4 py-2"
+              />
+            </div>
 
-        <div className="grid gap-2">
-          <label className="text-sm font-semibold">Slutt (valgfri)</label>
-          <input
-            name="ends_at"
-            type="datetime-local"
-            className="w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-4 py-2"
-          />
-        </div>
+            <div className="grid gap-2">
+              <label className="text-sm font-semibold">Slutt (valgfri)</label>
+              <input
+                name="ends_at"
+                type="datetime-local"
+                className="w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-4 py-2"
+              />
+            </div>
+          </>
+        ) : null}
 
         <label className="inline-flex items-center gap-2 text-sm">
           <input type="checkbox" name="is_active" defaultChecked />
@@ -637,7 +798,11 @@ export default async function AdminAdsPage() {
             <form
               key={ad.id}
               action={updateAdAction}
-              className="grid gap-3 rounded-xl border border-[rgb(var(--border))] px-4 py-3 text-sm md:grid-cols-[auto,minmax(220px,1fr),minmax(180px,1fr),auto,auto,auto,auto,auto]"
+              className={`grid gap-3 rounded-xl border border-[rgb(var(--border))] px-4 py-3 text-sm ${
+                scheduleMode === "supported"
+                  ? "md:grid-cols-[auto,minmax(220px,1fr),minmax(180px,1fr),auto,auto,auto,auto,auto]"
+                  : "md:grid-cols-[auto,minmax(220px,1fr),minmax(180px,1fr),auto,auto,auto]"
+              }`}
             >
               <input type="hidden" name="id" value={ad.id} />
               <div className="font-semibold self-center">#{ad.id}</div>
@@ -670,27 +835,33 @@ export default async function AdminAdsPage() {
                 />
                 aktiv
               </label>
-              <label className="grid gap-1 text-[rgb(var(--muted))]">
-                <span className="text-xs">start</span>
-                <input
-                  name="starts_at"
-                  type="datetime-local"
-                  defaultValue={toDateTimeLocalValue(ad.starts_at)}
-                  className="rounded-lg border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-2 py-1 text-sm text-[rgb(var(--fg))]"
-                />
-              </label>
-              <label className="grid gap-1 text-[rgb(var(--muted))]">
-                <span className="text-xs">slutt</span>
-                <input
-                  name="ends_at"
-                  type="datetime-local"
-                  defaultValue={toDateTimeLocalValue(ad.ends_at)}
-                  className="rounded-lg border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-2 py-1 text-sm text-[rgb(var(--fg))]"
-                />
-              </label>
-              <div className="self-center text-[rgb(var(--muted))]">
-                {getScheduleStatus(ad.starts_at, ad.ends_at)}
-              </div>
+              {scheduleMode === "supported" ? (
+                <>
+                  <label className="grid gap-1 text-[rgb(var(--muted))]">
+                    <span className="text-xs">start</span>
+                    <input
+                      name="starts_at"
+                      type="datetime-local"
+                      defaultValue={toDateTimeLocalValue(ad.starts_at)}
+                      className="rounded-lg border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-2 py-1 text-sm text-[rgb(var(--fg))]"
+                    />
+                  </label>
+                  <label className="grid gap-1 text-[rgb(var(--muted))]">
+                    <span className="text-xs">slutt</span>
+                    <input
+                      name="ends_at"
+                      type="datetime-local"
+                      defaultValue={toDateTimeLocalValue(ad.ends_at)}
+                      className="rounded-lg border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-2 py-1 text-sm text-[rgb(var(--fg))]"
+                    />
+                  </label>
+                  <div className="self-center text-[rgb(var(--muted))]">
+                    {getScheduleStatus(ad.starts_at, ad.ends_at)}
+                  </div>
+                </>
+              ) : (
+                <div className="self-center text-[rgb(var(--muted))]">uten tidsplan</div>
+              )}
               <button
                 type="submit"
                 className="inline-flex self-center rounded-lg border border-[rgb(var(--border))] px-3 py-1.5 text-sm font-semibold hover:bg-[rgb(var(--bg))] transition"
@@ -699,7 +870,7 @@ export default async function AdminAdsPage() {
               </button>
             </form>
           ))}
-          {!ads?.length && !error ? (
+          {!adRows.length && !error ? (
             <p className="text-sm text-[rgb(var(--muted))]">Ingen annonser.</p>
           ) : null}
         </div>
