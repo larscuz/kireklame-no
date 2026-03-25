@@ -154,19 +154,40 @@ function HeroMediaSection({
   );
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
+  const needsGenerationRef = useRef(false);
   const lastResolvedVideoUrlRef = useRef<string | null>(
     videoDefaultValue && posterDefaultValue ? videoDefaultValue : null
   );
+
+  function syncGenerationState(
+    nextVideoUrl: string,
+    nextPosterUrl: string,
+    source: "video" | "poster"
+  ) {
+    if (!nextVideoUrl) {
+      needsGenerationRef.current = false;
+      return;
+    }
+
+    if (source === "poster" && nextPosterUrl) {
+      lastResolvedVideoUrlRef.current = nextVideoUrl;
+      needsGenerationRef.current = false;
+      return;
+    }
+
+    needsGenerationRef.current = lastResolvedVideoUrlRef.current !== nextVideoUrl;
+  }
 
   async function maybeGeneratePoster(force = false) {
     const currentVideoUrl = videoRef.current?.value.trim() ?? "";
     const currentPosterUrl = posterRef.current?.value.trim() ?? "";
 
     if (!currentVideoUrl) {
+      needsGenerationRef.current = false;
       return;
     }
 
-    if (!force && currentPosterUrl && lastResolvedVideoUrlRef.current === currentVideoUrl) {
+    if (!force && !needsGenerationRef.current) {
       return;
     }
 
@@ -189,12 +210,14 @@ function HeroMediaSection({
       setPosterPreview(uploadedUrl);
       setStatusMessage("Poster oppdatert automatisk.");
       lastResolvedVideoUrlRef.current = currentVideoUrl;
+      needsGenerationRef.current = false;
     } catch (error: any) {
       const message =
         String(error?.message ?? "Klarte ikke lage automatisk poster.")
           || "Klarte ikke lage automatisk poster.";
       setErrorMessage(message);
       setStatusMessage(null);
+      needsGenerationRef.current = true;
     } finally {
       setIsGenerating(false);
     }
@@ -248,6 +271,19 @@ function HeroMediaSection({
           defaultValue={videoDefaultValue}
           placeholder="https://.../video.mp4"
           className="w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-4 py-2"
+          onChange={(event) => {
+            const nextVideoUrl = event.currentTarget.value.trim();
+            const currentPosterUrl = posterRef.current?.value.trim() ?? "";
+            syncGenerationState(nextVideoUrl, currentPosterUrl, "video");
+            setErrorMessage(null);
+            if (nextVideoUrl && lastResolvedVideoUrlRef.current !== nextVideoUrl) {
+              setStatusMessage("Ny video registrert. Poster lages automatisk ved blur eller lagring.");
+            } else if (currentPosterUrl) {
+              setStatusMessage("Poster klar.");
+            } else {
+              setStatusMessage(null);
+            }
+          }}
           onBlur={() => {
             void maybeGeneratePoster(false);
           }}
@@ -278,7 +314,12 @@ function HeroMediaSection({
           placeholder="https://.../hero-poster.jpg"
           className="w-full rounded-xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] px-4 py-2"
           onChange={(event) => {
-            setPosterPreview(event.currentTarget.value.trim());
+            const nextPosterUrl = event.currentTarget.value.trim();
+            const currentVideoUrl = videoRef.current?.value.trim() ?? "";
+            setPosterPreview(nextPosterUrl);
+            syncGenerationState(currentVideoUrl, nextPosterUrl, "poster");
+            setErrorMessage(null);
+            setStatusMessage(nextPosterUrl ? "Poster klar." : null);
           }}
         />
         <p className="text-xs text-[rgb(var(--muted))]">
