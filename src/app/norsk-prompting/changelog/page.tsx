@@ -288,9 +288,9 @@ const rankingCategories: FreeModelRankingCategory[] = [
 ];
 
 export const metadata = siteMeta({
-  title: "KI-verktøy for KI-skole | Norsk Prompting",
+  title: "KI-verktøy for KI-akademi | Norsk Prompting",
   description:
-    "Finn KI-verktøy for KI-skole, prompting og undervisning i Norsk Prompting. Siden samler tekst-, bilde-, video- og lydverktøy som kan brukes i mediefag og generativ praksis.",
+    "Finn KI-verktøy for KI-akademi, prompting og undervisning i Norsk Prompting. Siden samler tekst-, bilde-, video- og lydverktøy som kan brukes i mediefag og generativ praksis.",
   path: "/norsk-prompting/changelog",
 });
 
@@ -319,7 +319,7 @@ export default function NorskPromptingChangelogPage() {
     >
       <section className="np-node-surface rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))]/88 p-5 md:p-6">
         <p className="text-sm leading-relaxed text-[rgb(var(--muted))]">
-          KI-verktøy-siden gir en oversikt over modeller som kan brukes i KI-skole,
+          KI-verktøy-siden gir en oversikt over modeller som kan brukes i KI-akademi,
           prompting og undervisning i praksis. Her finner du tekst-, bilde-, video-
           og lydverktøy som passer til generativ KI og mediefaglige arbeidsflyter.
         </p>

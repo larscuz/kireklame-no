@@ -141,12 +141,12 @@ export const algorithmSources: AlgorithmSource[] = [
     summary:
       "Kandidatgenerering + rangering gir en stabil modell for å forklare moderne anbefalingssystemer.",
     notes:
-      "Brukes som systemlogikk i KI-skole for å unngå folkloreforklaringer.",
+      "Brukes som systemlogikk i KI-akademi for å unngå folkloreforklaringer.",
     confidence: "high",
   },
   {
     id: "src-kireklame-editorial-framework",
-    title: "KI-skole redaksjonell ramme: Algoritmer og kampanjeplanlegging",
+    title: "KI-akademi redaksjonell ramme: Algoritmer og kampanjeplanlegging",
     url: "https://kireklame.no/norsk-prompting/algoritmer",
     source_type: "editorial",
     platform: "cross-platform",

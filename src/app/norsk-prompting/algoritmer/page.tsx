@@ -6,7 +6,7 @@ import { absoluteUrl, buildArticleJsonLd, buildBreadcrumbJsonLd } from "@/lib/no
 export const metadata = siteMeta({
   title: "Algoritmer og kampanjeplanlegging | Norsk Prompting",
   description:
-    "Evidensbasert KI-skoleverktøy for sosiale medier: forstå discovery, planlegg kampanjer og diagnoser hvorfor innhold stopper.",
+    "Evidensbasert KI-akademiverktøy for sosiale medier: forstå discovery, planlegg kampanjer og diagnoser hvorfor innhold stopper.",
   path: "/norsk-prompting/algoritmer",
 });
 
@@ -21,7 +21,7 @@ export default function NorskPromptingAlgoritmerPage() {
       description={description}
       jsonLd={[
         buildArticleJsonLd({
-          headline: "Algoritmer og kampanjeplanlegging i KI-skole",
+          headline: "Algoritmer og kampanjeplanlegging i KI-akademi",
           description,
           path: "/norsk-prompting/algoritmer",
           dateModified: "2026-03-10",

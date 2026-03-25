@@ -7,9 +7,9 @@ import { siteMeta } from "@/lib/seo";
 import { absoluteUrl, buildArticleJsonLd, buildBreadcrumbJsonLd } from "@/lib/norsk-prompting/seo";
 
 export const metadata = siteMeta({
-  title: "Ordforråd for KI-skole og prompting | Norsk Prompting",
+  title: "Ordforråd for KI-akademi og prompting | Norsk Prompting",
   description:
-    "Utforsk ordforråd for KI-skole, prompting og mediefag i Norsk Prompting. Finn begreper for lys, komposisjon, film, VFX og generativ KI som gjør undervisning og produksjon mer presis.",
+    "Utforsk ordforråd for KI-akademi, prompting og mediefag i Norsk Prompting. Finn begreper for lys, komposisjon, film, VFX og generativ KI som gjør undervisning og produksjon mer presis.",
   path: "/norsk-prompting/ordforrad",
 });
 

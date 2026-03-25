@@ -7,9 +7,9 @@ import { absoluteUrl, buildArticleJsonLd, buildBreadcrumbJsonLd } from "@/lib/no
 import { loadExampleShowcaseItems } from "@/lib/norsk-prompting/exampleShowcaseCms";
 
 export const metadata = siteMeta({
-  title: "Eksempler for KI-skole og prompting | Norsk Prompting",
+  title: "Eksempler for KI-akademi og prompting | Norsk Prompting",
   description:
-    "Se eksempler på prompting i praksis for KI-skole, mediefag og generativ produksjon i Norsk Prompting. Siden viser bilde- og videoeksempler med konkrete prompts, analyse og arbeidsflyt.",
+    "Se eksempler på prompting i praksis for KI-akademi, mediefag og generativ produksjon i Norsk Prompting. Siden viser bilde- og videoeksempler med konkrete prompts, analyse og arbeidsflyt.",
   path: "/norsk-prompting/eksempler",
 });
 
@@ -45,7 +45,7 @@ export default async function NorskPromptingEksemplerPage() {
         </p>
         <p className="mt-2 text-sm leading-relaxed text-[rgb(var(--muted))]">
           Hver case er laget for å forklare valg av språk, struktur og kontroll,
-          slik at KI-skole blir koblet direkte til praktisk arbeid og analyse.
+          slik at KI-akademi blir koblet direkte til praktisk arbeid og analyse.
         </p>
       </section>
 

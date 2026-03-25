@@ -17,9 +17,9 @@ import {
 } from "@/lib/norsk-prompting/seo";
 
 export const metadata = siteMeta({
-  title: "KI-skole i Norge | Lær KI, prompting og kunstig intelligens i mediefag",
+  title: "KI-akademi i Norge | Lær KI, prompting og kunstig intelligens i mediefag",
   description:
-    "KI-skole for elever og lærere. Lær hvordan kunstig intelligens og prompting brukes i praksis i mediefag og kreativ produksjon.",
+    "KI-akademi for elever og lærere. Lær hvordan kunstig intelligens og prompting brukes i praksis i mediefag og kreativ produksjon.",
   path: "/norsk-prompting",
 });
 
@@ -66,11 +66,11 @@ export default function NorskPromptingHubPage() {
     mainEntity: [
       {
         "@type": "Question",
-        name: "Hva er KI-skole?",
+        name: "Hva er KI-akademi?",
         acceptedAnswer: {
           "@type": "Answer",
           text:
-            "KI-skole er undervisning i kunstig intelligens, prompting og digital produksjon. Elevene lærer å bruke KI-verktøy til bilde, video, tekst og lyd – med fokus på språkpresisjon, produksjonskontroll og etisk bruk. Målet er å gjøre KI til et praktisk arbeidsverktøy, ikke bare teori.",
+            "KI-akademi er undervisning i kunstig intelligens, prompting og digital produksjon. Elevene lærer å bruke KI-verktøy til bilde, video, tekst og lyd – med fokus på språkpresisjon, produksjonskontroll og etisk bruk. Målet er å gjøre KI til et praktisk arbeidsverktøy, ikke bare teori.",
         },
       },
       {
@@ -113,10 +113,10 @@ export default function NorskPromptingHubPage() {
   };
 
   const jsonLd = [
-    buildWebPageJsonLd("KI-skole i Norge", "/norsk-prompting", intro),
+    buildWebPageJsonLd("KI-akademi i Norge", "/norsk-prompting", intro),
     buildBreadcrumbJsonLd([
       { name: "Forside", item: absoluteUrl("/") },
-      { name: "KI-skole", item: absoluteUrl("/norsk-prompting") },
+      { name: "KI-akademi", item: absoluteUrl("/norsk-prompting") },
     ]),
     faqJsonLd,
   ];
@@ -124,7 +124,7 @@ export default function NorskPromptingHubPage() {
   return (
     <NorskPromptingShell
       currentPath="/norsk-prompting/prompt-utvider"
-      title="KI-skole – Norsk Prompting"
+      title="KI-akademi – Norsk Prompting"
       description={intro}
       jsonLd={jsonLd}
     >
@@ -172,7 +172,7 @@ export default function NorskPromptingHubPage() {
 
       <section className="np-node-surface rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))]/88 p-5 md:p-6">
         <h2 className="text-xl font-semibold">
-          KI-skole (KI-undervisning og prompting i praksis)
+          KI-akademi (KI-undervisning og prompting i praksis)
         </h2>
         <p className="mt-2 text-sm leading-relaxed text-[rgb(var(--muted))]">
           Norsk Prompting er en praktisk arbeidsflate for KI undervisning og AI
@@ -189,9 +189,9 @@ export default function NorskPromptingHubPage() {
 
       {/* SEO-tekst (indekserbar) */}
       <section className="np-node-surface rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))]/86 p-5 md:p-6 mb-4">
-        <h2 className="text-xl font-semibold">Hva er KI-skole?</h2>
+        <h2 className="text-xl font-semibold">Hva er KI-akademi?</h2>
         <p className="mt-2 text-sm text-[rgb(var(--muted))] leading-relaxed">
-          KI-skole er undervisning i kunstig intelligens, prompting og digital
+          KI-akademi er undervisning i kunstig intelligens, prompting og digital
           produksjon. Elevene lærer å bruke KI-verktøy til bilde, video, tekst og
           lyd – med fokus på språkpresisjon, produksjonskontroll og etisk bruk.
           Målet er å gjøre KI til et praktisk arbeidsverktøy, ikke bare teori.
