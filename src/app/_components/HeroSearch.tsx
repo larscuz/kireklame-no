@@ -47,8 +47,11 @@ export default function HeroSearch({
 
           {/* Underlay Video */}
           <div className="absolute inset-0 z-0">
-            <HeroBackgroundVideo src={heroVideoUrl} poster="/covers/cover-1.jpg" />
-            <div className="absolute inset-0 bg-black/30 pointer-events-none transition-opacity duration-700 group-hover:bg-black/10"></div>
+            <HeroBackgroundVideo
+              src={heroVideoUrl}
+              poster="/covers/cover-1.jpg"
+              dimmed={false}
+            />
           </div>
 
           {/* Foreground minimal UI */}
