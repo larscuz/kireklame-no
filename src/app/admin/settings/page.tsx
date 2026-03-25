@@ -9,56 +9,67 @@ export const dynamic = "force-dynamic";
 
 async function updateSettingsAction(formData: FormData) {
   "use server";
-  await requireAdmin();
+  try {
+    await requireAdmin();
 
-  const featured_company_slug =
-    String(formData.get("featured_company_slug") ?? "").trim() || null;
+    const featured_company_slug =
+      String(formData.get("featured_company_slug") ?? "").trim() || null;
 
-  const featured_hero_video_url =
-    String(formData.get("featured_hero_video_url") ?? "").trim() || null;
-  const featured_hero_poster_url =
-    String(formData.get("featured_hero_poster_url") ?? "").trim() || null;
+    const featured_hero_video_url =
+      String(formData.get("featured_hero_video_url") ?? "").trim() || null;
+    const featured_hero_poster_url =
+      String(formData.get("featured_hero_poster_url") ?? "").trim() || null;
 
-  const companies_featured_company_slug =
-    String(formData.get("companies_featured_company_slug") ?? "").trim() || null;
+    const companies_featured_company_slug =
+      String(formData.get("companies_featured_company_slug") ?? "").trim() || null;
 
-  const companies_hero_video_url =
-    String(formData.get("companies_hero_video_url") ?? "").trim() || null;
-  const companies_hero_poster_url =
-    String(formData.get("companies_hero_poster_url") ?? "").trim() || null;
+    const companies_hero_video_url =
+      String(formData.get("companies_hero_video_url") ?? "").trim() || null;
+    const companies_hero_poster_url =
+      String(formData.get("companies_hero_poster_url") ?? "").trim() || null;
 
-  const international_featured_company_slug =
-    String(formData.get("international_featured_company_slug") ?? "").trim() ||
-    null;
+    const international_featured_company_slug =
+      String(formData.get("international_featured_company_slug") ?? "").trim() ||
+      null;
 
-  const international_hero_video_url =
-    String(formData.get("international_hero_video_url") ?? "").trim() || null;
-  const international_hero_poster_url =
-    String(formData.get("international_hero_poster_url") ?? "").trim() || null;
+    const international_hero_video_url =
+      String(formData.get("international_hero_video_url") ?? "").trim() || null;
+    const international_hero_poster_url =
+      String(formData.get("international_hero_poster_url") ?? "").trim() || null;
 
-  const db = supabaseAdmin();
-  const { error } = await db
-    .from("site_settings")
-    .upsert({
-      id: 1,
-      featured_company_slug,
-      featured_hero_video_url,
-      featured_hero_poster_url,
-      companies_featured_company_slug,
-      companies_hero_video_url,
-      companies_hero_poster_url,
-      international_featured_company_slug,
-      international_hero_video_url,
-      international_hero_poster_url,
-    });
+    const db = supabaseAdmin();
+    const { error } = await db
+      .from("site_settings")
+      .upsert({
+        id: 1,
+        featured_company_slug,
+        featured_hero_video_url,
+        featured_hero_poster_url,
+        companies_featured_company_slug,
+        companies_hero_video_url,
+        companies_hero_poster_url,
+        international_featured_company_slug,
+        international_hero_video_url,
+        international_hero_poster_url,
+      });
 
-  if (error) throw new Error(error.message);
+    if (error) {
+      return { ok: false as const, error: error.message };
+    }
 
-  // bust cache
-  revalidatePath("/");
-  revalidatePath("/selskaper");
-  revalidatePath("/internasjonalt");
-  revalidatePath("/admin/settings");
+    // bust cache
+    revalidatePath("/");
+    revalidatePath("/selskaper");
+    revalidatePath("/internasjonalt");
+    revalidatePath("/admin/settings");
+
+    return { ok: true as const };
+  } catch (error: any) {
+    return {
+      ok: false as const,
+      error: String(error?.message ?? "Could not save settings."),
+    };
+  }
 }
 
 export default async function AdminSettingsPage() {

@@ -2,7 +2,9 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 
-type SettingsAction = (formData: FormData) => void | Promise<void>;
+type SettingsAction = (
+  formData: FormData
+) => Promise<{ ok: true } | { ok: false; error: string }>;
 
 type CompanyOption = {
   name: string;
@@ -364,36 +366,42 @@ export default function AdminSettingsForm({
     [companies]
   );
   const generatorsRef = useRef<Record<string, () => Promise<void>>>({});
-  const allowNativeSubmitRef = useRef(false);
   const [isPreparingSubmit, setIsPreparingSubmit] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [submitSuccess, setSubmitSuccess] = useState<string | null>(null);
 
   function registerGenerator(name: string, generator: () => Promise<void>) {
     generatorsRef.current[name] = generator;
   }
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-    if (allowNativeSubmitRef.current) {
-      allowNativeSubmitRef.current = false;
-      return;
-    }
-
     event.preventDefault();
     setIsPreparingSubmit(true);
+    setSubmitError(null);
+    setSubmitSuccess(null);
 
     try {
       for (const generator of Object.values(generatorsRef.current)) {
         await generator();
       }
+
+      const formData = new FormData(event.currentTarget);
+      const result = await action(formData);
+      if (!result.ok) {
+        setSubmitError(result.error);
+        return;
+      }
+
+      setSubmitSuccess("Innstillinger lagret.");
+    } catch (error: any) {
+      setSubmitError(String(error?.message ?? "Could not save settings."));
     } finally {
       setIsPreparingSubmit(false);
-      allowNativeSubmitRef.current = true;
-      event.currentTarget.requestSubmit();
     }
   }
 
   return (
     <form
-      action={action}
       onSubmit={handleSubmit}
       className="mt-8 grid gap-4 rounded-2xl border border-[rgb(var(--border))] bg-[rgb(var(--card))] p-6 shadow-soft"
     >
@@ -444,6 +452,13 @@ export default function AdminSettingsForm({
         activeCompanies={activeCompanies}
         inactiveCompanies={inactiveCompanies}
       />
+
+      {submitSuccess ? (
+        <p className="text-sm text-emerald-300">{submitSuccess}</p>
+      ) : null}
+      {submitError ? (
+        <p className="text-sm text-rose-300">{submitError}</p>
+      ) : null}
 
       <div className="flex gap-3">
         <button
