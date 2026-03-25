@@ -160,6 +160,25 @@ create trigger trg_ads_updated_at
 before update on public.ads
 for each row execute function public.set_updated_at();
 
+create table if not exists public.site_settings (
+  id integer primary key default 1 check (id = 1),
+  featured_company_slug text,
+  featured_hero_video_url text,
+  featured_hero_poster_url text,
+  companies_featured_company_slug text,
+  companies_hero_video_url text,
+  companies_hero_poster_url text,
+  international_featured_company_slug text,
+  international_hero_video_url text,
+  international_hero_poster_url text,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create trigger trg_site_settings_updated_at
+before update on public.site_settings
+for each row execute function public.set_updated_at();
+
 create table if not exists public.showreel_entries (
   id uuid primary key default gen_random_uuid(),
   name text not null,
@@ -224,6 +243,7 @@ alter table public.claims enable row level security;
 alter table public.submissions enable row level security;
 alter table public.news_articles enable row level security;
 alter table public.ads enable row level security;
+alter table public.site_settings enable row level security;
 alter table public.showreel_entries enable row level security;
 alter table public.ki_skole_examples enable row level security;
 

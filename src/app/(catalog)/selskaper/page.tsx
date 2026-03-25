@@ -46,13 +46,14 @@ export default async function CompaniesPage({
     getAdForPlacement("catalog_grid_banner_3"),
     supabaseAdmin()
       .from("site_settings")
-      .select("companies_featured_company_slug, companies_hero_video_url")
+      .select("*")
       .eq("id", 1)
       .maybeSingle()
       .then((res) => res.data ?? null),
   ]);
 
   const companiesHeroVideoUrl = settings?.companies_hero_video_url ?? null;
+  const companiesHeroPosterUrl = settings?.companies_hero_poster_url ?? null;
   const companiesFeaturedSlug = settings?.companies_featured_company_slug ?? null;
   const companiesFeatured =
     companiesFeaturedSlug
@@ -95,7 +96,7 @@ export default async function CompaniesPage({
             <>
               <HeroBackgroundVideo
                 src={companiesHeroVideoUrl}
-                poster="/covers/cover-1.jpg"
+                poster={companiesHeroPosterUrl ?? "/covers/cover-1.jpg"}
               />
               <div className="absolute inset-0 bg-black/25" />
             </>

@@ -9,6 +9,7 @@ import type { SponsorAd } from "@/lib/ads";
 export default function HeroSearch({
   initialQuery,
   heroVideoUrl,
+  heroPosterUrl,
   featuredCompany,
   sponsorAd,
   sponsorMiniAd,
@@ -17,6 +18,7 @@ export default function HeroSearch({
 }: {
   initialQuery: string; // beholdes for kompatibilitet (kan fjernes senere)
   heroVideoUrl?: string | null;
+  heroPosterUrl?: string | null;
   featuredCompany?: {
     name: string;
     slug: string;
@@ -49,7 +51,7 @@ export default function HeroSearch({
           <div className="absolute inset-0 z-0">
             <HeroBackgroundVideo
               src={heroVideoUrl}
-              poster="/covers/cover-1.jpg"
+              poster={heroPosterUrl ?? "/covers/cover-1.jpg"}
               dimmed={false}
             />
           </div>

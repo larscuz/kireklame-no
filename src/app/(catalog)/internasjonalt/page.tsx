@@ -35,13 +35,14 @@ export default async function InternasjonaltPage({
     getAdForPlacement("catalog_grid_banner_3"),
     supabaseAdmin()
       .from("site_settings")
-      .select("international_featured_company_slug, international_hero_video_url")
+      .select("*")
       .eq("id", 1)
       .maybeSingle()
       .then((res) => res.data ?? null),
   ]);
   const intl = companies ?? [];
   const internationalHeroVideoUrl = settings?.international_hero_video_url ?? null;
+  const internationalHeroPosterUrl = settings?.international_hero_poster_url ?? null;
   const internationalFeaturedSlug =
     settings?.international_featured_company_slug ?? null;
   const internationalFeatured =
@@ -64,7 +65,7 @@ export default async function InternasjonaltPage({
       {/* HERO */}
       <HeroInternational
         heroVideoUrl={internationalHeroVideoUrl}
-        poster="/covers/cover-1.jpg"
+        poster={internationalHeroPosterUrl ?? "/covers/cover-1.jpg"}
         locale={locale}
         copy={{
           title: locale === "en" ? "International" : "Internasjonalt",

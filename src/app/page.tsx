@@ -110,11 +110,12 @@ export default async function Home(props: any) {
   // 2) Hent hero settings (featured + video)
   const { data: settings } = await supabaseAdmin()
     .from("site_settings")
-    .select("featured_company_slug, featured_hero_video_url")
+    .select("*")
     .eq("id", 1)
     .maybeSingle();
 
   const heroVideoUrl = settings?.featured_hero_video_url ?? null;
+  const heroPosterUrl = settings?.featured_hero_poster_url ?? null;
 
   const featuredSlug = settings?.featured_company_slug ?? null;
   const featuredCompany = featuredSlug ? await getCompanyBySlug(featuredSlug) : null;
@@ -177,6 +178,7 @@ export default async function Home(props: any) {
       <HeroSearch
         initialQuery={params.q ?? ""}
         heroVideoUrl={heroVideoUrl}
+        heroPosterUrl={heroPosterUrl}
         featuredCompany={featured}
         sponsorAd={ad ?? null}
         sponsorMiniAd={heroMiniAd ?? null}
