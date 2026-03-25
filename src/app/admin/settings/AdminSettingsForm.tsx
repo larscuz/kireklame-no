@@ -376,6 +376,7 @@ export default function AdminSettingsForm({
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    const form = event.currentTarget;
     setIsPreparingSubmit(true);
     setSubmitError(null);
     setSubmitSuccess(null);
@@ -385,7 +386,7 @@ export default function AdminSettingsForm({
         await generator();
       }
 
-      const formData = new FormData(event.currentTarget);
+      const formData = new FormData(form);
       const result = await action(formData);
       if (!result.ok) {
         setSubmitError(result.error);
