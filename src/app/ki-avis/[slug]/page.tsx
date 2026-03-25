@@ -8,6 +8,7 @@ import SocialShareButton from "@/app/_components/SocialShareButton";
 import { getAdForPlacement, type SponsorAd } from "@/lib/ads";
 import { getLocale } from "@/lib/i18n.server";
 import { getPublishedNewsBySlug } from "@/lib/news/articles";
+import { NEWS_FEATURE_DISABLED } from "@/lib/news/disabled";
 import { isLikelyInternationalDeskArticle } from "@/lib/news/international";
 import {
   machineTranslationNote,
@@ -488,6 +489,20 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
+  if (NEWS_FEATURE_DISABLED) {
+    const base = siteMeta({
+      title: "Sak ikke funnet | KiR Nyheter",
+      description: "Nyhetsarkivet er fjernet.",
+      path: `/ki-avis/${slug}`,
+    });
+    return {
+      ...base,
+      robots: {
+        index: false,
+        follow: false,
+      },
+    };
+  }
   const article = await getPublishedNewsBySlug(slug);
   if (!article) {
     return siteMeta({
@@ -544,6 +559,8 @@ export default async function KIRNyheterArticlePage({
 }: {
   params: Promise<{ slug: string }>;
 }) {
+  if (NEWS_FEATURE_DISABLED) notFound();
+
   const { slug } = await params;
   const [locale, viewer] = await Promise.all([getLocale(), getUserOrNull()]);
   const sponsorLabel = locale === "en" ? "Sponsored" : "Sponset";

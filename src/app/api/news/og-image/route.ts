@@ -2,6 +2,7 @@ import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { NextResponse } from "next/server";
 import { getPublishedNewsBySlug } from "@/lib/news/articles";
+import { NEWS_FEATURE_DISABLED, newsGoneJsonResponse } from "@/lib/news/disabled";
 
 const BROWSER_UA =
   "Mozilla/5.0 (Macintosh; Intel Mac OS X 14_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36";
@@ -48,6 +49,8 @@ async function fetchImageBytes(url: string, site: string): Promise<{ bytes: Arra
 }
 
 export async function GET(req: Request) {
+  if (NEWS_FEATURE_DISABLED) return newsGoneJsonResponse();
+
   const site = (process.env.NEXT_PUBLIC_SITE_URL || "https://kireklame.no").replace(/\/+$/, "");
   const url = new URL(req.url);
   const slug = String(url.searchParams.get("slug") ?? "").trim();

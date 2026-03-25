@@ -1,4 +1,5 @@
 import { listPublishedNews } from "@/lib/news/articles";
+import { NEWS_FEATURE_DISABLED, newsGoneTextResponse } from "@/lib/news/disabled";
 
 export const runtime = "nodejs";
 export const revalidate = 900;
@@ -26,6 +27,8 @@ function coerceDescription(input: string | null | undefined): string {
 }
 
 export async function GET() {
+  if (NEWS_FEATURE_DISABLED) return newsGoneTextResponse();
+
   const site = (process.env.NEXT_PUBLIC_SITE_URL || "https://kireklame.no").replace(/\/+$/, "");
   const feedUrl = `${site}/ki-avis/rss.xml`;
   const rows = await listPublishedNews(120);

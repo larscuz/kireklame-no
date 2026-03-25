@@ -1,10 +1,12 @@
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import { Bodoni_Moda, Manrope, Source_Serif_4 } from "next/font/google";
 import AdSlot from "@/app/_components/AdSlot";
 import NewsImage from "@/app/_components/NewsImage";
 import { getAdForPlacement, type SponsorAd } from "@/lib/ads";
 import { getLocale } from "@/lib/i18n.server";
 import { listPublishedNews } from "@/lib/news/articles";
+import { NEWS_FEATURE_DISABLED } from "@/lib/news/disabled";
 import { isLikelyInternationalDeskArticle } from "@/lib/news/international";
 import { ENGLISH_AI_GLOSSARY_TERMS } from "@/lib/news/translate";
 import type { NewsArticle } from "@/lib/news/types";
@@ -153,6 +155,8 @@ function adSignature(ad: SponsorAd | null): string {
 }
 
 export default async function KIRInternationalPage() {
+  if (NEWS_FEATURE_DISABLED) notFound();
+
   const locale = await getLocale();
   const sponsorLabel = locale === "en" ? "Sponsored" : "Sponset";
   const openLinkFallback = locale === "en" ? "Open link" : "Åpne lenke";

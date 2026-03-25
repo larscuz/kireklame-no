@@ -1,13 +1,14 @@
 import Link from "next/link";
 import type { Metadata } from "next";
 import { Bodoni_Moda, Manrope, Source_Serif_4 } from "next/font/google";
-import { redirect } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import {
   FRONT_LEAD_OVERRIDE_TAG,
   FRONT_NOW_OVERRIDE_TAGS,
   listNewsForAdmin,
 } from "@/lib/news/articles";
+import { NEWS_FEATURE_DISABLED } from "@/lib/news/disabled";
 import {
   FRONT_LAYOUT_TAGS,
   type FrontLayoutTag,
@@ -188,6 +189,8 @@ export default async function KIAvisLayoutPage({
 }: {
   searchParams?: Promise<{ notice?: string | string[]; item?: string | string[]; q?: string | string[] }>;
 }) {
+  if (NEWS_FEATURE_DISABLED) notFound();
+
   await requireAdmin("/admin/ki-avis/layout");
 
   const sp = (await searchParams) ?? {};

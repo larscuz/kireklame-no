@@ -47,16 +47,6 @@ export default async function AdminDashboardPage() {
 
       <div className="mt-8 grid gap-4 sm:grid-cols-2">
         <Card
-          href="/admin/ki-avis"
-          title="KiR Nyheter CMS"
-          desc="Rediger og publiser saker til KiR Nyheter."
-        />
-        <Card
-          href="/admin/ki-avis/layout"
-          title="KiR Forside-layout"
-          desc="Plasser hovedsak og Forside nå-slots visuelt uten lang scrolling."
-        />
-        <Card
           href="/admin/showheel"
           title="Showheel CMS"
           desc="Visuell kontroll på /ki-reklame: legg til, fjern og sjekk duplikater."

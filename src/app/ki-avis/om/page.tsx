@@ -1,5 +1,7 @@
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import { Bodoni_Moda, Manrope, Source_Serif_4 } from "next/font/google";
+import { NEWS_FEATURE_DISABLED } from "@/lib/news/disabled";
 import { siteMeta } from "@/lib/seo";
 
 const masthead = Bodoni_Moda({
@@ -25,6 +27,8 @@ export const metadata = siteMeta({
 });
 
 export default function KIRAvisOmPage() {
+  if (NEWS_FEATURE_DISABLED) notFound();
+
   return (
     <main className={`${uiSans.className} min-h-screen bg-[#f1ede4] text-[#191919]`}>
       <header className="border-y border-black/20 bg-[#f6f2e9]">

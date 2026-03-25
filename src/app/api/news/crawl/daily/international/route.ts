@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { NEWS_FEATURE_DISABLED, newsGoneJsonResponse } from "@/lib/news/disabled";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 
 export const runtime = "nodejs";
@@ -178,6 +179,8 @@ async function triggerDailyCrawl(req: Request, payload: DailyCrawlPayload) {
 }
 
 export async function GET(req: Request) {
+  if (NEWS_FEATURE_DISABLED) return newsGoneJsonResponse();
+
   if (!isAuthorized(req)) {
     return NextResponse.json({ ok: false, error: "Unauthorized" }, { status: 401 });
   }
@@ -187,6 +190,8 @@ export async function GET(req: Request) {
 }
 
 export async function POST(req: Request) {
+  if (NEWS_FEATURE_DISABLED) return newsGoneJsonResponse();
+
   if (!isAuthorized(req)) {
     return NextResponse.json({ ok: false, error: "Unauthorized" }, { status: 401 });
   }

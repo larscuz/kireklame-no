@@ -34,31 +34,6 @@ const nextConfig = {
         permanent: true,
       },
       {
-        source: "/ki-nyheter",
-        destination: "/norsk-prompting",
-        permanent: true,
-      },
-      {
-        source: "/ki-nyheter/:path*",
-        destination: "/norsk-prompting/changelog",
-        permanent: true,
-      },
-      {
-        source: "/ki-avis",
-        destination: "/norsk-prompting/changelog",
-        permanent: true,
-      },
-      {
-        source: "/ki-avis/internasjonalt",
-        destination: "/norsk-prompting/changelog",
-        permanent: true,
-      },
-      {
-        source: "/ki-avis/rss.xml",
-        destination: "/norsk-prompting/changelog",
-        permanent: true,
-      },
-      {
         source: "/ki-opplaring",
         destination: "/norsk-prompting",
         permanent: true,

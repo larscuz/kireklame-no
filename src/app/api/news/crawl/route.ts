@@ -5,6 +5,7 @@ import {
   type SerperOrganic,
 } from "@/lib/crawl/searchSerper";
 import { supabaseAdmin } from "@/lib/supabase/admin";
+import { NEWS_FEATURE_DISABLED, newsGoneJsonResponse } from "@/lib/news/disabled";
 import {
   DEFAULT_NEWS_QUERIES,
   DEFAULT_NEWS_SOURCE_URLS,
@@ -168,6 +169,8 @@ function parseTimestamp(value: string | null | undefined): number {
 const SOURCE_URL_CHUNK_SIZE = 200;
 
 export async function POST(req: Request) {
+  if (NEWS_FEATURE_DISABLED) return newsGoneJsonResponse();
+
   const key = req.headers.get("x-ingest-key") || "";
   if (!process.env.INGEST_API_KEY || key !== process.env.INGEST_API_KEY) {
     return NextResponse.json({ ok: false, error: "Unauthorized" }, { status: 401 });

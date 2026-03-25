@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { NEWS_FEATURE_DISABLED, newsGoneJsonResponse } from "@/lib/news/disabled";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import { FRONT_LEAD_OVERRIDE_TAG, normalizeNewsUpsert } from "@/lib/news/articles";
 import { applyFrontLayoutAssignments } from "@/lib/news/frontLayout";
@@ -119,6 +120,8 @@ function pickAutoFrontLeadId(
 }
 
 export async function POST(req: Request) {
+  if (NEWS_FEATURE_DISABLED) return newsGoneJsonResponse();
+
   const key = req.headers.get("x-ingest-key") || "";
   if (!process.env.INGEST_API_KEY || key !== process.env.INGEST_API_KEY) {
     return NextResponse.json({ ok: false, error: "Unauthorized" }, { status: 401 });

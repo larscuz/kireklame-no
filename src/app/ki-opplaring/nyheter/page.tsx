@@ -1,5 +1,7 @@
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import { listPublishedNews } from "@/lib/news/articles";
+import { NEWS_FEATURE_DISABLED } from "@/lib/news/disabled";
 import { siteMeta } from "@/lib/seo";
 
 export const metadata = siteMeta({
@@ -16,6 +18,8 @@ function formatDate(value: string | null): string {
 }
 
 export default async function KiOpplaringNyheterPage() {
+  if (NEWS_FEATURE_DISABLED) notFound();
+
   const news = await listPublishedNews(30);
   const latest = news.slice(0, 12);
 

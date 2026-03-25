@@ -32,7 +32,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${site}/norsk-prompting/ordforrad`, changeFrequency: "weekly", priority: 0.88 },
     { url: `${site}/norsk-prompting/eksempler`, changeFrequency: "weekly", priority: 0.9 },
     { url: `${site}/norsk-prompting/changelog`, changeFrequency: "weekly", priority: 0.7 },
-    { url: `${site}/ki-avis/om`, changeFrequency: "weekly", priority: 0.7 },
   ];
 
   const companyUrls: MetadataRoute.Sitemap = (companies ?? [])

@@ -2,13 +2,14 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { Bodoni_Moda, Manrope, Source_Serif_4 } from "next/font/google";
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { fetchTextBestEffort } from "@/lib/crawl/fetcher";
 import { extractArticleSignals } from "@/lib/news/extract";
 import {
   guessDocumentLanguage,
   isLikelyInternationalDeskArticle,
 } from "@/lib/news/international";
+import { NEWS_FEATURE_DISABLED } from "@/lib/news/disabled";
 import { shouldTranslateToNorwegian, translateToNorwegianBokmal } from "@/lib/news/translate";
 import { requireAdmin } from "@/lib/supabase/server";
 import { supabaseAdmin } from "@/lib/supabase/admin";
@@ -847,6 +848,8 @@ export default async function KIAvisAdminPage({
 }: {
   searchParams?: Promise<{ notice?: string | string[]; item?: string | string[] }>;
 }) {
+  if (NEWS_FEATURE_DISABLED) notFound();
+
   await requireAdmin("/admin/ki-avis");
   const sp = (await searchParams) ?? {};
   const notice = resolveAdminNotice(sp.notice);

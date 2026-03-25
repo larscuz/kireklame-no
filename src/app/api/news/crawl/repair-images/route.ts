@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { fetchText, fetchTextBestEffort } from "@/lib/crawl/fetcher";
+import { NEWS_FEATURE_DISABLED, newsGoneJsonResponse } from "@/lib/news/disabled";
 import { extractArticleSignals } from "@/lib/news/extract";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import { canonicalizeNewsUrl } from "@/lib/news/utils";
@@ -98,6 +99,8 @@ async function bestImageFromSource(row: CandidateRow): Promise<string | null> {
 }
 
 export async function POST(req: Request) {
+  if (NEWS_FEATURE_DISABLED) return newsGoneJsonResponse();
+
   const key = req.headers.get("x-ingest-key") || "";
   if (!process.env.INGEST_API_KEY || key !== process.env.INGEST_API_KEY) {
     return NextResponse.json({ ok: false, error: "Unauthorized" }, { status: 401 });
@@ -199,4 +202,3 @@ export async function POST(req: Request) {
     errors,
   });
 }
-

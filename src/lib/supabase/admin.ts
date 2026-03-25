@@ -13,18 +13,16 @@ export async function adminListSitemapEntities() {
     { data: companies },
     { data: locations },
     { data: tags },
-    { data: newsArticles },
   ] = await Promise.all([
     db.from("companies").select("slug"),
     db.from("locations").select("slug"),
     db.from("tags").select("slug"),
-    db.from("news_articles").select("slug").eq("status", "published"),
   ]);
 
   return {
     companies: companies ?? [],
     locations: locations ?? [],
     tags: tags ?? [],
-    newsArticles: newsArticles ?? [],
+    newsArticles: [],
   };
 }
