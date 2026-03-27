@@ -575,7 +575,7 @@ export default async function EditCompanyPage({
         </div>
 
         <div className="grid gap-2">
-          <label className="text-sm font-semibold">Kontakt e-post</label>
+          <label className="text-sm font-semibold">Eier e-post (vises ikke offentlig)</label>
           <input
             name="email"
             defaultValue={(company as any).email ?? ""}

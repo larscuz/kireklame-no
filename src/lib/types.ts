@@ -29,7 +29,6 @@ export type CompanyCardModel = {
   company_type: string;
   cover_image: string | null;
   video_url?: string | null;
-  email?: string | null;
   is_verified: boolean;
   is_placeholder: boolean;
   location: { name: string; slug: string } | null;
@@ -39,7 +38,6 @@ export type CompanyCardModel = {
 export type CompanyDetailModel = CompanyCardModel & {
   description: string | null;
   website: string | null;
-  email: string | null;
   phone: string | null;
   links: LinkRow[];
 };

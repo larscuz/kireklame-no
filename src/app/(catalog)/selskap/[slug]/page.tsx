@@ -323,8 +323,8 @@ export async function generateMetadata({
   const rawDesc =
     (company.short_description ?? company.description ?? "").trim() ||
     (locale === "en"
-      ? "Find contact info, services, and AI level for actors in advertising and creative production."
-      : "Finn kontaktinfo, tjenester og AI-nivå for aktører i reklame og kreativ produksjon.");
+      ? "Find the company website, services, and AI level for actors in advertising and creative production."
+      : "Finn nettside, tjenester og AI-nivå for aktører i reklame og kreativ produksjon.");
 
   const desc = trimDescription(rawDesc, 160);
 
@@ -410,11 +410,20 @@ export default async function CompanyPage({
 
   const db = process.env.SUPABASE_SERVICE_ROLE_KEY ? supabaseAdmin() : supabase;
   const userEmail = (user?.email ?? "").toLowerCase();
+  let companyOwnerEmail = "";
+
+  if (userEmail) {
+    const { data: ownerRow } = await db
+      .from("companies")
+      .select("email")
+      .eq("id", company.id)
+      .maybeSingle();
+
+    companyOwnerEmail = String(ownerRow?.email ?? "").toLowerCase();
+  }
 
   const isOwner =
-    ((!!userEmail &&
-      company.email &&
-      company.email.toLowerCase() === userEmail) as boolean) ||
+    (!!userEmail && !!companyOwnerEmail && companyOwnerEmail === userEmail) ||
     !!(
       await db
         .from("submissions")
@@ -713,23 +722,7 @@ export default async function CompanyPage({
               <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent" />
               <div className="absolute inset-x-2 bottom-2">
                 <div className="rounded-xl border border-white/25 bg-black/65 p-2 backdrop-blur-md">
-                  <div className="grid grid-cols-2 gap-2">
-                    {company.email ? (
-                      <a
-                        href={localizePath(locale, `/c/contact/${slug}`)}
-                        className="inline-flex items-center justify-center rounded-lg border border-white/30 bg-black/45 px-3 py-2 text-xs font-semibold text-white transition hover:bg-black/65"
-                      >
-                        {locale === "en" ? "Contact company" : "Kontakt bedrift"}
-                      </a>
-                    ) : (
-                      <span
-                        aria-disabled="true"
-                        className="inline-flex cursor-not-allowed select-none items-center justify-center rounded-lg border border-white/20 bg-black/35 px-3 py-2 text-xs font-semibold text-white/70"
-                      >
-                        {locale === "en" ? "Contact company" : "Kontakt bedrift"}
-                      </span>
-                    )}
-
+                  <div className="grid grid-cols-1 gap-2">
                     {websiteUrl ? (
                       <a
                         href={localizePath(locale, `/go/${slug}`)}
